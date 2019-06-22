@@ -16,12 +16,12 @@
 				{
 					name: "twitter logo",
 					link: "https://twitter.com/brightlyopen",
-					src: ROOT + "/res/images/twitterLogo.png"
+					src: "/www/res/images/twitterLogo.png"
 				},
 				{
 					name: "instagram logo",
 					link: "https://www.instagram.com/brightlyopen",
-					src: ROOT + "/res/images/instaLogo.png"
+					src: "/www/res/images/instaLogo.png"
 				}
 			];
 
