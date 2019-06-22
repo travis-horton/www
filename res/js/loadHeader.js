@@ -1,8 +1,9 @@
 ;(function() {
 	document.addEventListener("DOMContentLoaded", function() {
+    console.log(ROOT);
 		function loadHeader() {
-				let doc = document
-				let body = doc.querySelector('body');
+				const doc = document
+				const body = doc.querySelector('body');
 
 				let header = doc.createElement('header');
 				let navList = doc.createElement('ul');
@@ -18,9 +19,9 @@
 				}
 
 				let navItems = [
-					{innerText: "code", href:"/kiddspazz/index.html"},
-					{innerText: "home", href:"/index.html"},
-					{innerText: "piano", href:"/pianist/index.html"}
+					{innerText: "Code", href:ROOT + "/kiddspazz/index.html"},
+					{innerText: "Bio", href:ROOT + "/index.html"},
+          {innerText: "Contact", href:ROOT + "/contact.html"}
 				]
 
 				for (let i = 0; i < navItems.length; i ++) {
