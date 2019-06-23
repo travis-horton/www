@@ -44,7 +44,7 @@
       ctx.fillText("final score: "+Math.floor(score), c.width/2 - 200, c.height/2 - 70);
       ctx.fillText("level: "+level, c.width/2 - 40, c.height/2 - 120);
       ctx.font = '10px helvetica';
-      ctx.fillText("Reload page to restart", c.width/2 - 80, c.height/2);
+      ctx.fillText("Click restart button to restart", c.width/2 - 80, c.height/2);
       if (Math.floor(score) === Math.floor(highScore)) {
         if (end > 0) {
           user = prompt("initials: ", "...");
@@ -470,6 +470,25 @@
 	  }
 	}, false);
 
+  function newGame() {
+    score = 0;
+    level = 1;
+    end = 1;
+    entities = [];
+    explosion = [];
+    entities.push(new Ship(3, 255));
+    for (i = 0; i < level; i++) {
+      let p = new Placement();
+      let newV = {x: Math.random()*.5, y: Math.random()*.5}
+      entities.push(new Asteroid(AsteroidSize, p.x, p.y, newV));
+    };
+  }
+
+  const restart = document.getElementById("restart");
+
+  console.log(restart);
+  restart.onclick = newGame;
+  
   entities.push(new Ship(3, 255));
   for (i = 0; i < level; i++) {
     let p = new Placement();

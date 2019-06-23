@@ -144,9 +144,9 @@ li h1 {
 }
 
 .centeredCanvas {
+  flex: auto;
   text-align: center;
-  padding: var(--padding);
-}
+} 
 
 .show_on_hover {
   display: none;
