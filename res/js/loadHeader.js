@@ -19,8 +19,9 @@
 
 				let navItems = [
 					{innerText: "About", href:"/www/index.html"},
-					{innerText: "Code", href:"/www/kiddspazz/index.html"},
-          {innerText: "Contact/Links", href:"/www/contact.html"}
+					{innerText: "Portfolio", href:"/www/portfolio/index.html"},
+          {innerText: "Contact", href:"/www/contact.html"},
+          {innerText: "Blog", href:"/www/blog/index.html"}
 				]
 
 				for (let i = 0; i < navItems.length; i ++) {

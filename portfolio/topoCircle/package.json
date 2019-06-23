@@ -1,0 +1,17 @@
+{
+  "name": "topocircle",
+  "version": "0.0.1",
+  "description": "a little animation of a dot traveling around a topo map",
+  "main": "index.html",
+  "scripts": {
+    "test": "test",
+    "serve": "./node_modules/.bin/parcel index.html",
+    "build": "./node_modules/.bin/parcel build index.html"
+  },
+  "author": "kiddspazz (https://www.travish.com)",
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^1.12.3",
+    "parcel-bundler": "^1.12.3"
+  }
+}
