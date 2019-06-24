@@ -8,14 +8,14 @@
 				let favicon = doc.createElement('link');
 
 				favicon.id = 'favicon';
-				favicon.href = '/www/res/images/favicons/favicon0.png'
+				favicon.href = '/res/images/favicons/favicon0.png'
 				favicon.type = 'image/png';
 				favicon.rel = 'icon';
 
 				head.appendChild(favicon);
 
 				function changeFavicon() {(favicon);
-					favicon.setAttribute('href', '/www/res/images/favicons/favicon' + iC + '.png');
+					favicon.setAttribute('href', '/res/images/favicons/favicon' + iC + '.png');
 					iC >= 7 ? iC = 0 : iC++;
 				};
 
