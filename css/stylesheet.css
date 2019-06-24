@@ -1,9 +1,9 @@
 :root {
-  --bgcolor1: rgb(55,55,55);
-  --bgcolor2: rgb(100,100,100);
-  --txtcolor1: rgb(0,200,200);
-  --txtcolor2: rgb(0,164,164);
-  --txtcolor3: rgb(228,0,0);
+  --bgcolor1: #262626;
+  --bgcolor2: #737373;
+  --txtcolor1: #d2d2d2;
+  --txtcolor2: #b9b9b9;
+  --txtcolor3: #67b8de;
   --paddingTop: 4px;
   --paddingRight: 6px;
   --paddingBottom: 4px;
@@ -181,4 +181,9 @@ a:active {
   outline: none;
   text-decoration-color: var(--txtcolor3);
   text-decoration-style: dashed;
+}
+
+a:visited {
+  text-decoration: underline;
+  text-decoration-style: wavy;
 }
