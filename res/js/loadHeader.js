@@ -18,10 +18,10 @@
 				}
 
 				let navItems = [
-					{innerText: "About", href:"/index.html"},
-					{innerText: "Portfolio", href:"/portfolio/index.html"},
-          {innerText: "Blog", href:"/blog/index.html"},
-          {innerText: "Contact", href:"/contact.html"}
+					{innerText: "About", href:"/"},
+					{innerText: "Portfolio", href:"/portfolio/"},
+          {innerText: "Blog", href:"/blog/"},
+          {innerText: "Contact", href:"/contact/"}
 				]
 
 				for (let i = 0; i < navItems.length; i ++) {
