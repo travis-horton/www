@@ -16,9 +16,12 @@
       <div class="main">
         <h1>The D Flip-Flop, pt 2</h1>
         <p>Here's a D Flip-Flop diagram:</p>
-        <img src="../media/dflipflop.png" style="margin: auto; height:200px; display: block">
+        <img src="/res/blogmedia/dflipflop.png" style="margin: auto; height:200px; display: block">
         <p>What the hell does all that mean? Yeah, that's what I thought. &#x263a;</p>
-        <p>Actually, it's not so bad. The squares with a rounded side are AND gates, the tiny little circles at their rounded tip is an inverter (changes the output from 1 to 0 or 0 to 1). "D" is the input, "Q" is the output, "<span style="text-decoration: overline">Q</span>" is the opposite of the output.
+        <p>Actually, it's not so bad. The squares with a rounded side are AND gates, the tiny little circles at their rounded tip is an inverter, or a NOT gate (changes the output from 1 to 0 or 0 to 1). "D" is the input, "Q" is the output, and "<span style="text-decoration: overline">Q</span>" is the opposite of the output. That makes the whole rounded-side-square-and-little-circle combo a NAND gate.</p>
+        <p>You can see that each NAND gate has two inputs and one output. They output 1 if <b>not</b> both inputs are 1, making them Not-AND gates, NAND gates. More clearly said, they output 1 if either of the inputs is not 1.</p>
+        <p>Here's where things get confusing (for me, anyway). The first thing that happens: the left-most NAND gate on the bottom receives two of whatever the value of "D" is. If "D" is 1, that gate will output 0; if "D" is 0, that gate will output 1.</p>
+        <p>The left-most top NAND gate will get the value of "D" as one input and the clock value as the other. The clock is pulsing between "1" and "0". Remember from the <i>Nand2Tetris</i> quote, we want the D Flip-Flop gate to output whatever the input was at the last time interval, i.e. the last time the clock's value was "1".</p>
       </div>
       </main>
     </div>
