@@ -1,3 +1,6 @@
 [submodule "journal"]
 	path = journal
 	url = https://github.com/kiddspazz/journal
+[submodule "portfolio/wips/battleship"]
+	path = portfolio/wips/battleship
+	url = https://github.com/kiddspazz/battleship
