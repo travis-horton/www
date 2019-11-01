@@ -16,12 +16,12 @@
 				{
 					name: "twitter logo",
 					link: "https://twitter.com/brightlyopen",
-					src: "/res/images/twitterLogo.png"
+					src: "/res/images/twitterLogo.png",
 				},
 				{
 					name: "instagram logo",
-					link: "https:/.instagram.com/brightlyopen",
-					src: "/res/images/instaLogo.png"
+					link: "https://instagram.com/brightlyopen",
+					src: "/res/images/instaLogo.png",
 				}
 			];
 
@@ -29,6 +29,7 @@
 				let a = doc.createElement("a");
 				a.className = "no_dec";
 				a.href = link;
+        a.target = "blank";
 
 				let img = doc.createElement("img");
 				img.className = "footerItem";

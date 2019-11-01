@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Compiling & Linking</title>
+    <meta name='viewport' content="width=device-width, initial-scale=1.0"/>
+    <link id="favicon" href="/res/images/favicons/travFavicon.png" type="image/png" rel="icon">
+    <link href="/res/css/stylesheet.css" type="text/css" rel="stylesheet"/>
+    <script src="/res/js/loadHeader.js"></script>
+    <script src="/res/js/loadFooter.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <main class="content">
+      <div class="main">
+        <h1>What is a compiler and why do I need it?</h1>
+        <p>I recently (October 23rd, 2019) updated my MacOS to Catalina. I had been learning Rust and went to compile my code after the update and got an error: "<code>error: linking with 'cc' failed: exit code: 1</code>."</p>
+        <P>After asking a general tech group chat, I was told it was because the command line tools were probably removed with the update. Sure enough they were gone, and installing them again fixed the problem. <b>However</b>, I realized that because I've been writing primarily JavaScript, I don't really understand what a compiler or a linker is or does. So, research time.</p>
+        <div>
+          <p><h1>A compiler</h1> reads, analyses and translates code into either an object file or a list of error messages.</p>
+          <p>See, computers really only speak one language: machine code, which is ones and zeros. To get from the nice, human-readable code that we write, it has to get translated to machine code. Generally, computers come with a built-in assembly-code-to-machine-code compiler (translator) [TO BE FINISHED]</p>
+          <p><h1>A linker</h1> combines one or more object files and possible some library code into either some executable, some library or a list of error messages. [WRITE SOMETHING MORE HERE?]</p>
+          <p>That was easy. I think the thing to note here is that some languages don't need compiling or linking (JavaScript) and some do. Languages that don't need a compiler or linker are called interpreted languages.</p>
+          <ul>Some interpreted languages (from Wikipedia):
+            <li>Javascript</li>
+            <li>Python</li>
+            <li>Ruby</li>
+          </ul>
+          <ul>Some non-interpreted languages:
+            <li>c++</li>
+            <li>Rust</li>
+            <li>Elm</li>
+            <li>Go</li>
+            <li>And many others</li>
+        </div>
+        <hr>
+        <p>A little code:</p>
+      </div>
+      </main>
+    </div>
+  </body>
+</html>
+
