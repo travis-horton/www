@@ -99,6 +99,11 @@ footer {
   font-size: x-small;
 }
 
+.blog_title {
+  text-align: center;
+  text-decoration: underline;
+}
+
 ul {
   margin: 0;
   padding: 0;
