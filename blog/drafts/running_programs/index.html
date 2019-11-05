@@ -18,10 +18,19 @@
         <p>I recently (October 23rd, 2019) updated my MacOS to Catalina. I had been learning Rust and went to compile my code after the update and got an error: "<code>error: linking with 'cc' failed: exit code: 1</code>."</p>
         <P>After asking a general tech group chat, I was told it was because the command line tools were probably removed with the update. Sure enough they were gone, and installing them again fixed the problem. <b>However</b>, I realized that because I've been writing primarily JavaScript, I don't really understand what a compiler or a linker is or does. So, research time.</p>
         <div>
-          <p><h1>A compiler</h1> reads, analyses and translates code into either an object file or a list of error messages.</p>
-          <p>See, computers really only speak one language: machine code, which is ones and zeros. To get from the nice, human-readable code that we write, it has to get translated to machine code. Generally, computers come with a built-in assembly-code-to-machine-code compiler (translator) [TO BE FINISHED]</p>
-          <p><h1>A linker</h1> combines one or more object files and possible some library code into either some executable, some library or a list of error messages. [WRITE SOMETHING MORE HERE?]</p>
+          <p><h1>A compiler</h1> reads, analyses and translates code into either an object file (or files) or a list of error messages.</p>
+          <p>See, computers really only speak one language: machine code, which is ones and zeros. For the computer to interpret the (hopefully) nice, human-readable code that we write, it has to get translated to machine code. [Do compilers generally (or always) compile to machine code?]</p>
+          <p><h1>A linker</h1> combines one or more object files and possible some library code into either some executable, some library or a list of error messages.</p>
           <p>That was easy. I think the thing to note here is that some languages don't need compiling or linking (JavaScript) and some do. Languages that don't need a compiler or linker are called interpreted languages.</p>
+          <h1>Rust</h1>
+          <p>In the case of Rust, the compiler is <code>rustc</code>, developed by the Rust team, and comes packages with Rust on most installs.</p>
+          <p><code>rustc</code> implements a few steps to compile:<ol>
+            <li>.rs &#x2192; AST ("abstract syntax tree") [paths resolved, macros expanded]</li>
+            <li>AST &#x2192; HIR ("high-level intermediate representation") [type checking, other analyses]</li>
+            <li>HIR &#x2192; MIR ("middle IR") [borrow check and high-level optimizations]</li>
+            <li>MIR &#x2192; LLVM IR (a standard format for LLVM, a third party compiler that takes a generic file format "LLVM IR"</li>
+            <li>LLVM IR &#x2192; machine code! [in the form of <code>.o</code> files</li>
+            <li>machine code &#x2192; linked to an executable</li>
           <ul>Some interpreted languages (from Wikipedia):
             <li>Javascript</li>
             <li>Python</li>
