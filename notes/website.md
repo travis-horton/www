@@ -16,3 +16,5 @@ ttd for this—create a way to easily deploy new stuff… shouldn’t be that ha
 to get the latest version:
 git fetch origin **master**
 git reset —hard FETCH_HEAD
+
+psql is set up on here--you have a user th and currently just one table named hit_counter (for the hit_counter php example)
