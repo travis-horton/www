@@ -18,3 +18,6 @@ git fetch origin **master**
 git reset —hard FETCH_HEAD
 
 psql is set up on here--you have a user th and currently just one table named hit_counter (for the hit_counter php example)
+
+maybe add a cool shit links page, include:
+1. https://www.destroyallsoftware.com/talks/wat
