@@ -15,3 +15,9 @@ Stack trace:
   thrown in /var/www/php/hits.php on line 16
 03/Nov/2019:19:16:16 +0000 [ERROR 0 /php/hits.php] PHP message: PHP Notice:  Array to string conversion in /var/www/php/hits.php on line 24
 03/Nov/2019:19:16:30 +0000 [ERROR 0 /php/hits.php] PHP message: PHP Notice:  Undefined offset: 0 in /var/www/php/hits.php on line 24
+19/Nov/2019:21:48:23 +0000 [ERROR 0 /phpMyAdmin/scripts/setup.php] Primary script unknown
+19/Nov/2019:21:48:24 +0000 [ERROR 0 /phpmyadmin/scripts/setup.php] Primary script unknown
+20/Nov/2019:02:43:00 +0000 [ERROR 0 /phpMyAdmin/scripts/setup.php] Primary script unknown
+20/Nov/2019:02:43:01 +0000 [ERROR 0 /phpmyadmin/scripts/setup.php] Primary script unknown
+20/Nov/2019:13:29:51 +0000 [ERROR 0 /phpMyAdmin/scripts/setup.php] Primary script unknown
+20/Nov/2019:13:29:51 +0000 [ERROR 0 /phpmyadmin/scripts/setup.php] Primary script unknown
