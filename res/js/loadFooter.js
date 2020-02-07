@@ -7,7 +7,7 @@
 			let footer = doc.createElement("footer");
 			let copyright = doc.createElement("span");
 
-			copyright.innerText = "\xa9\'18 kiddspazz"
+      copyright.innerText = "\xa9\'20 kiddspazz"
 			copyright.className = "footerItem";
 
 			footer.appendChild(copyright);
