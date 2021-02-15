@@ -4,10 +4,11 @@ const Header = () => {
 	return (
 		<header className={styles.header}>
 			<nav className={styles.navBar}>
-				<a className={styles.navItem} href='/'>About</a>
-				<a className={styles.navItem} href='/Portfolio'>Portfolio</a>
-				<a className={styles.navItem} href='/Blog'>Blog</a>
-				<a className={styles.navItem} href='/Contact'>Contact</a>
+				<a classname={styles.navItem} href='/'>about me</a>
+				<a classname={styles.navItem} href='/software-engineer'>software engineer</a>
+				<a classname={styles.navItem} href='/pianist'>pianist</a>
+				<a classname={styles.navItem} href='/accountant'>accountant</a>
+				<a classname={styles.navItem} href='/blog'>blog</a>
 			</nav>
 		</header>
 	);

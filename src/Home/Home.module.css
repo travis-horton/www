@@ -1,7 +1,24 @@
 .main {
+	margin: auto;
+	max-width: 550px;
+}
+
+.header {
+	margin: 20px 0;
+}
+
+h1 {
+	margin: 0;
+}
+
+h2 {
+	margin: 0;
 }
 
 .profilepic {
-	max-width: 88px;
-	border-radius: 5px;
+	width: 150px;
+	height: 150px;
+	margin-right: 10px;
+	border-radius: 4px;
+	float: left;
 }

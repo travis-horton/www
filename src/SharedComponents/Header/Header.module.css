@@ -4,7 +4,7 @@
 
 .navBar {
 	margin: auto;
-	width: 775px;
+	width: 550px;
 	display: flex;
 	justify-content: space-around;
 }
