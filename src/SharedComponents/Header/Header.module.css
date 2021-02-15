@@ -1,4 +1,14 @@
 .header {
+	background: grey;
+}
+
+.navBar {
+	margin: auto;
+	width: 775px;
 	display: flex;
-	justify-content: center;
+	justify-content: space-around;
+}
+
+.navItem {
+
 }
