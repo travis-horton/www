@@ -1,2 +1,7 @@
 .main {
 }
+
+.profilepic {
+	max-width: 88px;
+	border-radius: 5px;
+}
