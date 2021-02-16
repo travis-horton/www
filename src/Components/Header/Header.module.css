@@ -1,0 +1,14 @@
+.header {
+  background: #192b40;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navBar {
+  margin: auto;
+  width: 550px;
+  display: flex;
+  justify-content: space-around;
+}
