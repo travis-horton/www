@@ -18,3 +18,18 @@
 .content {
   font-size: 14px;
 }
+
+@media (max-width: 500px) {
+  .header {
+    margin: 5px;
+    flex-direction: column;
+  }
+
+  .profilepic {
+    margin: auto;
+  }
+
+  .titles {
+    text-align: right;
+  }
+}

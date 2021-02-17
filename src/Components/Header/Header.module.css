@@ -12,3 +12,40 @@
   display: flex;
   justify-content: space-around;
 }
+
+.navItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerImage {
+  display: none;
+  margin: 3px;
+  height: 18px;
+}
+
+@media (max-width: 500px) {
+  .header {
+    height: auto;
+    position: sticky;
+    top: 0;
+  }
+
+  .headerImage {
+    display: inline;
+  }
+
+  .navBar {
+    flex-direction: row;
+    text-align: center;
+  }
+
+  .navItem {
+    margin: 5px 0;
+  }
+
+  .navItemText {
+    display: none;
+  }
+}
