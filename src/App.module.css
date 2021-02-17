@@ -1,0 +1,29 @@
+* {
+  font-family: Menlo, monospace;
+}
+
+.main {
+  margin: 20px auto;
+  max-width: 550px;
+}
+
+body {
+  background: #0f151e;
+  margin: 0;
+  color: #eff8fa;
+}
+
+p {
+  margin: 7px 0;
+}
+
+a {
+  color: #b0e2f9;
+  text-decoration: underline;
+  transition: 1s;
+}
+
+a:hover {
+  color: #e0f4fd;
+  transition: 1s;
+}
