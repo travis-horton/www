@@ -6,16 +6,18 @@ const Home = () => (
   <div className={styles.main}>
     <header className={styles.header}>
       <img className={styles.profilepic} src={headshot} alt="profile pic" />
-      <h1>
-        travis horton
-      </h1>
-      <h2>
-        front-end engineer,
-        <br />
-        pianist,
-        <br />
-        accountant
-      </h2>
+      <div className={styles.titles}>
+        <h1>
+          travis horton
+        </h1>
+        <h2>
+          front-end engineer,
+          <br />
+          pianist,
+          <br />
+          accountant
+        </h2>
+      </div>
     </header>
     <div className={styles.content}>
       <p>
