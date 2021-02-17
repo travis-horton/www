@@ -1,14 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 
 const Header = () => (
   <header className={styles.header}>
     <nav className={styles.navBar}>
-      <a className={styles.navItem} href="/">about me</a>
-      <a className={styles.navItem} href="/programming">software engineer</a>
-      <a className={styles.navItem} href="/piano">pianist</a>
-      <a className={styles.navItem} href="/accounting">accountant</a>
-      <a className={styles.navItem} href="/blog">blog</a>
+      <Link to="/">about me</Link>
+      <Link to="/programming">software engineer</Link>
+      <Link to="/piano">pianist</Link>
+      <Link to="/accounting">accountant</Link>
+      <Link to="/blog">blog</Link>
     </nav>
   </header>
 );
