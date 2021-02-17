@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter, Route, Switch, Redirect,
+} from 'react-router-dom';
 import styles from './App.module.css';
 import {
   Home, Piano, Programming, Accounting, Blog,
@@ -16,6 +18,11 @@ ReactDOM.render(
       <div className={styles.main}>
         <Switch>
           <Route exact path="/">
+            <Redirect to="/home" />
+          </Route>
+        </Switch>
+        <Switch>
+          <Route path="/home">
             <Home />
           </Route>
         </Switch>
