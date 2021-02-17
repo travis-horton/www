@@ -11,9 +11,9 @@ const Home = () => (
           travis horton
         </h1>
         <h2>
-          front-end engineer,
+          front-end engineer
           <br />
-          pianist,
+          pianist
           <br />
           accountant
         </h2>
