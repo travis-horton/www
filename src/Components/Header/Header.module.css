@@ -6,6 +6,7 @@
 }
 
 .navBar {
+  text-transform: uppercase;
   margin: auto;
   width: 550px;
   display: flex;
