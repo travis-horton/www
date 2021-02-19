@@ -9,11 +9,13 @@
 }
 
 h1 {
+  color: #1d0a00;
   font-family: 'arkhip';
   font-size: 40px;
 }
 
 h2 {
+  color: #1d0a00;
   font-size: 22px;
   letter-spacing: .5px;
   text-transform: uppercase;
@@ -34,18 +36,17 @@ body {
 
 a {
   text-decoration: none;
-  color: #1d0a00;
   transition: 3s;
+  color: #1d0a00;
   /* color: #eff8fa; */
 }
 
 a:visited {
-  color: #08353D;
   /* color: #eff8fa; */
 }
 
 a:hover {
-  color: #0097ec;
+  color: #a714a2;
   transition: 1s;
 }
 
