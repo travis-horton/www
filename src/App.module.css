@@ -3,7 +3,7 @@
 }
 
 .main {
-  margin: 20px auto;
+  margin: 20px auto 40px;
   max-width: 550px;
 }
 
@@ -25,4 +25,11 @@ a:hover {
   .main {
     margin: 5px 5px;
   }
+}
+
+p, p > * {
+  font-family: Helvetica;
+  line-height: 140%;
+  font-size: 100%;
+  letter-spacing: .2px;
 }
