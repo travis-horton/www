@@ -8,8 +8,7 @@
 }
 
 .profilepic {
-  width: 165px;
-  height: 165px;
+  width: 265px;
   margin-right: 10px;
   border-radius: 20px;
   float: left;
@@ -17,10 +16,6 @@
 
 .titles :last-child {
   margin-bottom: 0;
-}
-
-.content {
-  font-size: 14px;
 }
 
 @media (max-width: 500px) {

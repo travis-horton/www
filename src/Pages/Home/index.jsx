@@ -1,5 +1,5 @@
 import React from 'react';
-import headshot from 'media/headshot.png';
+import headshot from 'media/headshot2.png';
 import styles from './Home.module.css';
 
 const Home = () => (
@@ -28,34 +28,8 @@ const Home = () => (
         runner.
       </p>
       <p>
-        i&apos;m a full time front-end engineer for bodybuilding.com; started in march of
-        2020. i recently built
-        {' '}
-        <a
-          href="https://www.bodybuilding.com/workout-plans2"
-          rel="noreferrer"
-          target="_blank"
-        >
-          this page
-        </a>
-        .
-      </p>
-      <p>
-        i teach the piano at the
-        {' '}
-        <a
-          href="https://www.collegeofidaho.edu/directory/travis-horton"
-          rel="noreferrer"
-          target="_blank"
-        >
-          college of idaho
-        </a>
-        , and also play the piano for
-        their choirs and student recitals and juries. i started working with the college of
-        idaho in the fall semester of 2019.
-      </p>
-      <p>
-        i do some contract accounting work on the side.
+        we bought a house in the summer of 2020! what an adult thing to do&mdash;i
+        definitely never thought i&apos;d get this responsible.
       </p>
       <p>
         i attended the recurse center spring 1, 2019 batch: february 18 - may 9. it was a
@@ -63,7 +37,7 @@ const Home = () => (
         the projects i worked on while i was there and before.
       </p>
       <p>
-        in 2017, my wife and i decided to leave our 7 year home of brooklyn for the road.
+        in 2017, my wife and i decided to leave our 7-year home of brooklyn for the road.
         we bought an rv and traveled the country for a year and a half. i studied
         programming part time while i worked half-time as an accountant for the brooklyn
         youth chorus.

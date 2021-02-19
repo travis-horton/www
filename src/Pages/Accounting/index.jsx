@@ -4,7 +4,7 @@ import styles from './Accounting.module.css';
 const Accounting = () => (
   <div className={styles.main}>
     <p>
-      i&apos;m a also an accountant
+      i do some contract accounting work on the side.
     </p>
   </div>
 );
