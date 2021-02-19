@@ -3,6 +3,10 @@
   display: flex;
 }
 
+.header h1 {
+  margin: 0;
+}
+
 .profilepic {
   width: 165px;
   height: 165px;

@@ -3,7 +3,9 @@ import styles from './Blog.module.css';
 
 const Blog = () => (
   <div className={styles.main}>
-    here&apos;s where i write stuff sometimes
+    <p>
+      here&apos;s where i write stuff sometimes
+    </p>
   </div>
 );
 
