@@ -1,4 +1,5 @@
 import React from 'react';
+import piano from 'media/piano-background.png';
 import styles from './Piano.module.css';
 
 const Piano = () => (
@@ -17,6 +18,7 @@ const Piano = () => (
       their choirs and student recitals and juries. i started working with the college of
       idaho in the fall semester of 2019.
     </p>
+    <img className={styles.pianoImage} src={piano} alt="piano" />
   </div>
 );
 

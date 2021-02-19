@@ -1,5 +1,5 @@
 .header {
-  margin: 20px 0;
+  margin: 0 0 20px;
   display: flex;
 }
 
@@ -7,28 +7,39 @@
   margin: 0;
 }
 
+.header h2 {
+  margin: 0;
+}
+
+.main {
+  margin: 10px auto;
+  max-width: 60%;
+  min-width: 633px;
+}
+
+.pics {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .profilepic {
-  width: 265px;
-  margin-right: 10px;
-  border-radius: 20px;
   float: left;
+  height: 285px;
+  margin-right: 14px;
+  border-radius: 20px;
+}
+
+.monkeypic {
+  float: right;
+  height: 210px;
+  border-radius: 20px;
+  margin-left: 14px;
 }
 
 .titles :last-child {
   margin-bottom: 0;
 }
 
-@media (max-width: 500px) {
-  .header {
-    margin: 5px;
-    flex-direction: column;
-  }
-
-  .profilepic {
-    margin: auto;
-  }
-
-  .titles {
-    text-align: right;
-  }
+.content {
+  margin: 0 14px;
 }

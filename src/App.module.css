@@ -3,45 +3,27 @@
   src: url('./media/fonts/Arkhip-Regular.otf') format('opentype');
 }
 
-@font-face {
-  font-family: 'aqua';
-  src: url('./media/fonts/aqua.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'polya';
-  src: url('./media/fonts/polya.otf') format('opentype');
-}
-
-@font-face {
-  font-family: 'aquatico';
-  src: url('./media/fonts/Aquatico-Regular.otf') format('opentype');
-}
-
-@font-face {
-  font-family: 'moon';
-  src: url('./media/fonts/moon.otf') format('opentype');
-}
-
 * {
-  font-family: 'moon';
+  box-sizing: border-box;
+  font-family: 'Century Gothic';
 }
 
 h1 {
-  font-family: 'moon';
+  font-family: 'arkhip';
+  font-size: 40px;
 }
 
 h2 {
-  font-weight: 200;
-}
-
-.main {
-  margin: 20px auto 40px;
-  max-width: 650px;
+  font-size: 22px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
 }
 
 body {
+  /* background: #192b40; */
   margin: 0;
+  color: #1d0a00;
+  /* color: azure; */
 }
 
 @media (max-width: 500px) {
@@ -51,15 +33,23 @@ body {
 }
 
 a {
-  color: lightseagreen;
+  text-decoration: none;
+  color: #1d0a00;
+  transition: 3s;
+  /* color: #eff8fa; */
 }
 
 a:visited {
-  color: grey;
+  color: #08353D;
+  /* color: #eff8fa; */
+}
+
+a:hover {
+  color: #0097ec;
+  transition: 1s;
 }
 
 p, span {
   text-transform: none;
-  font-family: 'Century Gothic';
   font-size: 14px;
 }
