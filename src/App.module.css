@@ -1,5 +1,5 @@
 * {
-  font-family: Menlo, monospace;
+  font-family: Montserrat;
 }
 
 .main {
@@ -8,17 +8,7 @@
 }
 
 body {
-  background: #0f151e;
   margin: 0;
-  color: #eff8fa;
-}
-
-a {
-  color: #b0e2f9;
-}
-
-a:hover {
-  color: #e0f4fd;
 }
 
 @media (max-width: 500px) {
@@ -27,9 +17,10 @@ a:hover {
   }
 }
 
-p, p > * {
-  font-family: Helvetica;
-  line-height: 140%;
-  font-size: 100%;
-  letter-spacing: .2px;
+a {
+  color: lightseagreen;
+}
+
+a:visited {
+  color: grey;
 }
