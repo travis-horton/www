@@ -7,12 +7,8 @@
   margin: 20px 0;
 }
 
-.profilepic {
-  width: 165px;
-  height: 165px;
-  margin-right: 10px;
-  border-radius: 20px;
-  float: left;
+.pianoImage {
+  height: 400px;
 }
 
 .content {

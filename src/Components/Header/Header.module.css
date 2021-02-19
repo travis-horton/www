@@ -1,14 +1,17 @@
 .header {
-  height: 28px;
+  height: 60px;
+  padding: 6px;
+  margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 1px solid #f3f3f3;
 }
 
 .navBar {
   text-transform: uppercase;
-  margin: auto;
-  width: 550px;
+  margin: 0 auto;
+  width: 100%;
   display: flex;
   justify-content: space-around;
 }
@@ -17,6 +20,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.navItemText {
+  text-transform: uppercase;
 }
 
 .headerImage {
