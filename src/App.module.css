@@ -5,27 +5,25 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'Century Gothic';
+  font-family: 'Century Gothic', serif;
 }
 
 h1 {
   color: #1d0a00;
-  font-family: 'arkhip';
+  font-family: 'arkhip', sans-serif;
   font-size: 40px;
 }
 
 h2 {
   color: #1d0a00;
   font-size: 22px;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
 body {
-  /* background: #192b40; */
   margin: 0;
   color: #1d0a00;
-  /* color: azure; */
 }
 
 @media (max-width: 500px) {
@@ -38,11 +36,10 @@ a {
   text-decoration: none;
   transition: 3s;
   color: #1d0a00;
-  /* color: #eff8fa; */
 }
 
 a:visited {
-  /* color: #eff8fa; */
+  box-sizing: border-box;
 }
 
 a:hover {
@@ -50,7 +47,8 @@ a:hover {
   transition: 1s;
 }
 
-p, span {
+p,
+span {
   text-transform: none;
   font-size: 14px;
 }
