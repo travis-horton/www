@@ -16,6 +16,11 @@
   justify-content: space-around;
 }
 
+.selected span {
+  font-weight: bold;
+  color: #a714a2;
+}
+
 .navItem {
   display: flex;
   align-items: center;
