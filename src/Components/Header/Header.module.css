@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #a714a2;
+  border-bottom: 1px solid #eeeeee;
 }
 
 .navBar {
@@ -17,14 +17,15 @@
 }
 
 .selected span {
-  font-weight: bold;
-  color: #a714a2;
+  border-bottom: 3pt solid #a714a2;
+  transition: 0.5s;
 }
 
 .navItem {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #1d0a00;
 }
 
 .navItemText {
