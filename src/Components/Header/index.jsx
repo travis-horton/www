@@ -22,17 +22,17 @@ const pages = [
   {
     name: 'pianist',
     icon: pianoIcon,
-    path: 'piano',
+    path: '/piano',
   },
   {
     name: 'accountant',
     icon: accountingIcon,
-    path: 'accounting',
+    path: '/accounting',
   },
   {
     name: 'blog',
     icon: blogIcon,
-    path: 'blog',
+    path: '/blog',
   },
 ];
 
@@ -41,7 +41,7 @@ class Header extends React.Component {
     super(props);
 
     this.state = {
-      selectedTab: 'about me',
+      selectedTab: window.location.pathname,
     };
   }
 
@@ -61,8 +61,8 @@ class Header extends React.Component {
               <Link
                 key={page.name}
                 to={page.path}
-                className={`${styles.navItem} ${page.name === selectedTab ? styles.selected : ''}`}
-                onClick={() => this.setState({ selectedTab: page.name })}
+                className={`${styles.navItem} ${page.path === selectedTab ? styles.selected : ''}`}
+                onClick={() => this.setState({ selectedTab: page.path })}
               >
                 <span className={styles.navItemText}>{page.name}</span>
                 <img className={styles.headerImage} src={page.icon} alt={page.name} />

@@ -34,8 +34,7 @@ body {
 
 a {
   text-decoration: none;
-  transition: 3s;
-  color: #1d0a00;
+  color: #14a719;
 }
 
 a:visited {
@@ -43,8 +42,6 @@ a:visited {
 }
 
 a:hover {
-  color: #a714a2;
-  transition: 1s;
 }
 
 p,

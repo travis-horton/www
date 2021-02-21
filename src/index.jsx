@@ -14,7 +14,7 @@ import Footer from './Components/Footer';
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Header currentPath={window.location.pathname} />
+      <Header />
       <Switch>
         <Route exact path="/">
           <Redirect to="/home" />
