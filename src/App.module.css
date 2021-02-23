@@ -3,9 +3,14 @@
   src: url('./media/fonts/Arkhip-Regular.otf') format('opentype');
 }
 
+@font-face {
+  font-family: 'gothic';
+  src: url('./media/fonts/gothic.ttf') format('truetype');
+}
+
 * {
   box-sizing: border-box;
-  font-family: 'Century Gothic', serif;
+  font-family: 'gothic', serif;
 }
 
 h1 {
