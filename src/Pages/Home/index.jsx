@@ -25,7 +25,7 @@ const Home = () => (
         i&apos;m travis. i program in react/javascript/css/html and i&apos;ve been trying
         (unsuccessfully) to learn rust&mdash;there&apos;s just not enough time!! i play the
         piano. i do some accounting on the side. i live in boise, idaho with my wonderful
-        wife anne and our cat monkey. and i&apos;ve been trying to become a runner.
+        wife anne and our cat monkey. and i run. really slowly.
       </p>
       <p>
         we bought a house in the summer of 2020! what an adult thing to do&mdash;i
