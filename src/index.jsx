@@ -3,16 +3,24 @@ import ReactDOM from 'react-dom';
 import {
   BrowserRouter, Route, Switch, Redirect,
 } from 'react-router-dom';
-import './App.module.css';
+import { Helmet } from 'react-helmet';
+
 import {
   Home, Piano, Programming, Accounting, Blog,
 } from './Pages/index';
-
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 
+import './App.module.css';
+
 ReactDOM.render(
   <React.StrictMode>
+    <Helmet>
+      <meta charset="utf-8" />
+      <link rel="icon" href="media/favicons/travFavicon.png" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>thor</title>
+    </Helmet>
     <BrowserRouter>
       <Header />
       <Switch>
