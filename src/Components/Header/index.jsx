@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import aboutIcon from 'media/about-icon.png';
 import keyboardIcon from 'media/keyboard-icon.png';
 import pianoIcon from 'media/piano-icon.png';
-import accountingIcon from 'media/accounting-icon.png';
+import contactIcon from 'media/contact-icon.png';
 import blogIcon from 'media/blog-icon.png';
 
 import styles from './Header.module.css';
@@ -25,14 +25,14 @@ const pages = [
     path: '/piano',
   },
   {
-    name: 'accountant',
-    icon: accountingIcon,
-    path: '/accounting',
-  },
-  {
     name: 'blog',
     icon: blogIcon,
     path: '/blog',
+  },
+  {
+    name: 'contact',
+    icon: contactIcon,
+    path: '/contact',
   },
 ];
 
