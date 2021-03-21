@@ -59,7 +59,7 @@ class Header extends React.Component {
           {
             pages.map((page) => {
               let isSelectedTab = false;
-              if (page.path === selectedTab || page.path === selectedTab + '/') {
+              if (page.path === selectedTab || page.path === `${selectedTab}/`) {
                 isSelectedTab = true;
               }
 
@@ -67,14 +67,14 @@ class Header extends React.Component {
                 <Link
                   key={page.name}
                   to={page.path}
-                  className={`${styles.navItem} ${page.path === selectedTab ? styles.selected : ''}`}
+                  className={`${styles.navItem} ${isSelectedTab ? styles.selected : ''}`}
                   onClick={() => this.setState({ selectedTab: page.path })}
                 >
                   <span className={styles.navItemText}>{page.name}</span>
                   <img className={styles.headerImage} src={page.icon} alt={page.name} />
                 </Link>
-              )
-            });
+              );
+            })
           }
         </nav>
       </header>
