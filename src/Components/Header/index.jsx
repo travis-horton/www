@@ -57,17 +57,24 @@ class Header extends React.Component {
       <a href="https://www.google.com">things i like</a>
       */}
           {
-            pages.map((page) => (
-              <Link
-                key={page.name}
-                to={page.path}
-                className={`${styles.navItem} ${page.path === selectedTab ? styles.selected : ''}`}
-                onClick={() => this.setState({ selectedTab: page.path })}
-              >
-                <span className={styles.navItemText}>{page.name}</span>
-                <img className={styles.headerImage} src={page.icon} alt={page.name} />
-              </Link>
-            ))
+            pages.map((page) => {
+              let isSelectedTab = false;
+              if (page.path === selectedTab || page.path === selectedTab + '/') {
+                isSelectedTab = true;
+              }
+
+              return (
+                <Link
+                  key={page.name}
+                  to={page.path}
+                  className={`${styles.navItem} ${page.path === selectedTab ? styles.selected : ''}`}
+                  onClick={() => this.setState({ selectedTab: page.path })}
+                >
+                  <span className={styles.navItemText}>{page.name}</span>
+                  <img className={styles.headerImage} src={page.icon} alt={page.name} />
+                </Link>
+              )
+            });
           }
         </nav>
       </header>
