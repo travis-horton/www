@@ -59,7 +59,7 @@ class Header extends React.Component {
           {
             pages.map((page) => {
               let isSelectedTab = false;
-              if (page.path === selectedTab || page.path === `${selectedTab}/`) {
+              if (page.path === selectedTab || `${page.path}/` === selectedTab) {
                 isSelectedTab = true;
               }
 
