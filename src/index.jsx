@@ -6,8 +6,8 @@ import {
 import { Helmet } from 'react-helmet';
 
 import {
-  Home, Piano, Programming, Accounting, Blog,
-} from './Pages/index';
+  Home, Piano, Programming, Blog, Contact,
+} from './Pages';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 
@@ -44,13 +44,13 @@ ReactDOM.render(
         </Route>
       </Switch>
       <Switch>
-        <Route path="/accounting">
-          <Accounting />
+        <Route path="/blog">
+          <Blog />
         </Route>
       </Switch>
       <Switch>
-        <Route path="/blog">
-          <Blog />
+        <Route path="/contact">
+          <Contact />
         </Route>
       </Switch>
       <Footer />
