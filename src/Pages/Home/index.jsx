@@ -1,11 +1,17 @@
 import React from 'react';
+import Image from 'Components/Image';
+
+import headshotThumb from 'media/headshot2thumb.png';
 import headshot from 'media/headshot2.png';
+import monkeyThumb from 'media/monkey-thumb.jpg';
 import monkey from 'media/monkeh.jpg';
 import styles from './Home.module.css';
 
 const Home = () => (
   <div className={styles.main}>
-    <img className={styles.profilepic} src={headshot} alt="profile pic" />
+    <div className={styles.profilepic}>
+      <Image alt="headshot" thumb={headshotThumb} src={headshot} height={285} width={285} />
+    </div>
     <header className={styles.header}>
       <div className={styles.titles}>
         <h1>
@@ -31,7 +37,9 @@ const Home = () => (
         we bought a house in the summer of 2020! what an adult thing to do&mdash;i
         definitely never thought i&apos;d get this responsible.
       </p>
-      <img className={styles.monkeypic} src={monkey} alt="profile pic" />
+      <div className={styles.monkeypic}>
+        <Image alt="monkey" thumb={monkeyThumb} src={monkey} height={210} width={157} />
+      </div>
       <p>
         i attended the recurse center spring 1, 2019 batch: february 18 - may 9. it was a
         great time, i met a lot of amazing people, and i learned a ton. here are some of
