@@ -4,6 +4,7 @@ import {
   BrowserRouter, Route, Switch, Redirect,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import favicon from 'media/favicons/travFavicon.png';
 
 import {
   Home, Piano, Programming, Blog, Contact,
@@ -17,7 +18,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Helmet>
       <meta charSet="utf-8" />
-      <link rel="icon" href="media/favicons/travFavicon.png" />
+      <link rel="icon" href={favicon} type="image/png" sizes="16x16" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>thor</title>
     </Helmet>
