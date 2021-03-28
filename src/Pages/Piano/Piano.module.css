@@ -1,0 +1,16 @@
+.main {
+  margin: auto;
+  max-width: 550px;
+}
+
+.header {
+  margin: 20px 0;
+}
+
+.pianoImage {
+  height: 400px;
+}
+
+.content {
+  font-size: 14px;
+}

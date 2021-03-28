@@ -1,0 +1,41 @@
+.header {
+  margin: 0 0 20px;
+  display: flex;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.main {
+  margin: 10px auto;
+  max-width: 60%;
+  min-width: 633px;
+}
+
+.pics {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.profilepic {
+  float: left;
+  margin-right: 14px;
+}
+
+.monkeypic {
+  float: right;
+  margin-left: 14px;
+}
+
+.titles :last-child {
+  margin-bottom: 0;
+}
+
+.content {
+  margin: 0 14px;
+}
