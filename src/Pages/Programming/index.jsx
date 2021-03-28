@@ -3,7 +3,7 @@ import styles from './Programming.module.css';
 
 const Programming = () => (
   <div className={styles.main}>
-    <h1>bodybuilding.com front-end engineer</h1>
+    <h2>bodybuilding.com client-side engineer</h2>
     <p>
       started in march of 2020. i recently built
       {' '}
