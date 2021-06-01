@@ -1,11 +1,10 @@
 import React from 'react';
-import Image from 'Components/Image';
+import Image from '~/src/Components/Image';
 
-import headshotThumb from 'media/headshot2thumb.png';
-import headshot from 'media/headshot2.png';
-import monkeyThumb from 'media/monkey-thumb.jpg';
-import monkey from 'media/monkeh.jpg';
-import styles from './Home.module.css';
+import headshotThumb from 'url:~/src/media/headshot2thumb.png';
+import headshot from 'url:~/src/media/headshot2.png';
+import monkeyThumb from 'url:~/src/media/monkey-thumb.jpg';
+import monkey from 'url:~/src/media/monkeh.jpg';
 
 const Home = () => (
   <div className={styles.main}>
