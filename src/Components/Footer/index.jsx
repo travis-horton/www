@@ -1,7 +1,6 @@
 import React from 'react';
-import twitterLogo from 'media/twitter-logo.png';
-import instaLogo from 'media/ig-logo.png';
-import styles from './Footer.module.css';
+import twitterLogo from 'url:~/src/media/twitter-logo.png';
+import instaLogo from 'url:~/src/media/ig-logo.png';
 
 const Footer = () => (
   <footer className={styles.footer}>
