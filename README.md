@@ -1,3 +1,3 @@
-rebuilding the website from scratch with react app
+# website repo
 
-adding github actions
+a general all-around website, with sections for personal interests, jobs/skills, and blog

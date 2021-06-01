@@ -1,12 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import aboutIcon from 'media/info-icon.svg';
-import keyboardIcon from 'media/keyboard-icon.svg';
-import pianoIcon from 'media/piano-icon.svg';
-import blogIcon from 'media/blog-icon.svg';
-import contactIcon from 'media/contact-icon.svg';
-
-import styles from './Header.module.css';
+import aboutIcon from 'url:~/src/media/info-icon.svg';
+import keyboardIcon from 'url:~/src/media/keyboard-icon.svg';
+import pianoIcon from 'url:~/src/media/piano-icon.svg';
+import blogIcon from 'url:~/src/media/blog-icon.svg';
+import contactIcon from 'url:~/src/media/contact-icon.svg';
 
 const pages = [
   {
@@ -49,13 +46,13 @@ class Header extends React.Component {
     const { selectedTab } = this.state;
 
     return (
-      <header className={styles.header}>
-        <nav className={styles.navBar}>
+      <header>
+        <nav>
           {/*
-      <a href="https://www.google.com">what i do</a>
-      <a href="https://www.google.com">who i am</a>
-      <a href="https://www.google.com">things i like</a>
-      */}
+            <a href="">what i do</a>
+            <a href="">who i am</a>
+            <a href="">things i like</a>
+          */}
           {
             pages.map((page) => {
               let isSelectedTab = false;
@@ -64,15 +61,14 @@ class Header extends React.Component {
               }
 
               return (
-                <Link
+                <a
                   key={page.name}
                   to={page.path}
-                  className={`${styles.navItem} ${isSelectedTab ? styles.selected : ''}`}
                   onClick={() => this.setState({ selectedTab: page.path })}
                 >
-                  <span className={styles.navItemText}>{page.name}</span>
-                  <img className={styles.headerImage} src={page.icon} alt={page.name} />
-                </Link>
+                  <span>{page.name}</span>
+                  <img src={page.icon} alt={page.name} />
+                </a>
               );
             })
           }
