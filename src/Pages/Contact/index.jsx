@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Contact = () => (
-  <div className={styles.main}>
+  <div>
     <h2>Contact</h2>
     <p>
       Email:

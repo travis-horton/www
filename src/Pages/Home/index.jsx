@@ -1,18 +1,18 @@
 import React from 'react';
-import Image from '~/src/Components/Image';
+import Image from '../../sharedComponents/Image';
 
-import headshotThumb from 'url:~/src/media/headshot2thumb.png';
-import headshot from 'url:~/src/media/headshot2.png';
-import monkeyThumb from 'url:~/src/media/monkey-thumb.jpg';
-import monkey from 'url:~/src/media/monkeh.jpg';
+import headshotThumb from 'url:../../media/headshot-thumb.png';
+import headshot from 'url:../../media/headshot.png';
+import monkeyThumb from 'url:../../media/monkeh-thumb.jpg';
+import monkey from 'url:../../media/monkeh.jpg';
 
 const Home = () => (
-  <div className={styles.main}>
-    <div className={styles.profilepic}>
+  <div>
+    <div>
       <Image alt="headshot" thumb={headshotThumb} src={headshot} height={285} width={285} />
     </div>
-    <header className={styles.header}>
-      <div className={styles.titles}>
+    <header>
+      <div>
         <h1>
           travis horton
         </h1>
@@ -25,7 +25,7 @@ const Home = () => (
         </h2>
       </div>
     </header>
-    <div className={styles.content}>
+    <div>
       <p>
         i&apos;m travis. i program in react/javascript/css/html and i&apos;ve been trying
         (unsuccessfully) to learn rust&mdash;there&apos;s just not enough time!! i play the
@@ -36,7 +36,7 @@ const Home = () => (
         we bought a house in the summer of 2020! what an adult thing to do&mdash;i
         definitely never thought i&apos;d get this responsible.
       </p>
-      <div className={styles.monkeypic}>
+      <div>
         <Image alt="monkey" thumb={monkeyThumb} src={monkey} height={210} width={157} />
       </div>
       <p>
