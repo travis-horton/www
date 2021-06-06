@@ -1,8 +1,8 @@
 import React from 'react';
 
 const Blog = () => (
-  <div className={styles.main}>
-    <a href="https://www.google.com" className={styles.neonButton}>button</a>
+  <div>
+    <a href="https://www.google.com">button</a>
     <p>
       here&apos;s where i write stuff sometimes
     </p>

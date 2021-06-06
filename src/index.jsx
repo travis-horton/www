@@ -1,15 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
-import favicon from 'url:~/src/media/favicons/travFavicon.png';
+import favicon from 'url:./media/favicons/travFavicon.png';
 
 import {
   Home, Piano, Programming, Blog, Contact,
-} from './Pages';
-import Header from './Components/Header';
-import Footer from './Components/Footer';
-
-import './App.module.css';
+} from './assets/pages';
+import { Header, Footer } from './sharedComponents';
 
 ReactDOM.render(
   <React.StrictMode>
