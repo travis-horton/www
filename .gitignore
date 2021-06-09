@@ -2,8 +2,9 @@
 
 /coverage
 /build
+/dist
 
-.parcel.cache
+/.parcel-cache
 
 .DS_Store
 .env.local

@@ -1,0 +1,26 @@
+@font-face {
+  font-family: 'arkhip';
+  src: url('/src/assets/fonts/arkhip.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'gothic';
+  src: url('/src/assets/fonts/gothic.ttf') format('truetype');
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'gothic', serif;
+}
+
+body {
+  margin: 0;
+  color: #1d0a00;
+  padding-bottom: 60px;
+}
+
+@media (max-width: 500px) {
+  .main {
+    margin: 5px 5px;
+  }
+}
