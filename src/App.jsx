@@ -37,6 +37,21 @@ const App = () =>
           <Programming />
         </Route>
       </Switch>
+      <Switch>
+        <Route path="/piano">
+          <Piano />
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path="/blog">
+          <Blog />
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path="/contact">
+          <Contact />
+        </Route>
+      </Switch>
       <Footer />
     </BrowserRouter>
   </React.StrictMode>;

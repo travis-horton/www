@@ -1,8 +1,13 @@
 import React from 'react';
 
+import {
+  Main,
+  StyledH2,
+} from '/src/sharedComponents/units';
+
 const Programming = () => (
-  <div>
-    <h2>bodybuilding.com client-side engineer</h2>
+  <Main>
+    <StyledH2>bodybuilding.com client-side engineer</StyledH2>
     <p>
       started in march of 2020. i recently built
       {' '}
@@ -17,7 +22,7 @@ const Programming = () => (
       for them.
     </p>
     <section>
-      <h2>personal projects</h2>
+      <StyledH2>personal projects</StyledH2>
       <a href="topo_circle/index.html">perlin noise</a>
       <br />
       <a href="ray_tracer/index.html">ray tracer</a>
@@ -31,7 +36,7 @@ const Programming = () => (
       <a href="gol/index.html" target="_blank">game of life</a>
     </section>
     <section>
-      <h2>goals</h2>
+      <StyledH2>goals</StyledH2>
       <a href="https://www.postgresql.org/docs/11/tutorial-sql.html" target="blank">postgres tutorial</a>
       <br />
       learn
@@ -42,7 +47,7 @@ const Programming = () => (
       <br />
     </section>
     <section>
-      <h2>works in progress</h2>
+      <StyledH2>works in progress</StyledH2>
       <a href="../kiddspazz/battleship/index.html">battleship</a>
       <br />
       <h2>next projects</h2>
@@ -50,7 +55,7 @@ const Programming = () => (
       <br />
       goals tracker app
     </section>
-  </div>
+  </Main>
 );
 
 export default Programming;
