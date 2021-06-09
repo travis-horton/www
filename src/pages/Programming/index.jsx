@@ -2,55 +2,57 @@ import React from 'react';
 
 import {
   Main,
+  StyledH1,
   StyledH2,
+  StyledA,
 } from '/src/sharedComponents/units';
 
 const Programming = () => (
   <Main>
-    <StyledH2>bodybuilding.com client-side engineer</StyledH2>
+    <StyledH1>bodybuilding.com client-side engineer</StyledH1>
     <p>
       started in march of 2020. i recently built
       {' '}
-      <a
+      <StyledA
         href="https://www.bodybuilding.com/workout-plans2"
         rel="noreferrer"
         target="_blank"
       >
         this page
-      </a>
+      </StyledA>
       {' '}
       for them.
     </p>
     <section>
       <StyledH2>personal projects</StyledH2>
-      <a href="topo_circle/index.html">perlin noise</a>
+      <StyledA href="topo_circle/index.html">perlin noise</StyledA>
       <br />
-      <a href="ray_tracer/index.html">ray tracer</a>
+      <StyledA href="ray_tracer/index.html">ray tracer</StyledA>
       <br />
-      <a href="asteroids/index.html">asteroids</a>
+      <StyledA href="asteroids/index.html">asteroids</StyledA>
       <br />
-      <a href="orbitz/index.html">orbits</a>
+      <StyledA href="orbitz/index.html">orbits</StyledA>
       <br />
-      <a href="polygon_race/index.html">polygon race</a>
+      <StyledA href="polygon_race/index.html">polygon race</StyledA>
       <br />
-      <a href="gol/index.html" target="_blank">game of life</a>
+      <StyledA href="gol/index.html" target="_blank">game of life</StyledA>
     </section>
     <section>
       <StyledH2>goals</StyledH2>
-      <a href="https://www.postgresql.org/docs/11/tutorial-sql.html" target="blank">postgres tutorial</a>
+      <StyledA href="https://www.postgresql.org/docs/11/tutorial-sql.html" target="blank">postgres tutorial</StyledA>
       <br />
       learn
       {' '}
-      <a href="https://doc.rust-lang.org/stable/book/" target="blank">rust</a>
+      <StyledA href="https://doc.rust-lang.org/stable/book/" target="blank">rust</StyledA>
       <br />
-      <a href="https://www.nand2tetris.org" target="blank">nand2tetris</a>
+      <StyledA href="https://www.nand2tetris.org" target="blank">nand2tetris</StyledA>
       <br />
     </section>
     <section>
       <StyledH2>works in progress</StyledH2>
-      <a href="../kiddspazz/battleship/index.html">battleship</a>
+      <StyledA href="../kiddspazz/battleship/index.html">battleship</StyledA>
       <br />
-      <h2>next projects</h2>
+      <StyledH2>next projects</StyledH2>
       rpg: roam the internet fighting html elements
       <br />
       goals tracker app
