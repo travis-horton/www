@@ -7,7 +7,7 @@ const StyledNavItem = styled.a`
   justify-content: center;
   color: #1d0a00;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 1rem;
 
   ${props => props.selected
     ?
@@ -19,10 +19,11 @@ const StyledNavItem = styled.a`
 
   &:hover {
     text-decoration: none;
+    cursor: pointer;
   }
 
   @media only screen and (max-width: 500px) {
-    margin: 5px 0;
+    margin: 0.3rem 0;
     > span {
       display: none;
     }

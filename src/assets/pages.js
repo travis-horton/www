@@ -1,8 +1,8 @@
-import aboutIcon from 'url:../media/info-icon.svg';
-import keyboardIcon from 'url:../media/keyboard-icon.svg';
-import pianoIcon from 'url:../media/piano-icon.svg';
-import blogIcon from 'url:../media/blog-icon.svg';
-import contactIcon from 'url:../media/contact-icon.svg';
+import aboutIcon from 'url:/src/assets/media/info-icon.svg';
+import keyboardIcon from 'url:/src/assets/media/keyboard-icon.svg';
+import pianoIcon from 'url:/src/assets/media/piano-icon.svg';
+import blogIcon from 'url:/src/assets/media/blog-icon.svg';
+import contactIcon from 'url:/src/assets/media/contact-icon.svg';
 
 const pages = [
   {
