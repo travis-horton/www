@@ -1,10 +1,14 @@
 import React from 'react';
-import Image from '../../sharedComponents/Image';
+import Image from '/src/sharedComponents/Image';
 
-import headshotThumb from 'url:../../media/headshot-thumb.png';
-import headshot from 'url:../../media/headshot.png';
-import monkeyThumb from 'url:../../media/monkeh-thumb.jpg';
-import monkey from 'url:../../media/monkeh.jpg';
+import headshotThumb from 'url:/src/assets/media/headshot-thumb.png';
+import headshot from 'url:/src/assets/media/headshot.png';
+import monkeyThumb from 'url:/src/assets/media/monkeh-thumb.jpg';
+import monkey from 'url:/src/assets/media/monkeh.jpg';
+
+import {
+  StyledH1,
+} from '/src/sharedComponents/units';
 
 const Home = () => (
   <div>
@@ -13,9 +17,9 @@ const Home = () => (
     </div>
     <header>
       <div>
-        <h1>
+        <StyledH1>
           travis horton
-        </h1>
+        </StyledH1>
         <h2>
           software engineer
           <br />
