@@ -9,7 +9,7 @@ import {
 
 const Programming = () => (
   <Main>
-    <StyledH1>bodybuilding.com client-side engineer</StyledH1>
+    <StyledH1>bodybuilding.com front-end engineer</StyledH1>
     <p>
       started in march of 2020. i recently built
       {' '}
