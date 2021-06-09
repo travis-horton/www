@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { pages } from '../../assets/pages';
 import {
@@ -9,7 +10,7 @@ import {
 } from './styles';
 
 const Header = () => {
-  const [selectedTab, setSelectedTab] = useState('about me');
+  const [selectedTab, setSelectedTab] = useState(document.location.pathname);
 
   return (
     <StyledHeader>
@@ -17,15 +18,19 @@ const Header = () => {
         {
           pages.map((page) => {
             return (
-              <StyledNavItem
-                selected={selectedTab === page.name}
+              <Link
                 key={page.name}
                 to={page.path}
-                onClick={() => setSelectedTab(page.name)}
+                onClick={() => setSelectedTab(page.path)}
+                style={{ textDecoration: 'none' }}
               >
-                <span>{page.name}</span>
-                <StyledHeaderImage src={page.icon} alt={page.name} />
-              </StyledNavItem>
+                <StyledNavItem
+                  selected={selectedTab === page.path}
+                >
+                  <span>{page.name}</span>
+                  <StyledHeaderImage src={page.icon} alt={page.name} />
+                </StyledNavItem>
+              </Link>
             );
           })
         }
