@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const StyledNavItem = styled.a`
+const StyledNavItem = styled.p`
   display: flex;
   align-items: center;
   justify-content: center;

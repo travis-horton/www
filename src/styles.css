@@ -10,11 +10,11 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'gothic', serif;
 }
 
 body {
   margin: 0;
+  font-family: 'gothic', serif;
   color: #1d0a00;
   padding-bottom: 60px;
 }
