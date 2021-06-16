@@ -1,13 +1,11 @@
 import React from 'react';
 
 import { Main } from '/src/sharedComponents/units';
+import { NeonButton } from './NeonButton';
 
 const Blog = () => (
-  <Main>
-    <a href="https://www.google.com">button</a>
-    <p>
-      here&apos;s where i write stuff sometimes
-    </p>
+  <Main style={{ textAlign: 'center' }}>
+    <NeonButton href="#">here&apos;s where i write stuff sometimes</NeonButton>
   </Main>
 );
 
