@@ -8,7 +8,7 @@ const pages = [
   {
     name: 'about me',
     icon: aboutIcon,
-    path: '/home',
+    path: '/',
   },
   {
     name: 'software engineer',
