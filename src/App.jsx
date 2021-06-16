@@ -23,12 +23,7 @@ const App = () =>
     <BrowserRouter>
       <Header />
       <Switch>
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
-      </Switch>
-      <Switch>
-        <Route path="/home">
+        <Route path="/" exact>
           <Home />
         </Route>
       </Switch>
