@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const clrNeon = 'hsl(196 100% 47%)';
-const clrBg =  'hsl(0 0% 50%)';
+const clrNeon = 'hsl(302 79% 37%)';
+const clrBg =  'hsl(0 0% 10%)';
 const NeonButton = styled.a`
   font-size: 1rem;
 
@@ -56,7 +56,7 @@ const NeonButton = styled.a`
   &:hover, &:focus {
     background: ${clrNeon};
     color: ${clrBg};
-    text-shadow: none;
+    text-shadow: 0 0 0.1em currentColor;;
     text-decoration: none;
   }
 
