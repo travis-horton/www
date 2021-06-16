@@ -9,9 +9,9 @@ import {
 
 const Programming = () => (
   <Main>
-    <StyledH1>bodybuilding.com front-end engineer</StyledH1>
+    <StyledH1>front-end engineer</StyledH1>
     <p>
-      started in march of 2020. i recently built
+      currently with bodybuilding.com. started in march of 2020. i recently built
       {' '}
       <StyledA
         href="https://www.bodybuilding.com/workout-plans2"
