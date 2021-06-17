@@ -1,0 +1,3 @@
+[submodule "src/pages/Programming/projects/perlin-noise"]
+	path = src/pages/Programming/projects/perlin-noise
+	url = https://github.com/kiddspazz/perlin-noise
