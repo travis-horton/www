@@ -15,7 +15,7 @@
 body {
   margin: 0;
   font-family: 'gothic', serif;
-  color: #1d0a00;
+  color: hsl(21, 100%, 6%);
   padding-bottom: 60px;
 }
 
@@ -23,4 +23,43 @@ body {
   .main {
     margin: 5px 5px;
   }
+}
+
+h1 {
+  color: #1d0a00;
+  font-family: 'arkhip', sans-serif;
+  font-size: 40px;
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h2 {
+  color: #1d0a00;
+  font-size: 22px; letter-spacing: 0.5px;
+  margin: 10px 0 8px 0;
+  text-transform: uppercase;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+a {
+  text-decoration: none;
+
+  &:visited {
+    color: black;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+main {
+  margin: 30px auto;
+  max-width: 60%;
+  min-width: 700px;
 }

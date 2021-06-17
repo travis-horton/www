@@ -1,7 +1,4 @@
-import React from 'react';
-import styled from 'styled-components';
-
-const StyledFooter = styled.footer`
+.main-footer {
   position: fixed;
   bottom: 0;
   height: 60px;
@@ -12,6 +9,18 @@ const StyledFooter = styled.footer`
   justify-content: center;
   align-items: center;
   background: #f6f6f6;
-`;
+}
 
-export default StyledFooter;
+.main-footer__content {
+  margin: 0;
+  padding: 15px;
+
+  &:hover {
+    cursor: default;
+  }
+}
+
+.main-footer__logo {
+  height: 18px;
+  margin: 1px 5px;
+}

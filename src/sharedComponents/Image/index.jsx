@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './image.css';
+
+import './styles.css';
 
 class Image extends React.Component {
   constructor(props) {
