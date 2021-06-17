@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { Main } from '/src/sharedComponents/units';
-
 const Piano = () => (
-  <Main>
+  <main>
     <p>
       i teach the piano at the
       {' '}
@@ -18,7 +16,7 @@ const Piano = () => (
       their choirs and student recitals and juries. i started working with the college of
       idaho in the fall semester of 2019.
     </p>
-  </Main>
+  </main>
 );
 
 export default Piano;

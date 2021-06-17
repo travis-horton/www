@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import headshotThumb from 'url:/src/assets/media/headshot-thumb.png';
 import headshot from 'url:/src/assets/media/headshot.png';
@@ -7,39 +6,26 @@ import monkeyThumb from 'url:/src/assets/media/monkeh-thumb.jpg';
 import monkey from 'url:/src/assets/media/monkeh.jpg';
 
 import Image from '/src/sharedComponents/Image';
-import {
-  Main,
-  StyledH1,
-  StyledH2,
-} from '/src/sharedComponents/units';
 
-const ProfilePic = styled.div`
-  float: left;
-  margin-right: 14px;
-`;
-
-const MonkeyPic = styled.div`
-  float: right;
-  margin-left: 14px;
-`;
+import './styles.css';
 
 const Home = () => (
-  <Main>
-    <ProfilePic>
+  <main>
+    <div className='home__profile-pic'>
       <Image alt="headshot" thumb={headshotThumb} src={headshot} height={285} width={285} />
-    </ProfilePic>
+    </div>
     <header>
       <div>
-        <StyledH1>
+        <h1>
           travis horton
-        </StyledH1>
-        <StyledH2>
+        </h1>
+        <h2>
           software engineer
           <br />
           pianist
           <br />
           accountant
-        </StyledH2>
+        </h2>
       </div>
     </header>
     <div>
@@ -52,9 +38,9 @@ const Home = () => (
         we bought a house in the summer of 2020! what an adult thing to do &mdash; i
         definitely never thought i&apos;d get this responsible.
       </p>
-      <MonkeyPic>
+      <div className='home__monkey-pic'>
         <Image alt="monkey" thumb={monkeyThumb} src={monkey} height={210} width={157} />
-      </MonkeyPic>
+      </div>
       <p>
         i attended the recurse center spring 1, 2019 batch: february 18 - may 9. it was a
         great time, i met a lot of amazing people, and i learned a ton. here are some of
@@ -74,7 +60,7 @@ const Home = () => (
         rode my bicycle a lot.
       </p>
     </div>
-  </Main>
+  </main>
 );
 
 export default Home;
