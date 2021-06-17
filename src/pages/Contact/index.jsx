@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { Main } from '/src/sharedComponents/units';
-
 const Contact = () => (
-  <Main>
+  <main>
     <h2>Contact</h2>
     <p>
       Email:
@@ -39,7 +37,7 @@ const Contact = () => (
       <br />
       <a href="https://jvns.ca/" target="blank">julia evan&apos;s blog</a>
     </p>
-  </Main>
+  </main>
 );
 
 export default Contact;

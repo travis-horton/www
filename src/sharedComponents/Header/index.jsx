@@ -3,43 +3,42 @@ import { Link } from 'react-router-dom';
 
 import { pages } from '../../assets/pages';
 import {
-  StyledHeader,
-  StyledNavBar,
   StyledHeaderImage,
-  StyledNavItem,
 } from './styles';
 
+import './styles.css';
+
 const subdirectory = () => {
-  return document.location.pathname.split("/")[1];
+  return document.location.pathname.split('/')[1];
 };
 
 const Header = () => {
   const [selectedTab, setSelectedTab] = useState(subdirectory());
 
   return (
-    <StyledHeader>
-      <StyledNavBar>
+    <header className='main-header'>
+      <nav className='main-header__nav'>
         {
           pages.map((page) => {
             return (
               <Link
-                key={page.name}
                 to={`/${page.path}`}
+                key={page.name}
+                className={`nav__item ${selectedTab === page.path ? 'nav__item--selected' : ''}`}
                 onClick={() => setSelectedTab(page.path)}
-                style={{ textDecoration: 'none' }}
               >
-                <StyledNavItem
-                  selected={selectedTab === page.path}
-                >
                   <span>{page.name}</span>
-                  <StyledHeaderImage src={page.icon} alt={page.name} />
-                </StyledNavItem>
+                  <img
+                    className='nav__icon'
+                    src={page.icon}
+                    alt={page.name}
+                  />
               </Link>
             );
           })
         }
-      </StyledNavBar>
-    </StyledHeader>
+      </nav>
+    </header>
   );
 }
 

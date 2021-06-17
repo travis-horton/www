@@ -2,20 +2,16 @@ import React from 'react';
 import twitterLogo from 'url:/src/assets/media/twitter-logo.png';
 import instaLogo from 'url:/src/assets/media/insta-logo.svg';
 
-import {
-  StyledFooter,
-  StyledFooterContent,
-  StyledFooterLogo,
-} from './styles';
+import './styles.css';
 
 const Footer = () => (
-  <StyledFooter>
-    <StyledFooterContent>
+  <footer className='main-footer'>
+    <small className='main-footer__content'>
         &copy;&apos;21 kiddspazz
-    </StyledFooterContent>
-    <StyledFooterLogo src={twitterLogo} alt="twitter-logo" />
-    <StyledFooterLogo src={instaLogo} alt="instagram-logo" />
-  </StyledFooter>
+    </small>
+    <img className='main-footer__logo' src={twitterLogo} alt="twitter-logo" />
+    <img className='main-footer__logo' src={instaLogo} alt="instagram-logo" />
+  </footer>
 );
 
 export default Footer;

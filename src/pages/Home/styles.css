@@ -1,0 +1,9 @@
+.home__profile-pic {
+  float: left;
+  margin-right: 14px;
+}
+
+.home__monkey-pic {
+  float: right;
+  margin-left: 14px;
+}
