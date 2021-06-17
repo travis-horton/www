@@ -9,8 +9,12 @@ import {
   StyledNavItem,
 } from './styles';
 
+const subdirectory = () => {
+  return document.location.pathname.split("/")[1];
+};
+
 const Header = () => {
-  const [selectedTab, setSelectedTab] = useState(document.location.pathname);
+  const [selectedTab, setSelectedTab] = useState(subdirectory());
 
   return (
     <StyledHeader>
@@ -20,7 +24,7 @@ const Header = () => {
             return (
               <Link
                 key={page.name}
-                to={page.path}
+                to={`/${page.path}`}
                 onClick={() => setSelectedTab(page.path)}
                 style={{ textDecoration: 'none' }}
               >
