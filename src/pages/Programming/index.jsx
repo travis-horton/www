@@ -20,10 +20,13 @@ const Programming = () => {
 
   return (
     <Main>
-      <StyledH1>
+      <StyledH1 style={{ textAlign: 'center' }}>
         <Link
           to={match.url}
-          style={{ textDecoration: 'none', color: 'black' }}
+          style={{
+            textDecoration: 'none',
+            color: 'black',
+          }}
         >
           front-end engineer
         </Link>

@@ -14,7 +14,7 @@ const StyledNavItem = styled.p`
       'border-bottom: 2px solid #a714a2; \
       border-radius: 2px; \
       transition: 0.5s;'
-    : ''
+      : 'border-bottom: 2px solid #fff;'
   }
 
   &:hover {
