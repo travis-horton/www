@@ -7,12 +7,12 @@ const PerlinNoise = () => {
     perlinScript();
   }, []);
   return (
-    <div>
-      <div className="container">
-        <div className="content" id="box" style={{ textAlign: 'center' }}>
-          <canvas style={{ width: 512, height: 512 }} id="canvas1"/>
-        </div>
-      </div>
+    <div
+      className="content"
+      id="box"
+      style={{ textAlign: 'center', margin: '20px' }}
+    >
+      <canvas style={{ width: 512, height: 512 }} id="canvas1"/>
     </div>
   );
 };
