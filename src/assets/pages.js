@@ -8,27 +8,27 @@ const pages = [
   {
     name: 'about me',
     icon: aboutIcon,
-    path: '/',
+    path: '',
   },
   {
     name: 'software engineer',
     icon: keyboardIcon,
-    path: '/programming',
+    path: 'programming',
   },
   {
     name: 'pianist',
     icon: pianoIcon,
-    path: '/piano',
+    path: 'piano',
   },
   {
     name: 'blog',
     icon: blogIcon,
-    path: '/blog',
+    path: 'blog',
   },
   {
     name: 'contact',
     icon: contactIcon,
-    path: '/contact',
+    path: 'contact',
   },
 ];
 
