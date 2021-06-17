@@ -49,3 +49,5 @@ the `dev` branch.
 # authors
 
 * kiddspazz/thor/travis, github: [@github](https://github.com/kiddspazz)
+
+uses kiddspazz's perlin noise repo
