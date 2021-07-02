@@ -24,7 +24,7 @@ const Contact = () => (
       <br />
     </p>
     <h2>Resume</h2>
-    <p><a href="/res/other/horton-resume.pdf">resume (pdf)</a></p>
+    <p><a href="/assets/resume.pdf">resume (pdf)</a></p>
     <h2>projects</h2>
     <p>
       github:

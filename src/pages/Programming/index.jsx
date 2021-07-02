@@ -4,25 +4,31 @@ import {
 } from 'react-router-dom';
 
 import {
-  PerlinNoise
+  PerlinNoise,
+  RayTracer,
+  Orbitz,
+  Asteroids,
 } from './projects';
+
+import './styles.css';
 
 const Programming = () => {
   const match = useRouteMatch();
 
   return (
     <main>
-      <h1 style={{ textAlign: 'center' }}>
-        <Link
-          to={match.url}
-          style={{ color: 'black' }}
-        >
-          front-end engineer
-        </Link>
-      </h1>
       <Switch>
         <Route path={`${match.path}/perlin-noise`}>
           <PerlinNoise />
+        </Route>
+        <Route path={`${match.path}/ray-tracer`}>
+          <RayTracer />
+        </Route>
+        <Route path={`${match.path}/orbitz`}>
+          <Orbitz />
+        </Route>
+        <Route path={`${match.path}/asteroids`}>
+          <Asteroids />
         </Route>
         <Route path={match.path}>
           <ProgrammingContent />
@@ -31,10 +37,6 @@ const Programming = () => {
       {/*
         <section>
             <h2>personal projects</h2>
-            <a href="topo_circle/index.html">perlin noise</a><br />
-            <a href="ray_tracer/index.html">ray tracer</a><br />
-            <a href="asteroids/index.html">asteroids</a><br />
-            <a href="orbitz/index.html">orbits</a><br />
             <a href="polygon_race/index.html">polygon race</a><br />
             <a href="gol/index.html" target="_blank">game of life</a>
           </section>
@@ -62,6 +64,9 @@ const ProgrammingContent = () => {
   const match = useRouteMatch();
   return (
     <div>
+      <h1 className="programming__title">
+        front-end engineer
+      </h1>
       <p>
         currently with bodybuilding.com; started in march of 2020. i recently built
         {' '}
@@ -79,17 +84,23 @@ const ProgrammingContent = () => {
         <h2>personal projects</h2>
         <ul>
           <li>
-            <Link
-              to={`${match.url}/perlin-noise`}
-            >
+            <Link to={`${match.url}/perlin-noise`}>
               perlin noise
             </Link>
           </li>
           <li>
-            <Link
-              to={`${match.url}/ray-tracer`}
-            >
+            <Link to={`${match.url}/ray-tracer`}>
               ray tracer
+            </Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/orbitz`}>
+              orbitz
+            </Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/asteroids`}>
+              asteroids
             </Link>
           </li>
         </ul>

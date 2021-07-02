@@ -1,0 +1,14 @@
+.programming__title {
+  margin: auto;
+  text-align: center;
+}
+
+.project-content {
+  margin: auto;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.project-content__ray-tracer {
+  margin-left: -50px;
+}
