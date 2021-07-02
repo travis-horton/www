@@ -55,4 +55,3 @@ uses kiddspazz's perlin noise repo
 # TODOS
 
 * add router to contact for resume
-* fix footer overhang
