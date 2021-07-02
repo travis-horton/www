@@ -10,7 +10,7 @@
   justify-content: center;
   align-items: center;
   background: white;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--light-grey);
 
   @media only screen and (max-width: 500px) {
     height: auto;
@@ -30,15 +30,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1d0a00;
+  color: black;
   text-transform: uppercase;
   font-size: 1rem;
-  border-bottom: 2px solid #fff;
-
-  &:hover {
-    text-decoration: none;
-    cursor: pointer;
-  }
+  border-bottom: 2px solid white; /* need white border to remove jumpy transition */
 
   @media only screen and (max-width: 500px) {
     margin: 0.3rem 0;
@@ -48,8 +43,17 @@
   }
 }
 
+.nav__item:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav__item:visited {
+  color: black
+}
+
 .nav__item--selected {
-  border-bottom: 2px solid #a714a2;
+  border-bottom: 2px solid var(--main-accent-color);;
   border-radius: 2px;
   transition: 0.5s;
 }

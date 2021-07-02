@@ -22,6 +22,10 @@
   z-index: 3;
 }
 
+.blog__neon-button:visited {
+  color: var(--clrNeon);;
+}
+
 .blog__neon-button::before {
   --clrNeon: hsl(302 79% 37%);
   --clrBg: hsl(0 0% 10%);
