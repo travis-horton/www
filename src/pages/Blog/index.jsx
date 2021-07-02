@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './styles.css';
+import './neon-button.css';
 
 const Blog = () => (
   <main style={{ textAlign: 'center' }}>

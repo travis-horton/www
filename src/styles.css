@@ -1,3 +1,10 @@
+:root {
+  --main-accent-color: hsl(302, 79%, 37%);
+  --secondary-accent-color: hsl(302, 40%, 37%);
+  --light-grey: hsl(0, 0%, 93%);
+  --very-light-grey: hsl(0, 0%, 96%);
+}
+
 @font-face {
   font-family: 'arkhip';
   src: url('/src/assets/fonts/arkhip.otf') format('opentype');
@@ -15,7 +22,7 @@
 body {
   margin: 0;
   font-family: 'gothic', serif;
-  color: hsl(21, 100%, 6%);
+  color: black;
   padding-bottom: 60px;
 }
 
@@ -26,7 +33,7 @@ body {
 }
 
 h1 {
-  color: #1d0a00;
+  color: black;
   font-family: 'arkhip', sans-serif;
   font-size: 40px;
   letter-spacing: 0.5px;
@@ -35,7 +42,7 @@ h1 {
 }
 
 h2 {
-  color: #1d0a00;
+  color: black;
   font-size: 22px; letter-spacing: 0.5px;
   margin: 10px 0 8px 0;
   text-transform: uppercase;
@@ -48,15 +55,17 @@ ul {
 
 a {
   text-decoration: none;
-
-  &:visited {
-    color: black;
-  }
-
-  &:hover {
-    text-decoration: underline;
-  }
+  color: var(--main-accent-color);
 }
+
+a:visited {
+  color: var(--secondary-accent-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 
 main {
   margin: 30px auto;
