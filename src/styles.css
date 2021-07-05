@@ -3,6 +3,7 @@
   --secondary-accent-color: hsl(302, 40%, 37%);
   --light-grey: hsl(0, 0%, 93%);
   --very-light-grey: hsl(0, 0%, 96%);
+  --main-content-width: 600;
 }
 
 @font-face {
@@ -24,12 +25,6 @@ body {
   font-family: 'gothic', serif;
   color: black;
   padding-bottom: 60px;
-}
-
-@media (max-width: 500px) {
-  .main {
-    margin: 5px 5px;
-  }
 }
 
 h1 {
@@ -70,5 +65,16 @@ a:hover {
 main {
   margin: 30px auto;
   max-width: 60%;
-  min-width: 700px;
+  min-width: calc(var(--main-content-width) * 1px);
+}
+
+@media only screen and (max-width: 500px) {
+  h1, h2 {
+    text-align: center;
+  }
+
+  main {
+    min-width: 300px;
+    margin: 30px auto;
+  }
 }

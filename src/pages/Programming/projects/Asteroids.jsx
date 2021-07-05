@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 
 import { renderAsteroidsInElement } from './asteroids/index.js';
 
-console.log(renderAsteroidsInElement);
-
 export const Asteroids = () => {
   useEffect(() => { renderAsteroidsInElement('box'); }, []);
 

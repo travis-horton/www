@@ -14,12 +14,12 @@ class Image extends React.Component {
 
   render() {
     const {
-      alt, thumb, src, height, width,
+      alt, thumb, src, className, height, width,
     } = this.props;
     const { isLoaded } = this.state;
 
     return (
-      <div style={{ height: `${height}px`, width: `${width}px` }}>
+      <div className={ className } style={{ height: `${height}px`, width: `${width}px` }}>
         <img
           className="image thumb"
           alt={alt}
