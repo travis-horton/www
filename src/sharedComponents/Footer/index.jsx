@@ -9,8 +9,12 @@ const Footer = () => (
     <small className='main-footer__content'>
         &copy;&apos;21 kiddspazz
     </small>
-    <img className='main-footer__logo' src={twitterLogo} alt="twitter-logo" />
-    <img className='main-footer__logo' src={instaLogo} alt="instagram-logo" />
+    <a href='https://twitter.com/brightlyopen'>
+      <img className='main-footer__logo' src={twitterLogo} alt="twitter-logo" />
+    </a>
+    <a href='https://www.instagram.com/brightlyopen'>
+      <img className='main-footer__logo' src={instaLogo} alt="instagram-logo" />
+    </a>
   </footer>
 );
 
