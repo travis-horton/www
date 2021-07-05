@@ -19,7 +19,7 @@ export const RayTracer = () => {
         </p>
       </div>
       <div
-        className="project-content project-content__ray-tracer"
+        className="project-content project-content__oversize"
         id="box"
       >
       </div>

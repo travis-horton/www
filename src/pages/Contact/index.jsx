@@ -1,5 +1,7 @@
 import React from 'react';
 
+import resume from 'url:/src/assets/resume.pdf';
+
 const Contact = () => (
   <main>
     <h2>Contact</h2>
@@ -24,7 +26,7 @@ const Contact = () => (
       <br />
     </p>
     <h2>Resume</h2>
-    <p><a href="/assets/resume.pdf">resume (pdf)</a></p>
+    <p><a href={ resume }>resume (pdf)</a></p>
     <h2>projects</h2>
     <p>
       github:

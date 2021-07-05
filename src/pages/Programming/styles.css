@@ -12,3 +12,11 @@
 .project-content__ray-tracer {
   margin-left: -50px;
 }
+
+.project-content__oversize canvas {
+  width: calc(1px * var(--main-content-width));
+}
+
+.project-content__dark-background canvas {
+  background: #333;
+}

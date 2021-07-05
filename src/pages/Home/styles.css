@@ -7,3 +7,10 @@
   float: right;
   margin-left: 14px;
 }
+
+@media only screen and (max-width: 500px) {
+  .home__profile-pic {
+    margin: 0 auto 10px;
+    float: none;
+  }
+}

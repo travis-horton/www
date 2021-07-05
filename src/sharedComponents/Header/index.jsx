@@ -27,7 +27,7 @@ const Header = () => {
                 className={`nav__item ${selectedTab === page.path ? 'nav__item--selected' : ''}`}
                 onClick={() => setSelectedTab(page.path)}
               >
-                  <span>{page.name}</span>
+                  <span className="nav__label">{page.name}</span>
                   <img
                     className='nav__icon'
                     src={page.icon}

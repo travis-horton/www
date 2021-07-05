@@ -11,11 +11,6 @@
   align-items: center;
   background: white;
   border-bottom: 1px solid var(--light-grey);
-
-  @media only screen and (max-width: 500px) {
-    height: auto;
-    position: sticky;
-  }
 }
 
 .main-header__nav {
@@ -34,13 +29,6 @@
   text-transform: uppercase;
   font-size: 1rem;
   border-bottom: 2px solid white; /* need white border to remove jumpy transition */
-
-  @media only screen and (max-width: 500px) {
-    margin: 0.3rem 0;
-    > span {
-      display: none;
-    }
-  }
 }
 
 .nav__item:hover {
@@ -58,12 +46,30 @@
   transition: 0.5s;
 }
 
+.nav__label {
+  display: inline;
+}
+
 .nav__icon {
   display: none;
   margin: 3px;
   height: 28px;
+}
 
-  @media only screen and (max-width: 500px) {
+@media screen and (max-width: 500px) {
+  .main-header {
+    height: auto;
+  }
+
+  .nav__item {
+    margin: 0.3rem 0;
+  }
+
+  .nav__label {
+    display: none;
+  }
+
+  .nav__icon {
     display: inline;
   }
 }
