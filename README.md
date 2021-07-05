@@ -50,8 +50,8 @@ the `dev` branch.
 
 * kiddspazz/thor/travis, github: [@github](https://github.com/kiddspazz)
 
-uses kiddspazz's perlin noise repo
+uses kiddspazz's perlin noise, asteroids, ray-tracer, polygon-race and orbitz repos
 
 # TODOS
 
-* add router to contact for resume
+* add blog posts
