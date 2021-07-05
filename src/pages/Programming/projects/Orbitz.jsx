@@ -14,7 +14,7 @@ export const Orbitz = () => {
         also have some mass and affect each other, but only barely.
       </div>
       <div
-        className="project-content project-content__center"
+        className="project-content project-content__oversize"
         id="box"
       >
       </div>

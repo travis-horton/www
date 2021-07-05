@@ -10,3 +10,6 @@
 [submodule "src/pages/Programming/projects/asteroids"]
 	path = src/pages/Programming/projects/asteroids
 	url = https://github.com/kiddspazz/asteroids
+[submodule "src/pages/Programming/projects/polygon-race"]
+	path = src/pages/Programming/projects/polygon-race
+	url = https://github.com/kiddspazz/polygon-race.git

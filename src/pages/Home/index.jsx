@@ -11,9 +11,14 @@ import './styles.css';
 
 const Home = () => (
   <main>
-    <div className='home__profile-pic'>
-      <Image alt="headshot" thumb={headshotThumb} src={headshot} height={285} width={285} />
-    </div>
+    <Image
+      className='home__profile-pic'
+      alt="headshot"
+      thumb={headshotThumb}
+      src={headshot}
+      height={285}
+      width={285}
+    />
     <header>
       <div>
         <h1>
