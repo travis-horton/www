@@ -1,0 +1,11 @@
+.blog__button-container {
+  text-align: center;
+}
+
+.blog__table-of-contents {
+  margin: auto;
+}
+
+td:not(:first-child) {
+  padding-left: 2rem;
+}
