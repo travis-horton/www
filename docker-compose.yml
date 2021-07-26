@@ -6,7 +6,8 @@ services:
     networks:
       - "net"
     environment:
-      - VIRTUAL_PORT=80
+      - VIRTUAL_HOST=kiddspazz.com
+      - LETSENCRYPT_HOST=kiddspazz.com
 
 networks:
   net:
