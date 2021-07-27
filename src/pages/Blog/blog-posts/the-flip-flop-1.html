@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>The D Flip-Flop, pt 1</title>
+    <meta name='viewport' content="width=device-width, initial-scale=1.0"/>
+    <link id="favicon" href="/res/images/favicons/travFavicon.png" type="image/png" rel="icon">
+    <link href="/res/css/stylesheet.css" type="text/css" rel="stylesheet"/>
+    <script src="/res/js/loadHeader.js"></script>
+    <script src="/res/js/loadFooter.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <main class="content">
+      <div class="main">
+        <h1 class="blog_title">The D Flip-Flop, pt 1</h1>
+        <p>So, computers all begin with little chips. Actually they start with little transistors. Nowadays they are <b>very, very little</b>. Like <a href="https://qz.com/852770/theres-a-limit-to-how-small-we-can-make-transistors-but-the-solution-is-photonic-chips/" target="_blank">70 ATOMS wide</a>.</p>
+        <p>Those little teeny tiny transistors make up what are called gates. A gate is the most basic logic unit in a computer. Here's an example of how transistors make up an AND gate:</p>
+        <img src="/res/blogmedia/and_gate.png" style="margin: auto; width:160px; display: block">
+        <p>The "V" at the top of the image is the source of the current and the little striped triangle (aka ground) at the bottom of the image is the where the electricity wants to go. It always wants to get from the "V" to ground.</p>
+        <p>The two circles with little symbols in them are transistors. You can <a href="https://www.youtube.com/watch?v=IcrBqCFLHIY">watch a video</a> on how they work if you're curious.</p>
+        <p>"A" and "B" are the two inputs and "Out" is the output. What we want to get out is current if and only if both "A" and "B" have current. (Another way to say this is that "A" and "B" are on, or true, or "1"s.) Transitors only allow current through if the input has current, so in this case, we only get current at the output if both "A" and "B" have current.</p>
+        <p>There a few other types of gates: OR gates, NOT gates, NAND gates, and several others. Go read about them <a href="http://www.ee.surrey.ac.uk/Projects/CAL/digital-logic/gatesfunc/" target="_blank">here</a>.</p>
+        <p>With these gates you can build all sorts of more complicated logical units. You can bunch them together and have "buses", which are just several of these simple gates in parallel with the expected number of outputs. You can build arithmetic logical units to compute basic arithmetic operations.</p>
+        <p>This brings us up to Chapter 3 of <a href="https://www.nand2tetris.org/"><i>Nand2Tetris</i></a>. Up to this chapter, everything the authors have used as givens felt like legitimate givens. However, in this chapter they introduce the Flip-Flop. The Flip-Flop is the basic building block of all memory operations. I'll quote their description (their italics):</p>
+        <blockquote><b>Flip-Flops</b> The most elementary sequential element in the computer is a device called a <i>flip-flop</i>, of which there are several variants. In this book we use a variant called a <i>data flip-flop</i>, or DFF, whose interface consists of a single-bit data input and a single-bit data output. In addition, the DFF has a <i>clock</i> input that continuously changes according to the master clock's signal. Taken together, the data and the clock inputs enable the DFF to implement the time-based behavior <i>out(t) = in(t - 1)</i>, where <i>in</i> and <i>out</i> are the gate's input and output values and <i>t</i> is the current clock cycle. In other words, the DFF simply outputs the input value from the previous time unit.</blockquote>
+        <p>And yet, later:</p>
+        <blockquote>The physical implementation of a DFF is an intricate task, and is based on connecting several elementary logic gates using feedback loops (one classic design is based on NAND gates alone). In this book we have chosen to abstract away this complexity, treating DFFs as primitive building blocks.</blockquote>
+        <p>Well, that's not good enough for me. Why should I build a computer from little transistors and yet not truly understand <i>the</i> basic building block of memory.</p>
+        <p>So, that's what this blog post is all about, but I think this post actually turned into simply building a pre-DFF foundation.</p>
+        <hr>
+        <p>A little code:</p>
+        <code>CHIP Not {</code><br>
+        <code>IN in;</code><br>
+        <code>OUT out;</code><br><br>
+        <code>PARTS:</code><br>
+        <code>Nand(a=in, b=in, out=out);</code><br>
+        <code>}</code>
+      </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+:root {
+  --main-accent-color: hsl(302, 79%, 37%);
+  --secondary-accent-color: hsl(302, 40%, 37%);
+  --light-grey: hsl(0, 0%, 93%);
+  --very-light-grey: hsl(0, 0%, 96%);
+  --main-content-width: 600;
+}
+
+@font-face {
+  font-family: 'arkhip';
+  src: url('/src/assets/fonts/arkhip.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'gothic';
+  src: url('/src/assets/fonts/gothic.ttf') format('truetype');
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'gothic', serif;
+  color: black;
+  padding-bottom: 60px;
+}
+
+h1 {
+  color: black;
+  font-family: 'arkhip', sans-serif;
+  font-size: 40px;
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h2 {
+  color: black;
+  font-size: 22px; letter-spacing: 0.5px;
+  margin: 10px 0 8px 0;
+  text-transform: uppercase;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--main-accent-color);
+}
+
+a:visited {
+  color: var(--secondary-accent-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+main {
+  margin: 30px auto;
+  max-width: 60%;
+  min-width: calc(var(--main-content-width) * 1px);
+}
+
+@media only screen and (max-width: 500px) {
+  h1, h2 {
+    text-align: center;
+  }
+
+  main {
+    min-width: 300px;
+    margin: 30px auto;
+  }
+}
