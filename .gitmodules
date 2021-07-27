@@ -1,0 +1,15 @@
+[submodule "src/pages/Programming/projects/perlin-noise"]
+	path = src/pages/Programming/projects/perlin-noise
+	url = https://github.com/kiddspazz/perlin-noise
+[submodule "src/pages/Programming/projects/ray-tracer"]
+	path = src/pages/Programming/projects/ray-tracer
+	url = https://github.com/kiddspazz/ray-tracer
+[submodule "src/pages/Programming/projects/orbitz"]
+	path = src/pages/Programming/projects/orbitz
+	url = https://github.com/kiddspazz/orbitz
+[submodule "src/pages/Programming/projects/asteroids"]
+	path = src/pages/Programming/projects/asteroids
+	url = https://github.com/kiddspazz/asteroids
+[submodule "src/pages/Programming/projects/polygon-race"]
+	path = src/pages/Programming/projects/polygon-race
+	url = https://github.com/kiddspazz/polygon-race.git
