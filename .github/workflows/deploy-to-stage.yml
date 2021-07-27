@@ -29,27 +29,6 @@ jobs:
           tags: kiddspazz/www_web:latest
 
       -
-        name: Deploy reverse-proxy setup to kiddspazz.com
-        uses: appleboy/ssh-action@v0.1.3
-        with:
-          host: ${{ secrets.DIGITALOCEAN_HOST }}
-          sync: true
-          username: ${{ secrets.DIGITALOCEAN_USERNAME }}
-          key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          script: |
-            rm -rf tmp-docker
-            mkdir tmp-docker
-            cd tmp-docker
-            wget https://raw.githubusercontent.com/kiddspazz/www/dev/reverse-proxy/docker-compose.yml
-            docker stop letsencrypt-helper
-            docker stop reverse-proxy
-            docker rm letsencrypt-helper
-            docker rm reverse-proxy
-            docker network rm net
-            docker network create net
-            docker-compose up -d
-
-      -
         name: Deploy to web app to kiddspazz.com
         uses: appleboy/ssh-action@v0.1.3
         with:
