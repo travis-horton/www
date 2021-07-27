@@ -36,7 +36,7 @@ jobs:
         with:
           host: ${{ secrets.DIGITALOCEAN_HOST_PROD }}
           username: ${{ secrets.DIGITALOCEAN_USERNAME_PROD }}
-          key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
+          key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
             docker pull kiddspazz/www_web
             docker stop web
