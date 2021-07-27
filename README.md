@@ -1,6 +1,7 @@
 [![style: styled-components](https://img.shields.io/badge/style-%F0%9F%92%85%20styled--components-orange.svg?colorB=daa357&colorA=db748e)](https://github.com/styled-components/styled-components)
 
-![build to dev](https://github.com/kiddspazz/.github/workflows/publish-docker-image-on-push.yml/badge.svg?branch=dev)
+![build to dev](https://github.com/kiddspazz/.github/workflows/deploy-to-dev.yml/badge.svg?branch=dev)
+![build to prod](https://github.com/kiddspazz/.github/workflows/deploy-to-prod.yml/badge.svg?branch=dev)
 
 # website repo
 
@@ -10,7 +11,9 @@ a general all-around website, with sections for personal interests, jobs/skills,
 
 * javascript
 * react
-* styled-components
+* [nginx-proxy docker](https://github.com/nginx-proxy/nginx-proxy) for nginx reverse proxy services
+* [acme-companion](https://github.com/nginx-proxy/acme-companion) paired with above for ssl/https
+    services
 
 # getting started
 
