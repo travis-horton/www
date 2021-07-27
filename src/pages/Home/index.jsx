@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import headshotThumb from 'url:/src/assets/media/headshot-thumb.png';
 import headshot from 'url:/src/assets/media/headshot.png';
@@ -48,8 +49,9 @@ const Home = () => (
       </div>
       <p>
         i attended the recurse center spring 1, 2019 batch: february 18 - may 9. it was a
-        great time, i met a lot of amazing people, and i learned a ton. here are some of
-        the projects i worked on while i was there and before.
+        great time, i met a lot of amazing people, and i learned a ton. <Link
+        to={`/programming`}>here</Link> are some of the projects i worked on while i was there
+        and before.
       </p>
       <p>
         in 2017, anne and i decided to leave our 6-year home of brooklyn for the road.
