@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { pages } from '../../assets/pages';
-import {
-  StyledHeaderImage,
-} from './styles';
 
 import './styles.css';
 
