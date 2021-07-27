@@ -23,17 +23,15 @@ to get a local version:
 
 ### setup
 
-make sure your docker deamon is running (aka start docker)
+make sure you have yarn
 
 ### install
 
-no install needed. this runs in a container and the container build takes care of all the
-installations
+yarn
 
 ### usage
 
-simply `yarn rebuild` will stop a docker container called "web" and rebuild and restart it
-this container listens on port 8080, so navigate in your browser to [localhost:8080](localhost:8080)
+yarn serve runs parcel serve, which sets up a version of the app on localhost:1234
 
 ### run tests
 

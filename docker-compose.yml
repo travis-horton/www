@@ -8,6 +8,7 @@ services:
     environment:
       - VIRTUAL_HOST=kiddspazz.com
       - LETSENCRYPT_HOST=kiddspazz.com
+      - VIRTUAL_PORT=80
 
 networks:
   net:
