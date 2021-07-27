@@ -20,4 +20,5 @@ jobs:
             docker pull kiddspazz/www_web
             docker stop web
             docker rm web
-            docker run --rm --name web -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 --network net -d kiddspazz/www_web
+            docker run --rm --name web -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
+            docker run --rm --name www_web -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
