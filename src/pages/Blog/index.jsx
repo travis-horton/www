@@ -3,6 +3,10 @@ import {
   Route, Switch, Link, useRouteMatch
 } from 'react-router-dom';
 
+import JsThisBlog from './blog-posts/js-this.jsx';
+import TheFlipFlop1 from './blog-posts/the-flip-flop-1.jsx';
+import TheFirstBlog from './blog-posts/the-first-blog.jsx';
+
 import './styles.css';
 import './neon-button.css';
 
@@ -42,13 +46,13 @@ const Blog = () => {
           </div>
         </Route>
         <Route path={`${match.path}/js-this`}>
-          <h1>i'm working on making these each programmatically displayed...</h1>
+          <JsThisBlog />
         </Route>
         <Route path={`${match.path}/the-flip-flop-1`}>
-          <h1>i'm working on making these each programmatically displayed...</h1>
+          <TheFlipFlop1 />
         </Route>
         <Route path={`${match.path}/the-first-blog`}>
-          <h1>i'm working on making these each programmatically displayed...</h1>
+          <TheFirstBlog />
         </Route>
       </Switch>
     </main>
