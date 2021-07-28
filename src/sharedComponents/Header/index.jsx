@@ -5,13 +5,7 @@ import { pages } from '../../assets/pages';
 
 import './styles.css';
 
-const subdirectory = () => {
-  return document.location.pathname.split('/')[1];
-};
-
-const Header = () => {
-  const [selectedTab, setSelectedTab] = useState(subdirectory());
-
+const Header = ({ selectedTab, setSelectedTab }) => {
   return (
     <header className='main-header'>
       <nav className='main-header__nav'>

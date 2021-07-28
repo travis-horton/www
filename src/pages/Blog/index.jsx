@@ -42,13 +42,13 @@ const Blog = () => {
           </div>
         </Route>
         <Route path={`${match.path}/js-this`}>
-          <h1>hi1</h1>
+          <h1>i'm working on making these each programmatically displayed...</h1>
         </Route>
         <Route path={`${match.path}/the-flip-flop-1`}>
-          <h1>hi2</h1>
+          <h1>i'm working on making these each programmatically displayed...</h1>
         </Route>
         <Route path={`${match.path}/the-first-blog`}>
-          <h1>hi3</h1>
+          <h1>i'm working on making these each programmatically displayed...</h1>
         </Route>
       </Switch>
     </main>
