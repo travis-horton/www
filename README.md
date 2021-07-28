@@ -16,25 +16,23 @@ a general all-around website, with sections for personal interests, jobs/skills,
     services
 
 # getting started
-
-to get a local version:
-
 ### prerequisites
 
 [yarn](https://yarnpkg.com)
+
 [docker](https://www.docker.com)
 
 ### setup
 
-make sure you have yarn
+make sure you have yarn (see above)
 
 ### install
 
-yarn
+simply `yarn`
 
 ### usage
 
-yarn serve runs parcel serve, which sets up a version of the app on localhost:1234
+`yarn serve` runs `parcel serve`, which sets up a version of the app on `localhost:1234`
 
 ### run tests
 
@@ -44,8 +42,7 @@ yarn serve runs parcel serve, which sets up a version of the app on localhost:12
 
 this is set up to deploy to stage [kiddspazz.com](https://www.kiddspazz.com) simply by git pushing
 the `dev` branch.
-
-*TODO* set up the deploy to production on a merge into master
+production automatically deploys on merge with `main`.
 
 # authors
 
@@ -56,3 +53,4 @@ uses kiddspazz's perlin noise, asteroids, ray-tracer, polygon-race and orbitz re
 # TODOS
 
 * add blog posts
+* write tests
