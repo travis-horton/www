@@ -27,12 +27,12 @@ const TheFlipFlop1 = () =>
         <p>So, that's what this blog post is all about, but I think this post actually turned into simply building a pre-DFF foundation.</p>
         <hr/>
         <p>A little code:</p>
-        <code>CHIP Not &lbrace;</code><br/>
-        <code>IN in;</code><br/>
-        <code>OUT out;</code><br/><br/>
-        <code>PARTS:</code><br/>
-        <code>Nand(a=in, b=in, out=out);</code><br/>
-        <code>&rbrace;</code>
+        <code>CHIP Not {"{"}</code><br/>
+        <code>&nbsp;&nbsp;IN in;</code><br/>
+        <code>&nbsp;&nbsp;OUT out;</code><br/><br/>
+        <code>&nbsp;&nbsp;PARTS:</code><br/>
+        <code>&nbsp;&nbsp;Nand(a=in, b=in, out=out);</code><br/>
+        <code>{"}"}</code>
       </div>
     </main>
   </div>;
