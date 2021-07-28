@@ -1,4 +1,4 @@
-name: ci
+name: development environment
 
 on:
   push:
