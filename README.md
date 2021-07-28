@@ -1,7 +1,6 @@
-[![style: styled-components](https://img.shields.io/badge/style-%F0%9F%92%85%20styled--components-orange.svg?colorB=daa357&colorA=db748e)](https://github.com/styled-components/styled-components)
-
-![build to dev](https://github.com/kiddspazz/.github/workflows/deploy-to-dev.yml/badge.svg?branch=dev)
-![build to prod](https://github.com/kiddspazz/.github/workflows/deploy-to-prod.yml/badge.svg?branch=dev)
+[![production environment](https://github.com/kiddspazz/www/actions/workflows/deploy-to-prod.yml/badge.svg?branch=main)](https://github.com/kiddspazz/www/actions/workflows/deploy-to-prod.yml)
+[![development environment](https://github.com/kiddspazz/www/actions/workflows/deploy-to-dev.yml/badge.svg?branch=dev)](https://github.com/kiddspazz/www/actions/workflows/deploy-to-dev.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/kiddspazz/www)](https://github.com/kiddspazz/www)
 
 # website repo
 
