@@ -24,6 +24,9 @@ a general all-around website, with sections for personal interests, jobs/skills,
 ### setup
 
 make sure you have yarn (see above)
+this project uses git submodules (!), so you'll have to do a bit of extra setup work:
+`git submodule init`
+`git submodule update`
 
 ### install
 
