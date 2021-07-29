@@ -38,27 +38,6 @@ const Programming = () => {
           <ProgrammingContent />
         </Route>
       </Switch>
-      {/*
-        <section>
-            <h2>personal projects</h2>
-            <a href="gol/index.html" target="_blank">game of life</a>
-          </section>
-        <section>
-            <h2>goals</h2>
-            <a href="https://www.postgresql.org/docs/11/tutorial-sql.html" target="blank">postgres tutorial</a><br />
-            learn
-            {' '}
-            <a href="https://doc.rust-lang.org/stable/book/" target="blank">rust</a><br />
-            <a href="https://www.nand2tetris.org" target="blank">nand2tetris</a><br />
-          </section>
-        <section>
-            <h2>works in progress</h2>
-            <a href="../kiddspazz/battleship/index.html">battleship</a><br />
-            <h2>next projects</h2>
-            rpg: roam the internet fighting html elements<br />
-            goals tracker app
-          </section>
-          */}
     </main>
   );
 }
@@ -122,7 +101,24 @@ const ProgrammingContent = () => {
         </section>
         <section>
           <h2>works in progress</h2>
-          <a href="../kiddspazz/battleship/index.html">battleship</a><br />
+          <p>
+            i've been recently focused on re-building this website. that has included giving it a
+            full design make-over (i hope you like it!), but also implementing react and
+            react-router.
+          </p>
+          <p>
+            those are the big changes that you can see, but in addition i implemented automated
+            builds; i have a "development" site (kiddspazz.com) which gets automatically built out
+            on any push to my dev branch and this url (www.travish.com) which gets built out on any
+            push to my main branch. all of this is using docker containers which also handle the
+            routing and ssl/https stuff!
+          </p>
+          <p>
+            this is some fun stuff y'all: now i can make some little changes, see them in my
+            "development" site pretty much immediately, and get them to my "production" site within
+            minutes. for instance, the paragraph your reading now was written on 7/29/21 at 11:00. it
+            was live on the "production" site by 11:10!
+          </p>
           <h2>next projects</h2>
           rpg: roam the internet fighting html elements<br />
           goals tracker app
