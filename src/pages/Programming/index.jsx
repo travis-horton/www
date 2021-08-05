@@ -116,8 +116,8 @@ const ProgrammingContent = () => {
           <p>
             this is some fun stuff y'all: now i can make some little changes, see them in my
             "development" site pretty much immediately, and get them to my "production" site within
-            minutes. for instance, the paragraph your reading now was written on 7/29/21 at 11:00. it
-            was live on the "production" site by 11:10!
+            minutes. for instance, the paragraph you're reading now was written on 7/29/21 at 11:00.
+            it was live on the "production" site by 11:10!
           </p>
           <h2>next projects</h2>
           rpg: roam the internet fighting html elements<br />
