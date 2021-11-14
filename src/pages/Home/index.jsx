@@ -23,49 +23,49 @@ const Home = ({ selectedTab, setSelectedTab }) => (
     <header>
       <div>
         <h1>
-          travis horton
+          Travis Horton
         </h1>
         <h2>
-          software engineer
+          Software Engineer
           <br />
-          pianist
+          Pianist
           <br />
-          accountant
+          Accountant
         </h2>
       </div>
     </header>
     <div>
       <p>
-        i&apos;m travis. i program in react/javascript/css/html and i&apos;ve been trying
-        to learn rust. i play the piano. i do some accounting on the side. i live in boise, idaho
-        with my wonderful wife anne and our cat monkey. and i run. really slowly.
+        I&apos;m Travis. I program in React/JavaScript/CSS/HTML and I&apos;ve been trying
+        to learn Rust. I play the piano. I do some accounting on the side. I live in Boise, Idaho
+        with my wonderful wife Anne and our cat Monkey. And I run. Really slowly.
       </p>
       <p>
-        we bought a house in the summer of 2020! what an adult thing to do &mdash; i
-        definitely never thought i&apos;d get this responsible.
+        We bought a house in the summer of 2020! What an adult thing to do &mdash; I
+        definitely never thought I&apos;d get this responsible.
       </p>
       <div className='home__monkey-pic'>
         <Image alt="monkey" thumb={monkeyThumb} src={monkey} height={210} width={157} />
       </div>
       <p>
-        i attended the recurse center spring 1, 2019 batch: february 18 - may 9. it was a
-        great time, i met a lot of amazing people, and i learned a ton.
+        I attended the Recurse Center Spring 1, 2019 batch: February 18 - May 9. It was a
+        great time, I met a lot of amazing people, and I learned a ton.
         {' '}
-        <Link to={`/programming`} onClick={() => setSelectedTab('programming')}>here</Link>
+        <Link to={`/programming`} onClick={() => setSelectedTab('programming')}>Here</Link>
         {' '}
-        are some of the projects i worked on while i was there and before.
+        are some of the projects I worked on while I was there and before.
       </p>
       <p>
-        in 2017, anne and i decided to leave our 6-year home of brooklyn for the road.
-        we bought an rv and traveled the country for a year and a half. i studied
-        programming part time while i worked half-time as an accountant for the brooklyn
-        youth chorus.
+        In 2017, Anne and I decided to leave our 6-year home of Brooklyn for the road.
+        We bought an RV and traveled the country for a year and a half. I studied
+        programming part time while I worked half-time as an accountant for the Brooklyn
+        Youth Chorus.
       </p>
       <p>
-        i studied piano for 6 years at unc-school of the arts and 2 more years at the new
-        england conservatory. i moved to new york city in 2011 and worked as a pianist
-        there for 6 years &mdash; played carnegie hall, joe&apos;s pub, off-broadway shows,
-        worked for nyu and the brooklyn youth chorus as a vocal coach and staff pianist. i
+        I studied piano for 6 years at UNC-School of the Arts and 2 more years at the New
+        England Conservatory. I moved to New York City in 2011 and worked as a pianist
+        there for 6 years &mdash; played Carnegie Hall, Joe&apos;s Pub, Off-Broadway shows,
+        worked for NYU and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I
         rode my bicycle a lot.
       </p>
     </div>
