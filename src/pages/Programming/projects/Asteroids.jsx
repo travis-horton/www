@@ -8,7 +8,7 @@ export const Asteroids = () => {
   return (
     <div>
       <div className="description">
-        arrow keys to move, space bar shoots
+        Arrow keys to move, space bar shoots
       </div>
       <div
         className="project-content project-content__center"
