@@ -10,12 +10,12 @@ export const RayTracer = () => {
       <h2>ray tracer</h2>
       <div className="description">
         <p>
-          ray tracing is one way of rendering 3-dimensional scenes.
+          Ray tracing is one way of rendering 3-dimensional scenes.
         </p>
         <p>
-          from the observer (you) a "ray" is traced through each pixel of the view window and it's
-          path is calculated to determine what color (depending on objects the ray encounters and
-          light sources it ends at) that pixel should be.
+          From the observer (you) a "ray" is traced through each pixel of the view window and
+          it&apos;s path is calculated to determine what color (depending on objects the ray
+          encounters and light sources it ends at) that pixel should be.
         </p>
       </div>
       <div

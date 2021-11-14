@@ -26,18 +26,18 @@ const Contact = () => (
       <br />
     </p>
     <h2>Resume</h2>
-    <p><a href={ resume }>resume (pdf)</a></p>
-    <h2>projects</h2>
+    <p><a href={ resume }>Resume (pdf)</a></p>
+    <h2>Projects</h2>
     <p>
-      github:
+      Github:
       {' '}
-      <a href="https://github.com/kiddspazz">kiddspazz</a>
+      <a href="https://github.com/kiddspazz">Kiddspazz</a>
     </p>
-    <h2>blogs i follow</h2>
+    <h2>Blogs I follow</h2>
     <p>
-      <a href="https://blog.jfo.click" target="blank">jeff fowler&apos;s blog</a>
+      <a href="https://blog.jfo.click" target="blank">Jeff Fowler&apos;s blog</a>
       <br />
-      <a href="https://jvns.ca/" target="blank">julia evan&apos;s blog</a>
+      <a href="https://jvns.ca/" target="blank">Julia Evan&apos;s blog</a>
     </p>
   </main>
 );

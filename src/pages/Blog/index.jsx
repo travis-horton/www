@@ -34,14 +34,14 @@ const Blog = () => {
           </table>
           <hr />
           <p>
-            plus a cool button that doesn't do anything:
+            Plus a cool button that doesn't do anything:
           </p>
           <div class='blog__button-container'>
             <Link
               className='blog__neon-button'
               to={`${match.url}`}
             >
-              here&apos;s where i write stuff sometimes
+              Here&apos;s where i write stuff sometimes
             </Link>
           </div>
         </Route>
