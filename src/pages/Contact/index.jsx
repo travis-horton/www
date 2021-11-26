@@ -31,7 +31,7 @@ const Contact = () => (
     <p>
       Github:
       {' '}
-      <a href="https://github.com/kiddspazz">Kiddspazz</a>
+      <a href="https://github.com/kiddspazz">kiddspazz</a>
     </p>
     <h2>Blogs I follow</h2>
     <p>
