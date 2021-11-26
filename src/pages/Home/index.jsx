@@ -23,14 +23,14 @@ const Home = ({ selectedTab, setSelectedTab }) => (
     <header>
       <div>
         <h1>
-          travis horton
+          Travis Horton
         </h1>
         <h2>
-          software engineer
+          Software Engineer
           <br />
-          pianist
+          Pianist
           <br />
-          accountant
+          Accountant
         </h2>
       </div>
     </header>
@@ -48,10 +48,10 @@ const Home = ({ selectedTab, setSelectedTab }) => (
         <Image alt="monkey" thumb={monkeyThumb} src={monkey} height={210} width={157} />
       </div>
       <p>
-        I attended the Recurse Center Spring 1, 2019 batch: February 18 &mdash; May 9. It was a
+        I attended the Recurse Center Spring 1, 2019 batch: February 18 - May 9. It was a
         great time, I met a lot of amazing people, and I learned a ton.
         {' '}
-        <Link to={`/programming`} onClick={() => setSelectedTab('programming')}>here</Link>
+        <Link to={`/programming`} onClick={() => setSelectedTab('programming')}>Here</Link>
         {' '}
         are some of the projects I worked on while I was there and before.
       </p>
