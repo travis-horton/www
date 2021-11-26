@@ -1,0 +1,15 @@
+.performances-content {
+}
+
+.performances-content__title {
+  margin-top: 40px;
+  font-size: 28px;
+}
+
+.performance {
+  border-bottom: 1px solid black;
+}
+
+.performance__name {
+  
+}

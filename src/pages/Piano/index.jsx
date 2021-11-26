@@ -1,4 +1,5 @@
 import React from 'react';
+import PerformanceCalendar from './PerformanceCalendar';
 
 const Piano = () => (
   <main>
@@ -15,6 +16,7 @@ const Piano = () => (
       . I also play the piano for their choirs, student recitals, student juries, and faculty
       concerts.  I started working with the College of Idaho in the fall semester of 2019.
     </p>
+    <PerformanceCalendar />
   </main>
 );
 
