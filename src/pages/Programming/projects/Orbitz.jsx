@@ -9,8 +9,8 @@ export const Orbitz = () => {
     <div>
       <h2>orbitz</h2>
       <div className="description">
-        these images actually represent objects with "mass". the "sun" in the center is a very
-        heavy object, and pulls the two smaller satellites around it. the two small satellites
+        These images actually represent objects with "mass". The "sun" in the center is a very
+        heavy object, and pulls the two smaller satellites around it. The two small satellites
         also have some mass and affect each other, but only barely.
       </div>
       <div
