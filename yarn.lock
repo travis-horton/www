@@ -1672,7 +1672,7 @@
   integrity sha512-UJG9foZ86NvLIVy0RMKJ8rwOH5hI4E7f5Xx5GIkKmgtNAQWErisPIVKgfZtAb+EC/KcPhPtI7hbmAEnmNcmFPw==
   dependencies:
     "@parcel/plugin" "2.0.0-nightly.710+10620104"
-    sharp "^0.27.1"
+    sharp "^0.28.0"
 
 "@parcel/transformer-js@2.0.0-nightly.710+10620104":
   version "2.0.0-nightly.710"
