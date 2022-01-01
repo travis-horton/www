@@ -37,11 +37,25 @@ const Day = (day) => {
 
   let className = "journal__day";
   className += ` mh${day.mental_health - 5}`;
+  if (day.s) className += " s";
+  const mental_health = {
+    5: '😁',
+    4: '😀',
+    3: '🙂',
+    2: '😐',
+    1: '😞',
+    0: '😭',
+  }
 
   return (
     <div className={className} key={Number(day.date)} style={divLocation}>
       <div className="day__day-number">
+        <p>
         {getMyDay(day.date)}
+        </p>
+        <p className="smiley">
+        {mental_health[day.mental_health - 5]}
+        </p>
       </div>
     </div>
   )

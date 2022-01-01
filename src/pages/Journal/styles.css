@@ -11,13 +11,13 @@
   width: calc(var(--day-size) * 1px);
   height: calc(var(--day-size) * 1px);
   background: white;
+  border: 1pt solid black;
   margin: 5px;
   position: absolute;
 
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .day__day-number {
@@ -55,4 +55,7 @@
 
 .mh2:after {
   height: calc(var(--day-size) * .4px);
+
+.smiley {
+  font-size: 30px;
 }
