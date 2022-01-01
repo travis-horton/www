@@ -1,0 +1,36 @@
+.journal {
+  width: 595px;
+  background: lightgrey;
+  position: relative;
+  height: 800px;
+  margin: auto;
+}
+
+.journal__day {
+  width: 75px;
+  height: 75px;
+  background: white;
+  border: 1pt solid black;
+  margin: 5px;
+  position: absolute;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.day__day-number {
+  font-size: 8px;
+}
+
+.s {
+  background: cyan;
+}
+
+.day__day-number > p {
+  margin: 0;
+}
+
+.smiley {
+  font-size: 30px;
+}
