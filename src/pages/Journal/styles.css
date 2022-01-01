@@ -7,16 +7,17 @@
 }
 
 .journal__day {
-  width: 75px;
-  height: 75px;
+  --day-size: 75;
+  width: calc(var(--day-size) * 1px);
+  height: calc(var(--day-size) * 1px);
   background: white;
-  border: 1pt solid black;
   margin: 5px;
   position: absolute;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
 }
 
 .day__day-number {
@@ -31,6 +32,27 @@
   margin: 0;
 }
 
-.smiley {
-  font-size: 30px;
+.mh5:after, .mh4:after, .mh3:after, .mh2:after {
+  content: '';
+  width: 4px;
+  background: cyan;
+  position: absolute;
+  right: 0px;
+  bottom: 0;
+}
+
+.mh5:after {
+  height: calc(var(--day-size) * 1px);
+}
+
+.mh4:after {
+  height: calc(var(--day-size) * .8px);
+}
+
+.mh3:after {
+  height: calc(var(--day-size) * .6px);
+}
+
+.mh2:after {
+  height: calc(var(--day-size) * .4px);
 }
