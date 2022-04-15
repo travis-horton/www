@@ -2,7 +2,6 @@
   "name": "www",
   "version": "2.1.0",
   "description": "website with parcel",
-  "main": "dist/index.html",
   "scripts": {
     "test": "jest",
     "build": "parcel build ./src/index.html",
@@ -32,7 +31,8 @@
     "@babel/preset-env": "^7.14.4",
     "@babel/preset-react": "^7.13.13",
     "@parcel/transformer-image": "2.0.0-nightly.2332",
-    "parcel": "^2.0.0-beta.3.1"
+    "parcel": "^2.0.0-beta.3.1",
+    "process": "^0.11.10"
   },
   "babel": {
     "presets": [
