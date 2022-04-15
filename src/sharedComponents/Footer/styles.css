@@ -14,10 +14,10 @@
 .main-footer__content {
   margin: 0;
   padding: 15px;
+}
 
-  &:hover {
-    cursor: default;
-  }
+.main-footer__content:hover {
+  cursor: default;
 }
 
 .main-footer__logo {
