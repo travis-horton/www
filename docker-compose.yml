@@ -3,8 +3,7 @@ services:
   web:
     container_name: web
     build: .
-    networks:
-      - "net"
+    network_mode: bridge
     environment:
       - VIRTUAL_HOST=kiddspazz.com
       - LETSENCRYPT_HOST=kiddspazz.com
