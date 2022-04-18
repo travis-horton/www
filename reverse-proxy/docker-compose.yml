@@ -1,47 +1,38 @@
 version: "3.7"
 
 services:
-    reverse-proxy:
-        image: "jwilder/nginx-proxy:latest"
-        container_name: "reverse-proxy"
+    nginx-proxy:
+        image: "nginxproxy/nginx-proxy"
+        container_name: "nginx-proxy"
         volumes:
-            - "html:/usr/share/nginx/html"
-            - "dhparam:/etc/nginx/dhparam"
+            - "conf:/etc/nginx/conf.d"
             - "vhost:/etc/nginx/vhost.d"
-            - "certs:/etc/nginx/certs"
-            - "/run/docker.sock:/tmp/docker.sock:ro"
+            - "html:/usr/share/nginx/html"
+            - "certs:/etc/nginx/certs:ro"
+            - "/var/run/docker.sock:/tmp/docker.sock:ro"
         restart: "always"
-        networks:
-            - "net"
+        network_mode: "bridge"
         ports:
             - "80:80"
             - "443:443"
 
-    letsencrypt:
+    acme-companion:
         image: "nginxproxy/acme-companion"
-        container_name: "letsencrypt-helper"
+        container_name: "nginx-proxy-acme"
+        volumes_from:
+            - "nginx-proxy"
         volumes:
-            - "html:/usr/share/nginx/html"
-            - "dhparam:/etc/nginx/dhparam"
-            - "vhost:/etc/nginx/vhost.d"
-            - "certs:/etc/nginx/certs"
-            - "/run/docker.sock:/var/run/docker.sock:ro"
+            - "certs:/etc/nginx/certs:rw"
+            - "acme:/etc/acme.sh"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        network_mode: bridge
         environment:
-            NGINX_PROXY_CONTAINER: "reverse-proxy"
             DEFAULT_EMAIL: "travis@travish.com"
-            ACME_CA_URI: "https://acme-staging-v02.api.letsencrypt.org/directory"
         restart: "always"
-        depends_on:
-            - "reverse-proxy"
-        networks:
-            - "net"
 
 volumes:
-  certs:
-  html:
-  vhost:
-  dhparam:
-
-networks:
-  net:
-    external: true
+    conf:
+    vhost:
+    html:
+    certs:
+    acme:
