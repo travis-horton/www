@@ -18,7 +18,7 @@ services:
             - "443:443"
 
     letsencrypt:
-        image: "jrcs/letsencrypt-nginx-proxy-companion:latest"
+        image: "nginxproxy/acme-companion"
         container_name: "letsencrypt-helper"
         volumes:
             - "html:/usr/share/nginx/html"
