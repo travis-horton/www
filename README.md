@@ -48,7 +48,7 @@ production automatically deploys on merge with `main`.
 
 # authors
 
-* kiddspazz/thor/travis, github: [@github](https://github.com/kiddspazz)
+* kiddspazz/thor/travis, [github](https://github.com/kiddspazz)
 
 uses kiddspazz's perlin noise, asteroids, ray-tracer, polygon-race and orbitz repos
 
