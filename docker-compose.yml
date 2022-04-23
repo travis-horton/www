@@ -10,24 +10,25 @@ services:
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     restart: always
-    network-mode: bridge
+    network_mode: bridge
     ports:
       - "80:80"
       - "443:443"
 
-    nginx-proxy-acme:
-      image: nginxproxy/acme-companion
-      container_name: nginx-proxy-acme
-      volumes-from:
-        - nginx-proxy
-      volumes:
-        - certs:/etc/nginx/certs
-        - acme:/etc/acme.sh
-        - /run/docker.sock:/var/run/docker.sock:ro
-      environment:
-        - DEFAULT_EMAIL=travis@travish.com
-      restart: always
-      network-mode: bridge
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs
+      - acme:/etc/acme.sh
+      - /run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DEFAULT_EMAIL=travis@travish.com
+    restart: always
+    network_mode: bridge
+
   web:
     container_name: web
     build: .
@@ -38,6 +39,7 @@ services:
       - VIRTUAL_HOST=kiddspazz.com
       - LETSENCRYPT_HOST=kiddspazz.com
       - VIRTUAL_PORT=80
+      - LETSENCRYPT_TEST=true
 
 
 volumes:
@@ -45,8 +47,10 @@ volumes:
   html:
   vhost:
   dhparam:
+  acme:
 
+# the default network name is [parent-dir]_default, so in this case www_default
 networks:
   default:
-    external:
-      # the default network name is [parent-dir]_default, so in this case www_default
+    name: www_default
+    driver: bridge
