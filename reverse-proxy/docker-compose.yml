@@ -12,9 +12,15 @@ services:
             - "/var/run/docker.sock:/tmp/docker.sock:ro"
         restart: "always"
         network_mode: "bridge"
+          - certs:/etc/nginx/certs
+          - vhost:/etc/nginx/vhost.d
+          - html:/usr/share/nginx/html
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+        restart: always
+        network-mode: bridge
         ports:
-            - "80:80"
-            - "443:443"
+          - "80:80"
+          - "443:443"
 
     acme-companion:
         image: "nginxproxy/acme-companion"
