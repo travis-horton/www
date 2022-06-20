@@ -1,10 +1,11 @@
 # notes
 ok... here's the deal. the following commands will set everything up basically how it should be,
-but right now the docker containers in production are on the network "bridge", which is the default
-network. the problem is that you can only start the nginx proxy docker container no more than 5
-times within 168hrs (1week) (cause the certificate authority will restrict your sign certs). what
-this means is that in a week i should go restart that nginx proxy docker container in production on
-a dedicated network (the docs suggest "net").
+
+the problem is that you if you start the nginx proxy docker container more than 5 times within
+168hrs (1week) the certificate authority will restrict your sign certs.
+
+the docker docs sa you should probably use a network other than the default "bridge", but i think i
+was reading somewhere else that part of this setup requires the default network...
 
 
 ## start the nginx proxy docker container -- to be done in stage and prod
