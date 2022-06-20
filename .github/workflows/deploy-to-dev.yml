@@ -29,7 +29,7 @@ jobs:
           tags: kiddspazz/www_web:latest
 
       -
-        name: Deploy to web app to kiddspazz.com
+        name: Deploy web app to kiddspazz.com
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.DIGITALOCEAN_HOST }}
@@ -43,7 +43,7 @@ jobs:
             docker rm www_web
             docker run --rm --name web -e VIRTUAL_HOST=kiddspazz.com \
               -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 \
-              --network net -d kiddspazz/www_web
+              -d kiddspazz/www_web
             docker run --rm --name www_web -e VIRTUAL_HOST=www.kiddspazz.com \
               -e LETSENCRYPT_HOST=www.kiddspazz.com -e VIRTUAL_PORT=80 \
-              --network net -d kiddspazz/www_web
+              -d kiddspazz/www_web
