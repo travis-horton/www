@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Route, Switch, Link, useRouteMatch, useParams
+  Route, Switch, Link, useRouteMatch
 } from 'react-router-dom';
 
 import {
