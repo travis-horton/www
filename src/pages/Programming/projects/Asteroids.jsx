@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { renderAsteroidsInElement } from './asteroids/index.js';
+import renderAsteroidsInElement from './asteroids/index.js';
 
 export const Asteroids = () => {
   useEffect(() => { renderAsteroidsInElement('box'); }, []);

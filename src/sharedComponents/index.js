@@ -3,5 +3,5 @@ import { default as Footer } from './Footer';
 
 export {
   Header,
-  Footer
-}
+  Footer,
+};
