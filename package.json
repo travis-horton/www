@@ -6,7 +6,9 @@
     "test": "jest",
     "build": "parcel build ./src/index.html",
     "serve": "parcel serve ./src/index.html",
-    "rebuild": "docker stop web; docker-compose build && docker-compose up -d"
+    "rebuild": "docker stop web; docker-compose build && docker-compose up -d",
+    "lint": "eslint",
+    "lint:fix": "eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,12 @@
     "@babel/preset-env": "^7.14.4",
     "@babel/preset-react": "^7.13.13",
     "@parcel/transformer-image": "2.0.0-nightly.2332",
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "parcel": "^2.0.0-beta.3.1",
     "process": "^0.11.10"
   },
