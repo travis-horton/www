@@ -3,26 +3,32 @@ import React from 'react';
 import performanceData from './performance_data';
 import './styles.css';
 
-const createPerfList = (performances) =>
-  performances.map((perf) =>
-    <li className="performance" key={perf.date}>
-      <h2 className="perfomance__name">{perf.name}</h2>
-      <p>Performers: {perf.performers}</p>
-      <a href={perf.googleMapsLink}>Location: {perf.venue}</a>
-      {perf.program && <p>Program: {perf.program}</p>}
-      {perf.description && <p>Description: {perf.description}</p>}
-      <p>Time and Date: {perf.date.toLocaleString()}</p>
-    </li>
-  );
+const createPerfList = (performances) => (
+  <table className='concerts'>
+    {
+      performances.map((perf) => (
+        <tr className="performance" key={perf.date}>
+          <td className="perfomance__name">{perf.name}</td>
+          <td>Performers: {perf.performers}</td>
+          <td><a href={perf.googleMapsLink}>Location: {perf.venue}</a></td>
+          {perf.program && <td>Program: {perf.program}</td>}
+          {perf.description && <td>Description: {perf.description}</td>}
+          <td>Time and Date: {perf.date.toLocaleString()}</td>
+        </tr>
+      ))
+    }
+  </table>
+)
 
 const upcomingPerformances = 
   createPerfList(performanceData.filter((perf) => 
-  perf.date > new Date()
-))
+    perf.date > new Date()
+  ))
 
 const pastPerformances = 
-  createPerfList(performanceData.filter((perf) => 
-  perf.date < new Date()
+  createPerfList(performanceData.filter((perf) => {
+    return perf.date < new Date()
+  }
 ))
 
 const PerformanceCalendar = () => {
