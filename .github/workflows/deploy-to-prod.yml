@@ -28,4 +28,3 @@ jobs:
             docker run --rm --name www_web -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
               -d kiddspazz/www_web
-            docker rmi $(docker images --filter 'dangling=true' -q --no-trunc)
