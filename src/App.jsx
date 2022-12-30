@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import {
-  BrowserRouter, Route, Switch, Redirect
+  BrowserRouter, Route, Switch
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
@@ -31,7 +30,7 @@ const App = () => {
         <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Switch>
           <Route path="/" exact>
-            <Home selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+            <Home setSelectedTab={setSelectedTab} />
           </Route>
         </Switch>
         <Switch>

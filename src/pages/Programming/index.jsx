@@ -47,7 +47,7 @@ const ProgrammingContent = () => {
   return (
     <div>
       <p>
-        I started working for <a href="https://www.joinhonor.com">honor</a> late
+        I started working for <a href="https://www.honorcare.com">honor</a> late
         October of 2021. I&apos;m really lucky and happy to be here: all of my
         colleagues are smart and welcoming, my manager is reasonable,
         empathetic, and honest, and the work I&apos;m doing is fun, engaging,
