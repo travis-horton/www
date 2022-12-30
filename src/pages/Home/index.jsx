@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 
 import headshotThumb from 'url:/src/assets/media/headshot-thumb.png';
 import headshot from 'url:/src/assets/media/headshot.png';
-import monkeyThumb from 'url:/src/assets/media/monkeh-thumb.jpg';
-import monkey from 'url:/src/assets/media/monkeh.jpg';
 
 import Image from '/src/sharedComponents/Image';
 
 import './styles.css';
 
-const Home = ({ selectedTab, setSelectedTab }) => (
+const Home = ({ setSelectedTab }) => (
   <main>
     <Image
       className='home__profile-pic'
@@ -36,37 +34,49 @@ const Home = ({ selectedTab, setSelectedTab }) => (
     </header>
     <div>
       <p>
-        I&apos;m Travis. I program in React/JavaScript/CSS/HTML and I&apos;ve been trying
+        I&apos;m Travis. I program in React/JavaScript/CSS/HTML/Python and I&apos;ve been trying
         to learn Rust. I play the piano. I do some accounting on the side. I live in Boise, Idaho
-        with my wonderful wife Anne and our cat Monkey. And I run. Really slowly.
+        with my wonderful wife Anne.
       </p>
       <p>
-        We bought a house in the summer of 2020! What an adult thing to do &mdash; I
-        definitely never thought I&apos;d get this responsible.
+        For the last few years I've been programming during the morning/early
+        afternoon and teaching piano in the afternoons and into the evening. I
+        work for <a href="https://www.honorcare.com">honor</a> and the{' '}
+        <a
+          href="https://www.collegeofidaho.edu/directory/travis-horton"
+          rel="noreferrer"
+          target="_blank"
+        >College of Idaho</a>. I often say I work too many hours, but I
+        don&apos;t want to quit anything because I really love all the work
+        I&apos;m doing!
       </p>
-      <div className='home__monkey-pic'>
-        <Image alt="monkey" thumb={monkeyThumb} src={monkey} height={210} width={157} />
-      </div>
-      <p>
-        I attended the Recurse Center Spring 1, 2019 batch: February 18 - May 9. It was a
-        great time, I met a lot of amazing people, and I learned a ton.
-        {' '}
-        <Link to={`/programming`} onClick={() => setSelectedTab('programming')}>Here</Link>
-        {' '}
-        are some of the projects I worked on while I was there and before.
-      </p>
-      <p>
-        In 2017, Anne and I decided to leave our 6-year home of Brooklyn for the road.
-        We bought an RV and traveled the country for a year and a half. I studied
-        programming part time while I worked half-time as an accountant for the Brooklyn
-        Youth Chorus.
-      </p>
+      <h4>A little background</h4>
       <p>
         I studied piano for 6 years at UNC-School of the Arts and 2 more years at the New
         England Conservatory. I moved to New York City in 2011 and worked as a pianist
         there for 6 years &mdash; played Carnegie Hall, Joe&apos;s Pub, Off-Broadway shows,
         worked for NYU and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I
-        rode my bicycle a lot.
+        rode my bicycle a lot. I married Anne in September, 2016.
+      </p>
+      <p>
+        In 2017, Anne and I decided to leave our 6-year home of Brooklyn for the road.
+        We bought an RV and traveled the country for a year and a half. I studied
+        programming part time while I worked half-time as an accountant for the Brooklyn
+        Youth Chorus. We decided on Boise as a home-base, and shortly thereafter
+        I was accepted into the{' '}
+        <a
+          href="https://www.recurse.com/"
+          rel="noreferrer"
+          target="_blank"
+        >Recurse Center</a>. That was awesome; if you have any interest in
+        programming, please do check it out.
+      </p>
+      <p>
+         <Link
+           to={`/programming`}
+          onClick={() => setSelectedTab('programming')}
+         >Here</Link> are a few things I&apos;ve built on my own, mostly from a
+        long time ago now.
       </p>
     </div>
   </main>
