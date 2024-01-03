@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Route, Switch, Link, useRouteMatch
+  Route, Switch, Link, useRouteMatch,
 } from 'react-router-dom';
 
 import {
@@ -13,7 +13,7 @@ import {
 
 import './styles.css';
 
-const Programming = () => {
+function Programming() {
   const match = useRouteMatch();
 
   return (
@@ -42,12 +42,16 @@ const Programming = () => {
   );
 }
 
-const ProgrammingContent = () => {
+function ProgrammingContent() {
   const match = useRouteMatch();
   return (
     <div>
       <p>
-        I started working for <a href="https://www.honorcare.com">honor</a> late
+        I started working for
+        {' '}
+        <a href="https://www.honorcare.com">honor</a>
+        {' '}
+        late
         October of 2021. I&apos;m really lucky and happy to be here: all of my
         colleagues are smart and welcoming, my manager is reasonable,
         empathetic, and honest, and the work I&apos;m doing is fun, engaging,
@@ -97,17 +101,21 @@ const ProgrammingContent = () => {
             target="blank"
           >
             Postgres tutorial
-          </a><br />
-          Learn{' '}
+          </a>
+          <br />
+          Learn
+          {' '}
           <a
             href="https://doc.rust-lang.org/stable/book/"
             target="blank"
           >
             Rust
-          </a><br />
+          </a>
+          <br />
           <a href="https://www.nand2tetris.org" target="blank">
             Nand2tetris
-          </a><br />
+          </a>
+          <br />
         </section>
         <section>
           <h2>Works in progress</h2>
@@ -118,7 +126,7 @@ const ProgrammingContent = () => {
           </p>
           <p>
             Those are the big changes that you can see, but in addition I
-            implemented automated builds; I have a "development" site
+            implemented automated builds; I have a &quot;development&quot; site
             (kiddspazz.com) which gets automatically built out on any push to my
             dev branch and this url (www.travish.com) which gets built out on
             any push to my main branch. All of this is using docker containers
@@ -126,47 +134,71 @@ const ProgrammingContent = () => {
           </p>
           <p>
             This is some fun stuff y&apos;all: now I can make some little
-            changes, see them in my "development" site pretty much immediately,
-            and get them to my "production" site within minutes. For instance,
-            the paragraph you&apos;re reading now was written on 7/29/21 at
-            11:00. It was live on the "production" site by 11:10!
+            changes, see them in my &quot;development&quot; site pretty much
+            immediately, and get them to my &quot;production&quot; site within
+            minutes. For instance, the paragraph you&apos;re reading now was
+            written on 7/29/21 at 11:00. It was live on the &quot;production&quot;
+            site by 11:10!
           </p>
           <h2>Next projects</h2>
-          RPG: Roam the internet fighting html elements<br />
+          RPG: Roam the internet fighting html elements
+          <br />
           Goals tracker app
         </section>
         <section>
           <h2>Fun quotes</h2>
           <p>
-            This is the output if you type <code>import this</code> in a python
+            This is the output if you type
+            {' '}
+            <code>import this</code>
+            {' '}
+            in a python
             interpreter:
           </p>
           <p>
-            Beautiful is better than ugly.<br/>
-            Explicit is better than implicit.<br/>
-            Simple is better than complex.<br/>
-            Complex is better than complicated.<br/>
-            Flat is better than nested.<br/>
-            Sparse is better than dense.<br/>
-            Readability counts.<br/>
-            Special cases aren't special enough to break the rules.<br/>
-            Although practicality beats purity.<br/>
-            Errors should never pass silently.<br/>
-            Unless explicitly silenced.<br/>
-            In the face of ambiguity, refuse the temptation to guess.<br/>
+            Beautiful is better than ugly.
+            <br />
+            Explicit is better than implicit.
+            <br />
+            Simple is better than complex.
+            <br />
+            Complex is better than complicated.
+            <br />
+            Flat is better than nested.
+            <br />
+            Sparse is better than dense.
+            <br />
+            Readability counts.
+            <br />
+            Special cases aren&apos;t special enough to break the rules.
+            <br />
+            Although practicality beats purity.
+            <br />
+            Errors should never pass silently.
+            <br />
+            Unless explicitly silenced.
+            <br />
+            In the face of ambiguity, refuse the temptation to guess.
+            <br />
             There should be one-- and preferably only one --obvious way to do
-            it.<br/>
+            it.
+            <br />
             Although that way may not be obvious at first unless you're Dutch.
-            Now is better than never.<br/>
-            Although never is often better than *right* now.<br/>
-            If the implementation is hard to explain, it's a bad idea.<br/>
-            If the implementation is easy to explain, it may be a good idea.<br/>
-            Namespaces are one honking great idea -- let's do more of those!<br/>
+            Now is better than never.
+            <br />
+            Although never is often better than *right* now.
+            <br />
+            If the implementation is hard to explain, it's a bad idea.
+            <br />
+            If the implementation is easy to explain, it may be a good idea.
+            <br />
+            Namespaces are one honking great idea -- let's do more of those!
+            <br />
           </p>
         </section>
       </div>
     </div>
   );
-};
+}
 
 export default Programming;
