@@ -34,21 +34,24 @@ const Home = ({ setSelectedTab }) => (
     </header>
     <div>
       <p>
-        I&apos;m Travis. I program in React/JavaScript/CSS/HTML/Python and I&apos;ve been trying
-        to learn Rust. I play the piano. I do some accounting on the side. I live in Boise, Idaho
+        I&apos;m Travis. I program in React/JavaScript/CSS/HTML/Python and I
+        play the piano. I do some accounting on the side. I live in Boise, Idaho
         with my wonderful wife Anne.
       </p>
       <p>
-        For the last few years I've been programming during the morning/early
-        afternoon and teaching piano in the afternoons and into the evening. I
-        work for <a href="https://www.honorcare.com">honor</a> and the{' '}
+        I work for the{' '}
         <a
           href="https://www.collegeofidaho.edu/directory/travis-horton"
           rel="noreferrer"
           target="_blank"
-        >College of Idaho</a>. I often say I work too many hours, but I
-        don&apos;t want to quit anything because I really love all the work
-        I&apos;m doing!
+        >College of Idaho</a> as the Professor of Piano, Choir Director, and
+        staff pianist.
+      </p>
+      <p>
+        Until November 2023 I was programming during the morning/early afternoon
+        and teaching piano in the afternoons and into the evening. Most
+        recently, I was working for <a href="https://www.honorcare.com">honor</a>
+        {' '}during the day. That was a great job.
       </p>
       <h4>A little background</h4>
       <p>
