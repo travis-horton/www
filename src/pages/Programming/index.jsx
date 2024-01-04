@@ -9,6 +9,7 @@ import {
   Orbitz,
   Asteroids,
   PolygonRace,
+  SeximalTimeKeeping,
 } from './projects';
 
 import './styles.css';
@@ -33,6 +34,9 @@ function Programming() {
         </Route>
         <Route path={`${match.path}/polygon-race`}>
           <PolygonRace />
+        </Route>
+        <Route path={`${match.path}/seximal-time-keeping`}>
+          <SeximalTimeKeeping />
         </Route>
         <Route path={match.path}>
           <ProgrammingContent />
@@ -91,6 +95,11 @@ function ProgrammingContent() {
           <li>
             <Link to={`${match.url}/polygon-race`}>
               Polygon race
+            </Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/seximal-time-keeping`}>
+              Seximal
             </Link>
           </li>
         </ul>

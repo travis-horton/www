@@ -13,3 +13,6 @@
 [submodule "src/pages/Programming/projects/polygon-race"]
 	path = src/pages/Programming/projects/polygon-race
 	url = https://github.com/kiddspazz/polygon-race.git
+[submodule "src/pages/Programming/projects/seximal_clock"]
+	path = src/pages/Programming/projects/seximal_clock
+	url = https://github.com/travis-horton/seximal_clock
