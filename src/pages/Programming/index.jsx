@@ -97,11 +97,6 @@ function ProgrammingContent() {
               Polygon race
             </Link>
           </li>
-          <li>
-            <Link to={`${match.url}/seximal-time-keeping`}>
-              Seximal
-            </Link>
-          </li>
         </ul>
         <section>
           <h2>Goals</h2>
@@ -128,27 +123,13 @@ function ProgrammingContent() {
         </section>
         <section>
           <h2>Works in progress</h2>
-          <p>
-            I&apos;ve been recently focused on re-building this website. That
-            has included giving it a full design make-over (I hope you like
-            it!), but also implementing React and React Router.
-          </p>
-          <p>
-            Those are the big changes that you can see, but in addition I
-            implemented automated builds; I have a &quot;development&quot; site
-            (kiddspazz.com) which gets automatically built out on any push to my
-            dev branch and this url (www.travish.com) which gets built out on
-            any push to my main branch. All of this is using docker containers
-            which also handle the routing and ssl/https stuff!
-          </p>
-          <p>
-            This is some fun stuff y&apos;all: now I can make some little
-            changes, see them in my &quot;development&quot; site pretty much
-            immediately, and get them to my &quot;production&quot; site within
-            minutes. For instance, the paragraph you&apos;re reading now was
-            written on 7/29/21 at 11:00. It was live on the &quot;production&quot;
-            site by 11:10!
-          </p>
+          <ul>
+            <li>
+              <Link to={`${match.url}/seximal-time-keeping`}>
+                Seximal
+              </Link>
+            </li>
+          </ul>
           <h2>Next projects</h2>
           RPG: Roam the internet fighting html elements
           <br />
