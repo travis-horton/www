@@ -10,6 +10,7 @@ import {
   Asteroids,
   PolygonRace,
   SeximalTimeKeeping,
+  BinaryNumerals,
 } from './projects';
 
 import './styles.css';
@@ -37,6 +38,9 @@ function Programming() {
         </Route>
         <Route path={`${match.path}/seximal-time-keeping`}>
           <SeximalTimeKeeping />
+        </Route>
+        <Route path={`${match.path}/binary`}>
+          <BinaryNumerals />
         </Route>
         <Route path={match.path}>
           <ProgrammingContent />
