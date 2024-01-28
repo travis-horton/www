@@ -3,7 +3,7 @@ import React, {ReactElement} from 'react';
 import './styles.css';
 
 const SIZE = 100;
-const SCALE = 4;
+const SCALE = 2;
 
 type Vector = {
   x: number,
@@ -79,8 +79,8 @@ export const BinaryNumerals = () => {
   return (
     <div>
       <svg viewBox={`0 0 ${SIZE} ${SIZE * 8}`}>
-        {[...Array(15).keys()].map(idx => (
-          <BinaryNumber startVec={{x: 6, y: 6 + (SCALE * (5 * idx))}} value={idx}/>
+        {[...Array(16).keys()].map(idx => (
+          <BinaryNumber startVec={{x: 6, y: 2 + (SCALE * (5 * idx))}} value={idx}/>
         ))}
       </svg>
     </div>
