@@ -80,7 +80,10 @@ export const BinaryNumerals = () => {
     <div>
       <svg viewBox={`0 0 ${SIZE} ${SIZE * 8}`}>
         {[...Array(16).keys()].map(idx => (
-          <BinaryNumber startVec={{x: 6, y: 2 + (SCALE * (5 * idx))}} value={idx}/>
+          <>
+          <text x="4" y={5 * SCALE + (SCALE * (5 * idx))}>{idx}</text>
+          <BinaryNumber startVec={{x: 20, y: 2 + (SCALE * (5 * idx))}} value={idx}/>
+          </>
         ))}
       </svg>
     </div>
