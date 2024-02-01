@@ -10,6 +10,7 @@ import {
   Asteroids,
   PolygonRace,
   SeximalTimeKeeping,
+  BinaryNumerals,
 } from './projects';
 
 import './styles.css';
@@ -38,6 +39,9 @@ function Programming() {
         <Route path={`${match.path}/seximal-time-keeping`}>
           <SeximalTimeKeeping />
         </Route>
+        <Route path={`${match.path}/binary`}>
+          <BinaryNumerals />
+        </Route>
         <Route path={match.path}>
           <ProgrammingContent />
         </Route>
@@ -51,23 +55,19 @@ function ProgrammingContent() {
   return (
     <div>
       <p>
-        I started working for
-        {' '}
-        <a href="https://www.honorcare.com">honor</a>
-        {' '}
-        late
-        October of 2021. I&apos;m really lucky and happy to be here: all of my
-        colleagues are smart and welcoming, my manager is reasonable,
-        empathetic, and honest, and the work I&apos;m doing is fun, engaging,
-        and meaningful. It&apos;s great.
+        Yeah, I write stuff that computers can read sometimes. I like moving
+        pixels around and doing math problems to get them to do so in
+        interesting ways.
       </p>
       <p>
-        Our stack is Typescript/React and Python. I haven&apos;t done too much
-        backend work before this role so I&apos;m definitely still learning
-        Python, but it&apos;s going well.
+        I also like vim. I spend way too much time in my vim config (ostensibly)
+        increasing my productivity (but really just making my life more fun).
       </p>
       <p>
-        And we&apos;re hiring, so if your looking for a job: reach out!
+        I've been doing some combination of the above (in addition to
+        productive, profitable, and sometimes corporate work) professionally
+        (read: in exchange for sweet dollar bills) for 5 years. Mostly in react
+        and typescript, but also in python, MySQL, and some other idioms.
       </p>
       <div>
         <h2>Personal Projects</h2>
@@ -127,6 +127,11 @@ function ProgrammingContent() {
             <li>
               <Link to={`${match.url}/seximal-time-keeping`}>
                 Seximal
+              </Link>
+            </li>
+            <li>
+              <Link to={`${match.url}/binary`}>
+                Binary
               </Link>
             </li>
           </ul>
