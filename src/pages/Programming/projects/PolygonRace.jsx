@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { renderPolygonRaceInElement } from './polygon-race/index.js';
+import renderPolygonRaceInElement from './polygon-race/index.js';
 
 export const PolygonRace = () => {
   useEffect(() => { renderPolygonRaceInElement('box'); }, []);

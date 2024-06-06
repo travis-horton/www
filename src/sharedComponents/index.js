@@ -1,5 +1,5 @@
-import { default as Header } from './Header';
-import { default as Footer } from './Footer';
+import Header from './Header';
+import Footer from './Footer';
 
 export {
   Header,
