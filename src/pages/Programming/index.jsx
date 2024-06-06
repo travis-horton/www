@@ -175,19 +175,19 @@ function ProgrammingContent() {
             <br />
             In the face of ambiguity, refuse the temptation to guess.
             <br />
-            There should be one-- and preferably only one --obvious way to do
+            There should be one&mdash;and preferably only one&mdash;obvious way to do
             it.
             <br />
-            Although that way may not be obvious at first unless you're Dutch.
+            Although that way may not be obvious at first unless you&apos;re Dutch.
             Now is better than never.
             <br />
             Although never is often better than *right* now.
             <br />
-            If the implementation is hard to explain, it's a bad idea.
+            If the implementation is hard to explain, it&apos;s a bad idea.
             <br />
             If the implementation is easy to explain, it may be a good idea.
             <br />
-            Namespaces are one honking great idea -- let's do more of those!
+            Namespaces are one honking great idea -- let&apos;s do more of those!
             <br />
           </p>
         </section>
