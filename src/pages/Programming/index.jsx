@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Route, Switch, Link, useRouteMatch
+  Route, Switch, Link, useRouteMatch,
 } from 'react-router-dom';
 
 import {
@@ -9,11 +9,13 @@ import {
   Orbitz,
   Asteroids,
   PolygonRace,
+  SeximalTimeKeeping,
+  BinaryNumerals,
 } from './projects';
 
 import './styles.css';
 
-const Programming = () => {
+function Programming() {
   const match = useRouteMatch();
 
   return (
@@ -34,6 +36,12 @@ const Programming = () => {
         <Route path={`${match.path}/polygon-race`}>
           <PolygonRace />
         </Route>
+        <Route path={`${match.path}/seximal-time-keeping`}>
+          <SeximalTimeKeeping />
+        </Route>
+        <Route path={`${match.path}/binary`}>
+          <BinaryNumerals />
+        </Route>
         <Route path={match.path}>
           <ProgrammingContent />
         </Route>
@@ -42,24 +50,24 @@ const Programming = () => {
   );
 }
 
-const ProgrammingContent = () => {
+function ProgrammingContent() {
   const match = useRouteMatch();
   return (
     <div>
       <p>
-        I started working for <a href="https://www.honorcare.com">honor</a> late
-        October of 2021. I&apos;m really lucky and happy to be here: all of my
-        colleagues are smart and welcoming, my manager is reasonable,
-        empathetic, and honest, and the work I&apos;m doing is fun, engaging,
-        and meaningful. It&apos;s great.
+        Yeah, I write stuff that computers can read sometimes. I like moving
+        pixels around and doing math problems to get them to do so in
+        interesting ways.
       </p>
       <p>
-        Our stack is Typescript/React and Python. I haven&apos;t done too much
-        backend work before this role so I&apos;m definitely still learning
-        Python, but it&apos;s going well.
+        I also like vim. I spend way too much time in my vim config (ostensibly)
+        increasing my productivity (but really just making my life more fun).
       </p>
       <p>
-        And we&apos;re hiring, so if your looking for a job: reach out!
+        I've been doing some combination of the above (in addition to
+        productive, profitable, and sometimes corporate work) professionally
+        (read: in exchange for sweet dollar bills) for 5 years. Mostly in react
+        and typescript, but also in python, MySQL, and some other idioms.
       </p>
       <div>
         <h2>Personal Projects</h2>
@@ -97,76 +105,95 @@ const ProgrammingContent = () => {
             target="blank"
           >
             Postgres tutorial
-          </a><br />
-          Learn{' '}
+          </a>
+          <br />
+          Learn
+          {' '}
           <a
             href="https://doc.rust-lang.org/stable/book/"
             target="blank"
           >
             Rust
-          </a><br />
+          </a>
+          <br />
           <a href="https://www.nand2tetris.org" target="blank">
             Nand2tetris
-          </a><br />
+          </a>
+          <br />
         </section>
         <section>
           <h2>Works in progress</h2>
-          <p>
-            I&apos;ve been recently focused on re-building this website. That
-            has included giving it a full design make-over (I hope you like
-            it!), but also implementing React and React Router.
-          </p>
-          <p>
-            Those are the big changes that you can see, but in addition I
-            implemented automated builds; I have a "development" site
-            (kiddspazz.com) which gets automatically built out on any push to my
-            dev branch and this url (www.travish.com) which gets built out on
-            any push to my main branch. All of this is using docker containers
-            which also handle the routing and ssl/https stuff!
-          </p>
-          <p>
-            This is some fun stuff y&apos;all: now I can make some little
-            changes, see them in my "development" site pretty much immediately,
-            and get them to my "production" site within minutes. For instance,
-            the paragraph you&apos;re reading now was written on 7/29/21 at
-            11:00. It was live on the "production" site by 11:10!
-          </p>
+          <ul>
+            <li>
+              <Link to={`${match.url}/seximal-time-keeping`}>
+                Seximal
+              </Link>
+            </li>
+            <li>
+              <Link to={`${match.url}/binary`}>
+                Binary
+              </Link>
+            </li>
+          </ul>
           <h2>Next projects</h2>
-          RPG: Roam the internet fighting html elements<br />
+          RPG: Roam the internet fighting html elements
+          <br />
           Goals tracker app
         </section>
         <section>
           <h2>Fun quotes</h2>
           <p>
-            This is the output if you type <code>import this</code> in a python
+            This is the output if you type
+            {' '}
+            <code>import this</code>
+            {' '}
+            in a python
             interpreter:
           </p>
           <p>
-            Beautiful is better than ugly.<br/>
-            Explicit is better than implicit.<br/>
-            Simple is better than complex.<br/>
-            Complex is better than complicated.<br/>
-            Flat is better than nested.<br/>
-            Sparse is better than dense.<br/>
-            Readability counts.<br/>
-            Special cases aren't special enough to break the rules.<br/>
-            Although practicality beats purity.<br/>
-            Errors should never pass silently.<br/>
-            Unless explicitly silenced.<br/>
-            In the face of ambiguity, refuse the temptation to guess.<br/>
-            There should be one-- and preferably only one --obvious way to do
-            it.<br/>
-            Although that way may not be obvious at first unless you're Dutch.
-            Now is better than never.<br/>
-            Although never is often better than *right* now.<br/>
-            If the implementation is hard to explain, it's a bad idea.<br/>
-            If the implementation is easy to explain, it may be a good idea.<br/>
-            Namespaces are one honking great idea -- let's do more of those!<br/>
+            Beautiful is better than ugly.
+            <br />
+            Explicit is better than implicit.
+            <br />
+            Simple is better than complex.
+            <br />
+            Complex is better than complicated.
+            <br />
+            Flat is better than nested.
+            <br />
+            Sparse is better than dense.
+            <br />
+            Readability counts.
+            <br />
+            Special cases aren&apos;t special enough to break the rules.
+            <br />
+            Although practicality beats purity.
+            <br />
+            Errors should never pass silently.
+            <br />
+            Unless explicitly silenced.
+            <br />
+            In the face of ambiguity, refuse the temptation to guess.
+            <br />
+            There should be one&mdash;and preferably only one&mdash;obvious way to do
+            it.
+            <br />
+            Although that way may not be obvious at first unless you&apos;re Dutch.
+            Now is better than never.
+            <br />
+            Although never is often better than *right* now.
+            <br />
+            If the implementation is hard to explain, it&apos;s a bad idea.
+            <br />
+            If the implementation is easy to explain, it may be a good idea.
+            <br />
+            Namespaces are one honking great idea -- let&apos;s do more of those!
+            <br />
           </p>
         </section>
       </div>
     </div>
   );
-};
+}
 
 export default Programming;
