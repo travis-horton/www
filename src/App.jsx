@@ -9,11 +9,9 @@ import {
 } from './pages';
 import { Header, Footer } from './sharedComponents';
 
-const subdirectory = () => {
-  return document.location.pathname.split('/')[1];
-};
+const subdirectory = () => document.location.pathname.split('/')[1];
 
-const App = () => {
+function App() {
   const [selectedTab, setSelectedTab] = useState(subdirectory());
 
   return (
@@ -25,7 +23,7 @@ const App = () => {
         <title>thor</title>
       </Helmet>
       <BrowserRouter>
-        <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
+        <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         <Switch>
           <Route path="/" exact>
             <Home setSelectedTab={setSelectedTab} />
