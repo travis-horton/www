@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { renderOrbitzInElement } from './orbitz/index.js';
+import renderOrbitzInElement from './orbitz/index.js';
 
 export const Orbitz = () => {
   useEffect(() => { renderOrbitzInElement('box'); }, []);

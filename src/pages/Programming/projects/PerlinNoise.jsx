@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { renderPerlinNoiseInElement } from './perlin-noise/src';
+import renderPerlinNoiseInElement from './perlin-noise/src';
 
 export const PerlinNoise = () => {
   useEffect(() => { renderPerlinNoiseInElement('box') }, []);

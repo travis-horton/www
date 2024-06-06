@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { renderRayTracerInElement } from './ray-tracer/ray-tracer.js';
+import renderRayTracerInElement from './ray-tracer/ray-tracer.js';
 
 export const RayTracer = () => {
   useEffect(() => { renderRayTracerInElement('box'); }, []);
