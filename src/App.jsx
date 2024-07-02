@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import favicon from './assets/media/favicons/favicon.png';
 
 import {
-  Home, Piano, Programming, Blog, Contact,
+  Home, Piano, Programming, Blog, Contact, Journal,
 } from './pages';
 import { Header, Footer } from './sharedComponents';
 
@@ -47,6 +47,11 @@ function App() {
         <Switch>
           <Route path="/contact">
             <Contact />
+          </Route>
+        </Switch>
+        <Switch>
+          <Route path="/journal">
+            <Journal />
           </Route>
         </Switch>
         <Footer />
