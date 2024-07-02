@@ -1,0 +1,62 @@
+.journal {
+  width: 595px;
+  background: lightgrey;
+  position: relative;
+  height: 800px;
+  margin: auto;
+}
+
+.journal__day {
+  --day-size: 75;
+  width: calc(var(--day-size) * 1px);
+  height: calc(var(--day-size) * 1px);
+  background: white;
+  border: 1pt solid black;
+  margin: 5px;
+  position: absolute;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.day__day-number {
+  font-size: 8px;
+}
+
+.s {
+  background: cyan;
+}
+
+.day__day-number > p {
+  margin: 0;
+}
+
+.mh5:after, .mh4:after, .mh3:after, .mh2:after {
+  content: '';
+  width: 4px;
+  background: cyan;
+  position: absolute;
+  right: 0px;
+  bottom: 0;
+}
+
+.mh5:after {
+  height: calc(var(--day-size) * 1px - 1);
+}
+
+.mh4:after {
+  height: calc(var(--day-size) * .8px);
+}
+
+.mh3:after {
+  height: calc(var(--day-size) * .6px);
+}
+
+.mh2:after {
+  height: calc(var(--day-size) * .4px);
+}
+
+.smiley {
+  font-size: 30px;
+}
