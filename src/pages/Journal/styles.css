@@ -42,7 +42,7 @@
 }
 
 .mh5:after {
-  height: calc(var(--day-size) * 1px);
+  height: calc(var(--day-size) * 1px - 1);
 }
 
 .mh4:after {
@@ -55,6 +55,7 @@
 
 .mh2:after {
   height: calc(var(--day-size) * .4px);
+}
 
 .smiley {
   font-size: 30px;
