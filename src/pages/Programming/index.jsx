@@ -64,7 +64,7 @@ function ProgrammingContent() {
         increasing my productivity (but really just making my life more fun).
       </p>
       <p>
-        I've been doing some combination of the above (in addition to
+        I&apos;ve been doing some combination of the above (in addition to
         productive, profitable, and sometimes corporate work) professionally
         (read: in exchange for sweet dollar bills) for 5 years. Mostly in react
         and typescript, but also in python, MySQL, and some other idioms.
