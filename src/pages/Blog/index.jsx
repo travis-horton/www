@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Route, Switch, Link, useRouteMatch
+  Route, Switch, Link, useRouteMatch,
 } from 'react-router-dom';
 
 import JsThisBlog from './blog-posts/js-this.jsx';
@@ -16,29 +16,29 @@ const Blog = () => {
     <main>
       <Switch>
         <Route path={`${match.path}`} exact>
-          <table class="blog__table-of-contents">
+          <table className="blog__table-of-contents">
             <tbody>
               <tr>
                 <td><time>October 18, 2019</time></td>
-                <td><Link to={`${match.url}/js-this`}>JavaScript's <code>this</code></Link></td>
+                <td><Link to={`${match.url}/js-this`}>JavaScript&apos;s <code>this</code></Link></td>
               </tr>
               <tr>
                 <td><time>June 27, 2019</time></td>
-                <td><a href={`${match.url}/the-flip-flop-1`}>The D Flip-Flop, pt 1</a></td>
+                <td><Link to={`${match.url}/the-flip-flop-1`}>The D Flip-Flop, pt 1</Link></td>
               </tr>
               <tr>
                 <td><time>June 26, 2019</time></td>
-                <td><a href={`${match.url}/the-first-blog`}>The First Blog Post</a></td>
+                <td><Link to={`${match.url}/the-first-blog`}>The First Blog Post</Link></td>
               </tr>
             </tbody>
           </table>
           <hr />
           <p>
-            Plus a cool button that doesn't do anything:
+            Plus a cool button that doesn&apos;t do anything:
           </p>
-          <div class='blog__button-container'>
+          <div className="blog__button-container">
             <Link
-              className='blog__neon-button'
+              className="blog__neon-button"
               to={`${match.url}`}
             >
               Here&apos;s where i write stuff sometimes
