@@ -9,10 +9,10 @@ const Footer = () => (
     <small className='main-footer__content'>
         &copy;&apos;21 kiddspazz
     </small>
-    <a href='https://twitter.com/brightlyopen'>
+    <a href='https://twitter.com/brightlyopen' target='_blank' rel='noreferrer'>
       <img className='main-footer__logo' src={twitterLogo} alt="twitter-logo" />
     </a>
-    <a href='https://www.instagram.com/brightlyopen'>
+    <a href='https://www.instagram.com/brightlyopen' target='_blank' rel='noreferrer'>
       <img className='main-footer__logo' src={instaLogo} alt="instagram-logo" />
     </a>
   </footer>
