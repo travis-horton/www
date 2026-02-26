@@ -8,7 +8,7 @@ import Image from '/src/sharedComponents/Image';
 
 import './styles.css';
 
-function Home({ setSelectedTab }) {
+function Home() {
   return (
     <main>
       <Image
@@ -87,10 +87,7 @@ function Home({ setSelectedTab }) {
           programming, please do check it out.
         </p>
         <p>
-          <Link
-            to="/programming"
-            onClick={() => setSelectedTab('programming')}
-          >
+          <Link to="/programming">
             Here
           </Link>
           {' '}
