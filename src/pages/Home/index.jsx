@@ -57,7 +57,7 @@ function Home() {
           and teaching piano in the afternoons and into the evening. Most
           recently, I was working for
           {' '}
-          <a href="https://www.honorcare.com">honor</a>
+          <a href="https://www.honorcare.com" target="_blank" rel="noreferrer">honor</a>
           {' '}
           during the day. That was a great job.
         </p>
