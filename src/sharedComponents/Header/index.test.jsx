@@ -4,12 +4,12 @@ import { MemoryRouter } from 'react-router-dom';
 import Header from '.';
 
 test('renders without crashing', () => {
-  render(<MemoryRouter><Header /></MemoryRouter>);
+  render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><Header /></MemoryRouter>);
 });
 
 test('marks the home link as selected on the home route', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/']}>
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }} initialEntries={['/']}>
       <Header />
     </MemoryRouter>
   );
@@ -18,7 +18,7 @@ test('marks the home link as selected on the home route', () => {
 
 test('marks the correct link as selected on a sub-route', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/programming']}>
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }} initialEntries={['/programming']}>
       <Header />
     </MemoryRouter>
   );
@@ -27,7 +27,7 @@ test('marks the correct link as selected on a sub-route', () => {
 
 test('does not mark other links as selected', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/programming']}>
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }} initialEntries={['/programming']}>
       <Header />
     </MemoryRouter>
   );
