@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import {
   Home, Piano, Programming, Blog, Contact, Journal, NotFound,
@@ -8,17 +8,17 @@ import { Header, Footer } from './sharedComponents';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Header />
-      <Switch>
-        <Route path="/" exact><Home /></Route>
-        <Route path="/programming"><Programming /></Route>
-        <Route path="/piano"><Piano /></Route>
-        <Route path="/blog"><Blog /></Route>
-        <Route path="/contact"><Contact /></Route>
-        <Route path="/journal"><Journal /></Route>
-        <Route><NotFound /></Route>
-      </Switch>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/programming/*" element={<Programming />} />
+        <Route path="/piano" element={<Piano />} />
+        <Route path="/blog/*" element={<Blog />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
       <Footer />
     </BrowserRouter>
   );
