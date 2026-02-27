@@ -4,8 +4,8 @@ import './styles.css';
 
 function Image({
   alt = 'image',
-  thumb = 'none',
-  src = 'none',
+  thumb = '',
+  src = '',
   className,
   height = 285,
   width = 285,
