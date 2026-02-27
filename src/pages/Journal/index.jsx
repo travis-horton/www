@@ -31,7 +31,7 @@ const getMyDay = (date) => {
   const jsDate = new Date(date);
   const year = jsDate.getFullYear() - 2000;
   const month = (jsDate.getMonth() + 1).toString().padStart(2, '0');
-  const day = jsDate.getDate().toString().padStart(2, '0');;
+  const day = jsDate.getDate().toString().padStart(2, '0');
 
   const myDay = Math.floor((date - MY_BDAY) / (1000 * 60 * 60 * 24));
 
@@ -47,7 +47,7 @@ const Day = (day) => {
 
   let className = 'journal__day';
   className += ` mh${day.mental_health - 5}`;
-  if (parseInt(day.s)) className += " s";
+  if (Number(day.s)) className += " s";
   const mental_health = {
     5: '😁',
     4: '😀',
