@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function ProgrammingContent() {
-  const match = useRouteMatch();
   return (
     <div>
       <p>
@@ -24,27 +23,27 @@ function ProgrammingContent() {
         <h2>Personal Projects</h2>
         <ul>
           <li>
-            <Link to={`${match.url}/perlin-noise`}>
+            <Link to={"/programming/perlin-noise"}>
               Perlin noise
             </Link>
           </li>
           <li>
-            <Link to={`${match.url}/ray-tracer`}>
+            <Link to={"/programming/ray-tracer"}>
               Ray tracer
             </Link>
           </li>
           <li>
-            <Link to={`${match.url}/orbitz`}>
+            <Link to={"/programming/orbitz"}>
               Orbitz
             </Link>
           </li>
           <li>
-            <Link to={`${match.url}/asteroids`}>
+            <Link to={"/programming/asteroids"}>
               Asteroids
             </Link>
           </li>
           <li>
-            <Link to={`${match.url}/polygon-race`}>
+            <Link to={"/programming/polygon-race"}>
               Polygon race
             </Link>
           </li>
@@ -78,12 +77,12 @@ function ProgrammingContent() {
           <h2>Works in progress</h2>
           <ul>
             <li>
-              <Link to={`${match.url}/seximal-time-keeping`}>
+              <Link to={"/programming/seximal-time-keeping"}>
                 Seximal
               </Link>
             </li>
             <li>
-              <Link to={`${match.url}/binary`}>
+              <Link to={"/programming/binary"}>
                 Binary
               </Link>
             </li>

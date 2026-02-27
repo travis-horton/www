@@ -15,7 +15,7 @@ jest.mock('./projects', () => ({
 
 test('renders without crashing', () => {
   render(
-    <MemoryRouter initialEntries={['/programming']}>
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }} initialEntries={['/']}>
       <Programming />
     </MemoryRouter>,
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 import {
   PerlinNoise,
@@ -15,36 +15,18 @@ import ProgrammingContent from './ProgrammingContent';
 import './styles.css';
 
 function Programming() {
-  const match = useRouteMatch();
-
   return (
     <main>
-      <Switch>
-        <Route path={`${match.path}/perlin-noise`}>
-          <PerlinNoise />
-        </Route>
-        <Route path={`${match.path}/ray-tracer`}>
-          <RayTracer />
-        </Route>
-        <Route path={`${match.path}/orbitz`}>
-          <Orbitz />
-        </Route>
-        <Route path={`${match.path}/asteroids`}>
-          <Asteroids />
-        </Route>
-        <Route path={`${match.path}/polygon-race`}>
-          <PolygonRace />
-        </Route>
-        <Route path={`${match.path}/seximal-time-keeping`}>
-          <SeximalTimeKeeping />
-        </Route>
-        <Route path={`${match.path}/binary`}>
-          <BinaryNumerals />
-        </Route>
-        <Route path={match.path}>
-          <ProgrammingContent />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="perlin-noise" element={<PerlinNoise />} />
+        <Route path="ray-tracer" element={<RayTracer />} />
+        <Route path="orbitz" element={<Orbitz />} />
+        <Route path="asteroids" element={<Asteroids />} />
+        <Route path="polygon-race" element={<PolygonRace />} />
+        <Route path="seximal-time-keeping" element={<SeximalTimeKeeping />} />
+        <Route path="binary" element={<BinaryNumerals />} />
+        <Route index element={<ProgrammingContent />} />
+      </Routes>
     </main>
   );
 }
