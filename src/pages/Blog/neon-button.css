@@ -23,7 +23,7 @@
 }
 
 .blog__neon-button:visited {
-  color: var(--clrNeon);;
+  color: var(--clrNeon);
 }
 
 .blog__neon-button::before {

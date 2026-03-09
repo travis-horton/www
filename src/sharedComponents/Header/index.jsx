@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     <header className="main-header">
-      <nav className="main-header__nav">
+      <nav className="main-header__nav" aria-label="Main navigation">
         {
           pages.map((page) => (
             <Link
