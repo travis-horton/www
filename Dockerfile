@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:latest as build
+FROM node:latest AS build
 WORKDIR /app
 
 ARG GIT_HASH=unknown
