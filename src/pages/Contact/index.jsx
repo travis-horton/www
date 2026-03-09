@@ -8,7 +8,7 @@ const Contact = () => (
     <p>
       Email:
       {' '}
-      <a href="mailto:travis@travish.com" target="_blank" rel="noreferrer">travis@travish.com</a>
+      <a href="mailto:travis@travish.com">travis@travish.com</a>
       <br />
       Phone: 919.593.0887
       <br />
