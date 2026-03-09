@@ -7,7 +7,15 @@ const MsPerDay = (1000 * 60 * 60 * 24);
 const MY_BDAY = new Date(1983, 9, 22);
 const HEIGHT = 85;
 const WIDTH = 85;
-const today = new Date();
+
+const MENTAL_HEALTH_EMOJI = {
+  5: '😁',
+  4: '😀',
+  3: '🙂',
+  2: '😐',
+  1: '😞',
+  0: '😭',
+};
 
 const getHOffset = (date) => {
   const weekDay = date.getDay();
@@ -15,6 +23,7 @@ const getHOffset = (date) => {
 };
 
 const getVOffset = (date) => {
+  const today = new Date();
   const mostRecentSunday = new Date(
     today.getFullYear(),
     today.getMonth(),
@@ -33,38 +42,30 @@ const getMyDay = (date) => {
   const month = (jsDate.getMonth() + 1).toString().padStart(2, '0');
   const day = jsDate.getDate().toString().padStart(2, '0');
 
-  const myDay = Math.floor((date - MY_BDAY) / (1000 * 60 * 60 * 24));
+  const myDay = Math.floor((date - MY_BDAY) / MsPerDay);
 
   return `${year}${month}${day} - ${myDay}`;
 };
 
-const Day = (day) => {
-  const date = new Date(day.date);
+const Day = ({ date: rawDate, mental_health, s }) => {
+  const date = new Date(rawDate);
   const divLocation = {
     top: getVOffset(date),
     left: getHOffset(date),
   };
 
   let className = 'journal__day';
-  className += ` mh${day.mental_health - 5}`;
-  if (Number(day.s)) className += " s";
-  const mental_health = {
-    5: '😁',
-    4: '😀',
-    3: '🙂',
-    2: '😐',
-    1: '😞',
-    0: '😭',
-  };
+  if (mental_health != null) className += ` mh${mental_health - 5}`;
+  if (Number(s)) className += " s";
 
   return (
-    <div className={className} key={Number(date)} style={divLocation}>
+    <div className={className} style={divLocation}>
       <div className="day__day-number">
         <p>
           {getMyDay(date)}
         </p>
         <p className="smiley">
-          {mental_health[Math.floor(day.mental_health) - 5]}
+          {mental_health != null && MENTAL_HEALTH_EMOJI[Math.floor(mental_health) - 5]}
         </p>
       </div>
     </div>
@@ -75,7 +76,7 @@ const Journal = () => (
   <main>
     <div className="journal">
       {
-        journalData.map((day) => Day(day))
+        journalData.map((day) => <Day key={day.date} {...day} />)
       }
     </div>
   </main>
