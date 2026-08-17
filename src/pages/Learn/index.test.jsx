@@ -1,0 +1,116 @@
+/* eslint-env jest */
+import React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+
+import Learn from '.';
+
+/*
+ * The drill is generated, so these tests avoid asserting on any particular
+ * question. They assert on the thing that must hold for every question: you
+ * commit an answer, and only then does the truth appear.
+ */
+const renderAt = (path) => render(
+  <MemoryRouter initialEntries={[path]}>
+    <Routes>
+      <Route path="/learn/*" element={<Learn />} />
+    </Routes>
+  </MemoryRouter>,
+);
+
+test('the course index renders', () => {
+  renderAt('/learn');
+  expect(screen.getByText('Seximal')).toBeInTheDocument();
+});
+
+test('the seximal level list renders every level', () => {
+  renderAt('/learn/seximal');
+  expect(screen.getByText(/1\. Counting & names/)).toBeInTheDocument();
+  expect(screen.getByText(/5\. Complements & chains/)).toBeInTheDocument();
+});
+
+const start = () => fireEvent.click(screen.getByRole('button', { name: /^Start/ }));
+
+test('a level teaches before it asks anything', () => {
+  renderAt('/learn/seximal/1');
+
+  // The lesson, not a question.
+  expect(screen.getByRole('heading', { name: 'Counting & names' })).toBeInTheDocument();
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+  start();
+  expect(screen.getByRole('textbox')).toBeInTheDocument();
+});
+
+test('a drill asks before it tells, then tells', () => {
+  renderAt('/learn/seximal/1');
+  start();
+
+  // Nothing is revealed until an answer is committed.
+  expect(screen.queryByText('No.')).not.toBeInTheDocument();
+  expect(screen.queryByText('Yes.')).not.toBeInTheDocument();
+
+  // "999" is not a valid base-six numeral and matches no name, so it is
+  // reliably wrong whatever question came up.
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: '999' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+
+  expect(screen.getByText('No.')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
+});
+
+test('"show me" gives up and reveals, without pretending it was right', () => {
+  renderAt('/learn/seximal/3');
+  start();
+
+  fireEvent.click(screen.getByRole('button', { name: 'show me' }));
+
+  expect(screen.getByText('No.')).toBeInTheDocument();
+});
+
+test('an unknown level does not explode', () => {
+  renderAt('/learn/seximal/99');
+  expect(screen.getByText('No such level')).toBeInTheDocument();
+});
+
+describe('toki pona', () => {
+  test('the level list renders and states its house style', () => {
+    renderAt('/learn/toki-pona');
+    expect(screen.getByRole('heading', { level: 1, name: 'toki pona' })).toBeInTheDocument();
+    expect(screen.getByText(/e marks noun objects/)).toBeInTheDocument();
+  });
+
+  test('a level teaches the twelve words and its rule before drilling', () => {
+    renderAt('/learn/toki-pona/1');
+
+    expect(screen.getByRole('heading', { name: /The first twelve/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'The new grammar: li' })).toBeInTheDocument();
+    expect(screen.getByText('mi')).toBeInTheDocument();
+    expect(screen.getByText('mun')).toBeInTheDocument();
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+    start();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  test('a translation item is self-graded — you say whether you had it', () => {
+    renderAt('/learn/toki-pona/2');
+    start();
+
+    // Walk to the first self-graded item; the session order is shuffled.
+    let guard = 0;
+    while (!screen.queryByText('into English') && !screen.queryByText('into toki pona')
+      && !screen.queryByText('decode it') && guard < 40) {
+      fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      guard += 1;
+    }
+
+    fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+
+    // No verdict is asserted for us — we are asked instead.
+    expect(screen.queryByText('No.')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'I had it' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "I didn't" })).toBeInTheDocument();
+  });
+});
