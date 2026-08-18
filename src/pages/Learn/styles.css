@@ -1,0 +1,294 @@
+/*
+ * sitelen pona. This is the UCSUR-only build of nasin-nanpa (MIT, jan Itan /
+ * ETBCOR) — it has NO latin ligatures, so glyphs only appear for the private-
+ * use codepoints in tokipona.js. Writing "mi" here would render as "mi".
+ */
+@font-face {
+  font-family: 'sitelen-pona';
+  src: url('/src/assets/fonts/nasin-nanpa-4.0.2-UCSUR.otf') format('opentype');
+}
+
+.tp__glyph {
+  font-family: 'sitelen-pona', 'gothic', serif;
+  line-height: 1.1;
+}
+
+.tp__glyph--prompt {
+  font-size: 96px;
+  margin: 10px 0 0 0;
+}
+
+.tp__glyph--banner {
+  font-size: 56px;
+  margin: 6px 0 10px 0;
+  color: var(--main-accent-color);
+}
+
+.tp__glyph--rule {
+  font-size: 44px;
+  margin: 0 0 4px 0;
+  color: var(--main-accent-color);
+}
+
+.tp__glyph--inline {
+  font-size: 30px;
+  margin-left: 12px;
+  vertical-align: middle;
+}
+
+.tp__glyph--card {
+  display: block;
+  font-size: 40px;
+  margin-bottom: 6px;
+}
+
+.tp__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.tp__card {
+  border: 1px solid var(--light-grey);
+  border-radius: 6px;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.tp__word {
+  display: block;
+  font-weight: bold;
+}
+
+.tp__gloss {
+  display: block;
+  font-size: 13px;
+  color: hsl(0, 0%, 40%);
+}
+
+.tp__rule {
+  border-left: 4px solid var(--main-accent-color);
+  background-color: var(--very-light-grey);
+  padding: 12px 16px;
+  margin: 12px 0;
+  max-width: 34em;
+}
+
+.tp__prompt {
+  font-size: 34px;
+}
+
+.level-nav {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 4px 0 8px 0;
+}
+
+.level-nav__title {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+/*
+ * Bare arrows, no titles. At the ends of the ladder they don't disappear —
+ * they fall back to the level list, so the control never moves or vanishes
+ * under your thumb between levels.
+ */
+.level-nav__arrow {
+  flex: 0 0 auto;
+  font-size: 26px;
+  line-height: 1;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.learn__back {
+  text-align: center;
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.learn__levels {
+  margin: 16px 0;
+}
+
+.learn__level {
+  margin-bottom: 18px;
+}
+
+.learn__level-title {
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+.learn__level-title--soon {
+  color: hsl(0, 0%, 55%);
+}
+
+.learn__level-blurb {
+  margin: 2px 0 0 0;
+}
+
+.learn__level-stats,
+.learn__meta,
+.drill__meta {
+  margin: 2px 0 0 0;
+  font-size: 14px;
+  color: hsl(0, 0%, 40%);
+}
+
+/* --- the lesson --------------------------------------------------------- */
+
+.lesson {
+  margin-top: 14px;
+  max-width: 34em;
+}
+
+.lesson p {
+  line-height: 1.5;
+}
+
+.lesson__example {
+  font-size: 20px;
+  padding: 10px 0;
+}
+
+.lesson__dim {
+  color: hsl(0, 0%, 40%);
+}
+
+.lesson__table {
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.lesson__table th,
+.lesson__table td {
+  text-align: left;
+  padding: 3px 22px 3px 0;
+}
+
+.lesson__table th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: hsl(0, 0%, 40%);
+  font-weight: normal;
+  border-bottom: 1px solid var(--light-grey);
+}
+
+.lesson__table td.lesson__dim {
+  font-size: 14px;
+}
+
+/* --- the drill ---------------------------------------------------------- */
+
+.drill__prompt {
+  font-size: 44px;
+  letter-spacing: 1px;
+  margin: 18px 0 0 0;
+  line-height: 1.15;
+}
+
+.drill__sub {
+  margin: 4px 0 20px 0;
+  color: hsl(0, 0%, 40%);
+}
+
+.drill__label {
+  display: block;
+  font-size: 14px;
+  color: hsl(0, 0%, 40%);
+  margin-bottom: 4px;
+}
+
+/*
+ * 16px minimum on the input: anything smaller and iOS Safari zooms the page
+ * on focus, which on an iPad turns every question into a pinch-to-recover.
+ */
+.drill__input {
+  font-family: inherit;
+  font-size: 24px;
+  width: 100%;
+  max-width: 340px;
+  padding: 10px 12px;
+  border: 2px solid var(--light-grey);
+  border-radius: 4px;
+}
+
+.drill__input:focus {
+  outline: none;
+  border-color: var(--main-accent-color);
+}
+
+.drill__verdict {
+  margin: 18px 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--light-grey);
+  background-color: var(--very-light-grey);
+}
+
+.drill__verdict.is-right {
+  border-left-color: hsl(140, 45%, 40%);
+}
+
+.drill__verdict.is-wrong {
+  border-left-color: var(--main-accent-color);
+}
+
+.drill__verdict-line {
+  font-weight: bold;
+  margin-top: 0;
+}
+
+.drill__explain {
+  font-size: 14px;
+  color: hsl(0, 0%, 30%);
+}
+
+.drill__actions {
+  margin: 20px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.drill__button {
+  font-family: inherit;
+  font-size: 18px;
+  padding: 10px 22px;
+  color: white;
+  background-color: var(--main-accent-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.drill__button:hover {
+  background-color: var(--secondary-accent-color);
+  text-decoration: none;
+}
+
+.drill__link-button {
+  font-family: inherit;
+  font-size: 16px;
+  color: hsl(0, 0%, 45%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.drill__weak {
+  margin: 8px 0 0 0;
+}
+
+@media only screen and (max-width: 500px) {
+  .drill__prompt {
+    font-size: 34px;
+  }
+}

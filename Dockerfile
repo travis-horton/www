@@ -6,11 +6,11 @@ ARG GIT_HASH=unknown
 ENV GIT_HASH=$GIT_HASH
 
 COPY ./package.json /app/package.json
-COPY ./yarn.lock /app/yarn.lock
+COPY ./package-lock.json /app/package-lock.json
 
-RUN yarn install
+RUN npm ci
 COPY ./src /app/src
-RUN yarn build
+RUN npm run build
 
 FROM nginx:latest
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf

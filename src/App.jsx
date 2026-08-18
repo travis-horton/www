@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import {
-  Home, Piano, Programming, Blog, Contact, Journal, NotFound,
+  Home, Piano, Programming, Blog, Contact, Journal, Learn, NotFound,
 } from './pages';
 import { Header, Footer } from './sharedComponents';
 
@@ -17,6 +17,7 @@ function App() {
         <Route path="/blog/*" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/journal" element={<Journal />} />
+        <Route path="/learn/*" element={<Learn />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
