@@ -258,7 +258,7 @@ The Journal component stays hidden from navigation (already not in `pages.js`). 
 5. Enter email → receive magic link email
 6. Click link → journal grid loads with data from PostgreSQL
 7. All other pages (/, /programming, /piano, etc.) remain publicly accessible
-8. `yarn test` — existing frontend tests pass, new auth tests pass
+8. `npm test` — existing frontend tests pass, new auth tests pass
 
 ---
 
