@@ -17,24 +17,21 @@ a general all-around website, with sections for personal interests, jobs/skills,
 # getting started
 ### prerequisites
 
-[yarn](https://yarnpkg.com)
-
 [docker](https://www.docker.com)
 
 ### setup
 
-make sure you have yarn (see above)
 this project uses git submodules (!), so you'll have to do a bit of extra setup work:
 `git submodule init`
 `git submodule update`
 
 ### install
 
-simply `yarn`
+simply `npm install`
 
 ### usage
 
-`yarn serve` runs `parcel serve`, which sets up a version of the app on `localhost:1234`
+`npm serve` runs `parcel serve`, which sets up a version of the app on `localhost:1234`
 
 ### run tests
 
