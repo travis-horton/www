@@ -93,6 +93,34 @@ describe('toki pona', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
+  test('the search box finds a word by English gloss ("five" -> luka) and links its lesson', () => {
+    renderAt('/learn/toki-pona');
+    const box = screen.getByRole('textbox', { name: /search/i });
+
+    fireEvent.change(box, { target: { value: 'five' } });
+
+    expect(screen.getByText('luka')).toBeInTheDocument();
+    expect(screen.getByText('hand · arm (& five)')).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: /Level 7/ });
+    expect(link).toHaveAttribute('href', '/learn/toki-pona/7');
+  });
+
+  test('the same search box finds it by "hand" too', () => {
+    renderAt('/learn/toki-pona');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'hand' },
+    });
+    expect(screen.getByText('luka')).toBeInTheDocument();
+  });
+
+  test('a query matching nothing says so, not silence', () => {
+    renderAt('/learn/toki-pona');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'zzzzzz' },
+    });
+    expect(screen.getByText(/No match for "zzzzzz"/)).toBeInTheDocument();
+  });
+
   test('a translation item is self-graded — you say whether you had it', () => {
     renderAt('/learn/toki-pona/2');
     start();
