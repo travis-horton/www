@@ -57,9 +57,11 @@
  *   v1 — { format, version, exportedAt, count, checksum, sessions: [...] }
  *        A session is { course, levelId, correct, total } plus, when the
  *        session was recorded after the bridge shipped, `id` (stable, unique)
- *        and `at` (ISO 8601). `misses: string[]` and `missedWords: string[]`
- *        are optional. Sessions predating those fields are legitimate and must
- *        keep working — see keyOf() for how they are identified.
+ *        and `at` (ISO 8601). `misses: string[]`, `missedWords: string[]` and
+ *        `missedRules: string[]` are optional. Sessions predating those fields
+ *        are legitimate and must keep working — see keyOf() for how they are
+ *        identified. Note `missedRules` carries rule IDS, not their prose: the
+ *        prose is this course's presentation and may be reworded any time.
  *
  * A code from a HIGHER version than the reader understands is refused, not
  * best-effort parsed: importing a shape you do not understand is how you drop

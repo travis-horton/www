@@ -5,14 +5,8 @@
  */
 
 import {
-  buildSession,
-  getLevel,
-  GLYPHS,
-  isCorrect,
-  LEVELS,
-  SELF_GRADED,
-  taughtIn,
-  toGlyphs,
+  buildSession, getLevel, GLYPHS, isCorrect, isSelfGraded, KIND_LABELS, LEVELS,
+  missLabels, PRODUCTION, RULES, structureOf, taughtIn, toGlyphs,
 } from './tokipona';
 
 describe('glyphs', () => {
@@ -129,16 +123,201 @@ describe('sessions', () => {
     expect(session).toHaveLength(27);
   });
 
-  test('sentence items are self-graded, word items are not', () => {
+  /*
+   * This used to read "sentence items are self-graded, word items are not",
+   * and that is the behaviour the graded-production work changed. What did NOT
+   * change, and is the half worth keeping: translating INTO English is still
+   * self-graded, because it has no closed answer set and never will.
+   */
+  test('into-English is self-graded; word items are not', () => {
     session.forEach((item) => {
-      if (item.kind === 'tp-en' || item.kind === 'en-tp') {
-        expect(SELF_GRADED.has(item.kind)).toBe(true);
+      if (item.kind === 'tp-en') {
+        expect(isSelfGraded(item)).toBe(true);
         expect(item.accepted).toBeUndefined();
-      } else {
-        expect(SELF_GRADED.has(item.kind)).toBe(false);
+      } else if (item.kind !== 'en-tp') {
+        expect(isSelfGraded(item)).toBe(false);
         expect(item.accepted.length).toBeGreaterThan(0);
       }
     });
+  });
+
+  test('an into-toki-pona item is graded exactly when PRODUCTION says so', () => {
+    LEVELS.forEach((level) => {
+      buildSession(level)
+        .filter((item) => item.kind === 'en-tp')
+        .forEach((item) => {
+          const spec = PRODUCTION[item.answer];
+          expect(`${item.answer}:${isSelfGraded(item)}`).toBe(`${item.answer}:${!spec}`);
+        });
+    });
+  });
+});
+
+/*
+ * ---------------------------------------------------------------------------
+ * Machine-graded production. The whole point is that a near-miss on a particle
+ * is marked wrong instead of forgiven, so these tests are mostly about the ONE
+ * way that goes bad: marking a correct answer wrong.
+ * ---------------------------------------------------------------------------
+ */
+describe('graded production', () => {
+  const specs = Object.entries(PRODUCTION).filter(([, spec]) => spec);
+
+  test('every key is a sentence some level actually asks for', () => {
+    const asked = new Set(LEVELS.flatMap((l) => l.toTokiPona.map(([, tp]) => tp)));
+    Object.keys(PRODUCTION).forEach((key) => {
+      expect(`${key}:${asked.has(key)}`).toBe(`${key}:true`);
+    });
+  });
+
+  test('every sentence the course asks for has a ruling, graded or not', () => {
+    LEVELS.forEach((level) => {
+      level.toTokiPona.forEach(([, tp]) => {
+        // `null` is a ruling — deliberately self-graded. Missing is an oversight.
+        expect(`${tp}:${tp in PRODUCTION}`).toBe(`${tp}:true`);
+      });
+    });
+  });
+
+  test('the canonical answer is always accepted', () => {
+    LEVELS.forEach((level) => {
+      buildSession(level)
+        .filter((item) => item.kind === 'en-tp' && !isSelfGraded(item))
+        .forEach((item) => {
+          expect(`${item.answer}:${isCorrect(item, item.answer)}`).toBe(`${item.answer}:true`);
+        });
+    });
+  });
+
+  test('so is every listed variant, punctuation and casing and all', () => {
+    LEVELS.forEach((level) => {
+      buildSession(level)
+        .filter((item) => item.kind === 'en-tp' && !isSelfGraded(item))
+        .forEach((item) => {
+          item.accepted.forEach((variant) => {
+            expect(isCorrect(item, ` ${variant.toUpperCase()}. `)).toBe(true);
+          });
+        });
+    });
+  });
+
+  /*
+   * THE VARIANT RULE, enforced. A variant may reorder words or add one; it may
+   * never differ in its structural tokens. Without this, a well-meant "also"
+   * could quietly accept the exact near-miss the grader exists to catch.
+   */
+  test('no variant differs from the canonical in its particles or prepositions', () => {
+    specs.forEach(([canonical, spec]) => {
+      const want = structureOf(canonical).slice().sort().join(' ');
+      (spec.also || []).forEach((variant) => {
+        const got = structureOf(variant).slice().sort().join(' ');
+        expect(`${variant}:${got}`).toBe(`${variant}:${want}`);
+      });
+    });
+  });
+
+  test('the near-misses the weak list is made of are marked wrong', () => {
+    const level4 = buildSession(getLevel('4'));
+    const preverb = level4.find((i) => i.answer === 'mi wile lape');
+    // The 26.0724 note's own error: an e that does not belong there.
+    expect(isCorrect(preverb, 'mi wile e lape')).toBe(false);
+    expect(isCorrect(preverb, 'mi wile lape')).toBe(true);
+
+    const level5 = buildSession(getLevel('5'));
+    const preposition = level5.find((i) => i.answer === 'kasi li lon supa');
+    expect(isCorrect(preposition, 'kasi li lon e supa')).toBe(false);
+    expect(isCorrect(preposition, 'kasi lon supa')).toBe(false); // dropped li
+    expect(isCorrect(preposition, 'kasi li lon supa')).toBe(true);
+
+    const level2 = buildSession(getLevel('2'));
+    const object = level2.find((i) => i.answer === 'mi wile e telo');
+    expect(isCorrect(object, 'mi wile telo')).toBe(false);
+    expect(isCorrect(object, 'mi wile e telo')).toBe(true);
+  });
+
+  test('conjoined subjects are accepted in either order', () => {
+    const item = buildSession(getLevel('10')).find((i) => i.answer === 'mi en sina li kama sona');
+    expect(isCorrect(item, 'sina en mi li kama sona')).toBe(true);
+    // ...but dropping the li that en brings back is still wrong.
+    expect(isCorrect(item, 'mi en sina kama sona')).toBe(false);
+  });
+
+  test('the one sentence with free particle placement is left self-graded', () => {
+    const item = buildSession(getLevel('6')).find((i) => i.answer === 'mi wile e pan taso');
+    expect(isSelfGraded(item)).toBe(true);
+  });
+});
+
+describe('rule tagging', () => {
+  test('every rule named in the table has prose to say out loud', () => {
+    Object.values(PRODUCTION).forEach((spec) => {
+      if (!spec) return;
+      spec.rules.forEach((rule) => {
+        expect(`${rule}:${Boolean(RULES[rule])}`).toBe(`${rule}:true`);
+      });
+    });
+  });
+
+  test('no rule is defined that nothing exercises', () => {
+    const used = new Set(Object.values(PRODUCTION).flatMap((s) => (s ? s.rules : [])));
+    Object.keys(RULES).forEach((rule) => {
+      expect(`${rule}:${used.has(rule)}`).toBe(`${rule}:true`);
+    });
+  });
+
+  test('every graded sentence is tagged with at least one rule', () => {
+    Object.entries(PRODUCTION).forEach(([tp, spec]) => {
+      if (!spec) return;
+      expect(`${tp}:${spec.rules.length > 0}`).toBe(`${tp}:true`);
+    });
+  });
+
+  /*
+   * A tag has to be true of the sentence, or the coaching line is a lie. These
+   * check the tags whose truth is visible on the surface of the string.
+   */
+  test('a tag naming a particle is only used where that particle is present', () => {
+    const mustContain = {
+      'e-after-verb': 'e',
+      'la-sets-the-scene': 'la',
+      'pi-regroups': 'pi',
+      'o-for-commands': 'o',
+      'en-joins-subjects': 'en',
+      'li-after-noun-subject': 'li',
+    };
+    Object.entries(PRODUCTION).forEach(([tp, spec]) => {
+      if (!spec) return;
+      const words = tp.toLowerCase().replace(/[.,!?;:"']/g, '').split(/\s+/);
+      spec.rules.forEach((rule) => {
+        const needed = mustContain[rule];
+        if (!needed) return;
+        expect(`${tp}/${rule}:${words.includes(needed)}`).toBe(`${tp}/${rule}:true`);
+      });
+    });
+  });
+
+  test('a tag saying a particle is ABSENT is only used where it is absent', () => {
+    ['no-li-after-mi-sina', 'no-e-after-preverb', 'no-e-after-preposition'].forEach((rule) => {
+      const absent = rule === 'no-li-after-mi-sina' ? 'li' : 'e';
+      Object.entries(PRODUCTION).forEach(([tp, spec]) => {
+        if (!spec || !spec.rules.includes(rule)) return;
+        const words = tp.toLowerCase().replace(/[.,!?;:"']/g, '').split(/\s+/);
+        // The clause the rule is about must not contain the forbidden particle.
+        // For the li rule that is the whole sentence (mi/sina subject, no li);
+        // for the e rules it is that no e appears at all in these sentences.
+        expect(`${tp}/${rule}:${words.includes(absent)}`).toBe(`${tp}/${rule}:false`);
+      });
+    });
+  });
+
+  test('misses are reported by rule where there is one, by kind where there is not', () => {
+    expect(missLabels({ kind: 'en-tp', rules: ['no-e-after-preverb'] }))
+      .toEqual([RULES['no-e-after-preverb']]);
+    // Two rules, two suspects: a weak list, not an apportionment of blame.
+    expect(missLabels({ kind: 'en-tp', rules: ['li-after-noun-subject', 'no-e-after-preposition'] }))
+      .toHaveLength(2);
+    expect(missLabels({ kind: 'glyph' })).toEqual([KIND_LABELS.glyph]);
+    expect(missLabels({ kind: 'tp-en', rules: [] })).toEqual([KIND_LABELS['tp-en']]);
   });
 });
 

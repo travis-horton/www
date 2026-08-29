@@ -303,6 +303,17 @@
   color: hsl(0, 0%, 30%);
 }
 
+/*
+ * The rule a wrong sentence broke, named inside the verdict. Quieter than the
+ * answer above it — the answer is what you wanted, this is why you missed it.
+ */
+.drill__rule {
+  font-size: 14px;
+  font-style: italic;
+  color: hsl(0, 0%, 30%);
+  margin-bottom: 0;
+}
+
 .drill__actions {
   margin: 20px 0 0 0;
   display: flex;
