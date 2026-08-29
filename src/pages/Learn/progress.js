@@ -4,11 +4,44 @@
  * v1 is deliberately localStorage-only: no account, no API, no Zig. When scores
  * should follow you between the iPad and the laptop, that is what the backend
  * (www Phases 2-4) is for, and this module is the seam it plugs into.
+ *
+ * Until that lands, transfer.js carries a record between devices BY HAND. It is
+ * a stopgap and is documented as one; the two fields this module stamps for it
+ * (`id`, `at`) are not, and should outlive it — see below.
  */
 
 const KEY = 'travish.learn.v1';
 
+/** The session cap. Exported so a merge re-caps exactly the way recording does. */
+export const MAX_SESSIONS = 200;
+
 const emptyStore = () => ({ sessions: [] });
+
+/*
+ * Session identity — `id` and `at`, stamped here rather than at the three call
+ * sites so every session gets them whatever drilled it.
+ *
+ * Nothing may REQUIRE them. Every session already on a learner's disk predates
+ * this, and summarize/weakKinds/weakWords/levelsReached below must keep working
+ * over that history untouched — same rule `missedWords` already follows.
+ *
+ * They exist for one reason: merging two devices' histories needs to tell "the
+ * same session, imported twice" apart from "two different sessions that happen
+ * to score alike", and an append-only list of anonymous {correct, total}
+ * objects cannot. `at` is also the ordering key the eventual backend will want
+ * — array position does that job today, and stops meaning anything the moment
+ * two devices' arrays are interleaved.
+ */
+const newId = () => {
+  try {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+  } catch (e) {
+    // Non-secure context, or a browser without it: fall through to the shim.
+  }
+  return `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+};
 
 export const load = () => {
   try {
@@ -32,9 +65,19 @@ const save = (store) => {
 
 export const recordSession = (session) => {
   const store = load();
+  const stamped = { id: newId(), at: new Date().toISOString(), ...session };
   // Keep the tail bounded; nobody needs the 500th session on a phone.
-  const sessions = [...store.sessions, session].slice(-200);
+  const sessions = [...store.sessions, stamped].slice(-MAX_SESSIONS);
   save({ ...store, sessions });
+};
+
+/**
+ * Overwrite the whole session list — the one write the transfer bridge needs
+ * and the drills never do. Kept here so KEY and the cap stay in one file.
+ */
+export const commitSessions = (sessions) => {
+  const store = load();
+  save({ ...store, sessions: sessions.slice(-MAX_SESSIONS) });
 };
 
 /** Per-course, per-level summary: attempts, best score, most recent score. */

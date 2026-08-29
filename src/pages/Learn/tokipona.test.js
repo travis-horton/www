@@ -222,3 +222,41 @@ describe('answer matching', () => {
     expect(isCorrect(wordItem, '   ')).toBe(false);
   });
 });
+
+describe('the numbers lesson drills the numbers it teaches', () => {
+  /*
+   * luka is word 79, taught in Level 7 as the hand. It is ALSO five, and the
+   * counting system Level 9 teaches — wan 1 · tu 2 · luka 5, stacked — cannot
+   * be used without it. For a while Level 9 only said so in its vocabNote, so
+   * a learner was told the number five existed and was never once asked to
+   * read or write it.
+   *
+   * It cannot be fixed with a vocab card: no word is taught twice, and the
+   * exercise counts above are fixed. It is fixed the way every level already
+   * reaches back for earlier vocabulary — in the sentences.
+   */
+  const level9 = getLevel('9');
+  const sentences = [
+    ...level9.toEnglish.map(([tp]) => tp),
+    ...level9.toTokiPona.map(([, tp]) => tp),
+    level9.decode[0],
+  ];
+  const drills = (w) => sentences.some((s) => s
+    .split(/\s+/)
+    .map((t) => t.replace(/[.,!?;:"']/g, ''))
+    .includes(w));
+
+  test('every number word it names is drilled there, luka included', () => {
+    ['wan', 'tu', 'luka'].forEach((w) => expect(`${w}:${drills(w)}`).toBe(`${w}:true`));
+  });
+
+  test('it drills the stack, not just the two digits', () => {
+    // "luka tu" = 7 is the whole point of counting in fives.
+    expect(sentences.some((s) => s.includes('luka tu'))).toBe(true);
+  });
+
+  test('drilling luka here did not turn into teaching it twice', () => {
+    const taughtIn = LEVELS.filter((l) => l.vocab.some((v) => v.word === 'luka'));
+    expect(taughtIn.map((l) => l.id)).toEqual(['7']);
+  });
+});
