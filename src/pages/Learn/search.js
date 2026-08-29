@@ -6,11 +6,13 @@
  *
  * Three directions, because a learner arrives from three different places:
  *
- *   toki pona word -> gloss, glyph, and every lesson that introduces or uses
- *     it. This is the "luka bug" fix: luka is taught in Level 7 and leaned on
- *     in Level 8 with nothing connecting the two — search is how a learner
- *     finds every lesson a word actually shows up in, not just the one that
- *     taught it.
+ *   toki pona word -> gloss, glyph, and every lesson that introduces, uses,
+ *     or merely mentions it. This is the "luka bug" fix: luka is taught in
+ *     Level 7 and leaned on again in Level 9's vocabNote (as the number
+ *     five) with nothing connecting the two — search is how a learner finds
+ *     every lesson a word actually shows up in, not just the one that taught
+ *     it. That includes lessons' freeform prose (vocabNote/closingNote/
+ *     intro/rule.body), not only the structured fields — see buildAppearances().
  *   English word -> the toki pona word(s) whose gloss contains it. The gloss
  *     strings already ARE this index — vocab('luka', 'hand · arm (& five)')
  *     means both "hand" and "five" have to resolve to luka — so this is a
@@ -47,6 +49,21 @@ const wordsIn = (sentence) => String(sentence)
   .map((w) => w.toLowerCase().replace(STRIP, ''))
   .filter(Boolean);
 
+/*
+ * English words that are ALSO valid toki pona word keys, so a naive scan of
+ * this course's freeform prose (vocabNote/closingNote/intro/rule.body, which
+ * mixes English sentences with untranslated toki pona) would otherwise credit
+ * every English use as a toki pona appearance. Measured against the actual
+ * prose in tokipona.js (26.0828): "a" is the only collision the corpus
+ * produces — every other single-word GLYPHS key (en, la, ni, mu, wan, tu...)
+ * never collides with an English function word in this text — so this list
+ * is short by evidence, not by assumption. If new lesson prose is added,
+ * re-run search.test.js's "mentioned in prose" coverage check; a new
+ * collision would show up as a bogus level appearance for a word that has no
+ * business being on that level.
+ */
+const PROSE_STOPWORDS = new Set(['a']);
+
 /**
  * word -> { word, gloss, glyph }, first vocab() card wins (tokipona.test.js
  * already guards against a word being taught twice).
@@ -69,17 +86,28 @@ const buildWordEntries = () => {
  *   'introduces' — the level's vocab list taught it
  *   'uses'       — it shows up in that level's glyph-reading, an example
  *                  sentence, or the decode line, without being new there
+ *   'mentioned'  — it only shows up in that level's freeform prose
+ *                  (vocabNote/closingNote/intro/rule.body) — e.g. luka
+ *                  (taught Level 7) doing double duty as the number five in
+ *                  Level 9's vocabNote. Prose mixes English and toki pona, so
+ *                  this pass only credits words already in WORD_ENTRIES (a
+ *                  real toki pona word) and skips PROSE_STOPWORDS (English
+ *                  words that collide with one, namely "a").
  * A word can be both in the same level (introduced and used in its own
- * examples) — 'introduces' wins so the tag never flips back to 'uses'.
+ * examples) — role only ever strengthens (mentioned -> uses -> introduces),
+ * never weakens, so a later prose-only pass can't downgrade a level a word
+ * was already properly introduced or used in.
  */
-const buildAppearances = () => {
+const ROLE_RANK = { mentioned: 0, uses: 1, introduces: 2 };
+
+const buildAppearances = (entries) => {
   const byWord = {};
 
   const touch = (word, level, role) => {
     if (!byWord[word]) byWord[word] = [];
     const existing = byWord[word].find((a) => a.levelId === level.id);
     if (existing) {
-      if (role === 'introduces') existing.role = 'introduces';
+      if (ROLE_RANK[role] > ROLE_RANK[existing.role]) existing.role = role;
       return;
     }
     byWord[word].push({ levelId: level.id, title: level.title, role });
@@ -91,6 +119,16 @@ const buildAppearances = () => {
     level.toEnglish.forEach(([tp]) => wordsIn(tp).forEach((w) => touch(w, level, 'uses')));
     level.toTokiPona.forEach(([, tp]) => wordsIn(tp).forEach((w) => touch(w, level, 'uses')));
     wordsIn(level.decode[0]).forEach((w) => touch(w, level, 'uses'));
+
+    const prose = [level.intro, level.vocabNote, level.closingNote, level.rule && level.rule.body];
+    prose.forEach((text) => {
+      if (!text) return;
+      wordsIn(text).forEach((w) => {
+        if (PROSE_STOPWORDS.has(w)) return;
+        if (!entries[w]) return; // not a recognized toki pona word
+        touch(w, level, 'mentioned');
+      });
+    });
   });
 
   return byWord;
@@ -113,7 +151,7 @@ const buildGlyphIndex = () => Object.entries(GLYPHS)
   .reduce((acc, [word, glyph]) => ({ ...acc, [glyph]: word }), {});
 
 const WORD_ENTRIES = buildWordEntries();
-const APPEARANCES = buildAppearances();
+const APPEARANCES = buildAppearances(WORD_ENTRIES);
 const ENGLISH_INDEX = buildEnglishIndex(WORD_ENTRIES);
 const GLYPH_TO_WORD = buildGlyphIndex();
 
