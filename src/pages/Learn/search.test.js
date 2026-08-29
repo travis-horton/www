@@ -16,7 +16,13 @@ describe('word -> lessons (toki pona in)', () => {
     expect(luka.word).toBe('luka');
     expect(luka.gloss).toBe('hand · arm (& five)');
     expect(luka.glyph).toBe(GLYPHS.luka);
-    expect(luka.levels).toEqual([{ levelId: '7', title: 'Asking, and the body', role: 'introduces' }]);
+    // luka is taught in Level 7, and Level 9's vocabNote leans on it again as
+    // the number five ("luka tu = 7 · luka luka = 10") without a vocab card
+    // there — that prose-only appearance should surface as 'mentioned'.
+    expect(luka.levels).toEqual([
+      { levelId: '7', title: 'Asking, and the body', role: 'introduces' },
+      { levelId: '9', title: 'Commands, numbers, up and down', role: 'mentioned' },
+    ]);
   });
 
   test('is case-insensitive', () => {
@@ -36,8 +42,37 @@ describe('word -> lessons (toki pona in)', () => {
   test('a word introduced AND used in its own level keeps the "introduces" tag', () => {
     // luka is taught, glyph-read, and used in an example sentence, all in Level 7.
     const [luka] = search('luka');
-    expect(luka.levels).toHaveLength(1);
-    expect(luka.levels[0].role).toBe('introduces');
+    const level7 = luka.levels.find((l) => l.levelId === '7');
+    expect(level7.role).toBe('introduces');
+  });
+});
+
+describe('words mentioned only in prose (the "luka bug" fix, generalized)', () => {
+  test('a word used only in a later level\'s vocabNote/closingNote/rule prose is tagged "mentioned"', () => {
+    // "jan" (Level 2) is never used in Level 6's structured fields, only in
+    // its closingNote's naming-convention explanation ("jan Tawi", "jan An?").
+    const [jan] = search('jan');
+    const level6 = jan.levels.find((l) => l.levelId === '6');
+    expect(level6).toEqual({ levelId: '6', title: 'Time, and the word la', role: 'mentioned' });
+  });
+
+  test('a "mentioned" role never overrides an existing "introduces" or "uses" tag for that level', () => {
+    // "pona" is both taught (Level 1) and used constantly elsewhere; nothing
+    // in prose should be able to knock a stronger tag down to "mentioned".
+    const [pona] = search('pona');
+    const level1 = pona.levels.find((l) => l.levelId === '1');
+    expect(level1.role).toBe('introduces');
+  });
+
+  test('the English article "a" does not get credited as the toki pona word "a" in prose', () => {
+    // Level 1's vocabNote and intro both use "a" as an English article
+    // ("is a figure", "is a house", "a complete language") — none of that
+    // should register as a Level 1 appearance of the toki pona word "a"
+    // (which isn't taught until Level 10).
+    const [a] = search('a');
+    expect(a.levels.some((l) => l.levelId === '1')).toBe(false);
+    // It should still resolve, from its own Level 10 vocab card.
+    expect(a.levels.some((l) => l.levelId === '10' && l.role === 'introduces')).toBe(true);
   });
 });
 
