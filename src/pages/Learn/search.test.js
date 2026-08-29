@@ -127,6 +127,107 @@ describe('particles taught only through a rule, not a vocab card', () => {
   });
 });
 
+describe('query tokenization (the reverse lookup, generalized)', () => {
+  test('plural folding: "hands" finds luka the same way "hand" does', () => {
+    expect(wordsOf(search('hands'))).toContain('luka');
+  });
+
+  test('plural folding: "colors" and the UK spelling "colours" both find kule', () => {
+    expect(wordsOf(search('colors'))).toContain('kule');
+    expect(wordsOf(search('colours'))).toContain('kule');
+  });
+
+  test('plural folding: "fruits" finds kili, "animals" finds soweli', () => {
+    expect(wordsOf(search('fruits'))).toContain('kili');
+    expect(wordsOf(search('animals'))).toContain('soweli');
+  });
+
+  test('plural folding: "things" finds every gloss that says "thing" (ijo and kiwen)', () => {
+    expect(wordsOf(search('things')).sort()).toEqual(['ijo', 'kiwen']);
+  });
+
+  test('irregular plurals are out of scope by design: "feet" still finds nothing', () => {
+    // foot/feet has no regular -s/-es shape; a lookup table of English
+    // irregulars was judged disproportionate for a ~120-word course (see the
+    // doc comment on foldPlural). This documents the choice, not an oversight.
+    expect(search('feet')).toEqual([]);
+  });
+
+  test('multi-word queries tokenize and AND across tokens, not OR', () => {
+    // "land" alone also matches ma ("land · earth · outdoors"), but "land
+    // animal" should return only soweli, whose gloss literally is "land
+    // animal" — the precise compound match, not every word containing "land".
+    expect(wordsOf(search('land'))).toContain('ma');
+    expect(wordsOf(search('land animal'))).toEqual(['soweli']);
+  });
+
+  test('multi-word: "hard thing" finds only kiwen, not every gloss containing "thing"', () => {
+    expect(wordsOf(search('hard thing'))).toEqual(['kiwen']);
+  });
+
+  test('multi-word: "flat surface" finds supa', () => {
+    expect(wordsOf(search('flat surface'))).toEqual(['supa']);
+  });
+
+  test('a multi-word query with no common word across all tokens finds nothing', () => {
+    // "hand" -> luka only, "color" -> kule only; no word means both.
+    expect(search('hand color')).toEqual([]);
+  });
+
+  test('numeral: "5" resolves the same way "five" does, via luka\'s aside', () => {
+    expect(wordsOf(search('5'))).toContain('luka');
+  });
+
+  test('a numeral with no matching gloss ("3") finds nothing, rather than guessing', () => {
+    expect(search('3')).toEqual([]);
+  });
+});
+
+describe('English-index stopwords (derived from this corpus, not a generic list)', () => {
+  test('"to" no longer returns a wall of unrelated verb glosses', () => {
+    // Previously: every "to eat"/"to love"/"to know"-shaped verb gloss
+    // matched, ~20 unrelated words. Now the bare infinitive marker is
+    // excluded from the index entirely.
+    expect(search('to')).toEqual([]);
+  });
+
+  test('words that legitimately mean "a", "of", "or", "and" are untouched', () => {
+    // These occur once or twice in the corpus and point at the word that
+    // actually means them — a generic stopword list would have wrongly
+    // deleted these; only the two measured pollutants ("·" and "to") are cut.
+    expect(wordsOf(search('of'))).toContain('tan');
+    expect(wordsOf(search('or'))).toContain('anu');
+    expect(wordsOf(search('and'))).toContain('en');
+  });
+
+  test('the gloss separator "·" is not itself a searchable token', () => {
+    expect(search('·')).toEqual([]);
+  });
+});
+
+describe('parenthetical asides in the reverse index', () => {
+  test('"words" finds nimi (a real gloss word), not pi (whose entire gloss is a bracketed usage note)', () => {
+    // Regression check for the exact reviewer finding: pi's gloss is
+    // '(regroups words)' with nothing outside the parens, so it should never
+    // have claimed "words" as one of its senses.
+    expect(wordsOf(search('words'))).toEqual(['nimi']);
+  });
+
+  test('pi, la, and mu are still findable by their own toki pona spelling', () => {
+    expect(wordsOf(search('pi'))).toEqual(['pi']);
+    expect(wordsOf(search('la'))).toEqual(['la']);
+    expect(wordsOf(search('mu'))).toEqual(['mu']);
+  });
+
+  test('an aside that supplements real primary content is still indexed ("five" still finds luka)', () => {
+    // luka's gloss is 'hand · arm (& five)' — real content ("hand", "arm")
+    // exists outside the parens, so the aside ("five") stays indexed. This is
+    // the existing, already-tested behavior; this test just states the rule
+    // that makes it different from pi's case.
+    expect(wordsOf(search('five'))).toContain('luka');
+  });
+});
+
 describe('no match', () => {
   test('a query that is neither toki pona, English, nor a glyph finds nothing', () => {
     expect(search('zzzzzz')).toEqual([]);

@@ -39,32 +39,42 @@ function TokiPonaSearch() {
         placeholder="five, luka, 󱤭…"
       />
 
-      {trimmed !== '' && results.length === 0 && (
-        <p className="learn__meta">{`No match for "${trimmed}".`}</p>
-      )}
+      {/*
+        aria-live="polite" on a container that is always mounted (rather than
+        on the conditionally-rendered <ul>/<p> themselves) so a screen reader
+        announces "No match" or the results as they change while typing —
+        content appearing/disappearing inside an already-live region is what
+        triggers the announcement; a region that only mounts once results
+        exist announces nothing the first time.
+      */}
+      <div aria-live="polite">
+        {trimmed !== '' && results.length === 0 && (
+          <p className="learn__meta">{`No match for "${trimmed}".`}</p>
+        )}
 
-      {results.length > 0 && (
-        <ul className="tp__search-results">
-          {results.map((r) => (
-            <li key={r.word} className="tp__search-result">
-              <span className="tp__glyph tp__glyph--inline">{r.glyph}</span>
-              <span className="tp__word">{r.word}</span>
-              <span className="tp__gloss">{r.gloss}</span>
-              <p className="tp__search-levels">
-                {r.levels.map((l, i) => (
-                  <React.Fragment key={l.levelId}>
-                    {i > 0 && ' · '}
-                    <Link to={`/learn/toki-pona/${l.levelId}`}>
-                      {`Level ${l.levelId}`}
-                    </Link>
-                    {l.role === 'introduces' ? ' (taught here)' : ' (used here)'}
-                  </React.Fragment>
-                ))}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
+        {results.length > 0 && (
+          <ul className="tp__search-results">
+            {results.map((r) => (
+              <li key={r.word} className="tp__search-result">
+                <span className="tp__glyph tp__glyph--inline">{r.glyph}</span>
+                <span className="tp__word">{r.word}</span>
+                <span className="tp__gloss">{r.gloss}</span>
+                <p className="tp__search-levels">
+                  {r.levels.map((l, i) => (
+                    <React.Fragment key={l.levelId}>
+                      {i > 0 && ' · '}
+                      <Link to={`/learn/toki-pona/${l.levelId}`}>
+                        {`Level ${l.levelId}`}
+                      </Link>
+                      {l.role === 'introduces' ? ' (taught here)' : ' (used here)'}
+                    </React.Fragment>
+                  ))}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
