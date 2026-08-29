@@ -22,7 +22,7 @@ const emptyStore = () => ({ sessions: [] });
  * sites so every session gets them whatever drilled it.
  *
  * Nothing may REQUIRE them. Every session already on a learner's disk predates
- * this, and summarize/weakKinds/weakWords/levelsReached below must keep working
+ * this, and summarize/weakKinds/weakWords/weakRules/levelsReached must keep working
  * over that history untouched — same rule `missedWords` already follows.
  *
  * They exist for one reason: merging two devices' histories needs to tell "the
@@ -141,6 +141,38 @@ export const weakWords = (course, limit = 20) => {
   return Object.entries(tally)
     .sort((a, b) => b[1] - a[1])
     .map(([word, count]) => ({ word, count }));
+};
+
+/*
+ * Per-RULE misses — the third tally, and the one a coach would actually read
+ * out. The other two answer "which exercise?" (weakKinds) and "which word?"
+ * (weakWords); neither can say "you dropped e after a preverb twice", which is
+ * the only sentence worth saying about a grammar error.
+ *
+ * A session may carry `missedRules: ['no-e-after-preverb', 'li-after-noun-subject']`
+ * — rule IDS, not prose, because the prose is presentation and these end up in
+ * localStorage and in a hand-carried transfer code. One entry per (miss x rule);
+ * an item that tests two rules charges both, so the counts here are of SUSPECTS,
+ * not of questions.
+ *
+ * Optional in exactly the way missedWords is: every session already on disk
+ * predates it and must keep working, so a missing field contributes nothing.
+ */
+export const weakRules = (course, limit = 20) => {
+  const runs = load().sessions
+    .filter((s) => s && s.course === course)
+    .slice(-limit);
+  const tally = {};
+  runs.forEach((s) => {
+    const rules = Array.isArray(s.missedRules) ? s.missedRules : [];
+    rules.forEach((rule) => {
+      if (typeof rule !== 'string' || rule === '') return;
+      tally[rule] = (tally[rule] || 0) + 1;
+    });
+  });
+  return Object.entries(tally)
+    .sort((a, b) => b[1] - a[1])
+    .map(([rule, count]) => ({ rule, count }));
 };
 
 /**

@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Learn from '.';
+import { recordSession } from './progress';
 
 /*
  * The drill is generated, so these tests avoid asserting on any particular
@@ -206,22 +207,28 @@ describe('toki pona', () => {
     expect(screen.getByText(/No match for "zzzzzz"/)).toBeInTheDocument();
   });
 
-  test('a translation item is self-graded — you say whether you had it', () => {
-    renderAt('/learn/toki-pona/2');
-    start();
-
-    // Walk to the first self-graded item; the session order is shuffled.
+  /*
+   * The session order is shuffled, so walk to the first item of the sub-kind
+   * under test. Items passed on the way may be either sort — "Next" for a
+   * machine-graded one, "I didn't" for a self-graded one — so take whichever
+   * this question offers rather than assuming.
+   */
+  const walkTo = (...subs) => {
     let guard = 0;
-    while (
-      !screen.queryByText('into English') &&
-      !screen.queryByText('into toki pona') &&
-      !screen.queryByText('decode it') &&
-      guard < 40
-    ) {
+    while (!subs.some((s) => screen.queryByText(s)) && guard < 40) {
       fireEvent.click(screen.getByRole('button', { name: 'Check' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      const next = screen.queryByRole('button', { name: 'Next' })
+        || screen.getByRole('button', { name: "I didn't" });
+      fireEvent.click(next);
       guard += 1;
     }
+    expect(guard).toBeLessThan(40);
+  };
+
+  test('translating INTO ENGLISH is self-graded — you say whether you had it', () => {
+    renderAt('/learn/toki-pona/2');
+    start();
+    walkTo('into English', 'decode it');
 
     fireEvent.click(screen.getByRole('button', { name: 'Check' }));
 
@@ -233,5 +240,84 @@ describe('toki pona', () => {
     expect(
       screen.getByRole('button', { name: "I didn't" }),
     ).toBeInTheDocument();
+  });
+
+  /*
+   * The other direction, and the reason this work exists. "mi wile telo" reads
+   * close enough to "mi wile e telo" that a learner marking their own work
+   * presses "I had it" — and dropping e is the actual, recorded weak spot. So
+   * the machine marks it, and there is no button to forgive it with.
+   */
+  test('translating INTO TOKI PONA is machine-graded — the near-miss is marked wrong', () => {
+    renderAt('/learn/toki-pona/2');
+    start();
+    walkTo('into toki pona');
+
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'mi wile telo' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+
+    expect(screen.getByText('No.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'I had it' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
+  });
+
+  test('a wrong sentence is told which rule it broke, right there', () => {
+    renderAt('/learn/toki-pona/5');
+    start();
+    walkTo('into toki pona');
+
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'nasa nasa nasa' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+
+    // Every level-5 production sentence turns on a preposition taking no e.
+    expect(screen.getByText(/no e after a preposition/)).toBeInTheDocument();
+  });
+
+  /*
+   * The end of a drill is the moment the weak list gets written down, and it
+   * used to say "en-tp — 2", which names a tab in a lesson rather than a habit
+   * to fix. Missing everything in level 5 must now name the rules: all three
+   * of its production sentences turn on a preposition taking no e, and two of
+   * them on li after a noun subject.
+   */
+  test('the DONE screen reports misses by rule, not by item kind', () => {
+    window.localStorage.clear();
+    // An earlier drill, so the standing list has something this one does not.
+    recordSession({
+      course: 'toki-pona',
+      levelId: '4',
+      total: 27,
+      correct: 25,
+      misses: ['en-tp', 'en-tp'],
+      missedRules: ['no-e-after-preverb', 'no-e-after-preverb'],
+    });
+
+    renderAt('/learn/toki-pona/5');
+    start();
+
+    let guard = 0;
+    while (!screen.queryByRole('button', { name: 'Again' }) && guard < 40) {
+      fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+      const next = screen.queryByRole('button', { name: 'Next' })
+        || screen.getByRole('button', { name: "I didn't" });
+      fireEvent.click(next);
+      guard += 1;
+    }
+
+    expect(screen.getByText('Where it went wrong:')).toBeInTheDocument();
+    // Twice over: once for this session, once in the standing list below it —
+    // which is empty of everything else, because localStorage was cleared.
+    expect(screen.getAllByText(/no e after a preposition — 3/)).toHaveLength(2);
+    expect(screen.getAllByText(/li after a noun subject — 2/)).toHaveLength(2);
+    // The old buckets are gone by name, but nothing that lacks a rule is lost:
+    // glyph and word misses still land somewhere, under prose of their own.
+    expect(screen.queryByText(/^en-tp/)).not.toBeInTheDocument();
+    expect(screen.getByText(/reading glyphs — 6/)).toBeInTheDocument();
+
+    // And the standing list, which is the thing worth copying into a tracker.
+    // It is cumulative, not a restatement: the preverb rule was never touched
+    // in this drill and is still on it, carried from the session recorded above.
+    expect(screen.getByText('Your weak list, across recent sessions:')).toBeInTheDocument();
+    expect(screen.getByText(/no e between a preverb and its verb — 2/)).toBeInTheDocument();
   });
 });
