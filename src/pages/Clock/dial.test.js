@@ -12,6 +12,11 @@ import {
   markPoint,
   MARKS,
   outerLabel,
+  LADDER,
+  ladderAngles,
+  ladderDigit,
+  ladderDigits,
+  ladderSweepAngles,
   spanIndex,
   SPANS_PER_DAY,
   watchIndex,
@@ -63,11 +68,14 @@ describe('the hands', () => {
     expect(b.lull).toBeGreaterThan(a.lull);
   });
 
-  test('the moment hand STEPS — it does not move inside a tick', () => {
+  test('the moment hand SWEEPS too — it moves inside a tick', () => {
+    // It used to step, floored to the tick; Travis asked for all three hands
+    // to move continuously (26.0905).
     const onTick = handAngles(MS_PER_TICK * 5);
     const partWay = handAngles(MS_PER_TICK * 5 + MS_PER_TICK * 0.4);
-    expect(partWay.moment).toBe(onTick.moment);
-    // …and then it does move, by exactly one mark's worth.
+    expect(partWay.moment).toBeGreaterThan(onTick.moment);
+    // …and a whole tick still advances it by exactly one mark, which is the
+    // property the stepping was there to make visible.
     const next = handAngles(MS_PER_TICK * 6);
     expect(next.moment - onTick.moment).toBeCloseTo(360 / MARKS);
   });
@@ -102,6 +110,70 @@ describe('the sketches', () => {
       seen.add(extraHandAngles((MS_PER_DAY / 36) * i).watch);
     }
     expect(seen.size).toBe(6);
+  });
+});
+
+describe('six ticks, seven hands', () => {
+  test('one hand per rung, outermost first', () => {
+    expect(LADDER).toEqual([
+      'watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap',
+    ]);
+  });
+
+  test('the seven digits ARE the day in seximal, to the snap', () => {
+    expect(ladderDigits(0)).toEqual([0, 0, 0, 0, 0, 0, 0]);
+    expect(ladderDigits(MS_PER_DAY - 1)).toEqual([5, 5, 5, 5, 5, 5, 5]);
+    // Reading the hands as digits must equal converting the day directly.
+    const ms = MS_PER_DAY * 0.4137;
+    const asNumber = ladderDigits(ms).reduce((acc, d) => acc * 6 + d, 0);
+    expect(asNumber).toBe(Math.floor((ms * 6 ** 7) / MS_PER_DAY));
+  });
+
+  test('a digit always sits ON a mark, whatever the hand is doing', () => {
+    const angles = ladderAngles(MS_PER_DAY * 0.6183);
+    Object.values(angles).forEach((a) => {
+      // Distance to the NEAREST mark, not `a % 60`: 5/6 of a turn lands on
+      // 299.99999999999994, whose remainder is 59.99…, not 0.
+      const rem = a % 60;
+      expect(Math.min(rem, 60 - rem)).toBeCloseTo(0);
+    });
+  });
+
+  test('a hand CROSSES its mark exactly when the digit changes', () => {
+    // Asserted on rungs 1–3 only: 6^n divides 86400000 in whole milliseconds
+    // while n ≤ 3 (the day carries just 3^3), so those are the boundaries that
+    // land exactly rather than near.
+    [1, 2, 3].forEach((n) => {
+      const step = MS_PER_DAY / 6 ** n;
+      const unit = LADDER[n - 1];
+      for (let k = 1; k < 6; k += 1) {
+        expect(ladderSweepAngles(step * k)[unit])
+          .toBeCloseTo(ladderAngles(step * k)[unit]);
+      }
+    });
+  });
+
+  test('…and sits between two marks the whole rest of the way', () => {
+    const step = MS_PER_DAY / 6 ** 3; // one span
+    const ms = step * 2 + step / 2; // halfway through the third span
+    // Still reads as digit 2; drawn half a mark past it.
+    expect(ladderAngles(ms).span).toBeCloseTo(120);
+    expect(ladderSweepAngles(ms).span).toBeCloseTo(150);
+  });
+
+  test('every hand moves on a millisecond — none waits for its own digit', () => {
+    const ms = MS_PER_DAY * 0.3183;
+    const before = ladderSweepAngles(ms);
+    const after = ladderSweepAngles(ms + 1);
+    LADDER.forEach((unit) => expect(after[unit]).not.toBe(before[unit]));
+  });
+
+  test('each hand turns once per the unit above it', () => {
+    // The lapse hand completes a turn in one watch, and starts over.
+    const watch = MS_PER_DAY / 6;
+    expect(ladderDigit(watch - 1, 2)).toBe(5);
+    expect(ladderDigit(watch, 2)).toBe(0);
+    expect(ladderDigit(watch, 1)).toBe(1);
   });
 });
 
