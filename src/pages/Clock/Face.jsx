@@ -40,7 +40,7 @@ function Face({
 
   return (
     <svg
-      className="clock__dial"
+      className="clock__dial clock__dial--marks"
       viewBox="-128 -128 256 256"
       role="img"
       aria-label={`Analog face: lapse ${Math.round(angles.lapse)}°, lull ${Math.round(angles.lull)}°, moment ${Math.round(angles.moment)}°`}

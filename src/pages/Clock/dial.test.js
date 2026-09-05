@@ -123,10 +123,35 @@ describe('six ticks, seven hands', () => {
   test('the seven digits ARE the day in seximal, to the snap', () => {
     expect(ladderDigits(0)).toEqual([0, 0, 0, 0, 0, 0, 0]);
     expect(ladderDigits(MS_PER_DAY - 1)).toEqual([5, 5, 5, 5, 5, 5, 5]);
-    // Reading the hands as digits must equal converting the day directly.
-    const ms = MS_PER_DAY * 0.4137;
-    const asNumber = ladderDigits(ms).reduce((acc, d) => acc * 6 + d, 0);
-    expect(asNumber).toBe(Math.floor((ms * 6 ** 7) / MS_PER_DAY));
+    // A LITERAL, not a re-derivation. The old version of this test recomputed
+    // the expected value with the same floor-division the code used, so both
+    // sides carried the same bug and it could not fail.
+    // 16:00 local is 2/3 of the day: 0.4₆ of a day, so 4 then six zeros.
+    expect(ladderDigits(57600000).join('')).toBe('4000000');
+    // 1/6 of a day is 04:00; 5/6 is 20:00 and every digit below the watch is 0.
+    expect(ladderDigits(MS_PER_DAY / 6).join('')).toBe('1000000');
+    expect(ladderDigits((MS_PER_DAY * 5) / 6).join('')).toBe('5000000');
+  });
+
+  test('no millisecond of the day disagrees with the direct expansion', () => {
+    // The regression this exists for: dividing by MS_PER_DAY / 6**n instead of
+    // multiplying first made floor land one short at digit boundaries, wrong at
+    // 270 instants a day — 16:00:00.000 among them, which read 4005050.
+    // Sampled rather than exhaustive so the suite stays fast; the sample is
+    // deliberately built from exact boundaries, which is where it broke.
+    const expected = (ms) => {
+      let v = Math.floor((ms * 6 ** 7) / MS_PER_DAY);
+      const out = [];
+      for (let i = 0; i < 7; i += 1) { out.unshift(v % 6); v = Math.floor(v / 6); }
+      return out;
+    };
+    const samples = [];
+    for (let n = 1; n <= 7; n += 1) {
+      for (let k = 0; k < 6 ** n; k += Math.max(1, Math.floor(6 ** n / 40))) {
+        samples.push(Math.round((k * MS_PER_DAY) / 6 ** n));
+      }
+    }
+    samples.forEach((ms) => expect(ladderDigits(ms)).toEqual(expected(ms)));
   });
 
   test('a digit always sits ON a mark, whatever the hand is doing', () => {
