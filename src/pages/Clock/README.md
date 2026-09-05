@@ -11,9 +11,9 @@ The time of day as a base-six number. The split used here:
 
 | unit   | count        | real length | written as     |
 |--------|--------------|-------------|----------------|
-| hour   | 36 a day     | 40 min      | two digits, 00–55₆ |
-| minute | 36 an hour   | 66.7 s      | two digits, 00–55₆ |
-| second | 36 a minute  | 1.85 s      | two digits, 00–55₆ |
+| hour   | 100₆ · 10₃₆ a day    | 40 min      | two digits, 00–55₆ |
+| minute | 100₆ · 10₃₆ an hour  | 66.7 s      | two digits, 00–55₆ |
+| second | 100₆ · 10₃₆ a minute | 1.85 s      | two digits, 00–55₆ |
 
 36 × 36 × 36 = 46 656 = 6⁶ = 1000000₆ ticks a day. Every count is a **nif**
 (100₆), so each unit is exactly one pair wide and the face is three pairs:
