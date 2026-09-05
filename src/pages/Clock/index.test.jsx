@@ -63,7 +63,7 @@ test('an unknown stored value falls back to seximal', () => {
   expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('it ticks', () => {
+test('it ticks on the seximal second, not the decimal one', () => {
   renderAt();
   expect(screen.getByTestId('digits-second')).toHaveTextContent('00');
   // Two real seconds is one seximal second and a bit.
@@ -71,5 +71,18 @@ test('it ticks', () => {
     jest.advanceTimersByTime(2000);
   });
   expect(screen.getByTestId('digits-second')).toHaveTextContent('01');
-  expect(screen.getByText(/16:00:02 on the decimal clock/)).toBeInTheDocument();
+  // The face last moved at the TICK boundary, 1851.85… ms in, so the
+  // orientation line reads that instant and not the 2000 ms we advanced.
+  // Under the old 1000 ms interval it read 16:00:02, which is precisely the
+  // cadence bug: the clock was sampling on someone else's second.
+  expect(screen.getByText(/16:00:01 on the decimal clock/)).toBeInTheDocument();
+});
+
+test('it does not advance twice inside one seximal second', () => {
+  renderAt();
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  // A whole decimal second is barely half a tick: the face must not have moved.
+  expect(screen.getByTestId('digits-second')).toHaveTextContent('00');
 });

@@ -14,6 +14,7 @@ import {
   MS_PER_MINUTE,
   MS_PER_TICK,
   msSinceLocalMidnight,
+  msToNextTick,
   niftimalDigit,
   niftimalTime,
   niftimalValue,
@@ -194,5 +195,42 @@ describe('the decimal clock', () => {
   test('zero-padded 24-hour', () => {
     expect(decimalTime(at(0, 0, 0))).toBe('00:00:00');
     expect(decimalTime(at(16, 5, 9))).toBe('16:05:09');
+  });
+});
+
+describe('ticking on the seximal second', () => {
+  test('the wait always lands on the next tick, never inside one', () => {
+    // The relationship, not a pinned literal: from any instant, waiting
+    // msToNextTick lands on a tick index exactly one higher.
+    [at(0, 0, 0), at(0, 0, 1, 7), at(9, 41, 33, 555), at(16, 0, 0), at(23, 59, 58)]
+      .forEach((d) => {
+        const landed = new Date(d.getTime() + msToNextTick(d));
+        expect(ticksSinceMidnight(landed)).toBe(ticksSinceMidnight(d) + 1);
+      });
+  });
+
+  test('the wait is a positive span no longer than one tick', () => {
+    [at(0, 0, 0), at(4, 20, 0, 1), at(16, 0, 0), at(21, 15, 45, 999)].forEach((d) => {
+      const wait = msToNextTick(d);
+      expect(wait).toBeGreaterThan(0);
+      expect(wait).toBeLessThanOrEqual(Math.ceil(MS_PER_TICK));
+    });
+  });
+
+  test('re-aiming each tick does not drift over a whole hour of them', () => {
+    // 36 ticks is a seximal minute; walking them by repeated re-aim must end
+    // exactly 36 ticks on, which a rounded fixed period would not.
+    let d = at(11, 11, 11, 11);
+    const start = ticksSinceMidnight(d);
+    for (let i = 0; i < 36; i += 1) d = new Date(d.getTime() + msToNextTick(d));
+    expect(ticksSinceMidnight(d)).toBe(start + 36);
+  });
+
+  test('a decimal-second interval would NOT do this — the bug it replaces', () => {
+    // 1000 ms lands inside the same tick more often than not: that is why the
+    // face repeated, then skipped.
+    const d = at(9, 41, 33, 0);
+    const afterOneDecimalSecond = new Date(d.getTime() + 1000);
+    expect(ticksSinceMidnight(afterOneDecimalSecond)).toBe(ticksSinceMidnight(d));
   });
 });
