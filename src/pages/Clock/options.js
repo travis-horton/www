@@ -115,42 +115,15 @@ export const CLOCK_OPTIONS = [
 
 export const OPTION_IDS = CLOCK_OPTIONS.map((o) => o.id);
 
-export const VOTES_KEY = 'travish.clock.votes';
-
-export const UP = 1;
-export const DOWN = -1;
-
-/**
- * Votes are per-browser, and that is a real limitation rather than a stage in
- * getting somewhere: there is no API behind this page yet, so nothing can be
- * counted across devices or people. The page says so where the buttons are,
- * because a vote button that silently goes nowhere is worse than no button.
+/*
+ * The vote helpers that used to live here are GONE, not commented out
+ * (Travis, 26.0905). They were localStorage-backed, which made every visitor's
+ * tally private to their own browser and therefore uncountable. Keeping dead
+ * code against a rewrite that is weeks away just gives it time to rot away
+ * from whatever the API actually ends up wanting.
  *
- * Unknown ids and unknown values are dropped on read, so an old or hand-edited
- * key cannot put the UI into a state the buttons cannot express.
+ * The real thing is one table and two routes on the Zig backend. When that
+ * exists, this module grows `readTally()` and `castVote()` and the ballot
+ * calls those. Until then, `git show c79bfef` has the old version if the
+ * shapes are worth a second look.
  */
-export const cleanVotes = (raw) => {
-  if (!raw || typeof raw !== 'object') return {};
-  return Object.fromEntries(
-    Object.entries(raw).filter(
-      ([id, v]) => OPTION_IDS.includes(id) && (v === UP || v === DOWN),
-    ),
-  );
-};
-
-/** Clicking the vote you already hold clears it — three states, two buttons. */
-export const toggleVote = (votes, id, value) => {
-  const next = { ...votes };
-  if (next[id] === value) delete next[id];
-  else next[id] = value;
-  return next;
-};
-
-/** The tally, for the summary line: how many of each the reader has marked. */
-export const countVotes = (votes) => Object.values(votes).reduce(
-  (acc, v) => ({
-    up: acc.up + (v === UP ? 1 : 0),
-    down: acc.down + (v === DOWN ? 1 : 0),
-  }),
-  { up: 0, down: 0 },
-);
