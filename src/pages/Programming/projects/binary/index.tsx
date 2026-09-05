@@ -91,7 +91,7 @@ const BinaryNumber = ({
       );
 
       return (
-        <>
+        <React.Fragment key={idx}>
           <line
             x1={startX}
             y1={startVec.y + (SCALE * 4)}
@@ -117,7 +117,7 @@ const BinaryNumber = ({
             startVec={{x: thisHexStartX, y: startVec.y}}
             showMoreSigBits={!hideMoreSigBits}
           />
-        </>
+        </React.Fragment>
       )
     })}
     </>
