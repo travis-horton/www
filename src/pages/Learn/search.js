@@ -6,13 +6,15 @@
  *
  * Three directions, because a learner arrives from three different places:
  *
- *   toki pona word -> gloss, glyph, and every lesson that introduces, uses,
- *     or merely mentions it. This is the "luka bug" fix: luka is taught in
- *     Level 7 and leaned on again in Level 9's vocabNote (as the number
- *     five) with nothing connecting the two — search is how a learner finds
- *     every lesson a word actually shows up in, not just the one that taught
- *     it. That includes lessons' freeform prose (vocabNote/closingNote/
- *     intro/rule.body), not only the structured fields — see buildAppearances().
+ *   toki pona word -> gloss, glyph, and every lesson that introduces,
+ *     re-introduces, uses, or merely mentions it. This began as the "luka
+ *     bug" fix: luka was taught in Level 7 and leaned on in Level 9 (as the
+ *     number five) with nothing connecting the two. The curriculum side of
+ *     that is now fixed too (Level 9 carries luka as an `again` card), but
+ *     search is still how a learner finds every lesson a word actually shows
+ *     up in, not just the one that taught it. That includes lessons' freeform
+ *     prose (vocabNote/closingNote/intro/rule.body), not only the structured
+ *     fields — see buildAppearances().
  *   English word (or phrase) -> the toki pona word(s) whose gloss contains
  *     it. The gloss strings already ARE this index — vocab('luka', 'hand ·
  *     arm (& five)') means both "hand" and "five" have to resolve to luka —
@@ -124,12 +126,19 @@ const buildWordEntries = () => {
  *                  this pass only credits words already in WORD_ENTRIES (a
  *                  real toki pona word) and skips PROSE_STOPWORDS (English
  *                  words that collide with one, namely "a").
+ *   'reintroduces' — the level carries it as an `again` card: a word taught
+ *                  earlier, brought back here in a new sense (luka, the
+ *                  Level 7 hand, as Level 9's five). Ranks above 'uses' —
+ *                  the level teaches something about the word — and below
+ *                  'introduces', which stays reserved for the first teaching.
  * A word can be both in the same level (introduced and used in its own
- * examples) — role only ever strengthens (mentioned -> uses -> introduces),
- * never weakens, so a later prose-only pass can't downgrade a level a word
- * was already properly introduced or used in.
+ * examples) — role only ever strengthens (mentioned -> uses -> reintroduces
+ * -> introduces), never weakens, so a later prose-only pass can't downgrade
+ * a level a word was already properly introduced or used in.
  */
-const ROLE_RANK = { mentioned: 0, uses: 1, introduces: 2 };
+const ROLE_RANK = {
+  mentioned: 0, uses: 1, reintroduces: 2, introduces: 3,
+};
 
 const buildAppearances = (entries) => {
   const byWord = {};
@@ -146,6 +155,7 @@ const buildAppearances = (entries) => {
 
   LEVELS.forEach((level) => {
     level.vocab.forEach((v) => touch(v.word, level, 'introduces'));
+    (level.again || []).forEach((v) => touch(v.word, level, 'reintroduces'));
     level.glyphReading.forEach((w) => touch(w, level, 'uses'));
     level.toEnglish.forEach(([tp]) => wordsIn(tp).forEach((w) => touch(w, level, 'uses')));
     level.toTokiPona.forEach(([, tp]) => wordsIn(tp).forEach((w) => touch(w, level, 'uses')));
@@ -198,6 +208,16 @@ const buildEnglishIndex = (entries) => {
     }
   });
 
+  // An `again` card's gloss is a sense the first teaching did not carry —
+  // mute's 'twenty', ale's 'hundred' — so "twenty" has to find mute the same
+  // way "five" finds luka. The displayed gloss stays the first teaching's; only
+  // the index learns the extra tokens.
+  LEVELS.forEach((level) => {
+    (level.again || []).forEach(({ word, gloss }) => {
+      wordsIn(gloss.replace(PAREN, ' ')).forEach((t) => addToken(t, word));
+    });
+  });
+
   return index;
 };
 
@@ -244,16 +264,19 @@ const normalizeSpelling = (token) => token.replace(/our$/, 'or');
 /*
  * Digit -> English number word, so "5" resolves the same way "five" already
  * does. Deliberately generic (not a luka-specific hack): a plain 0-10 word
- * list, checked against whatever the reverse index already knows. This
- * course only has single-word glosses for one/two/five (wan/tu/luka), so "3"
- * or "4" still correctly find nothing — there's no vocab() card that means
- * them, and this table doesn't pretend otherwise.
+ * list plus the two round numbers the course's additive system names (mute
+ * 20, ale 100), checked against whatever the reverse index already knows.
+ * This course only has glosses for one/two/five/twenty/hundred, so "3" or
+ * "4" still correctly find nothing — there's no card that means them, and
+ * this table doesn't pretend otherwise.
  */
 const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const ROUND_NUMBER_WORDS = { 20: 'twenty', 100: 'hundred' };
 const numeralWord = (token) => {
   if (!/^\d+$/.test(token)) return null;
   const n = Number(token);
-  return n < NUMBER_WORDS.length ? NUMBER_WORDS[n] : null;
+  if (n < NUMBER_WORDS.length) return NUMBER_WORDS[n];
+  return ROUND_NUMBER_WORDS[n] || null;
 };
 
 /**

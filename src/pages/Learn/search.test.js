@@ -16,13 +16,32 @@ describe('word -> lessons (toki pona in)', () => {
     expect(luka.word).toBe('luka');
     expect(luka.gloss).toBe('hand · arm (& five)');
     expect(luka.glyph).toBe(GLYPHS.luka);
-    // luka is taught in Level 7, and Level 9's vocabNote leans on it again as
-    // the number five ("luka tu = 7 · luka luka = 10") without a vocab card
-    // there — that prose-only appearance should surface as 'mentioned'.
+    // luka is taught in Level 7 as the hand, and Level 9 brings it back as
+    // the number five on an `again` card (Praxis leaf 9a1c55da) — that is a
+    // 'reintroduces' appearance, distinct from the first teaching and from a
+    // level that merely uses the word in a sentence.
     expect(luka.levels).toEqual([
       { levelId: '7', title: 'Asking, and the body', role: 'introduces' },
-      { levelId: '9', title: 'Commands, numbers, up and down', role: 'mentioned' },
+      { levelId: '9', title: 'Commands, numbers, up and down', role: 'reintroduces' },
     ]);
+  });
+
+  test('every again card surfaces as "reintroduces" in the level that carries it', () => {
+    LEVELS.forEach((level) => {
+      (level.again || []).forEach((v) => {
+        const [hit] = search(v.word);
+        const here = hit.levels.find((l) => l.levelId === level.id);
+        expect(`${v.word}:${here && here.role}`).toBe(`${v.word}:reintroduces`);
+      });
+    });
+  });
+
+  test('an again card never outranks the first teaching', () => {
+    // mute is taught in Level 3 and brought back in Level 9 as twenty; the
+    // Level 3 tag has to stay 'introduces'.
+    const [mute] = search('mute');
+    expect(mute.levels.find((l) => l.levelId === '3').role).toBe('introduces');
+    expect(mute.levels.find((l) => l.levelId === '9').role).toBe('reintroduces');
   });
 
   test('is case-insensitive', () => {
@@ -180,6 +199,18 @@ describe('query tokenization (the reverse lookup, generalized)', () => {
 
   test('a numeral with no matching gloss ("3") finds nothing, rather than guessing', () => {
     expect(search('3')).toEqual([]);
+  });
+
+  test('the again cards\' senses are indexed: "twenty"/"20" find mute, "hundred"/"100" find ale', () => {
+    // mute's first teaching is 'many · very' (Level 3) and ale's is 'all ·
+    // everything' (Level 2); the number senses arrive on Level 9's `again`
+    // cards, and the reverse index has to know them without changing the
+    // gloss a result displays.
+    expect(wordsOf(search('twenty'))).toEqual(['mute']);
+    expect(wordsOf(search('20'))).toEqual(['mute']);
+    expect(wordsOf(search('hundred'))).toEqual(['ale']);
+    expect(wordsOf(search('100'))).toEqual(['ale']);
+    expect(search('mute')[0].gloss).toBe('many · very');
   });
 });
 

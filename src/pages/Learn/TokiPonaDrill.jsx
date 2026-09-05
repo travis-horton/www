@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
-  buildSession, getLevel, GLYPHS, isCorrect, LEVELS, SELF_GRADED,
+  buildSession, getLevel, GLYPHS, isCorrect, LEVELS, SELF_GRADED, taughtIn,
 } from './tokipona';
 import { recordSession } from './progress';
 
@@ -145,6 +145,19 @@ function TokiPonaDrill() {
               <span className="tp__gloss">{v.gloss}</span>
             </li>
           ))}
+          {(level.again || []).map((v) => {
+            const from = taughtIn(v.word);
+            return (
+              <li key={v.word} className="tp__card tp__card--again">
+                <span className="tp__glyph tp__glyph--card">{v.glyph}</span>
+                <span className="tp__word">{v.word}</span>
+                <span className="tp__gloss">{v.gloss}</span>
+                <span className="tp__again">
+                  {from ? `again — from Level ${from.id}` : 'again'}
+                </span>
+              </li>
+            );
+          })}
         </ul>
         <p className="lesson__dim">{level.vocabNote}</p>
 

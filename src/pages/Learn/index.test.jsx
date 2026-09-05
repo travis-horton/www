@@ -99,7 +99,7 @@ describe('toki pona', () => {
 
     fireEvent.change(box, { target: { value: 'five' } });
 
-    expect(screen.getByText('luka')).toBeInTheDocument();
+    expect(screen.getByText('luka', { selector: '.tp__word' })).toBeInTheDocument();
     expect(screen.getByText('hand · arm (& five)')).toBeInTheDocument();
     const link = screen.getByRole('link', { name: /Level 7/ });
     expect(link).toHaveAttribute('href', '/learn/toki-pona/7');
@@ -110,7 +110,7 @@ describe('toki pona', () => {
     fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
       target: { value: 'hand' },
     });
-    expect(screen.getByText('luka')).toBeInTheDocument();
+    expect(screen.getByText('luka', { selector: '.tp__word' })).toBeInTheDocument();
   });
 
   test('a query matching nothing says so, not silence', () => {
