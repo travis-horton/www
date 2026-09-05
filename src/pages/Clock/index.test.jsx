@@ -102,6 +102,17 @@ test('it does not advance twice inside one seximal second', () => {
   expect(screen.getByTestId('digits-second')).toHaveTextContent('00');
 });
 
+test('the lede hands over "nif" before the page leans on it', () => {
+  // The page says "a nif of minutes" all the way down, including in the unit
+  // definitions and on the ballot. The word therefore has to be DEFINED on
+  // first use, not glossed a clause after it has already been spent.
+  renderAt();
+  const nif = screen.getByTestId('nif-def');
+  expect(nif.tagName).toBe('DFN');
+  expect(nif).toHaveTextContent('nif');
+  expect(nif.closest('p')).toHaveTextContent(/a nif is thirty-six/i);
+});
+
 describe('the ballot at the bottom', () => {
   test('every option is laid out with both cases and a pair of votes', () => {
     renderAt();
