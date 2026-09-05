@@ -1,44 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import Face from './Face';
 import SixFace from './SixFace';
 import { spanIndex } from './dial';
 import { seximalTriple } from './clock';
-import {
-  CLOCK_OPTIONS, DOWN, UP, VOTES_KEY, cleanVotes, countVotes, toggleVote,
-} from './options';
+import { CLOCK_OPTIONS } from './options';
 
 /*
  * The ballot (Travis, 26.0905). Each option gets a header, a description, its
- * own live demo, the case for, the case against, and a vote.
+ * own live demo, the case for and the case against.
+ *
+ * THERE ARE NO VOTE BUTTONS, and their absence is the point. They existed for
+ * about an hour, in commit c79bfef, backed by localStorage — which meant every
+ * visitor kept a private tally that nobody, including Travis, could ever read.
+ * A button that records your click into your own browser and nowhere else is
+ * not a vote, it is a fidget. Rather than ship that, the counting waits for an
+ * API this site does not have yet.
+ *
+ * Travis's call, 26.0905, and the reason is motivational rather than technical:
+ * a working vote count is now the declared mid-point of the Zig backend. One
+ * table, two routes, no auth, no journal parsing — it skips all of Phase 2 and
+ * still puts something real in production. Roughly ten tasks out from where the
+ * Zig sits today. Restoring the buttons is the reward for finishing them, so
+ * they go back in when there is something behind them.
  *
  * Named Ballot, not Options, and that is not a style choice: the data lives in
  * options.js, macOS resolves imports case-insensitively, and a component file
  * called Options.jsx makes `import … from './options'` resolve to ITSELF. The
  * symptom is a component that renders as undefined with no import error at
  * all. Same trap that made Dial.jsx into Face.jsx.
- *
- * The votes are stored in THIS BROWSER and nowhere else. There is no API
- * behind travish.com yet, so they cannot be counted across devices, let alone
- * across people. The page says that in plain words next to the buttons rather
- * than implying a tally that does not exist.
  */
-
-const load = () => {
-  try {
-    return cleanVotes(JSON.parse(window.localStorage.getItem(VOTES_KEY)));
-  } catch (e) {
-    return {};
-  }
-};
-
-const save = (votes) => {
-  try {
-    window.localStorage.setItem(VOTES_KEY, JSON.stringify(votes));
-  } catch (e) {
-    // Private mode or storage disabled: the buttons still work for this visit.
-  }
-};
 
 /**
  * Each option's live demo, by id. Kept here so options.js stays pure data —
@@ -70,31 +61,18 @@ const demo = (id, now, ms, mode) => {
 };
 
 function Ballot({ now, ms, mode }) {
-  const [votes, setVotes] = useState(load);
-
-  useEffect(() => {
-    save(votes);
-  }, [votes]);
-
-  const cast = (id, value) => setVotes((v) => toggleVote(v, id, value));
-  const tally = countVotes(votes);
-
   return (
     <section className="clock__options">
       <h2 className="clock__h2">five clocks, none of them decided</h2>
       <p className="clock__lede">
         A few ways the units could reach a face, laid out with the case for and
-        the case against. All five run live off the same clock. Vote on them.
+        the case against. All five run live off the same clock.
       </p>
-      <p className="clock__vote-note">
-        The votes are kept in this browser and go nowhere else — there is no
-        API behind this site yet, so nothing is counted across devices or
-        between people. Treat it as marking up your own copy.
-        {(tally.up > 0 || tally.down > 0) && (
-          <span data-testid="vote-tally">
-            {` You have marked ${tally.up} up and ${tally.down} down.`}
-          </span>
-        )}
+      <p className="clock__vote-note" data-testid="vote-pending">
+        There is nowhere yet to put a vote. This site is static, with no API
+        behind it, so a button here could only write your answer into your own
+        browser where nobody would ever read it. Counting these is the next
+        real thing the backend has to do.
       </p>
 
       {CLOCK_OPTIONS.map((opt, i) => (
@@ -135,31 +113,6 @@ function Ballot({ now, ms, mode }) {
                     {opt.cons.map((c) => <li key={c}>{c}</li>)}
                   </ul>
                 </div>
-              </div>
-
-              <div className="clock__vote" role="group" aria-label={`Vote on ${opt.title}`}>
-                <button
-                  type="button"
-                  className={`clock__vote-btn ${votes[opt.id] === UP ? 'is-on' : ''}`}
-                  aria-pressed={votes[opt.id] === UP}
-                  aria-label={`Vote up: ${opt.title}`}
-                  data-testid={`up-${opt.id}`}
-                  onClick={() => cast(opt.id, UP)}
-                >
-                  <span aria-hidden="true">▲</span>
-                  {' up'}
-                </button>
-                <button
-                  type="button"
-                  className={`clock__vote-btn ${votes[opt.id] === DOWN ? 'is-on' : ''}`}
-                  aria-pressed={votes[opt.id] === DOWN}
-                  aria-label={`Vote down: ${opt.title}`}
-                  data-testid={`down-${opt.id}`}
-                  onClick={() => cast(opt.id, DOWN)}
-                >
-                  <span aria-hidden="true">▼</span>
-                  {' down'}
-                </button>
               </div>
             </div>
           </div>

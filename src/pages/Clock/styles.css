@@ -472,36 +472,8 @@
   color: hsl(0, 0%, 55%);
 }
 
-/* --- the vote buttons ----------------------------------------------------- */
-
-.clock__vote {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.clock__vote-btn {
-  font-family: inherit;
-  font-size: 0.95rem;
-  min-height: 44px;
-  padding: 0 1.1rem;
-  color: black;
-  background: white;
-  border: 2px solid var(--light-grey);
-  border-radius: 6px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.clock__vote-btn.is-on {
-  color: white;
-  background: var(--main-accent-color);
-  border-color: var(--main-accent-color);
-}
-
-.clock__vote-btn:focus-visible {
-  outline: 2px solid var(--main-accent-color);
-  outline-offset: 2px;
-}
+/* The vote-button rules came out with the buttons on 26.0905; `git show
+   c79bfef` has them for whenever the backend can count. */
 
 /* --- the span demo -------------------------------------------------------- */
 
