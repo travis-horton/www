@@ -311,6 +311,14 @@
   font-weight: 600;
 }
 
+/* Marks a unit we proposed rather than one that is canon. */
+.clock__unit-flag {
+  margin-left: 0.25em;
+  font-size: 0.7em;
+  vertical-align: super;
+  opacity: 0.6;
+}
+
 .clock__unit-def dd {
   margin: 0;
 }
