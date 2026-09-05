@@ -1,9 +1,11 @@
 import React from 'react';
 import {
+  extraHandAngles,
   handAngles,
   markLabel,
   markPoint,
   outerLabel,
+  watchIndex,
   MAJOR_EVERY,
   MARKS,
 } from './dial';
@@ -28,8 +30,13 @@ const HANDS = [
  * than a CSS transition, deliberately: a transition tweens the short way round
  * and would visibly rubber-band backwards through the whole dial at each wrap.
  */
-function Face({ now, mode }) {
-  const angles = handAngles(msSinceLocalMidnight(now));
+function Face({
+  now, mode, extraHands = false, sextant = false,
+}) {
+  const ms = msSinceLocalMidnight(now);
+  const angles = handAngles(ms);
+  const extra = extraHandAngles(ms);
+  const watch = watchIndex(ms);
 
   return (
     <svg
@@ -39,6 +46,18 @@ function Face({ now, mode }) {
       aria-label={`Analog face: lapse ${Math.round(angles.lapse)}°, lull ${Math.round(angles.lull)}°, moment ${Math.round(angles.moment)}°`}
       data-testid="dial"
     >
+      {sextant && (
+        <path
+          className="clock__dial-sextant"
+          data-testid="sextant"
+          d={(() => {
+            const a = markPoint((watch * MARKS) / 6, R);
+            const b = markPoint(((watch + 1) * MARKS) / 6, R);
+            return `M 0 0 L ${a.x} ${a.y} A ${R} ${R} 0 0 1 ${b.x} ${b.y} Z`;
+          })()}
+        />
+      )}
+
       <circle className="clock__dial-rim" cx="0" cy="0" r={R} />
 
       {Array.from({ length: MARKS }, (_, i) => {
@@ -94,6 +113,20 @@ function Face({ now, mode }) {
           y2={-length}
           strokeWidth={width}
           transform={`rotate(${angles[unit]})`}
+        />
+      ))}
+
+      {extraHands && ['watch', 'breath'].map((unit) => (
+        <line
+          key={unit}
+          className={`clock__dial-hand clock__dial-hand--${unit}`}
+          data-testid={`hand-${unit}`}
+          x1="0"
+          y1="0"
+          x2="0"
+          y2={unit === 'watch' ? -34 : -58}
+          strokeWidth={unit === 'watch' ? 7 : 2.4}
+          transform={`rotate(${extra[unit]})`}
         />
       ))}
 

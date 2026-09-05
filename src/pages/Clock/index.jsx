@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Face from './Face';
+import { spanIndex } from './dial';
 
 import {
   dayFraction,
   decimalTime,
+  msSinceLocalMidnight,
   msToNextTick,
   niftimalDigit,
+  seximalTriple,
   UNIT_DEFINITIONS,
   UNIT_NAMES,
   seximalPair,
@@ -91,6 +94,7 @@ function Clock() {
   // precision at which every tick visibly moves it.
   const percent = dayFraction(ticks) * 100;
   const percentText = percent.toFixed(3);
+  const ms = msSinceLocalMidnight(now);
 
   return (
     <main>
@@ -224,6 +228,45 @@ function Clock() {
             </div>
           ))}
         </dl>
+
+        <h2 className="clock__h2">three sketches, none of them decided</h2>
+        <p className="clock__lede">
+          Ways the newer units could reach the face. All three run live off the
+          same clock; none is wired to the toggle yet.
+        </p>
+
+        <div className="clock__sketches">
+          <figure className="clock__sketch" data-testid="sketch-span">
+            <div className="clock__sketch-span">{seximalTriple(spanIndex(ms))}</div>
+            <figcaption>
+              <strong>the span, one number</strong>
+              {' — '}
+              three seximal digits, 000 to 555, good to 6 min 40 s. What
+              seximal.net says the span is for: the time without colons.
+            </figcaption>
+          </figure>
+
+          <figure className="clock__sketch" data-testid="sketch-hands">
+            <Face now={now} mode={mode} extraHands />
+            <figcaption>
+              <strong>watch and breath as hands</strong>
+              {' — '}
+              the short thick one and the thin one. Both step through six
+              positions only, so they read as slow duplicates of the lapse and
+              moment hands. Shown because seeing it settles it.
+            </figcaption>
+          </figure>
+
+          <figure className="clock__sketch" data-testid="sketch-sextant">
+            <Face now={now} mode={mode} sextant />
+            <figcaption>
+              <strong>the watch as a wedge</strong>
+              {' — '}
+              a watch is a sixth of the day and the dial already has six major
+              marks, so it is a region, not a pointer. No new hand.
+            </figcaption>
+          </figure>
+        </div>
 
         <p className="clock__foot">
           <Link to="/learn/seximal">the seximal course</Link>

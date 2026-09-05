@@ -69,6 +69,41 @@ export const markLabel = (i) => (i % MAJOR_EVERY === 0 ? seximalPair(i) : '');
  */
 export const outerLabel = (i) => NIFTIMAL_DIGITS[i];
 
+/* --- sketches of the three ways to use the new units --------------------- */
+
+export const SPANS_PER_DAY = 216; // 6³, so a span index is three seximal digits
+const MS_PER_SPAN = MS_PER_DAY / SPANS_PER_DAY;
+const MS_PER_WATCH = MS_PER_DAY / 6;
+const MS_PER_BREATH = MS_PER_MINUTE / 6;
+
+/**
+ * The span face: the whole time as ONE number, 0..215, which is 000₆..555₆.
+ * This is what seximal.net says the span is FOR — six nif of them in a day, so
+ * you can say the time without colons, good to 6 min 40 s.
+ */
+export const spanIndex = (msSinceMidnight) => Math.floor(msSinceMidnight / MS_PER_SPAN);
+
+/**
+ * Which sixth of the day we are in, 0..5 — the watch, as a REGION rather than
+ * a pointer. The dial already has six major marks, so a watch is the wedge
+ * between two of them and needs no hand.
+ */
+export const watchIndex = (msSinceMidnight) => Math.floor(msSinceMidnight / MS_PER_WATCH);
+
+/**
+ * Watch and breath AS HANDS, for the sketch that shows why they are a weak
+ * idea. Both step through only six positions — a watch is the lapse hand at a
+ * sixth of its resolution, a breath the moment hand at a sixth of its — so on
+ * a 36-mark dial they land on every sixth mark and read as slow duplicates.
+ * Drawn stepping, so that is visible rather than argued.
+ */
+export const extraHandAngles = (msSinceMidnight) => ({
+  watch: turnToDegrees(Math.floor(msSinceMidnight / MS_PER_WATCH) / 6),
+  breath: turnToDegrees(
+    Math.floor((msSinceMidnight % MS_PER_MINUTE) / MS_PER_BREATH) / 6,
+  ),
+});
+
 /** Cartesian point on a circle of radius r, at mark `i` of MARKS, centre 0,0. */
 export const markPoint = (i, r) => {
   const rad = ((turnToDegrees(i / MARKS) - 90) * Math.PI) / 180;
