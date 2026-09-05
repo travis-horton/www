@@ -83,7 +83,7 @@ function Ballot({ now, ms, mode }) {
     <section className="clock__options">
       <h2 className="clock__h2">five clocks, none of them decided</h2>
       <p className="clock__lede">
-        Every way the units could reach a face, laid out with the case for and
+        A few ways the units could reach a face, laid out with the case for and
         the case against. All five run live off the same clock. Vote on them.
       </p>
       <p className="clock__vote-note">
