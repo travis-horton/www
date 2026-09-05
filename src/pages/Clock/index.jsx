@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import Face from './Face';
+
 import {
   dayFraction,
   decimalTime,
   msToNextTick,
   niftimalDigit,
+  UNIT_DEFINITIONS,
+  UNIT_NAMES,
   seximalPair,
   splitTicks,
   spokenTime,
@@ -108,6 +112,8 @@ function Clock() {
           ))}
         </div>
 
+        <Face now={now} mode={mode} />
+
         <div className={`clock__face clock__face--${mode}`}>
           {UNITS.map((unit, i) => (
             <React.Fragment key={unit}>
@@ -119,7 +125,9 @@ function Clock() {
                 <span className="clock__name" data-testid={`name-${unit}`}>
                   {names[unit]}
                 </span>
-                <span className="clock__label">{unit}</span>
+                <span className="clock__label" data-testid={`label-${unit}`}>
+                  {UNIT_NAMES[unit]}
+                </span>
               </span>
             </React.Fragment>
           ))}
@@ -163,6 +171,33 @@ function Clock() {
             ))}
           </tbody>
         </table>
+
+        <h2 className="clock__h2">the units have names</h2>
+        <p className="clock__lede">
+          They are not invented here. They come from
+          {' '}
+          <a href="https://www.seximal.net/units">seximal.net</a>
+          , and they are the units this clock already had — the generic hour,
+          minute and second were standing in for them. The definitions look odd
+          at first because that page writes its numbers in seximal: a moment is
+          &ldquo;exactly 1.504 seconds&rdquo;, and 1.504₆ is 1.85.
+        </p>
+        <dl className="clock__units">
+          {UNIT_DEFINITIONS.map(([name, gloss, fraction, si]) => (
+            <div className="clock__unit-def" key={name} data-testid={`def-${name}`}>
+              <dt>{name}</dt>
+              <dd>
+                {gloss}
+                <span className="clock__dim">
+                  {' — '}
+                  {fraction}
+                  {' · '}
+                  {si}
+                </span>
+              </dd>
+            </div>
+          ))}
+        </dl>
 
         <p className="clock__foot">
           <Link to="/learn/seximal">the seximal course</Link>

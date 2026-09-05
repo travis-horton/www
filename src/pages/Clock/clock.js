@@ -152,6 +152,35 @@ export const decimalTime = (date) => (
   [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad2).join(':')
 );
 
+/*
+ * The units have proper names, from seximal.net/units, and they are the units
+ * this clock already had. The page writes its own numbers in seximal, which is
+ * what makes the definitions look wrong at a glance:
+ *
+ *   a lapse  is a "niftiday"   — 1/36 of a day       — "nif four minutes" = 40 min
+ *   a lull   is an "untiday"   — 1/1296 of a day     — "10.4 seconds longer than
+ *                                                      a minute", and 10.4₆ is
+ *                                                      6.67, so 66.67 s
+ *   a moment is a "niftilull"  — 1/46656 of a day    — "exactly 1.504 seconds",
+ *                                                      and 1.504₆ is 1.8518
+ *
+ * 40 min · 66.67 s · 1.85 s are exactly this clock's hour, minute and second,
+ * so the generic names were placeholders for these. A moment is the tick.
+ */
+export const UNIT_NAMES = {
+  hour: 'lapse',
+  minute: 'lull',
+  second: 'moment',
+};
+
+/** What each unit is, in one line, for the page. */
+export const UNIT_DEFINITIONS = [
+  ['day', 'the Earth turning once', '1', '24 h'],
+  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '40 min'],
+  ['lull', 'an untiday — a nif in a lapse', '1/10000₆ day', '1 min 6.7 s'],
+  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '1.85 s'],
+];
+
 /**
  * Milliseconds from `date` to the next whole tick, 1..MS_PER_TICK.
  *
