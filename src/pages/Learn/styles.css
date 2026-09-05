@@ -56,6 +56,19 @@
   text-align: center;
 }
 
+/* A word brought back from an earlier level in a new sense (luka as five). */
+.tp__card--again {
+  border-style: dashed;
+}
+
+.tp__again {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-style: italic;
+  color: hsl(0, 0%, 40%);
+}
+
 .tp__word {
   display: block;
   font-weight: bold;
