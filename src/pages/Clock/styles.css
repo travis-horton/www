@@ -4,8 +4,14 @@
  * gets left running is the iPad.
  */
 
+/*
+ * No width of its own: `main` already sets the site's measure (60% with a
+ * min-width floor, src/styles.css), and a second cap here made the page
+ * narrower than every other page on the site for no reason. Prose keeps its
+ * own reading measure below — that is a legibility limit, not a layout one.
+ */
 .clock {
-  max-width: 40em;
+  max-width: none;
 }
 
 .clock__lede {
