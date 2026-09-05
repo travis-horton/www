@@ -42,10 +42,14 @@ const saveMode = (mode) => {
 
 const UNITS = ['hour', 'minute', 'second'];
 
+// The count is a nif in both bases, and saying so in decimal ("36 a day") on a
+// page arguing for base six undercuts the argument. 36 = 100₆ = 10₃₆, round in
+// both — which is the whole reason the unit was chosen. Real length stays
+// decimal: it is the orientation column, in units the reader already owns.
 const LEGEND = [
-  ['hour', '36 a day', '40 min'],
-  ['minute', '36 an hour', '1 min 6.7 s'],
-  ['second', '36 a minute', '1.85 s'],
+  ['hour', '100₆ · 10₃₆ a day', '40 min'],
+  ['minute', '100₆ · 10₃₆ an hour', '1 min 6.7 s'],
+  ['second', '100₆ · 10₃₆ a minute', '1.85 s'],
 ];
 
 function Clock() {
