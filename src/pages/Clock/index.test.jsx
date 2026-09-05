@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import React from 'react';
 import {
-  act, fireEvent, render, screen,
+  act, fireEvent, render, screen, within,
 } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
@@ -120,8 +120,27 @@ describe('the ballot at the bottom', () => {
       const panel = screen.getByTestId(`option-${opt.id}`);
       expect(panel).toHaveTextContent(opt.title);
       expect(panel).toHaveTextContent(opt.subtitle);
-      expect(panel).toHaveTextContent('for');
-      expect(panel).toHaveTextContent('against');
+      // By ROLE, not by text. `toHaveTextContent('for')` was a substring match
+      // that "information" and "argues for" satisfied on their own, so it
+      // passed with the whole for-column deleted.
+      const { getByRole } = within(panel);
+      expect(getByRole('heading', { name: 'for' })).toBeInTheDocument();
+      expect(getByRole('heading', { name: 'against' })).toBeInTheDocument();
+      // …and the cases themselves must actually render, which nothing checked.
+      expect(panel).toHaveTextContent(opt.pros[0]);
+      expect(panel).toHaveTextContent(opt.cons[0]);
+    });
+  });
+
+  test('each option renders its own live demo', () => {
+    // The demo() switch in Ballot.jsx is keyed by option id and falls through
+    // to null. A new id would silently render an empty box.
+    renderAt();
+    CLOCK_OPTIONS.forEach((opt) => {
+      const demo = screen.getByTestId(`option-${opt.id}`)
+        .querySelector('.clock__option-demo');
+      expect(demo).not.toBeNull();
+      expect(demo.childElementCount).toBeGreaterThan(0);
     });
   });
 
@@ -134,10 +153,22 @@ describe('the ballot at the bottom', () => {
   });
 
   test('there are no vote buttons to click', () => {
+    // STRUCTURAL, not by test id. The old version asserted the absence of
+    // `up-${id}` / `down-${id}`, which exist nowhere in the repo outside that
+    // assertion — so it was asserting the absence of ids it had invented, and
+    // would have stayed green against vote buttons under any other name.
     renderAt();
     CLOCK_OPTIONS.forEach((opt) => {
-      expect(screen.queryByTestId(`up-${opt.id}`)).not.toBeInTheDocument();
-      expect(screen.queryByTestId(`down-${opt.id}`)).not.toBeInTheDocument();
+      const panel = screen.getByTestId(`option-${opt.id}`);
+      expect(within(panel).queryAllByRole('button')).toHaveLength(0);
     });
+  });
+
+  test('the page contributes no second main landmark', () => {
+    // index.jsx and the README both make this load-bearing: the page renders a
+    // fragment because Programming supplies the <main>. Nothing pinned it, so
+    // re-adding one inside Clock would have kept every test green.
+    renderAt();
+    expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 });

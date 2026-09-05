@@ -124,9 +124,23 @@ export const extraHandAngles = (msSinceMidnight) => ({
  */
 export const LADDER = ['watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap'];
 
-/** Digit `n` (1-based) of the day's seximal expansion, 0..5. */
+/**
+ * Digit `n` (1-based) of the day's seximal expansion, 0..5.
+ *
+ * MULTIPLY BEFORE DIVIDING. `MS_PER_DAY / 6**n` is not representable for n = 4
+ * or n = 6 — 86400000/46656 comes out as 1851.851851851852, rounded UP — so
+ * dividing by it makes `floor` land one short at a digit boundary and the digit
+ * reads 5 where it should read 0. That was wrong at 270 instants a day,
+ * including 16:00:00.000 exactly, where the face showed 4005050 for 4000000.
+ * Two digits wrong at once, at the very instant clock.js singles out as the one
+ * that must come out right.
+ *
+ * Going through the integer numerator keeps it exact: the largest intermediate
+ * is 86400000 × 6⁷ ≈ 2.4e13, comfortably inside 2^53. Same trick, and the same
+ * reason, as ticksSinceMidnight in clock.js.
+ */
 export const ladderDigit = (msSinceMidnight, n) => (
-  Math.floor(msSinceMidnight / (MS_PER_DAY / 6 ** n)) % 6
+  Math.floor((msSinceMidnight * 6 ** n) / MS_PER_DAY) % 6
 );
 
 /** All seven digits, outermost rung first. */
