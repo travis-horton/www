@@ -103,6 +103,12 @@
   margin: 14px 0 22px 0;
 }
 
+/* Tabular figures: at three decimals the last place changes every tick, and
+   proportional digits would make the whole line twitch sideways. */
+.clock__meta {
+  font-variant-numeric: tabular-nums;
+}
+
 /* --- the day bar -------------------------------------------------------- */
 
 .clock__bar {

@@ -85,7 +85,12 @@ function Clock() {
   const parts = splitTicks(ticks);
   const names = unitNames(ticks);
   const write = mode === NIFTIMAL ? niftimalDigit : seximalPair;
-  const percent = Math.round(dayFraction(ticks) * 1000) / 10;
+  // Three decimals, not two (Travis, 26.0905). A tick is 1/46656 of the day,
+  // which is 0.00214% — smaller than 0.01, so at two places the number would
+  // sit still for four or five ticks and then jump two. Three is the coarsest
+  // precision at which every tick visibly moves it.
+  const percent = dayFraction(ticks) * 100;
+  const percentText = percent.toFixed(3);
 
   return (
     <main>
@@ -150,7 +155,7 @@ function Clock() {
           <div className="clock__bar-fill" style={{ width: `${percent}%` }} />
         </div>
         <p className="clock__meta">
-          {`${decimalTime(now)} on the decimal clock · ${percent}% of the day gone`}
+          {`${decimalTime(now)} on the decimal clock · ${percentText}% of the day gone`}
         </p>
 
         <table className="clock__legend">
@@ -183,7 +188,7 @@ function Clock() {
           &ldquo;exactly 1.504 seconds&rdquo;, and 1.504₆ is 1.85.
         </p>
         <dl className="clock__units">
-          {UNIT_DEFINITIONS.map(([name, gloss, fraction, si]) => (
+          {UNIT_DEFINITIONS.map(([name, gloss, fraction, sign, si]) => (
             <div className="clock__unit-def" key={name} data-testid={`def-${name}`}>
               <dt>{name}</dt>
               <dd>
@@ -191,7 +196,7 @@ function Clock() {
                 <span className="clock__dim">
                   {' — '}
                   {fraction}
-                  {' ≈ '}
+                  {` ${sign} `}
                   {si}
                 </span>
               </dd>
