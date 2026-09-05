@@ -210,9 +210,36 @@ describe('the unit definitions', () => {
     expect(sign.day).toBe('≈');
   });
 
+  test('the ladder is unbroken: eight rungs, each a sixth of the one above', () => {
+    expect(UNIT_DEFINITIONS.map(([n]) => n)).toEqual([
+      'day', 'watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap',
+    ]);
+  });
+
+  test('what is canon says so, and what is ours says so', () => {
+    const source = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , , , s]) => [n, s]));
+    expect(source.span).toBe('Kunimunean');
+    expect(source.snap).toBe('Kunimunean');
+    expect(source.lapse).toBe('Misalian');
+    // The two we filled in are flagged, so nobody carries them off as canon.
+    expect(source.watch).toBe('proposed here');
+    expect(source.breath).toBe('proposed here');
+  });
+
+  test('exact down to the span, repeating below it — because 3^3 runs out', () => {
+    const SI_DAY = 24 * 60 * 60; // 86400 = 2^7 · 3^3 · 5^2
+    [1, 2, 3].forEach((n) => expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(true));
+    [4, 5, 6, 7].forEach((n) => expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(false));
+    const sign = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]));
+    expect([sign.watch, sign.lapse, sign.span]).toEqual(['=', '=', '=']);
+    expect([sign.lull, sign.breath, sign.moment, sign.snap]).toEqual(['≈', '≈', '≈', '≈']);
+  });
+
   test('and the claim behind that sign holds', () => {
     const SI_DAY = 24 * 60 * 60;
+    expect(SI_DAY / 6).toBe(14400); // watch: exactly 4 h
     expect(SI_DAY / 36).toBe(2400); // lapse: exactly 40 min
+    expect(SI_DAY / 216).toBe(400); // span: exactly 6 min 40 s
     expect(Number.isInteger(SI_DAY / 1296)).toBe(false); // lull repeats
     expect(Number.isInteger(SI_DAY / 46656)).toBe(false); // moment repeats
   });

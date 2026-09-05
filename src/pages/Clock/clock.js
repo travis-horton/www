@@ -183,17 +183,34 @@ export const UNIT_NAMES = {
  * What each unit is, in one line, for the page: name, gloss, fraction of a
  * day, the sign, the SI length.
  *
- * The sign is per row and it is not decoration. A lapse is 86400/36 = 2400 s,
- * exactly 40 minutes, so it gets "=" — and that lone equals is the interesting
- * fact in the column: one seximal unit lands whole in ordinary units. The rest
- * are "≈" because they genuinely repeat: a lull is 66.666… s and a moment is
- * 1.85185… s, and a day is the Earth turning, which is only near 24 h.
+ * The sign is per row and it is not decoration, and where it flips is a fact
+ * about the numbers rather than a choice. A day is 86400 s = 2^7 · 3^3 · 5^2,
+ * and 6^n = 2^n · 3^n, so 6^n divides the day exactly while n ≤ 3 — the three
+ * of them needed by the 3^3. Watch, lapse and span therefore land whole in
+ * ordinary units (4 h · 40 min · 6 min 40 s) and everything below the span
+ * repeats: a lull is 66.666… s, a breath 11.111…, a moment 1.85185…, a snap
+ * 0.30864…. The day itself is "≈" for a different reason: it is the Earth
+ * turning, which is only near 24 h.
+ *
+ * SOURCES, and the page says which is which. The Misalian units are jan
+ * Misali's; the span and snap are Justin Kunimune's, adopted as canon on
+ * seximal.net. The watch and the breath are NOT canon — they are ours, filling
+ * the 6^1 and 6^5 rungs the published ladder skips, and the page labels them
+ * so nobody carries them off as official. "Watch" because a ship's watch is
+ * already four hours, six to a day; "breath" because a slow breath is about
+ * eleven seconds, which gives it the same body-paced justification the snap
+ * has. (There is no canonical "sixti-" prefix, so these are glossed "a sixth
+ * of a day" and "a sixth of a lull" rather than coined by analogy.)
  */
 export const UNIT_DEFINITIONS = [
-  ['day', 'the Earth turning once', '1', '≈', '24 h'],
-  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '=', '40 min'],
-  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '≈', '1 min 6.7 s'],
-  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '≈', '1.85 s'],
+  ['day', 'the Earth turning once', '1', '≈', '24 h', 'Misalian'],
+  ['watch', 'a sixth of a day — six in a day, as at sea', '1/10₆ day', '=', '4 h', 'proposed here'],
+  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '=', '40 min', 'Misalian'],
+  ['span', 'a sixth of a lapse — six nif in a day, so the time is one number', '1/1000₆ day', '=', '6 min 40 s', 'Kunimunean'],
+  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '≈', '1 min 6.7 s', 'Misalian'],
+  ['breath', 'a sixth of a lull — about one slow breath', '1/100000₆ day', '≈', '11.1 s', 'proposed here'],
+  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '≈', '1.85 s', 'Misalian'],
+  ['snap', 'a sixth of a moment — near the pace of a syllable', '1/10000000₆ day', '≈', '0.309 s', 'Kunimunean'],
 ];
 
 /**
