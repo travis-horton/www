@@ -5,6 +5,13 @@ import { GLYPHS, LEVELS } from './tokipona';
 import { summarize } from './progress';
 import { search } from './search';
 
+// How a search result names each lesson a word appears in — see search.js
+// buildAppearances() for the roles. Anything not listed is a plain use.
+const ROLE_LABELS = {
+  introduces: ' (taught here)',
+  reintroduces: ' (brought back here)',
+};
+
 /*
  * Search — one box, three directions in (a toki pona word, an English gloss
  * word, or a pasted glyph), see search.js for how a query is told apart.
@@ -66,7 +73,7 @@ function TokiPonaSearch() {
                       <Link to={`/learn/toki-pona/${l.levelId}`}>
                         {`Level ${l.levelId}`}
                       </Link>
-                      {l.role === 'introduces' ? ' (taught here)' : ' (used here)'}
+                      {ROLE_LABELS[l.role] || ' (used here)'}
                     </React.Fragment>
                   ))}
                 </p>
@@ -204,6 +211,36 @@ function TokiPonaHome() {
           <em>misikeke</em>
           {' '}
           — are real and widely used, but they are an appendix, not the ladder.
+        </li>
+        <li>
+          <strong>Numbers add up.</strong>
+          {' '}
+          <em>wan</em>
+          {' 1 · '}
+          <em>tu</em>
+          {' 2 · '}
+          <em>luka</em>
+          {' 5 · '}
+          <em>mute</em>
+          {' 20 · '}
+          <em>ale</em>
+          {' 100 — biggest piece first, then add: '}
+          <em>luka tu</em>
+          {' '}
+          is seven. That is pu&apos;s own second system. Its first —
+          {' '}
+          <em>wan</em>
+          ,
+          {' '}
+          <em>tu</em>
+          , then
+          {' '}
+          <em>mute</em>
+          {' '}
+          for anything more — is real too, and is what most speakers reach for
+          when the exact count does not matter; but it cannot stack, so it is not
+          the one this course counts with. Level 9 says the same thing where the
+          numbers are taught.
         </li>
         <li>
           <strong>Latin letters, with sitelen pona alongside from day one.</strong>
