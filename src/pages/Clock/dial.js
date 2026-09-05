@@ -55,10 +55,19 @@ export const handAngles = (msSinceMidnight) => ({
  * — 36 labels is a thicket — and in seximal the majors are exactly the round
  * numbers 0, 10, 20, 30, 40, 50, which is base six's answer to 12 · 3 · 6 · 9.
  */
-export const markLabel = (i, mode) => {
-  if (i % MAJOR_EVERY !== 0) return '';
-  return mode === 'niftimal' ? NIFTIMAL_DIGITS[i] : seximalPair(i);
-};
+export const markLabel = (i) => (i % MAJOR_EVERY === 0 ? seximalPair(i) : '');
+
+/**
+ * The label for mark `i` on the OUTER ring: its niftimal glyph, on every mark
+ * including the in-between ones (Travis, 26.0905).
+ *
+ * Both rings are drawn at once on purpose. The inner ring carries the seximal
+ * pair on the majors, the outer carries a single niftimal glyph on all 36, so
+ * a mark shows its pair and its glyph together and the claim that one IS the
+ * other stops needing to be asserted in prose. The mode toggle then chooses
+ * which ring is emphasised rather than which one exists.
+ */
+export const outerLabel = (i) => NIFTIMAL_DIGITS[i];
 
 /** Cartesian point on a circle of radius r, at mark `i` of MARKS, centre 0,0. */
 export const markPoint = (i, r) => {
