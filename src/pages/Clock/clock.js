@@ -179,12 +179,21 @@ export const UNIT_NAMES = {
   second: 'moment',
 };
 
-/** What each unit is, in one line, for the page. */
+/*
+ * What each unit is, in one line, for the page: name, gloss, fraction of a
+ * day, the sign, the SI length.
+ *
+ * The sign is per row and it is not decoration. A lapse is 86400/36 = 2400 s,
+ * exactly 40 minutes, so it gets "=" — and that lone equals is the interesting
+ * fact in the column: one seximal unit lands whole in ordinary units. The rest
+ * are "≈" because they genuinely repeat: a lull is 66.666… s and a moment is
+ * 1.85185… s, and a day is the Earth turning, which is only near 24 h.
+ */
 export const UNIT_DEFINITIONS = [
-  ['day', 'the Earth turning once', '1', '24 h'],
-  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '40 min'],
-  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '1 min 6.7 s'],
-  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '1.85 s'],
+  ['day', 'the Earth turning once', '1', '≈', '24 h'],
+  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '=', '40 min'],
+  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '≈', '1 min 6.7 s'],
+  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '≈', '1.85 s'],
 ];
 
 /**

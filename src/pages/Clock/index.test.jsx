@@ -78,6 +78,18 @@ test('it ticks on the seximal second, not the decimal one', () => {
   expect(screen.getByText(/16:00:01 on the decimal clock/)).toBeInTheDocument();
 });
 
+test('the day percentage is fine enough that every tick moves it', () => {
+  renderAt();
+  const read = () => screen.getByText(/% of the day gone/).textContent
+    .match(/([\d.]+)% of the day gone/)[1];
+  const before = read();
+  expect(before.split('.')[1]).toHaveLength(3);
+  act(() => {
+    jest.advanceTimersByTime(2000); // one tick and a bit
+  });
+  expect(read()).not.toBe(before);
+});
+
 test('it does not advance twice inside one seximal second', () => {
   renderAt();
   act(() => {
