@@ -57,9 +57,13 @@
   background: var(--main-accent-color);
 }
 
+/* The ring must NOT be the accent colour drawn inside the button: on the
+   pressed button the background is that same accent, so the ring vanished at
+   1:1 contrast — on the very button a keyboard user lands on first. Black ring,
+   positive offset, so it sits outside the fill and reads against both states. */
 .clock__mode:focus-visible {
-  outline: 2px solid var(--main-accent-color);
-  outline-offset: -2px;
+  outline: 2px solid black;
+  outline-offset: 2px;
 }
 
 /* --- the face ----------------------------------------------------------- */
@@ -285,17 +289,21 @@
   stroke-linecap: round;
 }
 
-/* The moment hand steps; giving it the accent makes the step legible. */
-.clock__dial-hand--moment {
+/* SCOPED TO THE 36-MARK FACE, and the scoping is load-bearing rather than
+   tidiness. The seven-hand face reuses these same unit class names and sets its
+   own per-hand stroke-opacity inline; SVG multiplies `opacity` into
+   `stroke-opacity`, so while these three were unscoped they were silently
+   dimming three of its seven rungs. The lull hand came out at 0.64 × 0.75 =
+   0.48, LIGHTER than the thicker span hand above it at 0.53, which inverted the
+   ramp at the fourth rung — the exact property the ramp exists to show.
+   `.clock__dial` is on every Face and SixFace svg, so it cannot be the hook;
+   `.clock__dial--marks` is set only by Face. */
+.clock__dial--marks .clock__dial-hand--moment {
   opacity: 0.9;
 }
 
-.clock__dial-hand--lull {
+.clock__dial--marks .clock__dial-hand--lull {
   opacity: 0.75;
-}
-
-.clock__dial-hand--lapse {
-  opacity: 1;
 }
 
 .clock__dial-pin {
@@ -351,8 +359,13 @@
   font-weight: 600;
 }
 
-/* The seven-hand face sets its own per-hand opacity inline, so the ramp cannot
-   leak onto the main face or the sketches, which share these class names. */
+/* This comment used to claim the seven-hand face's inline ramp "cannot leak
+   onto the main face". That was backwards, and being backwards is why the bug
+   survived: inline stroke-opacity is an attribute on its own elements and was
+   never the risk. The risk was the STYLESHEET leaking INWARD, which is exactly
+   what the unscoped hand rules were doing. They are scoped to
+   .clock__dial--marks now. Any new per-hand rule must name the face it
+   belongs to. */
 
 /* Six short ticks at the rim (Travis, 26.0905: "the ticks need to be smaller
    themselves"). Deliberately NOT `is-major`: on a six-mark dial every mark is

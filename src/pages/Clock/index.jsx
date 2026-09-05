@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Face from './Face';
+// No Face import: the big analog clock came off the top of the page on
+// 26.0905 (Travis). The 36-mark face still exists and still runs live — it is
+// option 1 on the ballot, where it can be compared against the four
+// alternatives instead of being presented as the answer above the question.
 import Ballot from './Ballot';
 
 import {
@@ -159,8 +162,6 @@ function Clock() {
           ))}
         </div>
 
-        <Face now={frame} mode={mode} />
-
         <div className={`clock__face clock__face--${mode}`}>
           {UNITS.map((unit, i) => (
             <React.Fragment key={unit}>
@@ -186,13 +187,15 @@ function Clock() {
           <strong>{spokenTime(ticks)}</strong>
         </p>
 
+        {/* aria-valuenow carries the ROUNDED value, matching the visible text.
+            The raw float serialised as aria-valuenow="26.457433127572016". */}
         <div
           className="clock__bar"
           role="progressbar"
           aria-label="Day"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={percent}
+          aria-valuenow={Number(percentText)}
         >
           <div className="clock__bar-fill" style={{ width: `${percent}%` }} />
         </div>

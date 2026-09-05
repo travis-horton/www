@@ -84,6 +84,11 @@ function Ballot({ now, ms, mode }) {
           <header className="clock__option-head">
             <h3 className="clock__option-title">
               <span className="clock__option-num">{i + 1}</span>
+              {/* The space is required, not cosmetic: flex `gap` supplies the
+                  LOOK, but the accessible name concatenates raw text nodes, so
+                  without it every heading read "1Three hands on a nif-mark
+                  dial" in a screen reader's heading list. */}
+              {' '}
               {opt.title}
             </h3>
             <p className="clock__option-sub">{opt.subtitle}</p>

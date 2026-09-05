@@ -21,7 +21,10 @@ const WIDTH = [6, 5.2, 4.4, 3.6, 2.8, 2, 1.4];
 // hand and a thin dark one carry about the same amount of ink, so no rung
 // shouts over the others — and the fastest hand, the one you actually watch,
 // is the most legible.
-const OPACITY = [0.32, 0.42, 0.53, 0.64, 0.75, 0.87, 1];
+// Floor raised from 0.32 to 0.45: black at 0.32 on white measures 2.23:1,
+// under the 3:1 WCAG floor for a graphical object, so the watch hand was below
+// the contrast minimum. 0.45 clears it at 3.35:1 and the ordering is untouched.
+const OPACITY = [0.45, 0.54, 0.63, 0.72, 0.81, 0.9, 1];
 
 /**
  * Six ticks, seven hands (Travis, 26.0905). Each hand turns once per the unit
