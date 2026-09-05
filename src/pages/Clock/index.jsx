@@ -126,11 +126,23 @@ function Clock() {
     <>
       <div className="clock">
         <h1>Clock</h1>
+        {/*
+          * The lede has to hand the reader the word before it starts using it
+          * (Travis, 26.0905). It used to say "thirty-six hours" and then reach
+          * for "a nif of minutes" one clause later, which teaches the term
+          * backwards: the gloss arrived after the word it was glossing.
+          */}
         <p className="clock__lede">
-          The day cut into thirty-six hours, each a nif of minutes, each minute
-          a nif of seconds. Written in base six that is three pairs; written in
-          base thirty-six it is three glyphs. The names never change — a
-          niftimal digit is spoken as its seximal pair.
+          The day cut into a
+          {' '}
+          <dfn className="clock__dfn" data-testid="nif-def">nif</dfn>
+          {' '}
+          of hours — a nif is thirty-six, written 100 in base six and 10 in
+          base thirty-six, and it is the word this page uses from here on. Each
+          hour is a nif of minutes, each minute a nif of seconds. Written in
+          base six that is three pairs; written in base thirty-six it is three
+          glyphs. The names never change — a niftimal digit is spoken as its
+          seximal pair.
         </p>
 
         <div className="clock__modes" role="group" aria-label="Notation">
