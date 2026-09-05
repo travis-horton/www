@@ -11,16 +11,29 @@
   background: var(--very-light-grey);
 }
 
+/* Three text items instead of one line plus two icons, so the padding has to
+   come down or they collide at tablet width. */
 .main-footer__content {
   margin: 0;
-  padding: 15px;
+  padding: 0 12px;
 }
 
-.main-footer__content:hover {
+/* Only the copyright line was ever unclickable. Now two of the three hold
+   links, so the default cursor has to be scoped or it overrides the pointer. */
+.main-footer__content--static:hover {
   cursor: default;
 }
 
-.main-footer__logo {
-  height: 18px;
-  margin: 1px 5px;
+/* Under 600px the three items no longer fit on one row. Stack them and let the
+   footer grow, rather than shrinking the type further. */
+@media only screen and (max-width: 600px) {
+  .main-footer {
+    height: auto;
+    flex-direction: column;
+    padding: 8px 0;
+  }
+
+  .main-footer__content {
+    padding: 2px 12px;
+  }
 }

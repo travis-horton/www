@@ -43,6 +43,27 @@ h2 {
   text-transform: uppercase;
 }
 
+/*
+ * h3 and h4 had no rule at all, so they fell back to the browser default of
+ * `1.33em 0` — equal space above and below. A heading that is equidistant from
+ * the section it ends and the section it opens reads as belonging to neither.
+ * These follow h2's existing ratio: a generous gap above to separate, a tight
+ * one below to bind the heading to its own paragraph.
+ */
+h3 {
+  color: black;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+  margin: 28px 0 6px 0;
+}
+
+h4 {
+  color: black;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  margin: 26px 0 4px 0;
+}
+
 p {
   margin: 10px 0;
 }
