@@ -151,3 +151,18 @@ const pad2 = (n) => String(n).padStart(2, '0');
 export const decimalTime = (date) => (
   [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad2).join(':')
 );
+
+/**
+ * Milliseconds from `date` to the next whole tick, 1..MS_PER_TICK.
+ *
+ * A tick is 1851.851… ms, which is not representable, so the boundary is
+ * derived by integer arithmetic on the tick INDEX — ceil of (n+1) × ms/day ÷
+ * ticks/day — rather than by adding a rounded period. Adding a rounded 1852 ms
+ * would gain a whole tick roughly every nine minutes; adding 1851 would lose
+ * one about as fast. Re-deriving from the wall clock each time also absorbs a
+ * throttled background tab, which a fixed interval cannot.
+ */
+export const msToNextTick = (date) => {
+  const next = Math.ceil(((ticksSinceMidnight(date) + 1) * MS_PER_DAY) / TICKS_PER_DAY);
+  return Math.max(1, next - msSinceLocalMidnight(date));
+};

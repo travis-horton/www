@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   dayFraction,
   decimalTime,
+  msToNextTick,
   niftimalDigit,
   seximalPair,
   splitTicks,
@@ -56,9 +57,19 @@ function Clock() {
   const [mode, setMode] = useState(loadMode);
   const [now, setNow] = useState(() => new Date());
 
+  // Tick on the SEXIMAL second, not the decimal one. A tick is 1.85 s, so a
+  // 1000 ms interval showed the same face twice, then skipped one — the clock
+  // was legible but visibly not keeping its own time. Each timeout is aimed at
+  // the next tick boundary and re-aimed on arrival, so it cannot drift.
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
+    let id;
+    const tick = () => {
+      const d = new Date();
+      setNow(d);
+      id = setTimeout(tick, msToNextTick(d));
+    };
+    id = setTimeout(tick, msToNextTick(new Date()));
+    return () => clearTimeout(id);
   }, []);
 
   const choose = (m) => {
