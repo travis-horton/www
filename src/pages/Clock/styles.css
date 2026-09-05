@@ -18,6 +18,14 @@
   line-height: 1.5;
 }
 
+/* The one place a term is being handed to the reader rather than used. Marked
+   rather than italicised alone, because the whole page leans on this word. */
+.clock__dfn {
+  font-style: normal;
+  font-weight: 600;
+  border-bottom: 2px solid var(--main-accent-color);
+}
+
 /* --- the notation toggle ------------------------------------------------ */
 
 .clock__modes {

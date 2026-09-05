@@ -16,10 +16,10 @@
 export const CLOCK_OPTIONS = [
   {
     id: 'three-hands',
-    title: 'Three hands on a thirty-six mark dial',
+    title: 'Three hands on a nif-mark dial',
     subtitle: 'the face at the top of this page',
     blurb: `A lapse hand turning once a day, a lull hand once a lapse, a moment
-      hand once a lull. Thirty-six marks, a major every sixth. Each hand's
+      hand once a lull. A nif of marks, a major every sixth. Each hand's
       position is two seximal digits — which sixth of the dial, then which
       sixth of that sixth — and two seximal digits are one niftimal digit.`,
     pros: [
@@ -28,8 +28,11 @@ export const CLOCK_OPTIONS = [
       'Both notations live on the same tick: the inner ring carries the pair, the outer carries the glyph.',
     ],
     cons: [
-      'Thirty-six marks is a thicket at the size a page actually shows a clock.',
-      'The base is six, but the dial shows thirty-six — it argues for niftimal at least as loudly as for seximal.',
+      'A nif of marks is a thicket at the size a page actually shows a clock.',
+      // "thirty-six" stays spelled out in this one line on purpose: the whole
+      // complaint is that the count on the rim is 36 and not 6, and writing it
+      // as "a nif" would hide the very number being objected to.
+      'The base is six, but the rim carries thirty-six marks — it argues for niftimal at least as loudly as for seximal.',
       'Watch, span, breath and snap have nowhere to appear on it.',
     ],
   },
@@ -55,7 +58,7 @@ export const CLOCK_OPTIONS = [
     id: 'extra-hands',
     title: 'Watch and breath as extra hands',
     subtitle: 'the two proposed rungs, added to the existing face',
-    blurb: `Keep the thirty-six mark dial and hang two more hands on it: a short
+    blurb: `Keep the nif-mark dial and hang two more hands on it: a short
       thick one for the watch (a sixth of the day) and a thin one for the
       breath (a sixth of a lull). Both step rather than sweep.`,
     pros: [
@@ -64,7 +67,7 @@ export const CLOCK_OPTIONS = [
     ],
     cons: [
       'Both step through six positions only, so each is a coarser duplicate of a hand already there: the watch of the lapse, the breath of the moment.',
-      'Five hands on thirty-six marks is crowded past reading.',
+      'Five hands on a nif of marks is crowded past reading.',
       'It adds hands without adding information, which is the worst trade on a clock face.',
     ],
   },
