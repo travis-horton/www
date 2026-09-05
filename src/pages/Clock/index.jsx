@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Face from './Face';
+import SixFace from './SixFace';
 import { spanIndex } from './dial';
 
 import {
@@ -63,11 +64,16 @@ const LEGEND = [
 function Clock() {
   const [mode, setMode] = useState(loadMode);
   const [now, setNow] = useState(() => new Date());
+  const [frame, setFrame] = useState(() => new Date());
 
   // Tick on the SEXIMAL second, not the decimal one. A tick is 1.85 s, so a
   // 1000 ms interval showed the same face twice, then skipped one — the clock
   // was legible but visibly not keeping its own time. Each timeout is aimed at
   // the next tick boundary and re-aimed on arrival, so it cannot drift.
+  //
+  // This is the DIGITAL clock's heartbeat, and the bar's and the percentage's.
+  // Everything it feeds is a floored number, and a floored number should move
+  // once per tick and hold.
   useEffect(() => {
     let id;
     const tick = () => {
@@ -77,6 +83,21 @@ function Clock() {
     };
     id = setTimeout(tick, msToNextTick(new Date()));
     return () => clearTimeout(id);
+  }, []);
+
+  // The ANALOG face's own clock, one update per drawn frame (Travis, 26.0905).
+  // A swept hand needs a position per frame, not per tick; driving it off the
+  // tick above would move it in 1.85-second jumps no matter what the geometry
+  // said. Kept separate rather than raising the tick rate, so the digits go on
+  // stepping. requestAnimationFrame also stops on a hidden tab for free.
+  useEffect(() => {
+    let id;
+    const draw = () => {
+      setFrame(new Date());
+      id = window.requestAnimationFrame(draw);
+    };
+    id = window.requestAnimationFrame(draw);
+    return () => window.cancelAnimationFrame(id);
   }, []);
 
   const choose = (m) => {
@@ -121,7 +142,7 @@ function Clock() {
           ))}
         </div>
 
-        <Face now={now} mode={mode} />
+        <Face now={frame} mode={mode} />
 
         <div className={`clock__face clock__face--${mode}`}>
           {UNITS.map((unit, i) => (
@@ -247,7 +268,7 @@ function Clock() {
           </figure>
 
           <figure className="clock__sketch" data-testid="sketch-hands">
-            <Face now={now} mode={mode} extraHands />
+            <Face now={frame} mode={mode} extraHands />
             <figcaption>
               <strong>watch and breath as hands</strong>
               {' — '}
@@ -258,7 +279,7 @@ function Clock() {
           </figure>
 
           <figure className="clock__sketch" data-testid="sketch-sextant">
-            <Face now={now} mode={mode} sextant />
+            <Face now={frame} mode={mode} sextant />
             <figcaption>
               <strong>the watch as a wedge</strong>
               {' — '}
@@ -267,6 +288,17 @@ function Clock() {
             </figcaption>
           </figure>
         </div>
+
+        <h2 className="clock__h2">six ticks, seven hands</h2>
+        <p className="clock__lede">
+          One hand per rung of the ladder. The watch hand says which sixth of
+          the day, the lapse hand which sixth of the watch, and so on down to
+          the snap — so every hand rests on a mark and that mark is one seximal
+          digit. Read together they are the whole day as a seven-digit number,
+          0000000 to 5555555, which is 6⁷ = 279936 snaps. Six marks, six of
+          everything, one digit per hand.
+        </p>
+        <SixFace />
 
         <p className="clock__foot">
           <Link to="/learn/seximal">the seximal course</Link>

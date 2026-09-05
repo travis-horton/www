@@ -13,7 +13,6 @@ import {
   MS_PER_DAY,
   MS_PER_HOUR,
   MS_PER_MINUTE,
-  MS_PER_TICK,
   NIF,
   NIFTIMAL_DIGITS,
   seximalPair,
@@ -33,21 +32,24 @@ export const turnToDegrees = (turn) => (((turn % 1) + 1) % 1) * 360;
 /**
  * The three hand angles, in degrees, from milliseconds since local midnight.
  *
- * Hour and minute SWEEP: they are derived from the raw millisecond, so they
- * creep between marks the way a mechanical hand does. Second STEPS: it is
- * floored to the tick, because the tick is the smallest thing the clock claims
- * to know and a sweeping second hand would imply a precision the face does not
- * have.
+ * ALL THREE SWEEP (Travis, 26.0905). They are derived from the raw
+ * millisecond, so each creeps between marks the way a mechanical hand does and
+ * crosses a mark at the instant that unit's digit changes.
  *
- * The hour hand turns once per DAY, not twice — 36 hours, one revolution — so
- * midnight is up, midday is down, and the hand reads as a sun position.
+ * The moment hand used to step, floored to the tick, on the argument that a
+ * sweeping hand would imply a precision the clock does not have. That argument
+ * was wrong twice over: the clock knows the millisecond perfectly well — the
+ * TICK is a unit, not a limit — and a stepped hand at 1.85 s reads as a
+ * stutter rather than as precision. The digital face below is where the
+ * flooring belongs, because there a digit is the reading.
+ *
+ * The lapse hand turns once per DAY, not twice — 36 lapses, one revolution —
+ * so midnight is up, midday is down, and the hand reads as a sun position.
  */
 export const handAngles = (msSinceMidnight) => ({
   lapse: turnToDegrees(msSinceMidnight / MS_PER_DAY),
   lull: turnToDegrees((msSinceMidnight % MS_PER_DAY) / MS_PER_HOUR),
-  moment: turnToDegrees(
-    ((Math.floor(msSinceMidnight / MS_PER_TICK) * MS_PER_TICK) % MS_PER_MINUTE) / MS_PER_MINUTE,
-  ),
+  moment: turnToDegrees((msSinceMidnight % MS_PER_MINUTE) / MS_PER_MINUTE),
 });
 
 /**
@@ -103,6 +105,61 @@ export const extraHandAngles = (msSinceMidnight) => ({
     Math.floor((msSinceMidnight % MS_PER_MINUTE) / MS_PER_BREATH) / 6,
   ),
 });
+
+/* --- the six-tick face: one hand per rung, one digit per hand ------------- */
+
+/**
+ * Travis, 26.0905: "a clock with just six ticks and all 7 hands".
+ *
+ * This is the shape the ladder was asking for. Six marks, and one hand for
+ * each step down: the watch hand says which sixth of the DAY, the lapse hand
+ * which sixth of the watch, and so on to the snap. Each hand therefore points
+ * at exactly one seximal digit, and the seven of them read together as a
+ * seven-digit numeral — 0000000₆ to 5555555₆, which is 6⁷ = 279936 snaps, the
+ * whole day to its finest named unit.
+ *
+ * The 36-mark dial packs two digits into each hand's position and needs three
+ * hands; this packs one digit per hand and needs seven. Same information, and
+ * this one is honest about the base: six marks, six of everything.
+ */
+export const LADDER = ['watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap'];
+
+/** Digit `n` (1-based) of the day's seximal expansion, 0..5. */
+export const ladderDigit = (msSinceMidnight, n) => (
+  Math.floor(msSinceMidnight / (MS_PER_DAY / 6 ** n)) % 6
+);
+
+/** All seven digits, outermost rung first. */
+export const ladderDigits = (msSinceMidnight) => (
+  LADDER.map((_, i) => ladderDigit(msSinceMidnight, i + 1))
+);
+
+/**
+ * Where each DIGIT sits: the mark a hand's current digit occupies. Stepped by
+ * definition — this is the digit's home, not the hand's animation.
+ */
+export const ladderAngles = (msSinceMidnight) => Object.fromEntries(
+  LADDER.map((unit, i) => [unit, turnToDegrees(ladderDigit(msSinceMidnight, i + 1) / 6)]),
+);
+
+/**
+ * The seven hands as DRAWN — sweeping (Travis, 26.0905: "smoothly from tick to
+ * tick… fast enough to seem non-discrete").
+ *
+ * A hand's turn is the real-valued position of the day inside the unit ABOVE
+ * it, so hand n completes exactly one revolution per unit n−1. It crosses a
+ * mark at the instant its digit changes and travels the arc in between, the
+ * way an hour hand does on an ordinary clock; you read the digit off the mark
+ * it has last passed. Stepping and sweeping therefore agree at every boundary
+ * and nowhere else, which is what the test pins.
+ */
+export const ladderTurn = (msSinceMidnight, n) => (
+  (msSinceMidnight / (MS_PER_DAY / 6 ** (n - 1))) % 1
+);
+
+export const ladderSweepAngles = (msSinceMidnight) => Object.fromEntries(
+  LADDER.map((unit, i) => [unit, turnToDegrees(ladderTurn(msSinceMidnight, i + 1))]),
+);
 
 /** Cartesian point on a circle of radius r, at mark `i` of MARKS, centre 0,0. */
 export const markPoint = (i, r) => {
