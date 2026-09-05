@@ -1,7 +1,11 @@
-# /clock — the seximal / niftimal clock
+# /programming/clock — the seximal / niftimal clock
 
-A static, client-only page at `travish.com/clock`. Praxis leaf `dc03d6ad`
-("Niftimal clock app"), parent trunk **Seximal (base-6)**.
+A static, client-only page at `travish.com/programming/clock`. Praxis leaf
+`dc03d6ad` ("Niftimal clock app"), parent trunk **Seximal (base-6)**.
+
+It lived at `/clock` until 26.0905 and moved under the Programming section at
+Travis's ask; `/clock` is kept as a redirect because the old link was handed
+out.
 
 ## The decomposition
 
@@ -76,9 +80,18 @@ is "nif five", not "one nif five" — the same open question `blockName` in
 
 ### How it is mounted
 
-Exactly like `/learn`: a directory under `src/pages/`, a default export from
-`src/pages/index.jsx`, one `<Route path="/clock">` in `src/App.jsx`. It is not
-in the header nav (neither is `/learn`). nginx already falls back to
+A directory under `src/pages/`, mounted as `<Route path="clock">` inside
+`src/pages/Programming/index.jsx` and linked from the personal-projects list on
+that section's landing page. `src/App.jsx` keeps a `<Navigate>` from the old
+`/clock`.
+
+Two consequences of living inside another section. **It renders no `<main>` of
+its own** — Programming supplies one, and nesting a second would break the
+landmark and take the page's width from the wrong element. And **Programming
+imports it from `../Clock`, not from the pages barrel**, which would close an
+import cycle.
+
+It is not in the header nav (neither is `/learn`). nginx already falls back to
 `index.html` for every path, so the route needs no server change. No new font:
 the site's monospace stack carries digits and A–Z, and tabular numerals keep
 the face from jittering. The nasin-nanpa UCSUR font exists for `/learn`'s
