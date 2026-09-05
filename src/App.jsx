@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import {
-  Home, Piano, Programming, Blog, Contact, Journal, Learn, NotFound,
+  Home, Piano, Programming, Blog, Contact, Journal, Learn, Clock, NotFound,
 } from './pages';
 import { Header, Footer } from './sharedComponents';
 
@@ -18,6 +18,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/learn/*" element={<Learn />} />
+        <Route path="/clock" element={<Clock />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
