@@ -35,11 +35,11 @@ function Home() {
       </header>
       <div>
         <p>
-          I&apos;m Travis. I play the piano for a living, keep the books for a
-          children&apos;s chorus, and write software because I like it. I live in
-          Boise, Idaho with my wife Anne, and I drive to Caldwell more than
-          you&apos;d think. Three jobs, one calendar. It works better than it
-          sounds.
+          I&apos;m Travis. I live in Boise, Idaho with my wife Anne. I hold three
+          jobs, which sounds worse than it is. I play the piano, I keep the books
+          for a children&apos;s chorus in Brooklyn, and I write software. Two of
+          those are in Boise and one of them is remote, and most weeks they stay
+          out of each other&apos;s way.
         </p>
 
         <h4>At the piano</h4>
@@ -53,30 +53,24 @@ function Home() {
           >
             College of Idaho
           </a>
-          , and a staff pianist at Boise State. At the College it&apos;s piano
-          students, class piano and keyboarding skills, studio classes and
-          recital hour. At Boise State it&apos;s the choirs &mdash;
-          Meistersingers, University Singers, Vox Angelis &mdash; and the opera
-          and musical theatre workshop. Both come with a great many juries in a
-          great many keys. I also play for the Boise Philharmonic Master Chorale,
-          and when a pit needs a keyboard player I&apos;m usually in it.
-        </p>
-        <p>
-          Collaborative piano is the job I&apos;ve had longest. You sit slightly
-          behind someone, you make their idea work, and nobody claps for you
-          specifically. It&apos;s good work.
+          , and a staff pianist at Boise State. At the College I teach class piano
+          and keyboarding skills, and I keep a studio of about fifteen students. I
+          also play studio classes, recital hour, juries and student recitals
+          there. At Boise State I play for the choirs, which are Meistersingers,
+          University Singers and Vox Angelis, and for the opera and musical
+          theatre workshop. I play for the Boise Philharmonic Master Chorale as
+          well. Nearly all of this is collaborative piano, which is what I trained
+          for and the thing I am best at.
         </p>
 
         <h4>In the books</h4>
         <p>
-          Since 2017 I&apos;ve been the accountant for the Brooklyn Youth Chorus,
-          remotely. Payroll, reconciliation, budgets, the profit and loss, the
-          balance sheet.
-        </p>
-        <p>
-          People find this the surprising one. I don&apos;t. A set of books
-          balances or it doesn&apos;t, and the answer arrives the same day you
-          ask. Very little else in a musician&apos;s week offers that.
+          Since 2017 I have been the accountant for the Brooklyn Youth Chorus. The
+          work is remote and covers payroll, reconciliation, budgets and the
+          monthly close. People are usually surprised that this is the same person
+          who plays the piano. I find the two fit together better than they sound.
+          A set of books either balances or it does not, and you learn which the
+          same day you ask. Very little else in my week is that decisive.
         </p>
 
         <h4>At the other keyboard</h4>
@@ -85,7 +79,7 @@ function Home() {
           at
           {' '}
           <a href="https://www.honorcare.com" target="_blank" rel="noreferrer">honor</a>
-          . In the spring of 2019 I went to the
+          . In the spring of 2019 I spent a batch at the
           {' '}
           <a
             href="https://www.recurse.com/"
@@ -96,38 +90,48 @@ function Home() {
           </a>
           {' '}
           in Brooklyn, which I recommend to anyone who is even slightly curious
-          about programming.
-        </p>
-        <p>
-          These days it&apos;s mostly JavaScript, React, and Python, and lately
-          Zig &mdash; I&apos;m writing the backend that will eventually serve this
-          site, one allocator at a time. I also spend an indefensible amount of
-          time in my vim config.
+          about programming. These days I write mostly JavaScript, React and
+          Python. I have been learning Zig for the past several months and writing
+          the backend that will eventually serve this site. Progress is slow. I am
+          currently stuck on allocators, which I gather is the normal place to be
+          stuck.
         </p>
 
         <h4>A little background</h4>
         <p>
-          I studied piano for 6 years at UNC-School of the Arts and 2 more years
-          at the New England Conservatory. I moved to New York City in 2011 and
-          worked as a pianist there for 6 years &mdash; played Carnegie Hall,
-          Joe&apos;s Pub, Off-Broadway shows, worked for NYU and the Brooklyn
-          Youth Chorus as a vocal coach and staff pianist. I rode my bicycle a
-          lot. I married Anne in September, 2016.
+          I studied piano for six years at UNC School of the Arts and two more at
+          the New England Conservatory. I moved to New York City in 2011 and
+          worked there as a pianist for six years. I played Carnegie Hall and
+          Joe&apos;s Pub and a number of Off-Broadway shows, and I worked for NYU
+          and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I rode
+          my bicycle a lot. I married Anne in September of 2016.
         </p>
         <p>
-          In 2017, Anne and I decided to leave our 6-year home of Brooklyn for the
-          road. We bought an RV and traveled the country for a year and a half. I
-          studied programming part time while I worked half-time as an accountant
-          for the Brooklyn Youth Chorus. We decided on Boise as a home-base, and
-          shortly thereafter I was accepted into the Recurse Center.
+          In 2017 Anne and I left Brooklyn, which had been home for six years, and
+          bought an RV. We travelled the country in it for a year and a half. I
+          studied programming part time during that stretch and worked half time
+          as an accountant for the Chorus. We picked Boise as a home base at the
+          end of it, and shortly afterward I was accepted into the Recurse Center.
         </p>
 
-        <h4>Three hats</h4>
+        <h4>Away from all that</h4>
         <p>
-          The unifying thing is preparation. A choir rehearsal, a bank
-          reconciliation, and a deploy all reward the same habit: read the whole
-          thing first, find the measure where it goes wrong, fix that measure. The
-          rest is just which room you&apos;re standing in.
+          There is usually a board game on the table. Root and Spirit Island get
+          the most play. I ski when the season allows it and I run at a pace I
+          have made peace with. The garden produces more tomatoes than two people
+          can reasonably eat. I have started an escarpment live oak as a bonsai,
+          which is a project measured in decades, and the right time to begin one
+          is always now. I cook dinner most nights.
+        </p>
+        <p>
+          I keep a quarrel going with the Gregorian calendar. I count in base six
+          on purpose, and I am slowly learning
+          {' '}
+          <Link to="/learn">toki pona</Link>
+          , which is a complete language of about 120 words. I have written in a
+          journal every day since the first of January, 2019. Every entry carries
+          the same line at the top, which is as close to a philosophy as I have
+          managed: extract the most joy out of the most life.
         </p>
 
         <h4>Around here</h4>
@@ -136,47 +140,22 @@ function Home() {
           {' '}
           <Link to="/piano">pianist</Link>
           {' '}
-          page covers the teaching and playing.
+          page covers the teaching and the playing, and lists what I have coming
+          up.
           {' '}
           <Link to="/programming">Software engineer</Link>
           {' '}
-          has the things I&apos;ve built for fun &mdash; a ray tracer, Perlin
-          noise, some orbital mechanics, a clock that counts in base six.
-          {' '}
-          <Link to="/learn">Learn</Link>
-          {' '}
-          has small courses in things almost nobody teaches: counting in base six,
-          and toki pona, a complete language in about 120 words. The
+          has the things I have built for my own amusement, including a ray
+          tracer, some Perlin noise, a bit of orbital mechanics and a clock that
+          counts in base six. The
           {' '}
           <Link to="/blog">blog</Link>
           {' '}
-          is sporadic and mostly about how computers work.
+          is sporadic and mostly concerns how computers work.
           {' '}
           <Link to="/contact">Contact</Link>
           {' '}
-          has the email address.
-        </p>
-        <h4>Off the clock</h4>
-        <p>
-          There is a board game on the table most weeks &mdash; Root, Spirit
-          Island, Gaia Project, Terraforming Mars. I ski as much as the season
-          allows, run slower than I&apos;d like and enjoy it anyway, and keep a
-          garden that produces an indefensible quantity of tomatoes. I&apos;m
-          starting an escarpment live oak as a bonsai, which is a ten-year
-          project and therefore the right time to begin is now. I cook dinner.
-        </p>
-        <p>
-          I also have an ongoing quarrel with the Gregorian calendar, count in
-          base six on purpose, and am slowly learning
-          {' '}
-          <Link to="/learn">toki pona</Link>
-          , a complete language with about 120 words. None of this is useful.
-          That is rather the point.
-        </p>
-        <p>
-          I&apos;ve kept a journal every single day since the first of January,
-          2019. Every entry carries the same line, which is as close as I get to
-          a philosophy: extract the most joy out of the most life.
+          has my email address.
         </p>
       </div>
     </main>

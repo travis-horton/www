@@ -1,6 +1,10 @@
+/* The bottom margin matters now that the page has headings. The photo floats
+   left, so the first section heading wraps up alongside it and used to sit
+   flush against the lower edge. */
 .home__profile-pic {
   float: left;
   margin-right: 14px;
+  margin-bottom: 14px;
 }
 
 .home__monkey-pic {
