@@ -311,6 +311,44 @@
   font-weight: 600;
 }
 
+/* --- the six-tick, seven-hand face ---------------------------------------- */
+
+.clock__six-readout {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.clock__six-key {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+}
+
+.clock__six-key-digit {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* The seven-hand face sets its own per-hand opacity inline, so the ramp cannot
+   leak onto the main face or the sketches, which share these class names. */
+
+/* Six short ticks at the rim (Travis, 26.0905: "the ticks need to be smaller
+   themselves"). Deliberately NOT `is-major`: on a six-mark dial every mark is
+   a major, so the emphatic stroke has nothing to be emphatic against, and it
+   crowds the seven hands turning inside it. */
+.clock__dial-mark--six {
+  stroke-width: 1.6;
+  opacity: 0.45;
+}
+
 /* --- the three sketches --------------------------------------------------- */
 
 .clock__sketches {
@@ -355,8 +393,11 @@
   opacity: 0.08;
 }
 
-.clock__dial-hand--watch,
-.clock__dial-hand--breath {
+/* Scoped to the sketches on purpose: the seven-hand face uses the same class
+   names and sets its own stroke-opacity, and `opacity` here would multiply
+   into it and knock two of its seven rungs out of the ramp. */
+.clock__sketch .clock__dial-hand--watch,
+.clock__sketch .clock__dial-hand--breath {
   opacity: 0.55;
 }
 
