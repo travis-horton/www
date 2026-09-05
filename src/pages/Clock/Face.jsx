@@ -3,15 +3,17 @@ import {
   handAngles,
   markLabel,
   markPoint,
+  outerLabel,
   MAJOR_EVERY,
   MARKS,
 } from './dial';
 import { msSinceLocalMidnight } from './clock';
 
-const R = 100;          // viewBox is -110..110, so the rim has room for labels
+const R = 100;
 const R_MARK_IN = 84;
 const R_MARK_IN_MAJOR = 78;
-const R_LABEL = 66;
+const R_LABEL = 66;       // seximal pairs, inside the rim, majors only
+const R_OUTER = 114;      // niftimal glyphs, outside the rim, every mark
 
 const HANDS = [
   { unit: 'lapse', length: 46, width: 5 },
@@ -32,7 +34,7 @@ function Face({ now, mode }) {
   return (
     <svg
       className="clock__dial"
-      viewBox="-110 -110 220 220"
+      viewBox="-128 -128 256 256"
       role="img"
       aria-label={`Analog face: lapse ${Math.round(angles.lapse)}°, lull ${Math.round(angles.lull)}°, moment ${Math.round(angles.moment)}°`}
       data-testid="dial"
@@ -43,8 +45,9 @@ function Face({ now, mode }) {
         const major = i % MAJOR_EVERY === 0;
         const a = markPoint(i, R);
         const b = markPoint(i, major ? R_MARK_IN_MAJOR : R_MARK_IN);
-        const label = markLabel(i, mode);
+        const label = markLabel(i);
         const p = markPoint(i, R_LABEL);
+        const o = markPoint(i, R_OUTER);
         return (
           <React.Fragment key={i}>
             <line
@@ -56,7 +59,7 @@ function Face({ now, mode }) {
             />
             {label && (
               <text
-                className="clock__dial-label"
+                className={`clock__dial-label ${mode === 'seximal' ? 'is-active' : ''}`}
                 x={p.x}
                 y={p.y}
                 textAnchor="middle"
@@ -66,6 +69,16 @@ function Face({ now, mode }) {
                 {label}
               </text>
             )}
+            <text
+              className={`clock__dial-outer ${mode === 'niftimal' ? 'is-active' : ''} ${major ? 'is-major' : ''}`}
+              x={o.x}
+              y={o.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              data-testid={`dial-outer-${i}`}
+            >
+              {outerLabel(i)}
+            </text>
           </React.Fragment>
         );
       })}
