@@ -166,6 +166,12 @@ export const decimalTime = (date) => (
  *
  * 40 min · 66.67 s · 1.85 s are exactly this clock's hour, minute and second,
  * so the generic names were placeholders for these. A moment is the tick.
+ *
+ * The list below names each unit against its PARENT — niftiday, niftilapse,
+ * niftilull — so the three read as one ladder. seximal.net names the lull
+ * against the day instead ("an untiday"), which is the same quantity by a
+ * different route: a nif of nifs is an un, so a niftilapse IS an untiday. Its
+ * word is kept in parentheses, since that is what a reader will find there.
  */
 export const UNIT_NAMES = {
   hour: 'lapse',
@@ -177,7 +183,7 @@ export const UNIT_NAMES = {
 export const UNIT_DEFINITIONS = [
   ['day', 'the Earth turning once', '1', '24 h'],
   ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '40 min'],
-  ['lull', 'an untiday — a nif in a lapse', '1/10000₆ day', '1 min 6.7 s'],
+  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '1 min 6.7 s'],
   ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '1.85 s'],
 ];
 
