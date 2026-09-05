@@ -16,6 +16,7 @@ import {
   msSinceLocalMidnight,
   msToNextTick,
   niftimalDigit,
+  UNIT_DEFINITIONS,
   niftimalTime,
   niftimalValue,
   seximalPair,
@@ -195,6 +196,25 @@ describe('the decimal clock', () => {
   test('zero-padded 24-hour', () => {
     expect(decimalTime(at(0, 0, 0))).toBe('00:00:00');
     expect(decimalTime(at(16, 5, 9))).toBe('16:05:09');
+  });
+});
+
+describe('the unit definitions', () => {
+  test('the sign is exact only where the SI length actually is', () => {
+    // A lapse is 86400/36 = 2400 s on the nose. The other three repeat, or
+    // are the Earth turning, so they are approximations and say so.
+    const sign = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]));
+    expect(sign.lapse).toBe('=');
+    expect(sign.lull).toBe('≈');
+    expect(sign.moment).toBe('≈');
+    expect(sign.day).toBe('≈');
+  });
+
+  test('and the claim behind that sign holds', () => {
+    const SI_DAY = 24 * 60 * 60;
+    expect(SI_DAY / 36).toBe(2400); // lapse: exactly 40 min
+    expect(Number.isInteger(SI_DAY / 1296)).toBe(false); // lull repeats
+    expect(Number.isInteger(SI_DAY / 46656)).toBe(false); // moment repeats
   });
 });
 
