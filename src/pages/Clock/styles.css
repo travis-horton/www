@@ -1,0 +1,181 @@
+/*
+ * /clock. Site tokens only (see src/styles.css) so it follows the rest of the
+ * site; big tap targets and no hover-only affordances, because the place this
+ * gets left running is the iPad.
+ */
+
+.clock {
+  max-width: 40em;
+}
+
+.clock__lede {
+  line-height: 1.5;
+  max-width: 34em;
+}
+
+/* --- the notation toggle ------------------------------------------------ */
+
+.clock__modes {
+  display: inline-flex;
+  margin: 18px 0 8px 0;
+  border: 2px solid var(--light-grey);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.clock__mode {
+  font-family: inherit;
+  font-size: 18px;
+  min-height: 44px;
+  padding: 10px 24px;
+  color: black;
+  background: white;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.clock__mode + .clock__mode {
+  border-left: 2px solid var(--light-grey);
+}
+
+.clock__mode.is-on {
+  color: white;
+  background: var(--main-accent-color);
+}
+
+.clock__mode:focus-visible {
+  outline: 2px solid var(--main-accent-color);
+  outline-offset: -2px;
+}
+
+/* --- the face ----------------------------------------------------------- */
+
+.clock__face {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  margin: 22px 0 6px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.clock__digits,
+.clock__colon {
+  font-family: ui-monospace, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: clamp(52px, 13vw, 112px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.clock__colon {
+  color: hsl(0, 0%, 65%);
+  padding: 0 2px;
+}
+
+.clock__name {
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.clock__label {
+  margin-top: 2px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: hsl(0, 0%, 40%);
+}
+
+.clock__spoken {
+  font-size: 18px;
+  margin: 14px 0 22px 0;
+}
+
+/* --- the day bar -------------------------------------------------------- */
+
+.clock__bar {
+  position: relative;
+  height: 10px;
+  max-width: 34em;
+  border-radius: 5px;
+  background-color: var(--light-grey);
+  overflow: hidden;
+}
+
+.clock__bar-fill {
+  height: 100%;
+  background-color: var(--main-accent-color);
+  border-radius: 5px;
+}
+
+/* Six divisions, one per seximal "sixth" of the day. */
+.clock__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(100% / 6 - 2px),
+    white calc(100% / 6 - 2px),
+    white calc(100% / 6)
+  );
+  pointer-events: none;
+}
+
+.clock__meta {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: hsl(0, 0%, 40%);
+}
+
+/* --- the legend --------------------------------------------------------- */
+
+.clock__legend {
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.clock__legend th,
+.clock__legend td {
+  text-align: left;
+  padding: 3px 22px 3px 0;
+}
+
+.clock__legend th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: hsl(0, 0%, 40%);
+  font-weight: normal;
+  border-bottom: 1px solid var(--light-grey);
+}
+
+.clock__dim {
+  color: hsl(0, 0%, 40%);
+}
+
+.clock__foot {
+  font-size: 14px;
+}
+
+@media only screen and (max-width: 500px) {
+  .clock__modes {
+    display: flex;
+  }
+
+  .clock__mode {
+    flex: 1 1 0;
+  }
+
+  .clock__name {
+    font-size: 15px;
+  }
+}

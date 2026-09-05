@@ -1,0 +1,153 @@
+/*
+ * /clock — one day-fraction, two notations.
+ *
+ * The day is cut into 36 hours, each hour into 36 minutes, each minute into 36
+ * seconds: 36 × 36 × 36 = 46656 = 6^6 = 1000000₆ ticks a day. Every count is a
+ * nif (100₆), so each unit is exactly two seximal digits wide — or exactly ONE
+ * niftimal (base-36) digit. That is the whole relationship between the two
+ * modes: the same number, written six digits at a time or three.
+ *
+ * The split is the one the 2024 seximal_clock project already uses
+ * (src/pages/Programming/projects/seximal_clock/constants.js), so the two clocks
+ * on the site agree with each other. README.md alongside has the decomposition.
+ *
+ * Names come from the /learn seximal module, the one place the naming spec
+ * (codex 5_culture/interests/seximal/seximal.md) is encoded — nothing about the
+ * words is restated here. A niftimal digit's spoken name IS its seximal pair
+ * name: 'H' is 17 is "dozen-five". So both modes speak identically and only
+ * the written form changes.
+ */
+import { pairName, seximalName, toDigits } from '../Learn/seximal';
+
+export const NIF = 36;
+export const HOURS_PER_DAY = NIF;
+export const MINUTES_PER_HOUR = NIF;
+export const SECONDS_PER_MINUTE = NIF;
+export const TICKS_PER_DAY = NIF * NIF * NIF; // 46656 = 1000000₆
+
+export const MS_PER_DAY = 24 * 60 * 60 * 1000;
+/** A seximal second in real milliseconds: 1851.85… */
+export const MS_PER_TICK = MS_PER_DAY / TICKS_PER_DAY;
+/** A seximal minute: 66.67 real seconds. */
+export const MS_PER_MINUTE = MS_PER_DAY / (NIF * NIF);
+/** A seximal hour: exactly 40 real minutes. */
+export const MS_PER_HOUR = MS_PER_DAY / NIF;
+
+export const NIFTIMAL_DIGITS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+// ---------------------------------------------------------------------------
+// Base conversions
+// ---------------------------------------------------------------------------
+
+/** One niftimal digit for decimal 0..35. */
+export const niftimalDigit = (n) => {
+  if (!Number.isInteger(n) || n < 0 || n >= NIF) {
+    throw new RangeError(`niftimal digit out of range: ${n}`);
+  }
+  return NIFTIMAL_DIGITS[n];
+};
+
+/** Decimal value of one niftimal digit (either case), or null if it isn't one. */
+export const niftimalValue = (ch) => {
+  const s = String(ch);
+  if (s.length !== 1) return null;
+  const i = NIFTIMAL_DIGITS.indexOf(s.toUpperCase());
+  return i === -1 ? null : i;
+};
+
+/** Decimal -> niftimal numeral string. */
+export const toNiftimal = (n) => {
+  if (n === 0) return '0';
+  let rest = n;
+  let out = '';
+  while (rest > 0) {
+    out = NIFTIMAL_DIGITS[rest % NIF] + out;
+    rest = Math.floor(rest / NIF);
+  }
+  return out;
+};
+
+/** Niftimal numeral string -> decimal, or null if it isn't one. */
+export const fromNiftimal = (s) => {
+  const trimmed = String(s).trim().toUpperCase();
+  if (!/^[0-9A-Z]+$/.test(trimmed)) return null;
+  return trimmed.split('').reduce((acc, d) => acc * NIF + niftimalValue(d), 0);
+};
+
+/** Decimal 0..35 as a two-digit seximal pair, zero-padded: 17 -> "25". */
+export const seximalPair = (n) => toDigits(n).padStart(2, '0');
+
+// ---------------------------------------------------------------------------
+// The day
+// ---------------------------------------------------------------------------
+
+/**
+ * Milliseconds since LOCAL midnight. Deliberately not `getTime() % MS_PER_DAY`,
+ * which is midnight UTC — seven hours off in Boise.
+ */
+export const msSinceLocalMidnight = (date) => (
+  ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000
+  + date.getMilliseconds()
+);
+
+/**
+ * Whole ticks (seximal seconds) since local midnight, 0..46655. Multiplying
+ * before dividing keeps this in exact integer arithmetic; MS_PER_TICK itself
+ * is not representable, and 16:00 must come out as exactly 31104, not 31103.
+ */
+export const ticksSinceMidnight = (date) => (
+  Math.floor((msSinceLocalMidnight(date) * TICKS_PER_DAY) / MS_PER_DAY)
+);
+
+export const splitTicks = (ticks) => ({
+  hour: Math.floor(ticks / (NIF * NIF)),
+  minute: Math.floor(ticks / NIF) % NIF,
+  second: ticks % NIF,
+});
+
+export const joinTicks = ({ hour, minute, second }) => (
+  (hour * NIF + minute) * NIF + second
+);
+
+export const dayFraction = (ticks) => ticks / TICKS_PER_DAY;
+
+// ---------------------------------------------------------------------------
+// The two faces
+// ---------------------------------------------------------------------------
+
+const UNITS = ['hour', 'minute', 'second'];
+
+const face = (ticks, write) => {
+  const parts = splitTicks(ticks);
+  return UNITS.map((u) => write(parts[u])).join(':');
+};
+
+/** "23:41:05" — three seximal pairs. */
+export const seximalTime = (ticks) => face(ticks, seximalPair);
+
+/** "F:P:5" — the same three numbers, one niftimal digit each. */
+export const niftimalTime = (ticks) => face(ticks, niftimalDigit);
+
+/** The spoken name of each unit. Identical in both modes — that is the point. */
+export const unitNames = (ticks) => {
+  const parts = splitTicks(ticks);
+  return {
+    hour: pairName(parts.hour),
+    minute: pairName(parts.minute),
+    second: pairName(parts.second),
+  };
+};
+
+/**
+ * The whole time read as ONE seximal number. Because an hour is a nif of
+ * minutes and a minute is a nif of seconds, hh:mm:ss₆ is hhmmss₆, and the
+ * spec's pair-reading gives "<hour> unexian, <minute> nif <second>" for free.
+ */
+export const spokenTime = (ticks) => seximalName(ticks);
+
+const pad2 = (n) => String(n).padStart(2, '0');
+
+/** The ordinary clock, for orientation: "16:00:00". */
+export const decimalTime = (date) => (
+  [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad2).join(':')
+);
