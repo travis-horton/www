@@ -6,13 +6,16 @@ import {
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Clock from '.';
+import { CLOCK_OPTIONS, VOTES_KEY } from './options';
 
 const MODE_KEY = 'travish.clock.mode';
 
+// Mounted where it actually lives: under the Programming section, which
+// supplies the <main> this page deliberately does not render itself.
 const renderAt = () => render(
-  <MemoryRouter initialEntries={['/clock']}>
+  <MemoryRouter initialEntries={['/programming/clock']}>
     <Routes>
-      <Route path="/clock" element={<Clock />} />
+      <Route path="/programming/clock" element={<main><Clock /></main>} />
     </Routes>
   </MemoryRouter>,
 );
@@ -97,4 +100,58 @@ test('it does not advance twice inside one seximal second', () => {
   });
   // A whole decimal second is barely half a tick: the face must not have moved.
   expect(screen.getByTestId('digits-second')).toHaveTextContent('00');
+});
+
+describe('the ballot at the bottom', () => {
+  test('every option is laid out with both cases and a pair of votes', () => {
+    renderAt();
+    CLOCK_OPTIONS.forEach((opt) => {
+      const panel = screen.getByTestId(`option-${opt.id}`);
+      expect(panel).toHaveTextContent(opt.title);
+      expect(panel).toHaveTextContent(opt.subtitle);
+      expect(panel).toHaveTextContent('for');
+      expect(panel).toHaveTextContent('against');
+      expect(screen.getByTestId(`up-${opt.id}`)).toBeInTheDocument();
+      expect(screen.getByTestId(`down-${opt.id}`)).toBeInTheDocument();
+    });
+  });
+
+  test('it says out loud that a vote goes nowhere', () => {
+    // The buttons are honest only if the page admits there is no API behind
+    // them. If this line ever disappears, the votes become a lie.
+    renderAt();
+    expect(screen.getByText(/kept in this browser/i)).toBeInTheDocument();
+  });
+
+  test('a vote presses the button and survives a reload', () => {
+    const { unmount } = renderAt();
+    fireEvent.click(screen.getByTestId('up-seven-hands'));
+    expect(screen.getByTestId('up-seven-hands')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('down-seven-hands')).toHaveAttribute('aria-pressed', 'false');
+    expect(JSON.parse(window.localStorage.getItem(VOTES_KEY)))
+      .toEqual({ 'seven-hands': 1 });
+
+    unmount();
+    renderAt();
+    expect(screen.getByTestId('up-seven-hands')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('the opposite vote replaces it, and the same vote clears it', () => {
+    renderAt();
+    fireEvent.click(screen.getByTestId('up-span'));
+    fireEvent.click(screen.getByTestId('down-span'));
+    expect(screen.getByTestId('down-span')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('up-span')).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(screen.getByTestId('down-span'));
+    expect(screen.getByTestId('down-span')).toHaveAttribute('aria-pressed', 'false');
+    expect(JSON.parse(window.localStorage.getItem(VOTES_KEY))).toEqual({});
+  });
+
+  test('the tally appears only once something is marked', () => {
+    renderAt();
+    expect(screen.queryByTestId('vote-tally')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('down-extra-hands'));
+    expect(screen.getByTestId('vote-tally')).toHaveTextContent('0 up and 1 down');
+  });
 });

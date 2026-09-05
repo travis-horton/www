@@ -188,11 +188,6 @@
   .clock__name {
     font-size: 15px;
   }
-
-  /* On a phone `main` is already narrow, so 40% of it would be a coin. */
-  .clock__dial {
-    width: 80%;
-  }
 }
 
 /* --- the analog face ------------------------------------------------------ */
@@ -210,6 +205,17 @@
   display: block;
   width: 40%;
   margin: 0 auto 1.5rem;
+}
+
+/* On a phone `main` is already narrow, so 40% of it would be a coin.
+   This must come AFTER the rule above, not in the earlier phone block: a media
+   query adds no specificity, so an equally specific rule later in the file
+   wins over it regardless of viewport. Sitting where it used to, it never
+   applied at all. */
+@media only screen and (max-width: 500px) {
+  .clock__dial {
+    width: 80%;
+  }
 }
 
 .clock__dial-rim {
@@ -349,35 +355,147 @@
   opacity: 0.45;
 }
 
-/* --- the three sketches --------------------------------------------------- */
+/* --- the ballot ----------------------------------------------------------- */
 
-.clock__sketches {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+.clock__vote-note {
+  font-size: 0.9rem;
+  color: hsl(0, 0%, 40%);
+  line-height: 1.5;
   margin: 0 0 1.5rem;
 }
 
+.clock__option {
+  border-top: 1px solid var(--light-grey);
+  padding: 1.5rem 0;
+}
+
+.clock__option-head {
+  margin-bottom: 0.75rem;
+}
+
+.clock__option-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+/* The number is the only thing that survives when the titles get long, so it
+   carries the ordering rather than an ordered list the flex row would fight. */
+.clock__option-num {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--main-accent-color);
+}
+
+.clock__option-sub {
+  margin: 0.15rem 0 0 1.9rem;
+  font-size: 0.9rem;
+  color: hsl(0, 0%, 40%);
+}
+
+/* Demo on the left, argument on the right; stacked on a narrow screen. The
+   demo column is fixed so the five faces line up down the page and can be
+   compared without scrolling sideways to find them. */
+.clock__option-body {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
 @media only screen and (max-width: 700px) {
-  .clock__sketches {
+  .clock__option-body {
     grid-template-columns: 1fr;
   }
 }
 
-.clock__sketch {
-  margin: 0;
-}
-
-/* The sketch faces are already small; let them fill their cell. */
-.clock__sketch .clock__dial {
+/* The faces size to their own column here, not to `main`. */
+.clock__option-demo .clock__dial {
   width: 100%;
   margin-bottom: 0.5rem;
 }
 
-.clock__sketch figcaption {
-  font-size: 0.9rem;
-  line-height: 1.4;
+.clock__option-blurb {
+  margin: 0 0 1rem;
+  line-height: 1.55;
 }
+
+.clock__option-cases {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+@media only screen and (max-width: 560px) {
+  .clock__option-cases {
+    grid-template-columns: 1fr;
+  }
+}
+
+.clock__case h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: hsl(0, 0%, 40%);
+}
+
+.clock__case ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.clock__case li {
+  margin-bottom: 0.35rem;
+}
+
+.clock__case--pro li::marker {
+  content: '+  ';
+  color: var(--main-accent-color);
+}
+
+.clock__case--con li::marker {
+  content: '\2212  ';
+  color: hsl(0, 0%, 55%);
+}
+
+/* --- the vote buttons ----------------------------------------------------- */
+
+.clock__vote {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.clock__vote-btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  color: black;
+  background: white;
+  border: 2px solid var(--light-grey);
+  border-radius: 6px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.clock__vote-btn.is-on {
+  color: white;
+  background: var(--main-accent-color);
+  border-color: var(--main-accent-color);
+}
+
+.clock__vote-btn:focus-visible {
+  outline: 2px solid var(--main-accent-color);
+  outline-offset: 2px;
+}
+
+/* --- the span demo -------------------------------------------------------- */
 
 .clock__sketch-span {
   font-size: clamp(2.5rem, 9vw, 4.5rem);
@@ -393,11 +511,12 @@
   opacity: 0.08;
 }
 
-/* Scoped to the sketches on purpose: the seven-hand face uses the same class
-   names and sets its own stroke-opacity, and `opacity` here would multiply
-   into it and knock two of its seven rungs out of the ramp. */
-.clock__sketch .clock__dial-hand--watch,
-.clock__sketch .clock__dial-hand--breath {
+/* Scoped to ONE option on purpose. The seven-hand face sits in a sibling
+   demo, uses the same hand class names, and sets its own stroke-opacity —
+   `opacity` here would multiply into that and knock two of its seven rungs
+   out of the ramp. */
+.clock__option-demo--extra-hands .clock__dial-hand--watch,
+.clock__option-demo--extra-hands .clock__dial-hand--breath {
   opacity: 0.55;
 }
 

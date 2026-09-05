@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Face from './Face';
-import SixFace from './SixFace';
-import { spanIndex } from './dial';
+import Ballot from './Ballot';
 
 import {
   dayFraction,
@@ -11,7 +10,6 @@ import {
   msSinceLocalMidnight,
   msToNextTick,
   niftimalDigit,
-  seximalTriple,
   UNIT_DEFINITIONS,
   UNIT_NAMES,
   seximalPair,
@@ -25,7 +23,14 @@ import './styles.css';
 
 /*
  * A static, client-only clock. Nothing is fetched; the only state that
- * outlives the tab is which notation you last chose.
+ * outlives the tab is which notation you last chose, and how you voted on the
+ * faces at the bottom.
+ *
+ * It renders NO <main> of its own: it is mounted inside the Programming
+ * section's <main> (Travis, 26.0905: "the whole thing should live behind
+ * .../programming/"), and a second <main> inside the first is invalid, breaks
+ * the landmark for a screen reader, and would take its width from the wrong
+ * element.
  */
 
 const MODE_KEY = 'travish.clock.mode';
@@ -118,7 +123,7 @@ function Clock() {
   const ms = msSinceLocalMidnight(now);
 
   return (
-    <main>
+    <>
       <div className="clock">
         <h1>Clock</h1>
         <p className="clock__lede">
@@ -250,55 +255,7 @@ function Clock() {
           ))}
         </dl>
 
-        <h2 className="clock__h2">three sketches, none of them decided</h2>
-        <p className="clock__lede">
-          Ways the newer units could reach the face. All three run live off the
-          same clock; none is wired to the toggle yet.
-        </p>
-
-        <div className="clock__sketches">
-          <figure className="clock__sketch" data-testid="sketch-span">
-            <div className="clock__sketch-span">{seximalTriple(spanIndex(ms))}</div>
-            <figcaption>
-              <strong>the span, one number</strong>
-              {' — '}
-              three seximal digits, 000 to 555, good to 6 min 40 s. What
-              seximal.net says the span is for: the time without colons.
-            </figcaption>
-          </figure>
-
-          <figure className="clock__sketch" data-testid="sketch-hands">
-            <Face now={frame} mode={mode} extraHands />
-            <figcaption>
-              <strong>watch and breath as hands</strong>
-              {' — '}
-              the short thick one and the thin one. Both step through six
-              positions only, so they read as slow duplicates of the lapse and
-              moment hands. Shown because seeing it settles it.
-            </figcaption>
-          </figure>
-
-          <figure className="clock__sketch" data-testid="sketch-sextant">
-            <Face now={frame} mode={mode} sextant />
-            <figcaption>
-              <strong>the watch as a wedge</strong>
-              {' — '}
-              a watch is a sixth of the day and the dial already has six major
-              marks, so it is a region, not a pointer. No new hand.
-            </figcaption>
-          </figure>
-        </div>
-
-        <h2 className="clock__h2">six ticks, seven hands</h2>
-        <p className="clock__lede">
-          One hand per rung of the ladder. The watch hand says which sixth of
-          the day, the lapse hand which sixth of the watch, and so on down to
-          the snap — so every hand rests on a mark and that mark is one seximal
-          digit. Read together they are the whole day as a seven-digit number,
-          0000000 to 5555555, which is 6⁷ = 279936 snaps. Six marks, six of
-          everything, one digit per hand.
-        </p>
-        <SixFace />
+        <Ballot now={frame} ms={ms} mode={mode} />
 
         <p className="clock__foot">
           <Link to="/learn/seximal">the seximal course</Link>
@@ -306,7 +263,7 @@ function Clock() {
           <Link to="/programming/seximal-time-keeping">the hexagon clock</Link>
         </p>
       </div>
-    </main>
+    </>
   );
 }
 
