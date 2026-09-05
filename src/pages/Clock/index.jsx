@@ -191,7 +191,7 @@ function Clock() {
                 <span className="clock__dim">
                   {' — '}
                   {fraction}
-                  {' · '}
+                  {' ≈ '}
                   {si}
                 </span>
               </dd>

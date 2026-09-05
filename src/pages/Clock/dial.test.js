@@ -10,6 +10,7 @@ import {
   markLabel,
   markPoint,
   MARKS,
+  outerLabel,
   turnToDegrees,
 } from './dial';
 import {
@@ -69,19 +70,29 @@ describe('the hands', () => {
 });
 
 describe('the mark labels', () => {
-  test('only the majors are labelled', () => {
-    expect(markLabel(1, 'seximal')).toBe('');
-    expect(markLabel(7, 'niftimal')).toBe('');
-    expect(markLabel(0, 'seximal')).not.toBe('');
+  test('the inner ring labels only the majors', () => {
+    expect(markLabel(1)).toBe('');
+    expect(markLabel(7)).toBe('');
+    expect(markLabel(0)).not.toBe('');
   });
 
-  test('in seximal the majors are the round numbers', () => {
-    expect([0, 6, 12, 18, 24, 30].map((i) => markLabel(i, 'seximal')))
+  test('the inner majors are the round seximal numbers', () => {
+    expect([0, 6, 12, 18, 24, 30].map(markLabel))
       .toEqual(['00', '10', '20', '30', '40', '50']);
   });
 
-  test('in niftimal each major is a single glyph — the pair rule, drawn', () => {
-    expect([0, 6, 12, 18, 24, 30].map((i) => markLabel(i, 'niftimal')))
-      .toEqual(['0', '6', 'C', 'I', 'O', 'U']);
+  test('the outer ring names EVERY mark, in-between ones included', () => {
+    const all = Array.from({ length: MARKS }, (_, i) => outerLabel(i));
+    expect(all.filter(Boolean)).toHaveLength(MARKS);
+    expect(all[1]).toBe('1');
+    expect(all[10]).toBe('A');
+    expect(all[35]).toBe('Z');
+  });
+
+  test('a mark carries its pair inside and its glyph outside — the pair rule, drawn', () => {
+    // The whole reason both rings are drawn: mark 12 is "20" in seximal and
+    // "C" in niftimal, and you can read both off the same tick.
+    expect(markLabel(12)).toBe('20');
+    expect(outerLabel(12)).toBe('C');
   });
 });
