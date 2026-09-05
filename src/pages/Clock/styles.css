@@ -311,6 +311,55 @@
   font-weight: 600;
 }
 
+/* --- the three sketches --------------------------------------------------- */
+
+.clock__sketches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin: 0 0 1.5rem;
+}
+
+@media only screen and (max-width: 700px) {
+  .clock__sketches {
+    grid-template-columns: 1fr;
+  }
+}
+
+.clock__sketch {
+  margin: 0;
+}
+
+/* The sketch faces are already small; let them fill their cell. */
+.clock__sketch .clock__dial {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.clock__sketch figcaption {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.clock__sketch-span {
+  font-size: clamp(2.5rem, 9vw, 4.5rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  text-align: center;
+  padding: 1.2rem 0;
+}
+
+/* The watch as a region rather than a pointer. */
+.clock__dial-sextant {
+  fill: currentColor;
+  opacity: 0.08;
+}
+
+.clock__dial-hand--watch,
+.clock__dial-hand--breath {
+  opacity: 0.55;
+}
+
 /* Marks a unit we proposed rather than one that is canon. */
 .clock__unit-flag {
   margin-left: 0.25em;

@@ -77,6 +77,13 @@ export const fromNiftimal = (s) => {
 /** Decimal 0..35 as a two-digit seximal pair, zero-padded: 17 -> "25". */
 export const seximalPair = (n) => toDigits(n).padStart(2, '0');
 
+/**
+ * Decimal 0..215 as three seximal digits: 0 -> "000", 215 -> "555". The span
+ * index is exactly this wide, because there are 6³ spans in a day — which is
+ * the whole reason a span can carry the time as one number.
+ */
+export const seximalTriple = (n) => toDigits(n).padStart(3, '0');
+
 // ---------------------------------------------------------------------------
 // The day
 // ---------------------------------------------------------------------------

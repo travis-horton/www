@@ -7,14 +7,18 @@
 import {
   handAngles,
   MAJOR_EVERY,
+  extraHandAngles,
   markLabel,
   markPoint,
   MARKS,
   outerLabel,
+  spanIndex,
+  SPANS_PER_DAY,
+  watchIndex,
   turnToDegrees,
 } from './dial';
 import {
-  MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE, MS_PER_TICK,
+  MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE, MS_PER_TICK, seximalTriple,
 } from './clock';
 
 describe('the dial', () => {
@@ -66,6 +70,38 @@ describe('the hands', () => {
     // …and then it does move, by exactly one mark's worth.
     const next = handAngles(MS_PER_TICK * 6);
     expect(next.moment - onTick.moment).toBeCloseTo(360 / MARKS);
+  });
+});
+
+describe('the sketches', () => {
+  test('a span index is three seximal digits, 000₆ to 555₆', () => {
+    expect(SPANS_PER_DAY).toBe(6 ** 3);
+    expect(spanIndex(0)).toBe(0);
+    expect(spanIndex(MS_PER_DAY - 1)).toBe(SPANS_PER_DAY - 1);
+    expect(seximalTriple(spanIndex(0))).toBe('000');
+    expect(seximalTriple(spanIndex(MS_PER_DAY - 1))).toBe('555');
+  });
+
+  test('a span is six lulls, so it holds still across five of them', () => {
+    const start = MS_PER_MINUTE * 12; // an arbitrary lull boundary
+    expect(spanIndex(start + MS_PER_MINUTE * 5)).toBe(spanIndex(start));
+    expect(spanIndex(start + MS_PER_MINUTE * 6)).toBe(spanIndex(start) + 1);
+  });
+
+  test('the watch is a sixth of the day, six of them', () => {
+    expect(watchIndex(0)).toBe(0);
+    expect(watchIndex(MS_PER_DAY / 2)).toBe(3);
+    expect(watchIndex(MS_PER_DAY - 1)).toBe(5);
+  });
+
+  test('watch and breath hands step through six positions only', () => {
+    // This is the sketch's own argument against itself: six stops, so they
+    // land on every sixth mark and duplicate coarser versions of other hands.
+    const seen = new Set();
+    for (let i = 0; i < 36; i += 1) {
+      seen.add(extraHandAngles((MS_PER_DAY / 36) * i).watch);
+    }
+    expect(seen.size).toBe(6);
   });
 });
 
