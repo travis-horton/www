@@ -1,5 +1,9 @@
 import React from 'react';
 
+import Performances from './Performances';
+
+import './styles.css';
+
 function Piano() {
   return (
     <main>
@@ -86,12 +90,7 @@ function Piano() {
         complete. A great deal of this work is rehearsals, juries and studio
         classes that nobody prints a program for.
       </p>
-      <p>
-        <em>
-          (Upcoming and Past Concerts lists go here. Being generated from the
-          calendar.)
-        </em>
-      </p>
+      <Performances />
     </main>
   );
 }
