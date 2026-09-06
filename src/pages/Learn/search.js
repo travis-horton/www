@@ -102,7 +102,8 @@ const PAREN = /\(([^)]*)\)/g;
  * already guards against a word being taught twice).
  */
 const buildWordEntries = () => {
-  const entries = {};
+  // Object.create(null), not {} — see the PROTOTYPELESS note by the exports.
+  const entries = Object.create(null);
   LEVELS.forEach((level) => {
     level.vocab.forEach((v) => {
       if (!entries[v.word]) entries[v.word] = { word: v.word, gloss: v.gloss, glyph: v.glyph };
@@ -141,7 +142,7 @@ const ROLE_RANK = {
 };
 
 const buildAppearances = (entries) => {
-  const byWord = {};
+  const byWord = Object.create(null);
 
   const touch = (word, level, role) => {
     if (!byWord[word]) byWord[word] = [];
@@ -190,7 +191,7 @@ const buildAppearances = (entries) => {
  * English nouns via a parenthetical that is the whole definition.
  */
 const buildEnglishIndex = (entries) => {
-  const index = {};
+  const index = Object.create(null);
   const addToken = (token, word) => {
     if (ENGLISH_STOPWORDS.has(token)) return;
     if (!index[token]) index[token] = new Set();
@@ -223,8 +224,32 @@ const buildEnglishIndex = (entries) => {
 
 /** glyph codepoint string -> the word it renders. The exact inverse of GLYPHS. */
 const buildGlyphIndex = () => Object.entries(GLYPHS)
-  .reduce((acc, [word, glyph]) => ({ ...acc, [glyph]: word }), {});
+  .reduce((acc, [word, glyph]) => Object.assign(acc, { [glyph]: word }), Object.create(null));
 
+/*
+ * PROTOTYPELESS ON PURPOSE — this fixes a blank page in production.
+ *
+ * All four of these tables are looked up with strings the USER typed into the
+ * search box. A plain `{}` inherits from Object.prototype, so
+ * `WORD_ENTRIES['constructor']` returns an inherited Function instead of
+ * undefined.
+ *
+ * That took /learn/toki-pona down. Typing "constructor" or "__proto__" got
+ * past the `if (!entry) return null` guard in toResult(), because the
+ * inherited Function is truthy, and then
+ * `(APPEARANCES[word] || []).slice()` threw "slice is not a function". A
+ * throw during render unmounts the route, so the whole page went blank —
+ * not just the search results.
+ *
+ * Every `|| []` and `if (!x)` guard in this file was written assuming a miss
+ * yields undefined. Object.create(null) is what makes that assumption true.
+ * Fixing it here rather than at each call site means a new lookup added later
+ * is safe by default instead of safe only if someone remembers.
+ *
+ * TokiPonaHome.test.jsx pins it. That file did not exist before 26.0905,
+ * which is how this shipped: search.js was well covered as a module, and the
+ * page that mounts it was covered by nothing at all.
+ */
 const WORD_ENTRIES = buildWordEntries();
 const APPEARANCES = buildAppearances(WORD_ENTRIES);
 const ENGLISH_INDEX = buildEnglishIndex(WORD_ENTRIES);
