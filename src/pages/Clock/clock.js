@@ -77,6 +77,13 @@ export const fromNiftimal = (s) => {
 /** Decimal 0..35 as a two-digit seximal pair, zero-padded: 17 -> "25". */
 export const seximalPair = (n) => toDigits(n).padStart(2, '0');
 
+/**
+ * Decimal 0..215 as three seximal digits: 0 -> "000", 215 -> "555". The span
+ * index is exactly this wide, because there are 6³ spans in a day — which is
+ * the whole reason a span can carry the time as one number.
+ */
+export const seximalTriple = (n) => toDigits(n).padStart(3, '0');
+
 // ---------------------------------------------------------------------------
 // The day
 // ---------------------------------------------------------------------------
@@ -151,3 +158,79 @@ const pad2 = (n) => String(n).padStart(2, '0');
 export const decimalTime = (date) => (
   [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad2).join(':')
 );
+
+/*
+ * The units have proper names, from seximal.net/units, and they are the units
+ * this clock already had. The page writes its own numbers in seximal, which is
+ * what makes the definitions look wrong at a glance:
+ *
+ *   a lapse  is a "niftiday"   — 1/36 of a day       — "nif four minutes" = 40 min
+ *   a lull   is an "untiday"   — 1/1296 of a day     — "10.4 seconds longer than
+ *                                                      a minute", and 10.4₆ is
+ *                                                      6.67, so 66.67 s
+ *   a moment is a "niftilull"  — 1/46656 of a day    — "exactly 1.504 seconds",
+ *                                                      and 1.504₆ is 1.8518
+ *
+ * 40 min · 66.67 s · 1.85 s are exactly this clock's hour, minute and second,
+ * so the generic names were placeholders for these. A moment is the tick.
+ *
+ * The list below names each unit against its PARENT — niftiday, niftilapse,
+ * niftilull — so the three read as one ladder. seximal.net names the lull
+ * against the day instead ("an untiday"), which is the same quantity by a
+ * different route: a nif of nifs is an un, so a niftilapse IS an untiday. Its
+ * word is kept in parentheses, since that is what a reader will find there.
+ */
+export const UNIT_NAMES = {
+  hour: 'lapse',
+  minute: 'lull',
+  second: 'moment',
+};
+
+/*
+ * What each unit is, in one line, for the page: name, gloss, fraction of a
+ * day, the sign, the SI length.
+ *
+ * The sign is per row and it is not decoration, and where it flips is a fact
+ * about the numbers rather than a choice. A day is 86400 s = 2^7 · 3^3 · 5^2,
+ * and 6^n = 2^n · 3^n, so 6^n divides the day exactly while n ≤ 3 — the three
+ * of them needed by the 3^3. Watch, lapse and span therefore land whole in
+ * ordinary units (4 h · 40 min · 6 min 40 s) and everything below the span
+ * repeats: a lull is 66.666… s, a breath 11.111…, a moment 1.85185…, a snap
+ * 0.30864…. The day itself is "≈" for a different reason: it is the Earth
+ * turning, which is only near 24 h.
+ *
+ * SOURCES, and the page says which is which. The Misalian units are jan
+ * Misali's; the span and snap are Justin Kunimune's, adopted as canon on
+ * seximal.net. The watch and the breath are NOT canon — they are ours, filling
+ * the 6^1 and 6^5 rungs the published ladder skips, and the page labels them
+ * so nobody carries them off as official. "Watch" because a ship's watch is
+ * already four hours, six to a day; "breath" because a slow breath is about
+ * eleven seconds, which gives it the same body-paced justification the snap
+ * has. (There is no canonical "sixti-" prefix, so these are glossed "a sixth
+ * of a day" and "a sixth of a lull" rather than coined by analogy.)
+ */
+export const UNIT_DEFINITIONS = [
+  ['day', 'the Earth turning once', '1', '≈', '24 h', 'Misalian'],
+  ['watch', 'a sixth of a day — six in a day, as at sea', '1/10₆ day', '=', '4 h', 'proposed here'],
+  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '=', '40 min', 'Misalian'],
+  ['span', 'a sixth of a lapse — six nif in a day, so the time is one number', '1/1000₆ day', '=', '6 min 40 s', 'Kunimunean'],
+  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '≈', '1 min 6.7 s', 'Misalian'],
+  ['breath', 'a sixth of a lull — about one slow breath', '1/100000₆ day', '≈', '11.1 s', 'proposed here'],
+  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '≈', '1.85 s', 'Misalian'],
+  ['snap', 'a sixth of a moment — near the pace of a syllable', '1/10000000₆ day', '≈', '0.309 s', 'Kunimunean'],
+];
+
+/**
+ * Milliseconds from `date` to the next whole tick, 1..MS_PER_TICK.
+ *
+ * A tick is 1851.851… ms, which is not representable, so the boundary is
+ * derived by integer arithmetic on the tick INDEX — ceil of (n+1) × ms/day ÷
+ * ticks/day — rather than by adding a rounded period. Adding a rounded 1852 ms
+ * would gain a whole tick roughly every nine minutes; adding 1851 would lose
+ * one about as fast. Re-deriving from the wall clock each time also absorbs a
+ * throttled background tab, which a fixed interval cannot.
+ */
+export const msToNextTick = (date) => {
+  const next = Math.ceil(((ticksSinceMidnight(date) + 1) * MS_PER_DAY) / TICKS_PER_DAY);
+  return Math.max(1, next - msSinceLocalMidnight(date));
+};
