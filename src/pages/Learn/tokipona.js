@@ -153,6 +153,19 @@ export const toGlyphs = (sentence) => sentence
 
 const vocab = (word, gloss) => ({ word, gloss, glyph: GLYPHS[word] });
 
+/*
+ * A word brought BACK in a later level, wearing a different sense — luka
+ * (Level 7, the hand) returning in Level 9 as the number five. It is not a
+ * second teaching: `vocab` is the twelve new words a level owns, and the tests
+ * hold that a word is taught exactly once. `again` cards ride alongside those
+ * twelve, are drilled like any word card, and point back at the level that
+ * first taught the word (see taughtIn). A second meeting is a feature of
+ * spaced learning, not a duplication — Praxis leaf 9a1c55da, option 1.
+ */
+const again = (word, gloss) => ({
+  word, gloss, glyph: GLYPHS[word], again: true,
+});
+
 export const LEVELS = [
   {
     id: '1',
@@ -413,7 +426,7 @@ export const LEVELS = [
       vocab('sinpin', 'front · face'),
       vocab('nasa', 'strange · silly'),
     ],
-    vocabNote: 'luka is hand AND the number five — count your fingers. pilin is the heart that feels, not the one that pumps.',
+    vocabNote: 'luka is hand AND the number five — count your fingers; Level 9 counts with it. pilin is the heart that feels, not the one that pumps.',
     rule: {
       particle: 'asking questions',
       body: 'Two shapes: ① drop seme into the slot you\'re asking about — sina moku e seme? "you\'re eating WHAT?" · sina pilin seme? "how do you feel?" ② yes/no = X ala X: sina pona ala pona? "are you good?" — answer by repeating the word (pona = yes) or negating it (pona ala = no). ala also negates anything: mi sona ala "I don\'t know."',
@@ -477,8 +490,8 @@ export const LEVELS = [
   {
     id: '9',
     title: 'Commands, numbers, up and down',
-    blurb: 'o replaces li for commands and wishes; numbers stop at two and stack from there.',
-    intro: 'Level 9 gives you commands, numbers, and the vertical axis. Twelve new words (97–108).',
+    blurb: 'o replaces li for commands and wishes; the numbers add up — wan 1 · tu 2 · luka 5 — so luka tu is seven.',
+    intro: 'Level 9 gives you commands, numbers, and the vertical axis. Twelve new words (97–108) — plus three you already own, back as numbers.',
     vocab: [
       vocab('o', 'hey! · do it!'),
       vocab('wan', 'one · united'),
@@ -493,7 +506,13 @@ export const LEVELS = [
       vocab('selo', 'skin · outer layer'),
       vocab('alasa', 'to hunt · forage'),
     ],
-    vocabNote: 'Numbers are minimalist on purpose: wan 1 · tu 2 · luka 5 — stack them: luka tu = 7 · luka luka = 10. Beyond that, mute.',
+    // The counting system needs three words taught earlier as something else.
+    again: [
+      again('luka', 'five · hand'),
+      again('mute', 'twenty · many'),
+      again('ale', 'hundred · all'),
+    ],
+    vocabNote: 'Counting, all in one place — and a stance, said out loud: this course counts the additive way. wan 1 · tu 2 · luka 5 · mute 20 · ale 100 — biggest piece first, then add: luka tu = 7 · luka luka = 10 · mute luka tu = 27. luka is the hand from Level 7, counted on its five fingers; mute (Level 3) and ale (Level 2) are the same words wearing number hats. pu also offers the plainer wan · tu · mute "many" — real, and what most speakers use when nothing needs an exact count — but a system that stops at two cannot stack, so it is not the one taught here.',
     rule: {
       particle: 'o',
       body: 'o replaces li for commands and wishes: o moku! "eat!" · o lape pona "sleep well." Before a name it calls someone: jan An o, o lukin! "Anne — look!" And nanpa + a number makes ordinals: nanpa wan = "number one" = first, the best.',
@@ -502,14 +521,14 @@ export const LEVELS = [
     toEnglish: [
       ['o pana e telo tawa mi', 'give me water'],
       ['mun li lon sewi', 'the moon is up in the sky'],
-      ['poki ni li jo e pan', 'this box has bread in it'],
+      ['poki ni li jo e pan luka', 'this box has five loaves in it'],
       ['linja mi li pimeja', 'my hair is dark'],
       ['mi alasa e kili', "I'm foraging for fruit (blackberries)"],
     ],
     toTokiPona: [
       ['Look!', 'o lukin!'],
       ['This is number one!', 'ni li nanpa wan'],
-      ['Two birds are up high.', 'waso tu li lon sewi'],
+      ['Seven birds are up high.', 'waso luka tu li lon sewi'],
     ],
     closingNote: 'The well-wish pattern runs on o: o tawa pona "travel well" · o moku pona "bon appétit" · o lape pona "good night."',
     decode: ['o lape pona', 'sleep well'],
@@ -557,6 +576,9 @@ export const LEVELS = [
 
 export const getLevel = (id) => LEVELS.find((l) => l.id === id) || null;
 
+/** The level whose vocab first taught `word` (where an `again` card points back to), or null. */
+export const taughtIn = (word) => LEVELS.find((l) => l.vocab.some((v) => v.word === word)) || null;
+
 /*
  * Item kinds and how each is judged.
  *
@@ -602,6 +624,19 @@ export const buildSession = (level) => {
       prompt: word,
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean?',
+      answer: gloss,
+      accepted: gloss.split('·').map((g) => g.trim()),
+    });
+  });
+
+  // Words brought back from an earlier level in a new sense — drilled like a
+  // word card, but the prompt says so, because "luka" here wants "five".
+  (level.again || []).forEach(({ word, gloss }) => {
+    items.push({
+      kind: 'word',
+      prompt: word,
+      promptGlyph: GLYPHS[word],
+      promptSub: 'what does it mean here? (back from an earlier level)',
       answer: gloss,
       accepted: gloss.split('·').map((g) => g.trim()),
     });

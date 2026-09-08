@@ -23,6 +23,12 @@ function ProgrammingContent() {
         <h2>Personal Projects</h2>
         <ul>
           <li>
+            <Link to={"/programming/clock"}>
+              Seximal clock
+            </Link>
+            {' — the day in base six, with five faces to vote on'}
+          </li>
+          <li>
             <Link to={"/programming/perlin-noise"}>
               Perlin noise
             </Link>
