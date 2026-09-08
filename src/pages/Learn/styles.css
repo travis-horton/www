@@ -56,6 +56,19 @@
   text-align: center;
 }
 
+/* A word brought back from an earlier level in a new sense (luka as five). */
+.tp__card--again {
+  border-style: dashed;
+}
+
+.tp__again {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-style: italic;
+  color: hsl(0, 0%, 40%);
+}
+
 .tp__word {
   display: block;
   font-weight: bold;
@@ -77,6 +90,39 @@
 
 .tp__prompt {
   font-size: 34px;
+}
+
+.tp__search {
+  margin: 18px 0 22px 0;
+  max-width: 34em;
+}
+
+.tp__search-results {
+  margin: 14px 0 0 0;
+  list-style: none;
+  padding: 0;
+}
+
+.tp__search-result {
+  border: 1px solid var(--light-grey);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.tp__search-result .tp__word {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.tp__search-result .tp__gloss {
+  display: inline;
+}
+
+.tp__search-levels {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: hsl(0, 0%, 40%);
 }
 
 .level-nav {

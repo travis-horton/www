@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter, Navigate, Route, Routes,
+} from 'react-router-dom';
 
 import {
   Home, Piano, Programming, Blog, Contact, Journal, Learn, NotFound,
@@ -18,6 +20,9 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/learn/*" element={<Learn />} />
+        {/* The clock moved under /programming (Travis, 26.0905). Kept as a
+            redirect because the old path has been handed out. */}
+        <Route path="/clock" element={<Navigate to="/programming/clock" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

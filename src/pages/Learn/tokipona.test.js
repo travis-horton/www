@@ -6,7 +6,7 @@
  */
 
 import {
-  buildSession, getLevel, GLYPHS, isCorrect, LEVELS, SELF_GRADED, toGlyphs,
+  buildSession, getLevel, GLYPHS, isCorrect, LEVELS, SELF_GRADED, taughtIn, toGlyphs,
 } from './tokipona';
 
 describe('glyphs', () => {
@@ -124,6 +124,66 @@ describe('sessions', () => {
         expect(item.accepted.length).toBeGreaterThan(0);
       }
     });
+  });
+});
+
+describe('the numbers lesson brings luka back as five', () => {
+  /*
+   * luka is word 79, taught in Level 7 as the hand. It is ALSO five, and the
+   * counting system Level 9 teaches cannot be used without it — for a while
+   * Level 9's blurb promised numbers "stack from there" and never supplied
+   * the five to stack with (Praxis leaf 9a1c55da). Ruling, 26.0904: option 1
+   * — re-introduce luka in the numbers lesson, state the additive rule
+   * (luka 5 · mute 20 · ale 100), fix the blurb, and say the stance out loud.
+   * `again` cards are how a level does that without teaching a word twice.
+   */
+  const level9 = getLevel('9');
+
+  test('luka, mute and ale come back as the number cards', () => {
+    expect(level9.again.map((v) => v.word)).toEqual(['luka', 'mute', 'ale']);
+  });
+
+  test('an again card points back at an earlier level, never at its own', () => {
+    LEVELS.forEach((level) => {
+      (level.again || []).forEach((v) => {
+        const from = taughtIn(v.word);
+        expect(`${v.word}:${from && from.id}`).not.toBe(`${v.word}:null`);
+        expect(Number(from.id)).toBeLessThan(Number(level.id));
+        expect(level.vocab.map((w) => w.word)).not.toContain(v.word);
+        expect(v.glyph).toBe(GLYPHS[v.word]);
+      });
+    });
+  });
+
+  test('the again cards are drilled, on top of the full exercise set', () => {
+    const session = buildSession(level9);
+    expect(session).toHaveLength(27 + level9.again.length);
+    const luka = session.find((i) => i.kind === 'word' && i.prompt === 'luka');
+    expect(luka.accepted).toContain('five');
+  });
+
+  test('the blurb no longer promises a stack it does not supply', () => {
+    expect(level9.blurb).not.toMatch(/stop at two/);
+    expect(level9.blurb).toMatch(/luka/);
+  });
+
+  test('the stance on the number system is stated in the lesson copy', () => {
+    expect(level9.vocabNote).toMatch(/luka 5 · mute 20 · ale 100/);
+    expect(level9.vocabNote).toMatch(/pu/);
+  });
+
+  test('the sentences drill luka as a number, stacked', () => {
+    const sentences = [
+      ...level9.toEnglish.map(([tp]) => tp),
+      ...level9.toTokiPona.map(([, tp]) => tp),
+    ];
+    expect(sentences.some((s) => s.split(/\s+/).includes('luka'))).toBe(true);
+    expect(sentences.some((s) => s.includes('luka tu'))).toBe(true);
+  });
+
+  test('taughtIn finds the first teaching and misses with null', () => {
+    expect(taughtIn('luka').id).toBe('7');
+    expect(taughtIn('zzz')).toBeNull();
   });
 });
 
