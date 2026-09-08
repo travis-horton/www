@@ -22,8 +22,15 @@ jobs:
             docker rm web
             docker stop www_web
             docker rm www_web
+            mkdir -p /var/log/gcal-hook
+            # -v: the gcal push receiver's log MUST outlive the container.
+            # These run with --rm and no volumes, so without this the doorbell's
+            # memory is wiped on every deploy — and an empty log is
+            # indistinguishable from "nothing changed", which is the one thing
+            # this design must never fake. (Praxis ticket a7cdc081, 26.0907)
             docker run --rm --name web -e VIRTUAL_HOST=travish.com \
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
+              -v /var/log/gcal-hook:/var/log/gcal-hook \
               -d kiddspazz/www_web
             docker run --rm --name www_web -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
