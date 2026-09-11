@@ -249,7 +249,7 @@ const byLevelOrder = (a, b) => Number(a.levelId) - Number(b.levelId);
  * (e.g. "this", from ni's gloss) still matches directly and is never mangled
  * by folding.
  */
-const foldPlural = (token) => {
+export const foldPlural = (token) => {
   if (token.length <= 3) return token;
   if (token.endsWith('ies')) return `${token.slice(0, -3)}y`; // bodies -> body
   if (/(?:s|x|z|ch|sh)es$/.test(token)) return token.slice(0, -2); // boxes -> box
