@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { LearnSearch } from './LearnSearch';
+
 function LearnHome() {
   return (
     <div className="learn">
@@ -27,6 +29,8 @@ function LearnHome() {
           </p>
         </li>
       </ul>
+
+      <LearnSearch />
     </div>
   );
 }
