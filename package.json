@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/kiddspazz/www#readme",
   "dependencies": {
-    "firebase": "^10.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-is": "^18.0.0",
@@ -64,9 +63,7 @@
       "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "^url:.+$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(png|jpg|jpeg|gif|svg|ico|pdf|woff|woff2|ttf|eot)$": "<rootDir>/__mocks__/fileMock.js",
-      "^/src/(.+)$": "<rootDir>/src/$1",
-      "^firebase/app$": "<rootDir>/__mocks__/firebase/app.js",
-      "^firebase/database$": "<rootDir>/__mocks__/firebase/database.js"
+      "^/src/(.+)$": "<rootDir>/src/$1"
     },
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": [
@@ -82,8 +79,14 @@
         }
       ]
     },
+    "setupFiles": [
+      "<rootDir>/jest.polyfills.js"
+    ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom"
     ]
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
   }
 }
