@@ -32,4 +32,11 @@ COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 # different job — PERSISTENCE across `--rm` deploys, not existence.
 RUN mkdir -p /var/log/gcal-hook
 
+# 🔑 The mount point for the gcal capability map (ticket 63ba96c0, 26.0911).
+# Deliberately EMPTY in the image: this image is public on Docker Hub, so the
+# secret must never be baked in. `web` bind-mounts the droplet's
+# /etc/gcal-hook here at run time; any container without that mount serves
+# 404 on both capability routes (nginx.conf explains the fail-closed glob).
+RUN mkdir -p /etc/nginx/gcal
+
 COPY --from=build /app/dist /var/www/html
