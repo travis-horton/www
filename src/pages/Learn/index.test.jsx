@@ -68,6 +68,47 @@ test('"show me" gives up and reveals, without pretending it was right', () => {
   expect(screen.getByText('No.')).toBeInTheDocument();
 });
 
+describe('seximal search', () => {
+  test('the seximal page finds a named number and links the level that teaches it', () => {
+    renderAt('/learn/seximal');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'dozen' },
+    });
+    expect(screen.getByText('dozen', { selector: '.tp__word' })).toBeInTheDocument();
+    expect(screen.getByText('20₆ · 12 in decimal')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Level 1' })).toHaveAttribute('href', '/learn/seximal/1');
+  });
+
+  test('a topic result links straight to its level', () => {
+    renderAt('/learn/seximal');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'carry' },
+    });
+    expect(screen.getByRole('link', { name: 'Level 3: Adding & subtracting' }))
+      .toHaveAttribute('href', '/learn/seximal/3');
+  });
+
+  test('/learn searches both courses at once, grouped by course', () => {
+    renderAt('/learn');
+    fireEvent.change(screen.getByRole('textbox', { name: /search both courses/i }), {
+      target: { value: '20' },
+    });
+    // toki pona: mute is twenty. seximal: 20₆ is a dozen.
+    expect(screen.getByText('mute', { selector: '.tp__word' })).toBeInTheDocument();
+    expect(screen.getByText('dozen', { selector: '.tp__word' })).toBeInTheDocument();
+    expect(screen.getByText('toki pona', { selector: '.learn__search-course' })).toBeInTheDocument();
+    expect(screen.getByText('seximal', { selector: '.learn__search-course' })).toBeInTheDocument();
+  });
+
+  test('/learn says "No match" once, not once per course', () => {
+    renderAt('/learn');
+    fireEvent.change(screen.getByRole('textbox', { name: /search both courses/i }), {
+      target: { value: 'zzzzzz' },
+    });
+    expect(screen.getAllByText(/No match for "zzzzzz"/)).toHaveLength(1);
+  });
+});
+
 test('an unknown level does not explode', () => {
   renderAt('/learn/seximal/99');
   expect(screen.getByText('No such level')).toBeInTheDocument();
