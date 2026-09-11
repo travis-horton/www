@@ -79,8 +79,14 @@
         }
       ]
     },
+    "setupFiles": [
+      "<rootDir>/jest.polyfills.js"
+    ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom"
     ]
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
   }
 }
