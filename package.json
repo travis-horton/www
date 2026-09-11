@@ -62,7 +62,8 @@
     "moduleNameMapper": {
       "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "^url:.+$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(png|jpg|jpeg|gif|svg|ico|pdf|woff|woff2|ttf|eot)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(png|jpg|jpeg|gif|svg|ico)$": "<rootDir>/__mocks__/bareAssetMock.js",
+      "\\.(pdf|woff|woff2|ttf|eot)$": "<rootDir>/__mocks__/fileMock.js",
       "^/src/(.+)$": "<rootDir>/src/$1"
     },
     "transform": {
