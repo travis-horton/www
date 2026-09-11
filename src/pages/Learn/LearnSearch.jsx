@@ -24,13 +24,19 @@ const ROLE_LABELS = {
   reads: ' (how to read it)',
 };
 
-const levelLinks = (course, levels) => (
+// A seximal word's other levels come from the level summaries (the blurbs),
+// not from the drills — and the drills use every pair word in all five
+// levels. So they say "mentioned": "used here" on Level 4 alone would read
+// as "not used in 2, 3 or 5", which is false.
+const SEXIMAL_ROLE_LABELS = { ...ROLE_LABELS, mentioned: ' (mentioned here)' };
+
+const levelLinks = (course, levels, labels = ROLE_LABELS) => (
   <p className="tp__search-levels">
     {levels.map((l, i) => (
       <React.Fragment key={l.levelId}>
         {i > 0 && ' · '}
         <Link to={`/learn/${course}/${l.levelId}`}>{`Level ${l.levelId}`}</Link>
-        {ROLE_LABELS[l.role] || ' (used here)'}
+        {labels[l.role] || ' (used here)'}
       </React.Fragment>
     ))}
   </p>
@@ -69,7 +75,7 @@ const seximalItem = (r) => {
     <li key={`sx-${r.key}`} className="tp__search-result">
       <span className="tp__word">{r.term}</span>
       <span className="tp__gloss">{gloss}</span>
-      {levelLinks('seximal', r.levels)}
+      {levelLinks('seximal', r.levels, SEXIMAL_ROLE_LABELS)}
     </li>
   );
 };

@@ -70,13 +70,17 @@ test('"show me" gives up and reveals, without pretending it was right', () => {
 
 describe('seximal search', () => {
   test('the seximal page finds a named number and links the level that teaches it', () => {
-    renderAt('/learn/seximal');
+    const { container } = renderAt('/learn/seximal');
     fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
       target: { value: 'dozen' },
     });
     expect(screen.getByText('dozen', { selector: '.tp__word' })).toBeInTheDocument();
     expect(screen.getByText('20₆ · 12 in decimal')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Level 1' })).toHaveAttribute('href', '/learn/seximal/1');
+    // Level 4 is listed because its summary says "dozen-scale". The drills of
+    // every level use dozen, so "used here" on Level 4 alone would mislead.
+    expect(container.querySelector('.tp__search-levels'))
+      .toHaveTextContent('Level 1 (taught here) · Level 4 (mentioned here)');
   });
 
   test('a topic result links straight to its level', () => {
