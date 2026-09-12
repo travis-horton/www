@@ -189,7 +189,7 @@ export const LEVELS = [
     vocabNote: 'The glyphs give a lot away: suli is a figure with arms spread wide, lili the same figure shrunk; tomo is a house; telo is waves.',
     rule: {
       particle: 'li',
-      body: 'li marks the predicate — it sits between the subject and what is said about it: kili li pona, "the fruit is good." There is no "is" in toki pona; li does that work. The single exception: after mi and sina, li is dropped — mi moku, "I\'m eating." That is genuinely the whole rule.',
+      body: 'li marks the predicate — it sits between the subject and what is said about it: kili li pona, "the fruit is good." There is no "is" in toki pona; li does that work. The single exception: when mi or sina is the WHOLE subject, li is dropped — mi moku, "I\'m eating." (Add anything else to that subject and li comes back — see Level 10.) That is genuinely the whole rule.',
     },
     glyphReading: ['telo', 'tomo', 'kili', 'suno', 'lili', 'jan'],
     toEnglish: [
@@ -229,7 +229,7 @@ export const LEVELS = [
     vocabNote: 'Notice ike is pona\'s opposite number, and ona covers he, she, it and they — toki pona doesn\'t gender its pronouns.',
     rule: {
       particle: 'e',
-      body: 'e marks the direct object — it sits between the verb and the thing the verb lands on: mi moku e kili, "I eat fruit." jan li lukin e mun, "the person looks at the moon." One sharp edge: e comes before every object, no exceptions. li is the only particle that ever disappears (after mi and sina); e never does.',
+      body: 'e marks the direct object — it sits between the verb and the thing the verb lands on: mi moku e kili, "I eat fruit." jan li lukin e mun, "the person looks at the moon." One sharp edge: e comes before every object, no exceptions. li is the only particle that ever disappears (when mi or sina is the whole subject); e never does.',
     },
     glyphReading: ['olin', 'wile', 'jo', 'lukin', 'ona', 'ike'],
     toEnglish: [
