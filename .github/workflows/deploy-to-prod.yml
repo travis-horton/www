@@ -28,9 +28,16 @@ jobs:
             # memory is wiped on every deploy — and an empty log is
             # indistinguishable from "nothing changed", which is the one thing
             # this design must never fake. (Praxis ticket a7cdc081, 26.0907)
+            # -v /etc/gcal-hook: the capability map, an UNTRACKED file that lives
+            # only on this droplet (ticket 63ba96c0, 26.0911). ⚠️ Place it BEFORE
+            # the deploy that first carries this line: without it the receiver
+            # answers 404 and Google eventually drops the channels. `www_web`
+            # gets no mount on purpose — the receiver lives on travish.com only.
+            mkdir -p /etc/gcal-hook
             docker run --rm --name web -e VIRTUAL_HOST=travish.com \
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
+              -v /etc/gcal-hook:/etc/nginx/gcal:ro \
               -d kiddspazz/www_web
             docker run --rm --name www_web -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
