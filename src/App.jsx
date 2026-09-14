@@ -4,7 +4,7 @@ import {
 } from 'react-router-dom';
 
 import {
-  Home, Piano, Programming, Blog, Contact, Journal, Learn, NotFound,
+  Home, Piano, Programming, Blog, Contact, Learn, NotFound,
 } from './pages';
 import { Header, Footer } from './sharedComponents';
 
@@ -18,7 +18,6 @@ function App() {
         <Route path="/piano" element={<Piano />} />
         <Route path="/blog/*" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/journal" element={<Journal />} />
         <Route path="/learn/*" element={<Learn />} />
         {/* The clock moved under /programming (Travis, 26.0905). Kept as a
             redirect because the old path has been handed out. */}
