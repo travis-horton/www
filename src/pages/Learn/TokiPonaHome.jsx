@@ -1,90 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { GLYPHS, LEVELS } from './tokipona';
 import { summarize } from './progress';
-import { search } from './search';
-
-// How a search result names each lesson a word appears in — see search.js
-// buildAppearances() for the roles. Anything not listed is a plain use.
-const ROLE_LABELS = {
-  introduces: ' (taught here)',
-  reintroduces: ' (brought back here)',
-};
-
-/*
- * Search — one box, three directions in (a toki pona word, an English gloss
- * word, or a pasted glyph), see search.js for how a query is told apart.
- *
- * It lives here rather than on its own route/page because the whole point is
- * "where did I meet this word?" asked FROM the page that already lists every
- * lesson — a learner mid-lesson-list is exactly who needs it, the corpus is
- * small enough that there is nothing to paginate, and it needs no state of
- * its own beyond the query string, so a separate view would just be this
- * page with extra navigation.
- */
-function TokiPonaSearch() {
-  const [query, setQuery] = useState('');
-  const results = useMemo(() => search(query), [query]);
-  const trimmed = query.trim();
-
-  return (
-    <div className="tp__search">
-      <label className="drill__label" htmlFor="tp-search">
-        search — a toki pona word, an English word, or a pasted glyph
-      </label>
-      <input
-        id="tp-search"
-        className="drill__input"
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        autoComplete="off"
-        autoCapitalize="off"
-        autoCorrect="off"
-        spellCheck="false"
-        placeholder="five, luka, 󱤭…"
-      />
-
-      {/*
-        aria-live="polite" on a container that is always mounted (rather than
-        on the conditionally-rendered <ul>/<p> themselves) so a screen reader
-        announces "No match" or the results as they change while typing —
-        content appearing/disappearing inside an already-live region is what
-        triggers the announcement; a region that only mounts once results
-        exist announces nothing the first time.
-      */}
-      <div aria-live="polite">
-        {trimmed !== '' && results.length === 0 && (
-          <p className="learn__meta">{`No match for "${trimmed}".`}</p>
-        )}
-
-        {results.length > 0 && (
-          <ul className="tp__search-results">
-            {results.map((r) => (
-              <li key={r.word} className="tp__search-result">
-                <span className="tp__glyph tp__glyph--inline">{r.glyph}</span>
-                <span className="tp__word">{r.word}</span>
-                <span className="tp__gloss">{r.gloss}</span>
-                <p className="tp__search-levels">
-                  {r.levels.map((l, i) => (
-                    <React.Fragment key={l.levelId}>
-                      {i > 0 && ' · '}
-                      <Link to={`/learn/toki-pona/${l.levelId}`}>
-                        {`Level ${l.levelId}`}
-                      </Link>
-                      {ROLE_LABELS[l.role] || ' (used here)'}
-                    </React.Fragment>
-                  ))}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}
+import { TokiPonaSearch } from './LearnSearch';
 
 function TokiPonaHome() {
   const reviewStats = summarize('toki-pona', 'review');
