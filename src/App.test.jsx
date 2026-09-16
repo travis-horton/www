@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import App from './App';
 
 jest.mock('./pages/Programming', () => ({ default: () => null, __esModule: true }));
@@ -16,11 +16,14 @@ test('renders the home page by default', () => {
 
 test('renders all nav links', () => {
   render(<App />);
-  expect(screen.getByRole('link', { name: /about me/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /software engineer/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /pianist/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /blog/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /contact/i })).toBeInTheDocument();
+  // Scoped to the <nav>: the About page body also links to /programming
+  // ("Software engineer"), so an unscoped getByRole finds two matches.
+  const nav = within(screen.getByRole('navigation'));
+  expect(nav.getByRole('link', { name: /about me/i })).toBeInTheDocument();
+  expect(nav.getByRole('link', { name: /software engineer/i })).toBeInTheDocument();
+  expect(nav.getByRole('link', { name: /pianist/i })).toBeInTheDocument();
+  expect(nav.getByRole('link', { name: /blog/i })).toBeInTheDocument();
+  expect(nav.getByRole('link', { name: /contact/i })).toBeInTheDocument();
 });
 
 test('has no React StrictMode incompatible components', () => {
