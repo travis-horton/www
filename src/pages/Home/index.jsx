@@ -148,7 +148,16 @@ function Home() {
           </a>
           . I moved to New York City in 2011 and
           worked there as a pianist for six years. I played Carnegie Hall and
-          Joe&apos;s Pub and a number of Off-Broadway shows, and I worked for NYU
+          Joe&apos;s Pub and a number of Off-Broadway shows, and I worked for
+          {' '}
+          <a
+            href="https://www.nyu.edu/"
+            rel="noreferrer"
+            target="_blank"
+          >
+            NYU
+          </a>
+          {' '}
           and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I rode
           my bicycle a lot. I married Anne in September of 2016.
         </p>
