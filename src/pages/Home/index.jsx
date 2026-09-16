@@ -137,7 +137,16 @@ function Home() {
             UNC School of the Arts
           </a>
           {' '}
-          and two more at the New England Conservatory. I moved to New York City in 2011 and
+          and two more at the
+          {' '}
+          <a
+            href="https://necmusic.edu/"
+            rel="noreferrer"
+            target="_blank"
+          >
+            New England Conservatory
+          </a>
+          . I moved to New York City in 2011 and
           worked there as a pianist for six years. I played Carnegie Hall and
           Joe&apos;s Pub and a number of Off-Broadway shows, and I worked for NYU
           and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I rode
