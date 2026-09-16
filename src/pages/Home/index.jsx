@@ -25,56 +25,52 @@ function Home() {
             Travis Horton
           </h1>
           <h2>
-            Software Engineer
-            <br />
             Pianist
             <br />
             Accountant
+            <br />
+            Software Engineer
           </h2>
         </div>
       </header>
       <div>
         <p>
-          I&apos;m Travis. I program in React/JavaScript/CSS/HTML/Python and I
-          play the piano. I do some accounting on the side. I live in Boise, Idaho
-          with my wonderful wife Anne.
+          I&apos;m Travis. I live in Boise, Idaho with my wife Anne. I hold three
+          jobs, which sounds worse than it is. I play the piano, I keep the books
+          for a children&apos;s chorus in Brooklyn, and I write software. Two of
+          those are in Boise and one of them is remote, and most weeks they stay
+          out of each other&apos;s way.
         </p>
+
+        <h4>At the piano</h4>
         <p>
-          I work for the
-          {' '}
-          <a
-            href="https://www.collegeofidaho.edu/directory/travis-horton"
-            rel="noreferrer"
-            target="_blank"
-          >
-            College of Idaho
-          </a>
-          {' '}
-          as the Professor of Piano and staff pianist.
+          I&apos;m a staff pianist at Boise State, where I play for the choirs,
+          which are Meistersingers, University Singers and Vox Angelis, and for
+          the opera and musical theatre workshop. I play for the Boise
+          Philharmonic Master Chorale as well, and I keep a private piano studio
+          in Boise. Until this fall I was also Adjunct
+          Professor of Piano and Staff Pianist at the College of Idaho. Nearly all
+          of this is collaborative piano, which is what I trained for and the
+          thing I am best at.
         </p>
+
+        <h4>In the books</h4>
         <p>
-          Until November 2023 I was programming during the morning/early afternoon
-          and teaching piano in the afternoons and into the evening. Most
-          recently, I was working for
+          Since 2017 I have been the accountant for the Brooklyn Youth Chorus. The
+          work is remote and covers payroll, reconciliation, budgets and the
+          monthly close. People are usually surprised that this is the same person
+          who plays the piano. I find the two fit together better than they sound.
+          A set of books either balances or it does not, and you learn which the
+          same day you ask. Very little else in my week is that decisive.
+        </p>
+
+        <h4>At the other keyboard</h4>
+        <p>
+          I was a front-end engineer at Bodybuilding.com and a full-stack engineer
+          at
           {' '}
           <a href="https://www.honorcare.com" target="_blank" rel="noreferrer">honor</a>
-          {' '}
-          during the day. That was a great job.
-        </p>
-        <h4>A little background</h4>
-        <p>
-          I studied piano for 6 years at UNC-School of the Arts and 2 more years at the New
-          England Conservatory. I moved to New York City in 2011 and worked as a pianist
-          there for 6 years &mdash; played Carnegie Hall, Joe&apos;s Pub, Off-Broadway shows,
-          worked for NYU and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I
-          rode my bicycle a lot. I married Anne in September, 2016.
-        </p>
-        <p>
-          In 2017, Anne and I decided to leave our 6-year home of Brooklyn for the road.
-          We bought an RV and traveled the country for a year and a half. I studied
-          programming part time while I worked half-time as an accountant for the Brooklyn
-          Youth Chorus. We decided on Boise as a home-base, and shortly thereafter
-          I was accepted into the
+          . In the spring of 2019 I spent a batch at the
           {' '}
           <a
             href="https://www.recurse.com/"
@@ -83,16 +79,68 @@ function Home() {
           >
             Recurse Center
           </a>
-          . That was awesome; if you have any interest in
-          programming, please do check it out.
+          {' '}
+          in Brooklyn, which I recommend to anyone who is even slightly curious
+          about programming. These days I write mostly JavaScript, React and
+          Python. I have been learning Zig for the past several months and writing
+          the backend that will eventually serve this site. Progress is slow. I am
+          currently stuck on allocators, which I gather is the normal place to be
+          stuck.
+        </p>
+
+        <h4>A little background</h4>
+        <p>
+          I studied piano for six years at UNC School of the Arts and two more at
+          the New England Conservatory. I moved to New York City in 2011 and
+          worked there as a pianist for six years. I played Carnegie Hall and
+          Joe&apos;s Pub and a number of Off-Broadway shows, and I worked for NYU
+          and the Brooklyn Youth Chorus as a vocal coach and staff pianist. I rode
+          my bicycle a lot. I married Anne in September of 2016.
         </p>
         <p>
-          <Link to="/programming">
-            Here
-          </Link>
+          In 2017 Anne and I left Brooklyn, which had been home for six years, and
+          bought an RV. We travelled the country in it for a year and a half. I
+          studied programming part time during that stretch and worked half time
+          as an accountant for the Chorus. We picked Boise as a home base at the
+          end of it, and shortly afterward I was accepted into the Recurse Center.
+        </p>
+
+        <h4>Away from all that</h4>
+        <p>
+          I love board games, skiing and playing in my garden, and I have
+          aspirations of being a &quot;runner&quot; (because right now I&apos;m
+          just a jogger) and of having an escarpment oak bonsai tree!
+        </p>
+        <p>
+          I keep a quarrel going with the Gregorian calendar. I count in base six
+          on purpose, and I am slowly learning
           {' '}
-          are a few things I&apos;ve built on my own, mostly from a long time
-          ago now.
+          <Link to="/learn">toki pona</Link>
+          , which is a complete language of about 120 words.
+        </p>
+
+        <h4>Around here</h4>
+        <p>
+          The
+          {' '}
+          <Link to="/piano">pianist</Link>
+          {' '}
+          page covers the teaching and the playing, and lists what I have coming
+          up.
+          {' '}
+          <Link to="/programming">Software engineer</Link>
+          {' '}
+          has the things I have built for my own amusement, including a ray
+          tracer, some Perlin noise, a bit of orbital mechanics and a clock that
+          counts in base six. The
+          {' '}
+          <Link to="/blog">blog</Link>
+          {' '}
+          is sporadic and mostly concerns how computers work.
+          {' '}
+          <Link to="/contact">Contact</Link>
+          {' '}
+          has my email address.
         </p>
       </div>
     </main>

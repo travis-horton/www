@@ -1,36 +1,86 @@
 import React from 'react';
 
+import Performances from './Performances';
+
+import './styles.css';
+
 function Piano() {
   return (
     <main>
       <p>
-        I teach the piano at the
+        I play the piano with other people. That is the work, and it is the part
+        of music I have always wanted to do.
+      </p>
+      <p>
+        I&apos;m a staff pianist at Boise State. I play for the choirs, which are
+        Meistersingers, University Singers and Vox Angelis, and for the opera and
+        musical theatre workshop, and guest artists turn up and I play for most of
+        them. I also play for the Boise Philharmonic Master Chorale, and I teach a
+        private piano studio. Until this fall I was Adjunct
+        Professor of Piano and Staff Pianist at the College of Idaho in Caldwell,
+        where I taught class piano and keyboarding skills and kept a studio of
+        about fifteen students.
+      </p>
+
+      <h4>Collaborative piano</h4>
+      <p>
+        Collaborative piano is its own discipline, and it is what I trained for. A
+        soloist decides the tempo, the rubato and where the phrase breathes. I
+        decide all of the same things and then hand most of them to somebody else
+        while continuing to play. Much of the skill is anticipation. I have to
+        hear a breath before it arrives and know the text as well as the singer
+        does, because the words are my part too.
+      </p>
+      <p>
+        The rest of it is more practical. I play orchestra reductions that were
+        never meant for two hands and try to make them sound deliberate. I
+        transpose on sight, because a voice gets tired and the aria goes down a
+        whole step that evening. Sight reading is a requirement rather than an
+        accomplishment. None of this is glamorous and nobody has ever bought a
+        ticket on my account, but the best moments in a performance are the ones
+        nobody planned, and you only get those by listening closely enough to
+        follow.
+      </p>
+      <p>
+        I studied piano for six years at UNC School of the Arts and two more at
+        the New England Conservatory.
+      </p>
+
+      <h4>Pits</h4>
+      <p>
+        I play musical theatre when I can get it. Recent runs include Always,
+        Patsy Cline and The 25th Annual Putnam County Spelling Bee. This fall I am
+        assistant music director on Annie. The work is the same set of skills
+        applied under worse lighting and a tighter clock.
+      </p>
+
+      <h4>What I play for</h4>
+      <ul>
+        <li>Choral rehearsals and concerts</li>
+        <li>Voice and instrumental recitals, whether student, faculty or degree</li>
+        <li>Juries, studio classes and auditions</li>
+        <li>Opera and musical theatre workshops and scenes programs</li>
+        <li>Musical theatre pits, and music or assistant music direction</li>
+        <li>Coachings for singers learning repertoire</li>
+        <li>Guest artists and masterclasses</li>
+        <li>Private lessons in piano and voice</li>
+      </ul>
+      <p>
+        If you have a recital on the calendar and no pianist, or a singer who
+        needs a coach, or a pit that needs a keyboard player, write to me at
         {' '}
-        <a
-          href="https://www.collegeofidaho.edu/directory/travis-horton"
-          rel="noreferrer"
-          target="_blank"
-        >
-          College of Idaho
-        </a>
-        . I also play the piano for their choirs, student recitals, student
-        juries, and faculty concerts.  I started working with the College of
-        Idaho in the fall semester of 2019.
+        <a href="mailto:travis@travish.com">travis@travish.com</a>
+        . If I am already booked or I am not the right fit, I can usually point
+        you at someone who is.
       </p>
+
+      <h4>Performances</h4>
       <p>
-        In the fall of 2023 the college&apos;s choir director stepped down
-        suddenly and I was lucky and prepared enough to step in as the choir
-        director and finished out the academic year. That effectively meant that
-        I was a full time faculty member during the &apos;23-&apos;24 year.
+        What is coming up, and some of what has already happened. The list is not
+        complete. A great deal of this work is rehearsals, juries and studio
+        classes that nobody prints a program for.
       </p>
-      <p>
-        In the spring of 2024 I was offered a full-time position as piano
-        faculty at the college and I accepted! I&apos;m happy to be continuing
-        my work there. I have some 15 piano students, I play for the choirs
-        (under the direction of a new choir director, Mark Perry), and teach a
-        few piano related classes (keyboarding skills and class piano; maybe
-        soon a piano literature class).
-      </p>
+      <Performances />
     </main>
   );
 }
