@@ -7,6 +7,7 @@ import Drill from './Drill';
 import TokiPonaHome from './TokiPonaHome';
 import TokiPonaDrill from './TokiPonaDrill';
 import TokiPonaReview from './TokiPonaReview';
+import { NotFoundContent } from '../NotFound';
 
 import './styles.css';
 
@@ -20,6 +21,7 @@ function Learn() {
         <Route path="toki-pona/:levelId" element={<TokiPonaDrill />} />
         <Route path="toki-pona" element={<TokiPonaHome />} />
         <Route index element={<LearnHome />} />
+        <Route path="*" element={<NotFoundContent />} />
       </Routes>
     </main>
   );
