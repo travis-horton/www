@@ -107,10 +107,9 @@ function Home() {
 
         <h4>Away from all that</h4>
         <p>
-          There is usually a board game on the table. Root and Spirit Island get
-          the most play. I ski when the season allows it and I run at a pace I
-          have made peace with. The garden produces more tomatoes than two people
-          can reasonably eat. I have started an escarpment live oak as a bonsai.
+          I love board games, skiing and playing in my garden, and I have
+          aspirations of being a &quot;runner&quot; (because right now I&apos;m
+          just a jogger) and of having an escarpment oak bonsai tree!
         </p>
         <p>
           I keep a quarrel going with the Gregorian calendar. I count in base six
