@@ -47,17 +47,17 @@ function Home() {
           which are Meistersingers, University Singers and Vox Angelis, and for
           the opera and musical theatre workshop. I play for the Boise
           Philharmonic Master Chorale as well, and I keep a private piano studio
-          in Boise. Until this fall I was also Adjunct
-          Professor of Piano and Staff Pianist at the College of Idaho. Nearly all
-          of this is collaborative piano, which is what I trained for and the
-          thing I am best at.
+          in Boise. Until this fall I was also Adjunct Professor of Piano and
+          Staff Pianist at the College of Idaho. Nearly all of this is
+          collaborative piano, which is what I trained for and the thing I am
+          best at.
         </p>
 
         <h4>In the books</h4>
         <p>
           Since 2017 I have been the accountant for the Brooklyn Youth Chorus. The
           work is remote and covers payroll, reconciliation, budgets and the
-          monthly close. Accounting is just playing with numbers, and on my first
+          monthly close. Accounting is just playing with numbers, and my first
           try at college (UNC-CH) I was a math major. Though that didn&apos;t work
           out, my love of numbers stuck with me.
         </p>
