@@ -9,27 +9,17 @@ function Piano() {
     <main>
       <p>
         I play the piano with other people. That is the work, and it is the part
-        of music I have always wanted to do. Most weeks it means two campuses and
-        a fair amount of driving between them.
+        of music I have always wanted to do.
       </p>
       <p>
-        I&apos;m Adjunct Professor of Piano and Staff Pianist at the
-        {' '}
-        <a
-          href="https://www.collegeofidaho.edu/directory/travis-horton"
-          rel="noreferrer"
-          target="_blank"
-        >
-          College of Idaho
-        </a>
-        {' '}
-        in Caldwell, and a staff pianist at Boise State. At the College I teach
-        class piano and keyboarding skills and keep a studio of about fifteen
-        piano students. I play studio classes, recital hour, juries and student
-        recitals there, and I take private voice students as well. At Boise State
-        I play for the choirs, which are Meistersingers, University Singers and
-        Vox Angelis, and for the opera and musical theatre workshop. Guest artists
-        turn up at both places and I play for most of them.
+        I&apos;m a staff pianist at Boise State. I play for the choirs, which are
+        Meistersingers, University Singers and Vox Angelis, and for the opera and
+        musical theatre workshop, and guest artists turn up and I play for most of
+        them. I also play for the Boise Philharmonic Master Chorale, and I teach a
+        private piano studio. Until this fall I was Adjunct
+        Professor of Piano and Staff Pianist at the College of Idaho in Caldwell,
+        where I taught class piano and keyboarding skills and kept a studio of
+        about fifteen students.
       </p>
 
       <h4>Collaborative piano</h4>

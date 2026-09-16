@@ -44,23 +44,14 @@ function Home() {
 
         <h4>At the piano</h4>
         <p>
-          I&apos;m Adjunct Professor of Piano and Staff Pianist at the
-          {' '}
-          <a
-            href="https://www.collegeofidaho.edu/directory/travis-horton"
-            rel="noreferrer"
-            target="_blank"
-          >
-            College of Idaho
-          </a>
-          , and a staff pianist at Boise State. At the College I teach class piano
-          and keyboarding skills, and I keep a studio of about fifteen students. I
-          also play studio classes, recital hour, juries and student recitals
-          there. At Boise State I play for the choirs, which are Meistersingers,
-          University Singers and Vox Angelis, and for the opera and musical
-          theatre workshop. I play for the Boise Philharmonic Master Chorale as
-          well. Nearly all of this is collaborative piano, which is what I trained
-          for and the thing I am best at.
+          I&apos;m a staff pianist at Boise State, where I play for the choirs,
+          which are Meistersingers, University Singers and Vox Angelis, and for
+          the opera and musical theatre workshop. I play for the Boise
+          Philharmonic Master Chorale as well, and I keep a private piano studio
+          in Boise. Until this fall I was also Adjunct
+          Professor of Piano and Staff Pianist at the College of Idaho. Nearly all
+          of this is collaborative piano, which is what I trained for and the
+          thing I am best at.
         </p>
 
         <h4>In the books</h4>
@@ -119,19 +110,14 @@ function Home() {
           There is usually a board game on the table. Root and Spirit Island get
           the most play. I ski when the season allows it and I run at a pace I
           have made peace with. The garden produces more tomatoes than two people
-          can reasonably eat. I have started an escarpment live oak as a bonsai,
-          which is a project measured in decades, and the right time to begin one
-          is always now. I cook dinner most nights.
+          can reasonably eat. I have started an escarpment live oak as a bonsai.
         </p>
         <p>
           I keep a quarrel going with the Gregorian calendar. I count in base six
           on purpose, and I am slowly learning
           {' '}
           <Link to="/learn">toki pona</Link>
-          , which is a complete language of about 120 words. I have written in a
-          journal every day since the first of January, 2019. Every entry carries
-          the same line at the top, which is as close to a philosophy as I have
-          managed: extract the most joy out of the most life.
+          , which is a complete language of about 120 words.
         </p>
 
         <h4>Around here</h4>
