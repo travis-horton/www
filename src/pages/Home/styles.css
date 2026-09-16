@@ -1,6 +1,11 @@
+/* The photo floats RIGHT (Travis, 26.0916), so the name, the header and the
+   first paragraphs run down the left with the picture alongside. The bottom
+   margin matters now that the page has headings: the first section heading
+   wraps up alongside the photo and used to sit flush against its lower edge. */
 .home__profile-pic {
-  float: left;
-  margin-right: 14px;
+  float: right;
+  margin-left: 14px;
+  margin-bottom: 14px;
 }
 
 .home__monkey-pic {

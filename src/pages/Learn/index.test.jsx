@@ -18,6 +18,12 @@ const renderAt = (path) => render(
   </MemoryRouter>,
 );
 
+test('an unknown course path renders the 404 inside the one <main>', () => {
+  const { container } = renderAt('/learn/made-up');
+  expect(screen.getByText('hm, nothing here')).toBeInTheDocument();
+  expect(container.querySelectorAll('main')).toHaveLength(1);
+});
+
 test('the course index renders', () => {
   renderAt('/learn');
   expect(screen.getByText('Seximal')).toBeInTheDocument();
