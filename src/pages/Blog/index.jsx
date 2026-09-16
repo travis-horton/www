@@ -4,6 +4,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import JsThisBlog from './blog-posts/js-this.jsx';
 import TheFlipFlop1 from './blog-posts/the-flip-flop-1.jsx';
 import TheFirstBlog from './blog-posts/the-first-blog.jsx';
+import { NotFoundContent } from '../NotFound';
 
 import './styles.css';
 import './neon-button.css';
@@ -45,6 +46,7 @@ const Blog = () => (
       <Route path="js-this" element={<JsThisBlog />} />
       <Route path="the-flip-flop-1" element={<TheFlipFlop1 />} />
       <Route path="the-first-blog" element={<TheFirstBlog />} />
+      <Route path="*" element={<NotFoundContent />} />
     </Routes>
   </main>
 );
