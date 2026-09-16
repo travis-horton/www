@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { LEVELS } from './seximal';
 import { summarize, weakKinds } from './progress';
+import { SeximalSearch } from './LearnSearch';
 
 function SeximalHome() {
   const weak = weakKinds('seximal').slice(0, 4);
@@ -44,6 +45,8 @@ function SeximalHome() {
         Every question is generated, so a level never runs out. You answer
         before you see the answer — that is the point.
       </p>
+
+      <SeximalSearch />
 
       <ul className="learn__levels">
         {LEVELS.map((level) => {
