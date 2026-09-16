@@ -14,7 +14,9 @@ import {
   MS_PER_MINUTE,
   MS_PER_TICK,
   msSinceLocalMidnight,
+  msToNextTick,
   niftimalDigit,
+  UNIT_DEFINITIONS,
   niftimalTime,
   niftimalValue,
   seximalPair,
@@ -194,5 +196,88 @@ describe('the decimal clock', () => {
   test('zero-padded 24-hour', () => {
     expect(decimalTime(at(0, 0, 0))).toBe('00:00:00');
     expect(decimalTime(at(16, 5, 9))).toBe('16:05:09');
+  });
+});
+
+describe('the unit definitions', () => {
+  test('the sign is exact only where the SI length actually is', () => {
+    // A lapse is 86400/36 = 2400 s on the nose. The other three repeat, or
+    // are the Earth turning, so they are approximations and say so.
+    const sign = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]));
+    expect(sign.lapse).toBe('=');
+    expect(sign.lull).toBe('≈');
+    expect(sign.moment).toBe('≈');
+    expect(sign.day).toBe('≈');
+  });
+
+  test('the ladder is unbroken: eight rungs, each a sixth of the one above', () => {
+    expect(UNIT_DEFINITIONS.map(([n]) => n)).toEqual([
+      'day', 'watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap',
+    ]);
+  });
+
+  test('what is canon says so, and what is ours says so', () => {
+    const source = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , , , s]) => [n, s]));
+    expect(source.span).toBe('Kunimunean');
+    expect(source.snap).toBe('Kunimunean');
+    expect(source.lapse).toBe('Misalian');
+    // The two we filled in are flagged, so nobody carries them off as canon.
+    expect(source.watch).toBe('proposed here');
+    expect(source.breath).toBe('proposed here');
+  });
+
+  test('exact down to the span, repeating below it — because 3^3 runs out', () => {
+    const SI_DAY = 24 * 60 * 60; // 86400 = 2^7 · 3^3 · 5^2
+    [1, 2, 3].forEach((n) => expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(true));
+    [4, 5, 6, 7].forEach((n) => expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(false));
+    const sign = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]));
+    expect([sign.watch, sign.lapse, sign.span]).toEqual(['=', '=', '=']);
+    expect([sign.lull, sign.breath, sign.moment, sign.snap]).toEqual(['≈', '≈', '≈', '≈']);
+  });
+
+  test('and the claim behind that sign holds', () => {
+    const SI_DAY = 24 * 60 * 60;
+    expect(SI_DAY / 6).toBe(14400); // watch: exactly 4 h
+    expect(SI_DAY / 36).toBe(2400); // lapse: exactly 40 min
+    expect(SI_DAY / 216).toBe(400); // span: exactly 6 min 40 s
+    expect(Number.isInteger(SI_DAY / 1296)).toBe(false); // lull repeats
+    expect(Number.isInteger(SI_DAY / 46656)).toBe(false); // moment repeats
+  });
+});
+
+describe('ticking on the seximal second', () => {
+  test('the wait always lands on the next tick, never inside one', () => {
+    // The relationship, not a pinned literal: from any instant, waiting
+    // msToNextTick lands on a tick index exactly one higher.
+    [at(0, 0, 0), at(0, 0, 1, 7), at(9, 41, 33, 555), at(16, 0, 0), at(23, 59, 58)]
+      .forEach((d) => {
+        const landed = new Date(d.getTime() + msToNextTick(d));
+        expect(ticksSinceMidnight(landed)).toBe(ticksSinceMidnight(d) + 1);
+      });
+  });
+
+  test('the wait is a positive span no longer than one tick', () => {
+    [at(0, 0, 0), at(4, 20, 0, 1), at(16, 0, 0), at(21, 15, 45, 999)].forEach((d) => {
+      const wait = msToNextTick(d);
+      expect(wait).toBeGreaterThan(0);
+      expect(wait).toBeLessThanOrEqual(Math.ceil(MS_PER_TICK));
+    });
+  });
+
+  test('re-aiming each tick does not drift over a whole hour of them', () => {
+    // 36 ticks is a seximal minute; walking them by repeated re-aim must end
+    // exactly 36 ticks on, which a rounded fixed period would not.
+    let d = at(11, 11, 11, 11);
+    const start = ticksSinceMidnight(d);
+    for (let i = 0; i < 36; i += 1) d = new Date(d.getTime() + msToNextTick(d));
+    expect(ticksSinceMidnight(d)).toBe(start + 36);
+  });
+
+  test('a decimal-second interval would NOT do this — the bug it replaces', () => {
+    // 1000 ms lands inside the same tick more often than not: that is why the
+    // face repeated, then skipped.
+    const d = at(9, 41, 33, 0);
+    const afterOneDecimalSecond = new Date(d.getTime() + 1000);
+    expect(ticksSinceMidnight(afterOneDecimalSecond)).toBe(ticksSinceMidnight(d));
   });
 });
