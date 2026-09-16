@@ -132,11 +132,7 @@ function Home() {
           {' '}
           has the things I have built for my own amusement, including a ray
           tracer, some Perlin noise, a bit of orbital mechanics and a clock that
-          counts in base six. The
-          {' '}
-          <Link to="/blog">blog</Link>
-          {' '}
-          is sporadic and mostly concerns how computers work.
+          counts in base six.
           {' '}
           <Link to="/contact">Contact</Link>
           {' '}
