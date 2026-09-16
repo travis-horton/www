@@ -2,7 +2,6 @@ export { default as Blog } from './Blog';
 export { default as Clock } from './Clock';
 export { default as Contact } from './Contact';
 export { default as Home } from './Home';
-export { default as Journal } from './Journal';
 export { default as Learn } from './Learn';
 export { default as NotFound } from './NotFound';
 export { default as Piano } from './Piano';
