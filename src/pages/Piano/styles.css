@@ -1,0 +1,56 @@
+/*
+ * The performance list. Three lines per entry on a phone, one row on a wider
+ * screen, so the dates form a scannable column rather than a ragged left edge.
+ */
+
+.piano__perfs {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 1.5rem;
+}
+
+.piano__perf {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--light-grey);
+  line-height: 1.4;
+}
+
+.piano__perf:last-child {
+  border-bottom: none;
+}
+
+/* Tabular figures so the date column lines up down the list. */
+.piano__perf-when {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  color: hsl(0, 0%, 40%);
+}
+
+.piano__perf-time {
+  color: hsl(0, 0%, 40%);
+}
+
+.piano__perf-title {
+  font-weight: 600;
+}
+
+.piano__perf-sub,
+.piano__perf-where {
+  color: hsl(0, 0%, 40%);
+  font-size: 0.9rem;
+}
+
+@media only screen and (min-width: 700px) {
+  .piano__perf {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 0 1rem;
+    align-items: baseline;
+  }
+
+  /* The venue line sits under the title, in the second column, so it reads as
+     belonging to the performance rather than to the date. */
+  .piano__perf-where {
+    grid-column: 2;
+  }
+}
