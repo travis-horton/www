@@ -14,6 +14,7 @@ import ProgrammingContent from './ProgrammingContent';
 // Imported from its own directory rather than through `../index` — the pages
 // barrel imports Programming, so going back through it would close a cycle.
 import Clock from '../Clock';
+import { NotFoundContent } from '../NotFound';
 
 import './styles.css';
 
@@ -30,6 +31,9 @@ function Programming() {
         <Route path="binary" element={<BinaryNumerals />} />
         <Route path="clock" element={<Clock />} />
         <Route index element={<ProgrammingContent />} />
+        {/* Anything else under /programming/ is a 404 — without this the
+            outer "/programming/*" swallows it and the page renders empty. */}
+        <Route path="*" element={<NotFoundContent />} />
       </Routes>
     </main>
   );
