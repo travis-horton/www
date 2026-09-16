@@ -35,11 +35,10 @@ function Home() {
       </header>
       <div>
         <p>
-          I&apos;m Travis. I live in Boise, Idaho with my wife Anne. I hold three
-          jobs, which sounds worse than it is. I play the piano, I keep the books
-          for a children&apos;s chorus in Brooklyn, and I write software. Two of
-          those are in Boise and one of them is remote, and most weeks they stay
-          out of each other&apos;s way.
+          I&apos;m Travis. I live in Boise, Idaho with my wife Anne. For work I
+          mostly play the piano and do a little accounting for a children&apos;s
+          chorus in Brooklyn. I&apos;m a recovering professional programmer, now
+          just programming for fun.
         </p>
 
         <h4>At the piano</h4>
@@ -58,10 +57,9 @@ function Home() {
         <p>
           Since 2017 I have been the accountant for the Brooklyn Youth Chorus. The
           work is remote and covers payroll, reconciliation, budgets and the
-          monthly close. People are usually surprised that this is the same person
-          who plays the piano. I find the two fit together better than they sound.
-          A set of books either balances or it does not, and you learn which the
-          same day you ask. Very little else in my week is that decisive.
+          monthly close. Accounting is just playing with numbers, and on my first
+          try at college (UNC-CH) I was a math major. Though that didn&apos;t work
+          out, my love of numbers stuck with me.
         </p>
 
         <h4>At the other keyboard</h4>
@@ -83,9 +81,7 @@ function Home() {
           in Brooklyn, which I recommend to anyone who is even slightly curious
           about programming. These days I write mostly JavaScript, React and
           Python. I have been learning Zig for the past several months and writing
-          the backend that will eventually serve this site. Progress is slow. I am
-          currently stuck on allocators, which I gather is the normal place to be
-          stuck.
+          the backend that will eventually serve this site. Progress is slow.
         </p>
 
         <h4>A little background</h4>
