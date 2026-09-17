@@ -6,21 +6,31 @@ import {
   getLevel,
   GLYPHS,
   isCorrect,
+  isSelfGraded,
   LEVELS,
-  SELF_GRADED,
+  missLabels,
+  RULES,
   taughtIn,
 } from './tokipona';
-import { recordSession } from './progress';
+import { recordSession, weakRules } from './progress';
 
 /*
  * The toki pona drill.
  *
- * Same commit-first spine as the seximal one, with one real difference: two of
- * the four item kinds are SELF-GRADED. "mi olin e sina" has a dozen fair
- * English renderings, and a string comparison would spend its life rejecting
- * correct answers. So you commit, the answer appears, and you say whether you
- * had it. The scoring is exactly as honest as you are, which for retrieval
- * practice is the right trade.
+ * Same commit-first spine as the seximal one, with one real difference: SOME
+ * items are SELF-GRADED. Translating "mi olin e sina" into English has a dozen
+ * fair renderings and a string comparison would spend its life rejecting
+ * correct answers, so you commit, the answer appears, and you say whether you
+ * had it.
+ *
+ * Going the other way it is not a trade worth making. An English prompt whose
+ * toki pona answer turns on a particle has one right answer, and the near-miss
+ * — "mi wile telo" for "mi wile e telo" — is precisely what a learner marking
+ * their own work forgives. Those are graded by machine; which ones and why is
+ * PRODUCTION in tokipona.js. The item knows: `accepted` present means graded.
+ *
+ * And a miss is reported by the RULE it broke, not by the kind of exercise it
+ * was, because "en-tp — 2" is not something anyone can act on.
  */
 
 const TEACHING = 'teaching';
@@ -38,10 +48,11 @@ function TokiPonaDrill() {
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState(TEACHING);
   const [results, setResults] = useState([]);
+  const [weak, setWeak] = useState([]);
   const inputRef = useRef(null);
 
   const item = items[index];
-  const selfGraded = item && SELF_GRADED.has(item.kind);
+  const selfGraded = item && isSelfGraded(item);
 
   useEffect(() => {
     if (phase === ANSWERING && inputRef.current) inputRef.current.focus();
@@ -77,13 +88,20 @@ function TokiPonaDrill() {
   };
 
   const finish = (finalResults) => {
+    const missed = finalResults.filter((r) => !r.correct);
     recordSession({
       course: 'toki-pona',
       levelId: level.id,
       total: finalResults.length,
       correct: finalResults.filter((r) => r.correct).length,
-      misses: finalResults.filter((r) => !r.correct).map((r) => r.kind),
+      misses: missed.map((r) => r.kind),
+      // New alongside `misses`; older sessions simply don't carry it. An item
+      // testing two rules charges both, so this is longer than `misses`.
+      missedRules: missed.flatMap((r) => r.rules || []),
     });
+    // Read AFTER recording, so the cumulative list on the DONE screen includes
+    // the session that just ended rather than being one drill out of date.
+    setWeak(weakRules('toki-pona'));
     setPhase(DONE);
   };
 
@@ -106,7 +124,11 @@ function TokiPonaDrill() {
     }
     setResults([
       ...results,
-      { kind: item.kind, correct: isCorrect(item, input) },
+      {
+        kind: item.kind,
+        rules: item.rules,
+        correct: isCorrect(item, input),
+      },
     ]);
     setPhase(CHECKED);
   };
@@ -194,10 +216,30 @@ function TokiPonaDrill() {
   if (phase === DONE) {
     const correct = results.filter((r) => r.correct).length;
     const missed = results.filter((r) => !r.correct);
-    const byKind = missed.reduce(
-      (acc, r) => ({ ...acc, [r.kind]: (acc[r.kind] || 0) + 1 }),
-      {},
+    /*
+     * Buckets are RULES where the item names one and item kinds where it does
+     * not, both already turned into prose by missLabels — so a bad "kasi li
+     * lon supa" reads "no e after a preposition", not "en-tp".
+     */
+    const tally = {};
+    missed.forEach((r) =>
+      missLabels(r).forEach((label) => {
+        tally[label] = (tally[label] || 0) + 1;
+      }),
     );
+    const buckets = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+    /*
+     * The standing weak list, across recent sessions — rules only, because a
+     * rule is a habit and an item kind is just a tab in a lesson.
+     *
+     * Shown only when history holds MORE than the drill just finished, which
+     * on a first-ever session it does not: printing the same five lines twice
+     * under two headings would teach a reader that the second heading is
+     * decoration and to stop reading it.
+     */
+    const here = missed.reduce((acc, r) => acc + (r.rules || []).length, 0);
+    const everywhere = weak.reduce((acc, r) => acc + r.count, 0);
+    const standing = everywhere > here ? weak.slice(0, 5) : [];
     return (
       <div className="drill">
         <h2>{`${correct} / ${results.length}`}</h2>
@@ -207,8 +249,20 @@ function TokiPonaDrill() {
           <>
             <p>Where it went wrong:</p>
             <ul className="drill__weak">
-              {Object.entries(byKind).map(([kind, count]) => (
-                <li key={kind}>{`${kind} — ${count}`}</li>
+              {buckets.map(([label, count]) => (
+                <li key={label}>{count > 1 ? `${label} — ${count}` : label}</li>
+              ))}
+            </ul>
+          </>
+        )}
+        {standing.length > 0 && (
+          <>
+            <p className="learn__meta">
+              Your weak list, across recent sessions:
+            </p>
+            <ul className="drill__weak">
+              {standing.map(({ rule, count }) => (
+                <li key={rule}>{`${RULES[rule] || rule} — ${count}`}</li>
               ))}
             </ul>
           </>
@@ -288,6 +342,16 @@ function TokiPonaDrill() {
                 </span>
               )}
             </p>
+            {/*
+              Name the rule at the moment it breaks, not only in the tally at
+              the end. A learner who has just written "mi wile telo" is the one
+              person in the world who wants to be told about e right now.
+            */}
+            {!wasRight && !selfGraded && (item.rules || []).length > 0 && (
+              <p className="drill__rule">
+                {(item.rules || []).map((r) => RULES[r] || r).join(' · ')}
+              </p>
+            )}
           </div>
         )}
 
@@ -302,14 +366,22 @@ function TokiPonaDrill() {
               <button
                 className="drill__button"
                 type="button"
-                onClick={() => advance({ kind: item.kind, correct: true })}
+                onClick={() =>
+                  advance({ kind: item.kind, rules: item.rules, correct: true })
+                }
               >
                 I had it
               </button>
               <button
                 className="drill__link-button"
                 type="button"
-                onClick={() => advance({ kind: item.kind, correct: false })}
+                onClick={() =>
+                  advance({
+                    kind: item.kind,
+                    rules: item.rules,
+                    correct: false,
+                  })
+                }
               >
                 I didn&apos;t
               </button>
