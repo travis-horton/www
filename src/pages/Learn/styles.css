@@ -303,6 +303,17 @@
   color: hsl(0, 0%, 30%);
 }
 
+/*
+ * The rule a wrong sentence broke, named inside the verdict. Quieter than the
+ * answer above it — the answer is what you wanted, this is why you missed it.
+ */
+.drill__rule {
+  font-size: 14px;
+  font-style: italic;
+  color: hsl(0, 0%, 30%);
+  margin-bottom: 0;
+}
+
 .drill__actions {
   margin: 20px 0 0 0;
   display: flex;
@@ -345,4 +356,55 @@
   .drill__prompt {
     font-size: 34px;
   }
+}
+
+/*
+ * The device-transfer bridge. Temporary — goes when the backend lands and
+ * Transfer.jsx is deleted. See the header of transfer.js.
+ */
+.transfer {
+  margin: 26px 0;
+  padding: 12px 16px;
+  border: 1px solid var(--light-grey);
+  border-radius: 6px;
+  max-width: 42em;
+}
+
+.transfer__summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.transfer__half {
+  margin: 18px 0 0 0;
+}
+
+.transfer__heading {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+}
+
+/*
+ * 16px minimum, same reason as .drill__input: anything smaller and iOS Safari
+ * zooms the page on focus, which on an iPad makes a long paste miserable.
+ */
+.transfer__box {
+  font-family: monospace;
+  font-size: 16px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid var(--light-grey);
+  border-radius: 4px;
+  resize: vertical;
+  word-break: break-all;
+}
+
+.transfer__box:focus {
+  outline: none;
+  border-color: var(--main-accent-color);
+}
+
+.transfer .drill__button:disabled {
+  background-color: var(--light-grey);
+  cursor: not-allowed;
 }

@@ -635,13 +635,191 @@ export const taughtIn = (word) =>
  *   glyph      glyph shown, type the word          -> exact match
  *   word       word shown, give a meaning          -> matches any listed gloss
  *   tp-en      toki pona sentence -> English       -> SELF-GRADED
- *   en-tp      English -> toki pona                -> SELF-GRADED
+ *   en-tp      English -> toki pona                -> exact, IF it is in PRODUCTION
  *
- * The two sentence kinds are self-graded on purpose: "mi olin e sina" has a
- * dozen good English renderings and no string comparison is going to be fair
- * about that. You commit an answer, then mark yourself. See the node's ①.
+ * tp-en stays self-graded forever. "mi olin e sina" has a dozen good English
+ * renderings and no string comparison is going to be fair about that.
+ *
+ * en-tp is the direction that changed. Going INTO toki pona, a sentence that
+ * turns on a particle has one right answer: "mi wile e telo" is right and
+ * "mi wile telo" is wrong, and self-grading forgives exactly that difference
+ * — a learner reading their near-miss against the answer presses "I had it".
+ * The whole weak list is near-misses, so the one thing self-grading cannot see
+ * is the only thing worth measuring. Those sentences are graded by machine now.
+ *
+ * An item is self-graded IFF it carries no `accepted` list. See isSelfGraded.
  */
-export const SELF_GRADED = new Set(['tp-en', 'en-tp']);
+
+/*
+ * The rules this course actually exercises, and how to say each one out loud.
+ *
+ * These are the buckets a miss is reported in. They exist because "en-tp — 2"
+ * is not a sentence a coach would ever say and "you dropped e after a preverb
+ * twice" is. The ids are stable (they end up in localStorage and in an exported
+ * progress code); the prose is not.
+ */
+export const RULES = {
+  'li-after-noun-subject': 'li after a noun subject',
+  'no-li-after-mi-sina': 'no li after mi or sina',
+  'e-after-verb': 'e after the verb, before its object',
+  'no-e-after-preverb': 'no e between a preverb and its verb',
+  'no-e-after-preposition': 'no e after a preposition',
+  'modifier-follows-head': 'modifiers follow the word they modify',
+  'pi-regroups': 'pi regroups what follows it',
+  'la-sets-the-scene': 'la sets the scene, and comes first',
+  'o-for-commands': 'o replaces li for commands',
+  'en-joins-subjects': 'en joins subjects — and li comes back',
+  'seme-in-the-slot': 'seme goes in the slot you are asking about',
+  'ala-negates': 'ala follows the word it negates',
+  'number-stacking': 'numbers stack — luka tu is seven',
+};
+
+/** Human names for the item kinds, for when a miss has no rule to blame. */
+export const KIND_LABELS = {
+  glyph: 'reading glyphs',
+  word: 'word meanings',
+  'tp-en': 'translating into English',
+  'en-tp': 'writing toki pona',
+  meaning: 'producing the word',
+};
+
+/*
+ * ---------------------------------------------------------------------------
+ * PRODUCTION — which English->toki pona sentences are machine-graded, what
+ * else counts as right, and which rule a miss is charged to.
+ *
+ * Keyed by the canonical answer exactly as it appears in the level above, so
+ * the two can be checked against each other (see the tests). A key mapped to
+ * `null` is DELIBERATELY LEFT SELF-GRADED.
+ *
+ * THE ADMISSION RULE. A sentence is machine-graded only when its correct
+ * renderings can be enumerated COMPLETELY out of the vocabulary and house
+ * style this course has already taught. Where they cannot — a particle whose
+ * placement is genuinely free, an English word with several fair glosses — the
+ * sentence stays self-graded. Marking a correct answer wrong is a worse
+ * failure than forgiving a near-miss: the first teaches the learner that the
+ * tool is broken, the second only fails to teach. Exactly one sentence is
+ * excluded today ("I only want bread" — taso can sit before the object or
+ * after it, and both are defensible), and adding to that list is always the
+ * right move when a variant is arguable.
+ *
+ * THE VARIANT RULE, which is what keeps generosity from eating the point. An
+ * `also` variant may differ from the canonical in word order or in an added
+ * word — it may NEVER differ in its structural tokens (the particles and
+ * prepositions in STRUCTURAL_TOKENS). "sina en mi li kama sona" is accepted
+ * because conjoined subjects are genuinely unordered; "mi wile telo" never is,
+ * because it is missing an e. A test enforces this over the whole table, so
+ * the grader cannot drift into forgiving the thing it was built to catch.
+ * ---------------------------------------------------------------------------
+ */
+export const PRODUCTION = {
+  // Level 1 — li
+  'mun li lili': { rules: ['li-after-noun-subject'] },
+  'mi suli': { rules: ['no-li-after-mi-sina'] },
+  'jan li moku': { rules: ['li-after-noun-subject'] },
+
+  // Level 2 — e
+  'mi wile e telo': { rules: ['e-after-verb'] },
+  'sina moku e ale': { rules: ['e-after-verb'] },
+  // "they" is ona, and ona mute for an explicitly plural they. Same particles.
+  'ona li pali e ijo pona': {
+    rules: ['li-after-noun-subject', 'e-after-verb'],
+    also: ['ona mute li pali e ijo pona'],
+  },
+
+  // Level 3 — stacking modifiers
+  'mi wile e telo lete': { rules: ['e-after-verb', 'modifier-follows-head'] },
+  'ijo sin li sike': {
+    rules: ['li-after-noun-subject', 'modifier-follows-head'],
+  },
+  'sina wawa mute': { rules: ['no-li-after-mi-sina', 'modifier-follows-head'] },
+
+  // Level 4 — preverbs. The e that must NOT be there.
+  'mi wile lape': { rules: ['no-e-after-preverb'] },
+  'soweli li wile moku': {
+    rules: ['li-after-noun-subject', 'no-e-after-preverb'],
+  },
+  'sina ken kama sona': { rules: ['no-e-after-preverb'] },
+
+  // Level 5 — prepositions. The other e that must not be there.
+  'mi tawa tomo': { rules: ['no-e-after-preposition'] },
+  'kasi li lon supa': {
+    rules: ['li-after-noun-subject', 'no-e-after-preposition'],
+  },
+  'jan li kama tan ma': {
+    rules: ['li-after-noun-subject', 'no-e-after-preposition'],
+  },
+
+  // Level 6 — la
+  'mi wile e pan taso': null, // taso before the object or after it; both defensible.
+  'sitelen li ante': { rules: ['li-after-noun-subject'] },
+  'tenpo ni la sina lon esun': {
+    rules: ['la-sets-the-scene', 'no-e-after-preposition'],
+  },
+
+  // Level 7 — questions and the body
+  'sina lukin e seme?': { rules: ['e-after-verb', 'seme-in-the-slot'] },
+  'noka mi li suli': {
+    rules: ['li-after-noun-subject', 'modifier-follows-head'],
+  },
+  'mi sona ala': { rules: ['no-li-after-mi-sina', 'ala-negates'] },
+
+  // Level 8 — pi
+  // "tiny" is lili, and lili mute for the emphatic reading. Same particles.
+  'pipi li lili': {
+    rules: ['li-after-noun-subject'],
+    also: ['pipi li lili mute'],
+  },
+  'kulupu mama mi li suli': {
+    rules: ['li-after-noun-subject', 'modifier-follows-head'],
+  },
+  'ilo pi kalama musi li pona': {
+    rules: ['pi-regroups', 'li-after-noun-subject'],
+  },
+
+  // Level 9 — o, and the numbers
+  // A command may name who it is aimed at: "sina o lukin". Still one o.
+  'o lukin!': { rules: ['o-for-commands'], also: ['sina o lukin'] },
+  'ni li nanpa wan': { rules: ['li-after-noun-subject'] },
+  // The course teaches luka tu; tu luka is read the same way in the wild.
+  'waso luka tu li lon sewi': {
+    rules: ['number-stacking', 'no-e-after-preposition'],
+    also: ['waso tu luka li lon sewi'],
+  },
+
+  // Level 10 — en, kin
+  // Conjoined subjects are unordered: "you and I" and "I and you" are one thing.
+  'mi en sina li kama sona': {
+    rules: ['en-joins-subjects'],
+    also: ['sina en mi li kama sona'],
+  },
+  'mi kin!': { rules: ['modifier-follows-head'] },
+  'kili li suwi': { rules: ['li-after-noun-subject'] },
+};
+
+/**
+ * The tokens a variant may never add, drop or swap — the particles plus the
+ * prepositions. This is the list the variant rule above is enforced against.
+ */
+export const STRUCTURAL_TOKENS = new Set([
+  'li',
+  'e',
+  'la',
+  'pi',
+  'o',
+  'en',
+  'a',
+  'anu',
+  'kin',
+  'taso',
+  'ala',
+  'lon',
+  'tawa',
+  'tan',
+  'kepeken',
+  'sama',
+  'poka',
+]);
 
 const shuffle = (arr) => {
   const out = [...arr];
@@ -703,12 +881,19 @@ export const buildSession = (level) => {
   });
 
   level.toTokiPona.forEach(([en, tp]) => {
+    const spec = PRODUCTION[tp];
     items.push({
       kind: 'en-tp',
       prompt: en,
       promptSub: 'into toki pona',
       answer: tp,
       answerGlyph: toGlyphs(tp),
+      // A spec is what makes an item machine-graded: `accepted` present means
+      // graded, absent (the null entries, and anything not in the table) means
+      // the learner marks themselves. The rule tags come with it.
+      ...(spec
+        ? { accepted: [tp, ...(spec.also || [])], rules: spec.rules }
+        : {}),
     });
   });
 
@@ -730,9 +915,41 @@ const normalize = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-/** Only meaningful for the exact-matched kinds; sentence kinds are self-graded. */
+/**
+ * An item is self-graded exactly when nothing can judge it — i.e. when it has
+ * no accepted answers. One predicate rather than a set of kinds, because
+ * "en-tp" is no longer uniformly one or the other: it depends on the sentence.
+ */
+export const isSelfGraded = (item) =>
+  !item || !Array.isArray(item.accepted) || item.accepted.length === 0;
+
+/** Only meaningful for items that carry `accepted`; the rest are self-graded. */
 export const isCorrect = (item, response) => {
   const given = normalize(response);
   if (given === '') return false;
   return (item.accepted || []).some((a) => normalize(a) === given);
+};
+
+/** The structural tokens of a sentence, in order — the variant rule's yardstick. */
+export const structureOf = (sentence) =>
+  normalize(sentence)
+    .split(' ')
+    .filter((w) => STRUCTURAL_TOKENS.has(w));
+
+/**
+ * Bucket a list of missed results into the things worth saying out loud: the
+ * RULE where the item names one, the item kind where it does not. A single
+ * miss can charge two rules — "kasi li lon supa" tests li and the missing e —
+ * which is right: both are live suspects and the tally is a weak list, not an
+ * apportionment of blame.
+ *
+ * Shared by the drill's DONE screen and the cumulative read in progress.js, so
+ * "e after the verb" means the same thing in both places.
+ */
+export const missLabels = (result) => {
+  const rules = Array.isArray(result && result.rules) ? result.rules : [];
+  if (rules.length > 0) return rules.map((r) => RULES[r] || r);
+  return [
+    KIND_LABELS[result && result.kind] || (result && result.kind) || 'unknown',
+  ];
 };
