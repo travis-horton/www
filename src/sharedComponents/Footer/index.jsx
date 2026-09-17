@@ -22,17 +22,11 @@ const Footer = () => (
       {' · courses in base six and toki pona'}
     </small>
     <small className="main-footer__content">
-      I&apos;m not on social media. The
-      {' '}
-      <Link to="/contact">contact page</Link>
-      {' '}
+      I&apos;m not on social media. The <Link to="/contact">contact page</Link>{' '}
       is the way to reach me.
     </small>
     <small className="main-footer__content main-footer__content--static">
-      &copy;&apos;26 kiddspazz &middot; v
-      {version}
-      .
-      {gitHash}
+      &copy;&apos;26 kiddspazz &middot; v{version}.{gitHash}
     </small>
   </footer>
 );

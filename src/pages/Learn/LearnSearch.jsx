@@ -89,15 +89,15 @@ const seximalItem = (r) => {
  * "No match" or the results as they change while typing — content appearing
  * inside an already-live region is what triggers the announcement.
  */
-const renderBox = ({
-  id, label, placeholder, query, setQuery, groups,
-}) => {
+const renderBox = ({ id, label, placeholder, query, setQuery, groups }) => {
   const trimmed = query.trim();
   const found = groups.filter((g) => g.items.length > 0);
   const labelled = groups.length > 1;
   return (
     <div className="tp__search">
-      <label className="drill__label" htmlFor={id}>{label}</label>
+      <label className="drill__label" htmlFor={id}>
+        {label}
+      </label>
       <input
         id={id}
         className="drill__input"
@@ -153,10 +153,13 @@ export function SeximalSearch() {
 
 export function LearnSearch() {
   const [query, setQuery] = useState('');
-  const groups = useMemo(() => [
-    { course: 'toki pona', items: searchTokiPona(query).map(tokiPonaItem) },
-    { course: 'seximal', items: searchSeximal(query).map(seximalItem) },
-  ], [query]);
+  const groups = useMemo(
+    () => [
+      { course: 'toki pona', items: searchTokiPona(query).map(tokiPonaItem) },
+      { course: 'seximal', items: searchSeximal(query).map(seximalItem) },
+    ],
+    [query],
+  );
   return renderBox({
     id: 'learn-search',
     label: 'search both courses — a word, a number, or a pasted glyph',

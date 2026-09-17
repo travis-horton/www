@@ -14,23 +14,35 @@ const BlogToc = () => (
     <table className="blog__table-of-contents">
       <tbody>
         <tr>
-          <td><time>October 18, 2019</time></td>
-          <td><Link to="js-this">JavaScript&apos;s <code>this</code></Link></td>
+          <td>
+            <time>October 18, 2019</time>
+          </td>
+          <td>
+            <Link to="js-this">
+              JavaScript&apos;s <code>this</code>
+            </Link>
+          </td>
         </tr>
         <tr>
-          <td><time>June 27, 2019</time></td>
-          <td><Link to="the-flip-flop-1">The D Flip-Flop, pt 1</Link></td>
+          <td>
+            <time>June 27, 2019</time>
+          </td>
+          <td>
+            <Link to="the-flip-flop-1">The D Flip-Flop, pt 1</Link>
+          </td>
         </tr>
         <tr>
-          <td><time>June 26, 2019</time></td>
-          <td><Link to="the-first-blog">The First Blog Post</Link></td>
+          <td>
+            <time>June 26, 2019</time>
+          </td>
+          <td>
+            <Link to="the-first-blog">The First Blog Post</Link>
+          </td>
         </tr>
       </tbody>
     </table>
     <hr />
-    <p>
-      Plus a cool button that doesn&apos;t do anything:
-    </p>
+    <p>Plus a cool button that doesn&apos;t do anything:</p>
     <div className="blog__button-container">
       <Link className="blog__neon-button" to=".">
         Here&apos;s where i write stuff sometimes
