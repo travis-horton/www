@@ -33,8 +33,9 @@ export function isSandboxHost(hostname) {
 
 /**
  * A corner ribbon across the top-left of the header on every non-production
- * host — "DEV" on kiddspazz.com, "LOCAL" under `parcel serve` — so a tab is
- * never mistaken for the live site. Renders nothing on production.
+ * host — "DEV" on kiddspazz.com, "LOCAL" under `parcel serve`, the hostname
+ * on a second smaller line — so a tab is never mistaken for the live site.
+ * Renders nothing on production.
  *
  * On the dev host it also drops a `noindex` robots meta into <head>. The real
  * guard is the X-Robots-Tag header the proxy adds for kiddspazz.com (see
@@ -63,7 +64,10 @@ const DevBadge = ({ hostname = window.location.hostname }) => {
       role="status"
       aria-label={`${label} deployment: ${hostname}`}
     >
-      <span className="dev-badge__ribbon">{label}</span>
+      <span className="dev-badge__ribbon">
+        <span className="dev-badge__label">{label}</span>
+        <span className="dev-badge__info">{hostname}</span>
+      </span>
     </div>
   );
 };
