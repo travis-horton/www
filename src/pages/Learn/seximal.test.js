@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Guards the naming spec itself. Every case below is either a worked example
  * from codex 5_culture/interests/seximal/seximal.md or a boundary of the rules

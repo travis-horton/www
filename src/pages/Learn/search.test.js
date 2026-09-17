@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Guards the search INDEX, not the UI — same split as tokipona.test.js vs.
  * TokiPonaReview.test.jsx. Three directions in, one result shape out; see the

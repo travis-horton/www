@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Guards the seximal search INDEX, not the UI (the UI half is in
  * index.test.jsx) — same split as search.test.js.

@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * TokiPonaHome had NO test file at all, which is why /learn/toki-pona could go
  * blank in production while all 168 Learn tests stayed green. search.js is

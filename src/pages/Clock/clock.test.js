@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Base conversions and digit naming for /clock. The naming words themselves
  * are pinned by Learn/seximal.test.js; what is pinned here is that the clock
