@@ -729,34 +729,53 @@ export const PRODUCTION = {
 
   // Level 3 — stacking modifiers
   'mi wile e telo lete': { rules: ['e-after-verb', 'modifier-follows-head'] },
-  'ijo sin li sike': { rules: ['li-after-noun-subject', 'modifier-follows-head'] },
+  'ijo sin li sike': {
+    rules: ['li-after-noun-subject', 'modifier-follows-head'],
+  },
   'sina wawa mute': { rules: ['no-li-after-mi-sina', 'modifier-follows-head'] },
 
   // Level 4 — preverbs. The e that must NOT be there.
   'mi wile lape': { rules: ['no-e-after-preverb'] },
-  'soweli li wile moku': { rules: ['li-after-noun-subject', 'no-e-after-preverb'] },
+  'soweli li wile moku': {
+    rules: ['li-after-noun-subject', 'no-e-after-preverb'],
+  },
   'sina ken kama sona': { rules: ['no-e-after-preverb'] },
 
   // Level 5 — prepositions. The other e that must not be there.
   'mi tawa tomo': { rules: ['no-e-after-preposition'] },
-  'kasi li lon supa': { rules: ['li-after-noun-subject', 'no-e-after-preposition'] },
-  'jan li kama tan ma': { rules: ['li-after-noun-subject', 'no-e-after-preposition'] },
+  'kasi li lon supa': {
+    rules: ['li-after-noun-subject', 'no-e-after-preposition'],
+  },
+  'jan li kama tan ma': {
+    rules: ['li-after-noun-subject', 'no-e-after-preposition'],
+  },
 
   // Level 6 — la
   'mi wile e pan taso': null, // taso before the object or after it; both defensible.
   'sitelen li ante': { rules: ['li-after-noun-subject'] },
-  'tenpo ni la sina lon esun': { rules: ['la-sets-the-scene', 'no-e-after-preposition'] },
+  'tenpo ni la sina lon esun': {
+    rules: ['la-sets-the-scene', 'no-e-after-preposition'],
+  },
 
   // Level 7 — questions and the body
   'sina lukin e seme?': { rules: ['e-after-verb', 'seme-in-the-slot'] },
-  'noka mi li suli': { rules: ['li-after-noun-subject', 'modifier-follows-head'] },
+  'noka mi li suli': {
+    rules: ['li-after-noun-subject', 'modifier-follows-head'],
+  },
   'mi sona ala': { rules: ['no-li-after-mi-sina', 'ala-negates'] },
 
   // Level 8 — pi
   // "tiny" is lili, and lili mute for the emphatic reading. Same particles.
-  'pipi li lili': { rules: ['li-after-noun-subject'], also: ['pipi li lili mute'] },
-  'kulupu mama mi li suli': { rules: ['li-after-noun-subject', 'modifier-follows-head'] },
-  'ilo pi kalama musi li pona': { rules: ['pi-regroups', 'li-after-noun-subject'] },
+  'pipi li lili': {
+    rules: ['li-after-noun-subject'],
+    also: ['pipi li lili mute'],
+  },
+  'kulupu mama mi li suli': {
+    rules: ['li-after-noun-subject', 'modifier-follows-head'],
+  },
+  'ilo pi kalama musi li pona': {
+    rules: ['pi-regroups', 'li-after-noun-subject'],
+  },
 
   // Level 9 — o, and the numbers
   // A command may name who it is aimed at: "sina o lukin". Still one o.
@@ -783,8 +802,23 @@ export const PRODUCTION = {
  * prepositions. This is the list the variant rule above is enforced against.
  */
 export const STRUCTURAL_TOKENS = new Set([
-  'li', 'e', 'la', 'pi', 'o', 'en', 'a', 'anu', 'kin', 'taso', 'ala',
-  'lon', 'tawa', 'tan', 'kepeken', 'sama', 'poka',
+  'li',
+  'e',
+  'la',
+  'pi',
+  'o',
+  'en',
+  'a',
+  'anu',
+  'kin',
+  'taso',
+  'ala',
+  'lon',
+  'tawa',
+  'tan',
+  'kepeken',
+  'sama',
+  'poka',
 ]);
 
 const shuffle = (arr) => {
@@ -857,7 +891,9 @@ export const buildSession = (level) => {
       // A spec is what makes an item machine-graded: `accepted` present means
       // graded, absent (the null entries, and anything not in the table) means
       // the learner marks themselves. The rule tags come with it.
-      ...(spec ? { accepted: [tp, ...(spec.also || [])], rules: spec.rules } : {}),
+      ...(spec
+        ? { accepted: [tp, ...(spec.also || [])], rules: spec.rules }
+        : {}),
     });
   });
 
@@ -884,8 +920,8 @@ const normalize = (s) =>
  * no accepted answers. One predicate rather than a set of kinds, because
  * "en-tp" is no longer uniformly one or the other: it depends on the sentence.
  */
-export const isSelfGraded = (item) => !item || !Array.isArray(item.accepted)
-  || item.accepted.length === 0;
+export const isSelfGraded = (item) =>
+  !item || !Array.isArray(item.accepted) || item.accepted.length === 0;
 
 /** Only meaningful for items that carry `accepted`; the rest are self-graded. */
 export const isCorrect = (item, response) => {
@@ -895,9 +931,10 @@ export const isCorrect = (item, response) => {
 };
 
 /** The structural tokens of a sentence, in order — the variant rule's yardstick. */
-export const structureOf = (sentence) => normalize(sentence)
-  .split(' ')
-  .filter((w) => STRUCTURAL_TOKENS.has(w));
+export const structureOf = (sentence) =>
+  normalize(sentence)
+    .split(' ')
+    .filter((w) => STRUCTURAL_TOKENS.has(w));
 
 /**
  * Bucket a list of missed results into the things worth saying out loud: the
@@ -912,5 +949,7 @@ export const structureOf = (sentence) => normalize(sentence)
 export const missLabels = (result) => {
   const rules = Array.isArray(result && result.rules) ? result.rules : [];
   if (rules.length > 0) return rules.map((r) => RULES[r] || r);
-  return [KIND_LABELS[result && result.kind] || (result && result.kind) || 'unknown'];
+  return [
+    KIND_LABELS[result && result.kind] || (result && result.kind) || 'unknown',
+  ];
 };

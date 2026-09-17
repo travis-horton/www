@@ -5,8 +5,19 @@
  */
 
 import {
-  buildSession, getLevel, GLYPHS, isCorrect, isSelfGraded, KIND_LABELS, LEVELS,
-  missLabels, PRODUCTION, RULES, structureOf, taughtIn, toGlyphs,
+  buildSession,
+  getLevel,
+  GLYPHS,
+  isCorrect,
+  isSelfGraded,
+  KIND_LABELS,
+  LEVELS,
+  missLabels,
+  PRODUCTION,
+  RULES,
+  structureOf,
+  taughtIn,
+  toGlyphs,
 } from './tokipona';
 
 describe('glyphs', () => {
@@ -147,7 +158,9 @@ describe('sessions', () => {
         .filter((item) => item.kind === 'en-tp')
         .forEach((item) => {
           const spec = PRODUCTION[item.answer];
-          expect(`${item.answer}:${isSelfGraded(item)}`).toBe(`${item.answer}:${!spec}`);
+          expect(`${item.answer}:${isSelfGraded(item)}`).toBe(
+            `${item.answer}:${!spec}`,
+          );
         });
     });
   });
@@ -164,7 +177,9 @@ describe('graded production', () => {
   const specs = Object.entries(PRODUCTION).filter(([, spec]) => spec);
 
   test('every key is a sentence some level actually asks for', () => {
-    const asked = new Set(LEVELS.flatMap((l) => l.toTokiPona.map(([, tp]) => tp)));
+    const asked = new Set(
+      LEVELS.flatMap((l) => l.toTokiPona.map(([, tp]) => tp)),
+    );
     Object.keys(PRODUCTION).forEach((key) => {
       expect(`${key}:${asked.has(key)}`).toBe(`${key}:true`);
     });
@@ -184,7 +199,9 @@ describe('graded production', () => {
       buildSession(level)
         .filter((item) => item.kind === 'en-tp' && !isSelfGraded(item))
         .forEach((item) => {
-          expect(`${item.answer}:${isCorrect(item, item.answer)}`).toBe(`${item.answer}:true`);
+          expect(`${item.answer}:${isCorrect(item, item.answer)}`).toBe(
+            `${item.answer}:true`,
+          );
         });
     });
   });
@@ -236,14 +253,18 @@ describe('graded production', () => {
   });
 
   test('conjoined subjects are accepted in either order', () => {
-    const item = buildSession(getLevel('10')).find((i) => i.answer === 'mi en sina li kama sona');
+    const item = buildSession(getLevel('10')).find(
+      (i) => i.answer === 'mi en sina li kama sona',
+    );
     expect(isCorrect(item, 'sina en mi li kama sona')).toBe(true);
     // ...but dropping the li that en brings back is still wrong.
     expect(isCorrect(item, 'mi en sina kama sona')).toBe(false);
   });
 
   test('the one sentence with free particle placement is left self-graded', () => {
-    const item = buildSession(getLevel('6')).find((i) => i.answer === 'mi wile e pan taso');
+    const item = buildSession(getLevel('6')).find(
+      (i) => i.answer === 'mi wile e pan taso',
+    );
     expect(isSelfGraded(item)).toBe(true);
   });
 });
@@ -259,7 +280,9 @@ describe('rule tagging', () => {
   });
 
   test('no rule is defined that nothing exercises', () => {
-    const used = new Set(Object.values(PRODUCTION).flatMap((s) => (s ? s.rules : [])));
+    const used = new Set(
+      Object.values(PRODUCTION).flatMap((s) => (s ? s.rules : [])),
+    );
     Object.keys(RULES).forEach((rule) => {
       expect(`${rule}:${used.has(rule)}`).toBe(`${rule}:true`);
     });
@@ -287,37 +310,58 @@ describe('rule tagging', () => {
     };
     Object.entries(PRODUCTION).forEach(([tp, spec]) => {
       if (!spec) return;
-      const words = tp.toLowerCase().replace(/[.,!?;:"']/g, '').split(/\s+/);
+      const words = tp
+        .toLowerCase()
+        .replace(/[.,!?;:"']/g, '')
+        .split(/\s+/);
       spec.rules.forEach((rule) => {
         const needed = mustContain[rule];
         if (!needed) return;
-        expect(`${tp}/${rule}:${words.includes(needed)}`).toBe(`${tp}/${rule}:true`);
+        expect(`${tp}/${rule}:${words.includes(needed)}`).toBe(
+          `${tp}/${rule}:true`,
+        );
       });
     });
   });
 
   test('a tag saying a particle is ABSENT is only used where it is absent', () => {
-    ['no-li-after-mi-sina', 'no-e-after-preverb', 'no-e-after-preposition'].forEach((rule) => {
+    [
+      'no-li-after-mi-sina',
+      'no-e-after-preverb',
+      'no-e-after-preposition',
+    ].forEach((rule) => {
       const absent = rule === 'no-li-after-mi-sina' ? 'li' : 'e';
       Object.entries(PRODUCTION).forEach(([tp, spec]) => {
         if (!spec || !spec.rules.includes(rule)) return;
-        const words = tp.toLowerCase().replace(/[.,!?;:"']/g, '').split(/\s+/);
+        const words = tp
+          .toLowerCase()
+          .replace(/[.,!?;:"']/g, '')
+          .split(/\s+/);
         // The clause the rule is about must not contain the forbidden particle.
         // For the li rule that is the whole sentence (mi/sina subject, no li);
         // for the e rules it is that no e appears at all in these sentences.
-        expect(`${tp}/${rule}:${words.includes(absent)}`).toBe(`${tp}/${rule}:false`);
+        expect(`${tp}/${rule}:${words.includes(absent)}`).toBe(
+          `${tp}/${rule}:false`,
+        );
       });
     });
   });
 
   test('misses are reported by rule where there is one, by kind where there is not', () => {
-    expect(missLabels({ kind: 'en-tp', rules: ['no-e-after-preverb'] }))
-      .toEqual([RULES['no-e-after-preverb']]);
+    expect(
+      missLabels({ kind: 'en-tp', rules: ['no-e-after-preverb'] }),
+    ).toEqual([RULES['no-e-after-preverb']]);
     // Two rules, two suspects: a weak list, not an apportionment of blame.
-    expect(missLabels({ kind: 'en-tp', rules: ['li-after-noun-subject', 'no-e-after-preposition'] }))
-      .toHaveLength(2);
+    expect(
+      missLabels({
+        kind: 'en-tp',
+        rules: ['li-after-noun-subject', 'no-e-after-preposition'],
+      }),
+    ).toHaveLength(2);
     expect(missLabels({ kind: 'glyph' })).toEqual([KIND_LABELS.glyph]);
-    expect(missLabels({ kind: 'tp-en', rules: [] })).toEqual([KIND_LABELS['tp-en']]);
+    expect(missLabels({ kind: 'tp-en', rules: [] })).toEqual([
+      KIND_LABELS['tp-en'],
+    ]);
   });
 });
 
@@ -420,13 +464,18 @@ describe('the numbers lesson drills the numbers it teaches', () => {
     ...level9.toTokiPona.map(([, tp]) => tp),
     level9.decode[0],
   ];
-  const drills = (w) => sentences.some((s) => s
-    .split(/\s+/)
-    .map((t) => t.replace(/[.,!?;:"']/g, ''))
-    .includes(w));
+  const drills = (w) =>
+    sentences.some((s) =>
+      s
+        .split(/\s+/)
+        .map((t) => t.replace(/[.,!?;:"']/g, ''))
+        .includes(w),
+    );
 
   test('every number word it names is drilled there, luka included', () => {
-    ['wan', 'tu', 'luka'].forEach((w) => expect(`${w}:${drills(w)}`).toBe(`${w}:true`));
+    ['wan', 'tu', 'luka'].forEach((w) =>
+      expect(`${w}:${drills(w)}`).toBe(`${w}:true`),
+    );
   });
 
   test('it drills the stack, not just the two digits', () => {
@@ -435,7 +484,9 @@ describe('the numbers lesson drills the numbers it teaches', () => {
   });
 
   test('drilling luka here did not turn into teaching it twice', () => {
-    const taughtIn = LEVELS.filter((l) => l.vocab.some((v) => v.word === 'luka'));
+    const taughtIn = LEVELS.filter((l) =>
+      l.vocab.some((v) => v.word === 'luka'),
+    );
     expect(taughtIn.map((l) => l.id)).toEqual(['7']);
   });
 });

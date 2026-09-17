@@ -7,9 +7,7 @@
  * session ever written — that is the rule these tests exist to hold.
  */
 
-import {
-  recordSession, weakKinds, weakRules, weakWords,
-} from './progress';
+import { recordSession, weakKinds, weakRules, weakWords } from './progress';
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -53,12 +51,18 @@ describe('weakRules', () => {
     // Same two misses, read two ways. One says which tab to click; the other
     // says what he actually did wrong, which is the whole point.
     expect(weakKinds('toki-pona')).toEqual([{ kind: 'en-tp', count: 2 }]);
-    expect(weakRules('toki-pona')).toEqual([{ rule: 'no-e-after-preverb', count: 2 }]);
+    expect(weakRules('toki-pona')).toEqual([
+      { rule: 'no-e-after-preverb', count: 2 },
+    ]);
   });
 
   test('a session from before the field existed contributes nothing, and throws nothing', () => {
     recordSession({
-      course: 'toki-pona', levelId: '1', total: 27, correct: 20, misses: ['glyph'],
+      course: 'toki-pona',
+      levelId: '1',
+      total: 27,
+      correct: 20,
+      misses: ['glyph'],
     });
     expect(weakRules('toki-pona')).toEqual([]);
     expect(weakKinds('toki-pona')).toEqual([{ kind: 'glyph', count: 1 }]);
@@ -77,19 +81,33 @@ describe('weakRules', () => {
 
   test('courses do not bleed into each other', () => {
     recordSession({
-      course: 'seximal', levelId: '1', total: 10, correct: 9, missedRules: ['no-e-after-preverb'],
+      course: 'seximal',
+      levelId: '1',
+      total: 10,
+      correct: 9,
+      missedRules: ['no-e-after-preverb'],
     });
     expect(weakRules('toki-pona')).toEqual([]);
-    expect(weakRules('seximal')).toEqual([{ rule: 'no-e-after-preverb', count: 1 }]);
+    expect(weakRules('seximal')).toEqual([
+      { rule: 'no-e-after-preverb', count: 1 },
+    ]);
   });
 
   test('only the recent tail counts, so a fixed habit stops being reported', () => {
     recordSession({
-      course: 'toki-pona', levelId: '1', total: 27, correct: 26, missedRules: ['ala-negates'],
+      course: 'toki-pona',
+      levelId: '1',
+      total: 27,
+      correct: 26,
+      missedRules: ['ala-negates'],
     });
     for (let i = 0; i < 20; i += 1) {
       recordSession({
-        course: 'toki-pona', levelId: '2', total: 27, correct: 27, missedRules: [],
+        course: 'toki-pona',
+        levelId: '2',
+        total: 27,
+        correct: 27,
+        missedRules: [],
       });
     }
     expect(weakRules('toki-pona')).toEqual([]);

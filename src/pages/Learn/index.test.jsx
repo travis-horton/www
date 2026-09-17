@@ -217,8 +217,9 @@ describe('toki pona', () => {
     let guard = 0;
     while (!subs.some((s) => screen.queryByText(s)) && guard < 40) {
       fireEvent.click(screen.getByRole('button', { name: 'Check' }));
-      const next = screen.queryByRole('button', { name: 'Next' })
-        || screen.getByRole('button', { name: "I didn't" });
+      const next =
+        screen.queryByRole('button', { name: 'Next' }) ||
+        screen.getByRole('button', { name: "I didn't" });
       fireEvent.click(next);
       guard += 1;
     }
@@ -253,11 +254,15 @@ describe('toki pona', () => {
     start();
     walkTo('into toki pona');
 
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'mi wile telo' } });
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'mi wile telo' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Check' }));
 
     expect(screen.getByText('No.')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'I had it' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'I had it' }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
   });
 
@@ -266,7 +271,9 @@ describe('toki pona', () => {
     start();
     walkTo('into toki pona');
 
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'nasa nasa nasa' } });
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'nasa nasa nasa' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Check' }));
 
     // Every level-5 production sentence turns on a preposition taking no e.
@@ -298,8 +305,9 @@ describe('toki pona', () => {
     let guard = 0;
     while (!screen.queryByRole('button', { name: 'Again' }) && guard < 40) {
       fireEvent.click(screen.getByRole('button', { name: 'Check' }));
-      const next = screen.queryByRole('button', { name: 'Next' })
-        || screen.getByRole('button', { name: "I didn't" });
+      const next =
+        screen.queryByRole('button', { name: 'Next' }) ||
+        screen.getByRole('button', { name: "I didn't" });
       fireEvent.click(next);
       guard += 1;
     }
@@ -317,7 +325,11 @@ describe('toki pona', () => {
     // And the standing list, which is the thing worth copying into a tracker.
     // It is cumulative, not a restatement: the preverb rule was never touched
     // in this drill and is still on it, carried from the session recorded above.
-    expect(screen.getByText('Your weak list, across recent sessions:')).toBeInTheDocument();
-    expect(screen.getByText(/no e between a preverb and its verb — 2/)).toBeInTheDocument();
+    expect(
+      screen.getByText('Your weak list, across recent sessions:'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/no e between a preverb and its verb — 2/),
+    ).toBeInTheDocument();
   });
 });
