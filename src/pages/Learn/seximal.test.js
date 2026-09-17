@@ -6,7 +6,11 @@
  */
 
 import {
-  fromDigits, isCorrect, pairName, seximalName, toDigits,
+  fromDigits,
+  isCorrect,
+  pairName,
+  seximalName,
+  toDigits,
 } from './seximal';
 
 const s6 = (str) => fromDigits(str);
@@ -49,8 +53,12 @@ describe('nif and pair-reading', () => {
 
 describe('unexian', () => {
   test('worked examples from the spec', () => {
-    expect(seximalName(s6('523521'))).toBe('fifsy-two unexian, thirsy-five nif dozen-one');
-    expect(seximalName(s6('13132'))).toBe('one unexian, thirsy-one nif thirsy-two');
+    expect(seximalName(s6('523521'))).toBe(
+      'fifsy-two unexian, thirsy-five nif dozen-one',
+    );
+    expect(seximalName(s6('13132'))).toBe(
+      'one unexian, thirsy-one nif thirsy-two',
+    );
   });
 });
 
@@ -65,7 +73,10 @@ describe('numerals', () => {
 
 describe('answer matching', () => {
   const item = {
-    answerMode: 'digits', value: 31, digits: '51', name: 'fifsy-one',
+    answerMode: 'digits',
+    value: 31,
+    digits: '51',
+    name: 'fifsy-one',
   };
 
   test('accepts the digits it asked for', () => {
@@ -81,7 +92,10 @@ describe('answer matching', () => {
 
   test('a name-mode item will not accept digits', () => {
     const named = {
-      answerMode: 'name', value: 31, digits: '51', name: 'fifsy-one',
+      answerMode: 'name',
+      value: 31,
+      digits: '51',
+      name: 'fifsy-one',
     };
     expect(isCorrect(named, '51')).toBe(false);
     expect(isCorrect(named, 'fifsy-one')).toBe(true);

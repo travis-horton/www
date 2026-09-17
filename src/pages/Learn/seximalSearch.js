@@ -25,7 +25,14 @@
  */
 
 import {
-  LEVELS, NIF, blockName, fromDigits, normalizeName, pairName, seximalName, toDigits,
+  LEVELS,
+  NIF,
+  blockName,
+  fromDigits,
+  normalizeName,
+  pairName,
+  seximalName,
+  toDigits,
 } from './seximal';
 import { foldPlural } from './search';
 
@@ -36,10 +43,11 @@ const UNEXIAN = NIF * NIF; // 10000₆
  * hyphen-vs-space, commas), plus the punctuation a blurb carries — so
  * "nif-complements" and "fifsy-five" split into their words.
  */
-const tokens = (text) => normalizeName(text)
-  .replace(/[.!?;:"'()&—–]/g, ' ')
-  .split(/\s+/)
-  .filter(Boolean);
+const tokens = (text) =>
+  normalizeName(text)
+    .replace(/[.!?;:"'()&—–]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
 
 const levelTokens = (level) => tokens(`${level.title} ${level.blurb}`);
 
@@ -67,7 +75,8 @@ const NAMED = buildNamedNumbers();
 // digit words — so none of them is ever mistaken for a topic.
 const NUMBER_VOCAB = (() => {
   const vocab = new Set(Object.keys(NAMED));
-  for (let n = 0; n < NIF; n += 1) tokens(pairName(n)).forEach((t) => vocab.add(t));
+  for (let n = 0; n < NIF; n += 1)
+    tokens(pairName(n)).forEach((t) => vocab.add(t));
   return vocab;
 })();
 
@@ -81,7 +90,8 @@ const NUMBER_VOCAB = (() => {
  * first-mention rule would have claimed Level 3 teaches it. It still lists
  * Level 3 as a place "ten" comes up, which is true.
  */
-const homeOf = (word, fallback) => LEVELS.find((l) => levelTokens(l).includes(word)) || fallback;
+const homeOf = (word, fallback) =>
+  LEVELS.find((l) => levelTokens(l).includes(word)) || fallback;
 const PAIR_HOME = homeOf(seximalName(6), LEVELS[0]); // 'six'
 const BLOCK_HOME = homeOf(seximalName(NIF), LEVELS[1]); // 'nif'
 const homeFor = (value) => (value < NIF ? PAIR_HOME : BLOCK_HOME);
@@ -107,8 +117,21 @@ const appearancesOf = (word, value) => {
  * below is exactly the function words the five blurbs contain.
  */
 const TOPIC_STOPWORDS = new Set([
-  'the', 'and', 'as', 'up', 'to', 'of', 'in', 'is', 'where', 'instead',
-  'back', 'including', 'then', 'inside', 'around',
+  'the',
+  'and',
+  'as',
+  'up',
+  'to',
+  'of',
+  'in',
+  'is',
+  'where',
+  'instead',
+  'back',
+  'including',
+  'then',
+  'inside',
+  'around',
 ]);
 
 const buildTopicIndex = () => {
@@ -134,11 +157,12 @@ const TOPICS = buildTopicIndex();
 const topicHits = (raw) => {
   const words = tokens(raw).filter((t) => !TOPIC_STOPWORDS.has(t));
   if (words.length === 0) return [];
-  const perWord = words.map((w) => new Set([
-    ...(TOPICS[w] || []),
-    ...(TOPICS[foldPlural(w)] || []),
-  ]));
-  const both = perWord.reduce((acc, set) => new Set([...acc].filter((id) => set.has(id))));
+  const perWord = words.map(
+    (w) => new Set([...(TOPICS[w] || []), ...(TOPICS[foldPlural(w)] || [])]),
+  );
+  const both = perWord.reduce(
+    (acc, set) => new Set([...acc].filter((id) => set.has(id))),
+  );
   return [...both].sort((a, b) => Number(a) - Number(b));
 };
 
@@ -262,7 +286,9 @@ export const searchSeximal = (query) => {
   const spoken = parseSpokenName(raw);
   if (spoken !== null) results.push(numberResult(spoken, 'name'));
 
-  numeralReadings(raw).forEach(({ reading, value }) => results.push(numberResult(value, reading)));
+  numeralReadings(raw).forEach(({ reading, value }) =>
+    results.push(numberResult(value, reading)),
+  );
 
   topicHits(raw).forEach((levelId) => results.push(topicResult(levelId)));
 

@@ -23,35 +23,23 @@ function ProgrammingContent() {
         <h2>Personal Projects</h2>
         <ul>
           <li>
-            <Link to={"/programming/clock"}>
-              Seximal clock
-            </Link>
+            <Link to={'/programming/clock'}>Seximal clock</Link>
             {' — the day in base six, with five faces to vote on'}
           </li>
           <li>
-            <Link to={"/programming/perlin-noise"}>
-              Perlin noise
-            </Link>
+            <Link to={'/programming/perlin-noise'}>Perlin noise</Link>
           </li>
           <li>
-            <Link to={"/programming/ray-tracer"}>
-              Ray tracer
-            </Link>
+            <Link to={'/programming/ray-tracer'}>Ray tracer</Link>
           </li>
           <li>
-            <Link to={"/programming/orbitz"}>
-              Orbitz
-            </Link>
+            <Link to={'/programming/orbitz'}>Orbitz</Link>
           </li>
           <li>
-            <Link to={"/programming/asteroids"}>
-              Asteroids
-            </Link>
+            <Link to={'/programming/asteroids'}>Asteroids</Link>
           </li>
           <li>
-            <Link to={"/programming/polygon-race"}>
-              Polygon race
-            </Link>
+            <Link to={'/programming/polygon-race'}>Polygon race</Link>
           </li>
         </ul>
         <section>
@@ -64,8 +52,7 @@ function ProgrammingContent() {
             Postgres tutorial
           </a>
           <br />
-          Learn
-          {' '}
+          Learn{' '}
           <a
             href="https://doc.rust-lang.org/stable/book/"
             target="_blank"
@@ -74,7 +61,11 @@ function ProgrammingContent() {
             Rust
           </a>
           <br />
-          <a href="https://www.nand2tetris.org" target="_blank" rel="noreferrer">
+          <a
+            href="https://www.nand2tetris.org"
+            target="_blank"
+            rel="noreferrer"
+          >
             Nand2tetris
           </a>
           <br />
@@ -83,14 +74,10 @@ function ProgrammingContent() {
           <h2>Works in progress</h2>
           <ul>
             <li>
-              <Link to={"/programming/seximal-time-keeping"}>
-                Seximal
-              </Link>
+              <Link to={'/programming/seximal-time-keeping'}>Seximal</Link>
             </li>
             <li>
-              <Link to={"/programming/binary"}>
-                Binary
-              </Link>
+              <Link to={'/programming/binary'}>Binary</Link>
             </li>
           </ul>
           <h2>Next projects</h2>
@@ -101,11 +88,7 @@ function ProgrammingContent() {
         <section>
           <h2>Fun quotes</h2>
           <p>
-            This is the output if you type
-            {' '}
-            <code>import this</code>
-            {' '}
-            in a python
+            This is the output if you type <code>import this</code> in a python
             interpreter:
           </p>
           <p>
@@ -133,11 +116,11 @@ function ProgrammingContent() {
             <br />
             In the face of ambiguity, refuse the temptation to guess.
             <br />
-            There should be one&mdash;and preferably only one&mdash;obvious way to do
-            it.
+            There should be one&mdash;and preferably only one&mdash;obvious way
+            to do it.
             <br />
-            Although that way may not be obvious at first unless you&apos;re Dutch.
-            Now is better than never.
+            Although that way may not be obvious at first unless you&apos;re
+            Dutch. Now is better than never.
             <br />
             Although never is often better than *right* now.
             <br />
@@ -145,7 +128,8 @@ function ProgrammingContent() {
             <br />
             If the implementation is easy to explain, it may be a good idea.
             <br />
-            Namespaces are one honking great idea -- let&apos;s do more of those!
+            Namespaces are one honking great idea -- let&apos;s do more of
+            those!
             <br />
           </p>
         </section>
