@@ -31,19 +31,26 @@ export function isSandboxHost(hostname) {
   return sandboxLabel(hostname) === 'dev';
 }
 
+/** `host` is hostname[:port]; the label is decided on the hostname alone. */
+function hostnameOf(host) {
+  const h = host || '';
+  // "[::1]:1234" → "[::1]"; "localhost:1234" → "localhost"; "kiddspazz.com" as is.
+  return h.startsWith('[') ? h.slice(0, h.indexOf(']') + 1) : h.split(':')[0];
+}
+
 /**
- * A corner ribbon across the top-left of the header on every non-production
- * host — "DEV" on kiddspazz.com, "LOCAL" under `parcel serve`, the hostname
- * on a second smaller line — so a tab is never mistaken for the live site.
- * Renders nothing on production.
+ * A tag at the top-left, straddling the header/page divider, on every
+ * non-production host — "DEV" on kiddspazz.com, "LOCAL" under `parcel serve`,
+ * with host:port on a second line — so a tab is never mistaken for the live
+ * site. Renders nothing on production.
  *
  * On the dev host it also drops a `noindex` robots meta into <head>. The real
  * guard is the X-Robots-Tag header the proxy adds for kiddspazz.com (see
  * deploy-to-dev.yml); this is the belt to that suspender for any crawler that
  * runs the JS. Local never needs it — nothing crawls localhost.
  */
-const DevBadge = ({ hostname = window.location.hostname }) => {
-  const label = sandboxLabel(hostname);
+const DevBadge = ({ host = window.location.host }) => {
+  const label = sandboxLabel(hostnameOf(host));
   const noindex = label === 'dev';
 
   useEffect(() => {
@@ -62,12 +69,10 @@ const DevBadge = ({ hostname = window.location.hostname }) => {
     <div
       className={`dev-badge dev-badge--${label}`}
       role="status"
-      aria-label={`${label} deployment: ${hostname}`}
+      aria-label={`${label} deployment: ${host}`}
     >
-      <span className="dev-badge__ribbon">
-        <span className="dev-badge__label">{label}</span>
-        <span className="dev-badge__info">{hostname}</span>
-      </span>
+      <span className="dev-badge__label">{label}</span>
+      <span className="dev-badge__info">{host}</span>
     </div>
   );
 };
