@@ -1,0 +1,14 @@
+node_modules
+dist
+.parcel-cache
+coverage
+package-lock.json
+# git submodules (.gitmodules) — each is its own repo
+src/pages/Programming/projects/asteroids
+src/pages/Programming/projects/orbitz
+src/pages/Programming/projects/perlin-noise
+src/pages/Programming/projects/polygon-race
+src/pages/Programming/projects/ray-tracer
+src/pages/Programming/projects/seximal_clock
+# the Zig backend
+api

@@ -39,8 +39,9 @@ export const recordSession = (session) => {
 
 /** Per-course, per-level summary: attempts, best score, most recent score. */
 export const summarize = (course, levelId) => {
-  const runs = load().sessions
-    .filter((s) => s.course === course && s.levelId === levelId);
+  const runs = load().sessions.filter(
+    (s) => s.course === course && s.levelId === levelId,
+  );
   if (runs.length === 0) return null;
   const best = runs.reduce((acc, s) => Math.max(acc, s.correct / s.total), 0);
   const last = runs[runs.length - 1];
@@ -56,8 +57,8 @@ export const summarize = (course, levelId) => {
  * This is the weak list, computed rather than hand-maintained.
  */
 export const weakKinds = (course, limit = 20) => {
-  const runs = load().sessions
-    .filter((s) => s.course === course)
+  const runs = load()
+    .sessions.filter((s) => s.course === course)
     .slice(-limit);
   const tally = {};
   runs.forEach((s) => {
@@ -83,8 +84,8 @@ export const weakKinds = (course, limit = 20) => {
  * contributes nothing to the tally.
  */
 export const weakWords = (course, limit = 20) => {
-  const runs = load().sessions
-    .filter((s) => s && s.course === course)
+  const runs = load()
+    .sessions.filter((s) => s && s.course === course)
     .slice(-limit);
   const tally = {};
   runs.forEach((s) => {
@@ -105,9 +106,10 @@ export const weakWords = (course, limit = 20) => {
  * Non-numeric level ids (review sessions record `levelId: 'review'`) are not
  * levels and never count. Returns 0 for a course never drilled.
  */
-export const levelsReached = (course) => load().sessions
-  .filter((s) => s && s.course === course)
-  .reduce((acc, s) => {
-    const n = Number(s.levelId);
-    return Number.isFinite(n) ? Math.max(acc, n) : acc;
-  }, 0);
+export const levelsReached = (course) =>
+  load()
+    .sessions.filter((s) => s && s.course === course)
+    .reduce((acc, s) => {
+      const n = Number(s.levelId);
+      return Number.isFinite(n) ? Math.max(acc, n) : acc;
+    }, 0);

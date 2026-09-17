@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 
 import { LEVELS } from './tokipona';
 import {
-  buildReviewSession, defaultLevelsKnown, isCorrect, knownVocab, SESSION_LENGTH,
+  buildReviewSession,
+  defaultLevelsKnown,
+  isCorrect,
+  knownVocab,
+  SESSION_LENGTH,
 } from './review';
 import { recordSession } from './progress';
 
@@ -65,11 +69,14 @@ function TokiPonaReview() {
   };
 
   const commit = () => {
-    setResults([...results, {
-      kind: item.kind,
-      word: item.word,
-      correct: isCorrect(item, input),
-    }]);
+    setResults([
+      ...results,
+      {
+        kind: item.kind,
+        word: item.word,
+        correct: isCorrect(item, input),
+      },
+    ]);
     setPhase(CHECKED);
   };
 
@@ -98,14 +105,18 @@ function TokiPonaReview() {
         <h1>Review</h1>
         <p>
           {`Everything you have met so far — ${vocab.length} words from `}
-          {levelsKnown === 1 ? 'level 1' : `levels 1–${levelsKnown}`}
-          , in all three directions: read the glyph, give the meaning, and the
-          hard one — produce the word from its meaning. Questions are generated,
-          so this does not run out, and words you have been missing come back
-          more often.
+          {levelsKnown === 1 ? 'level 1' : `levels 1–${levelsKnown}`}, in all
+          three directions: read the glyph, give the meaning, and the hard one —
+          produce the word from its meaning. Questions are generated, so this
+          does not run out, and words you have been missing come back more
+          often.
         </p>
         <p className="drill__actions">
-          <button className="drill__button" type="button" onClick={() => begin(levelsKnown)}>
+          <button
+            className="drill__button"
+            type="button"
+            onClick={() => begin(levelsKnown)}
+          >
             {`Start — ${SESSION_LENGTH} questions`}
           </button>
           {!widened && (
@@ -129,7 +140,10 @@ function TokiPonaReview() {
   if (phase === DONE) {
     const correct = results.filter((r) => r.correct).length;
     const missed = results.filter((r) => !r.correct);
-    const byWord = missed.reduce((acc, r) => ({ ...acc, [r.word]: (acc[r.word] || 0) + 1 }), {});
+    const byWord = missed.reduce(
+      (acc, r) => ({ ...acc, [r.word]: (acc[r.word] || 0) + 1 }),
+      {},
+    );
     return (
       <div className="drill">
         <h2>{`${correct} / ${results.length}`}</h2>
@@ -146,10 +160,13 @@ function TokiPonaReview() {
           </>
         )}
         <p className="drill__actions">
-          <button className="drill__button" type="button" onClick={() => begin(levelsKnown)}>
+          <button
+            className="drill__button"
+            type="button"
+            onClick={() => begin(levelsKnown)}
+          >
             Again
-          </button>
-          {' '}
+          </button>{' '}
           <Link to="/learn/toki-pona">Back to the levels</Link>
         </p>
       </div>
@@ -175,20 +192,24 @@ function TokiPonaReview() {
         {`Review · ${index + 1} of ${items.length}`}
       </p>
 
-      {item.promptIsGlyph
-        ? <p className="tp__glyph tp__glyph--prompt">{item.prompt}</p>
-        : (
-          <p className="drill__prompt tp__prompt">
-            {item.prompt}
-            {item.promptGlyph && (
-              <span className="tp__glyph tp__glyph--inline">{item.promptGlyph}</span>
-            )}
-          </p>
-        )}
+      {item.promptIsGlyph ? (
+        <p className="tp__glyph tp__glyph--prompt">{item.prompt}</p>
+      ) : (
+        <p className="drill__prompt tp__prompt">
+          {item.prompt}
+          {item.promptGlyph && (
+            <span className="tp__glyph tp__glyph--inline">
+              {item.promptGlyph}
+            </span>
+          )}
+        </p>
+      )}
       <p className="drill__sub">{item.promptSub}</p>
 
       <form onSubmit={onSubmit}>
-        <label className="drill__label" htmlFor="answer">your answer</label>
+        <label className="drill__label" htmlFor="answer">
+          your answer
+        </label>
         <input
           id="answer"
           ref={inputRef}
@@ -204,12 +225,16 @@ function TokiPonaReview() {
         />
 
         {checked && (
-          <div className={`drill__verdict ${wasRight ? 'is-right' : 'is-wrong'}`}>
+          <div
+            className={`drill__verdict ${wasRight ? 'is-right' : 'is-wrong'}`}
+          >
             <p className="drill__verdict-line">{wasRight ? 'Yes.' : 'No.'}</p>
             <p>
               {item.answer}
               {item.answerGlyph && (
-                <span className="tp__glyph tp__glyph--inline">{item.answerGlyph}</span>
+                <span className="tp__glyph tp__glyph--inline">
+                  {item.answerGlyph}
+                </span>
               )}
             </p>
           </div>

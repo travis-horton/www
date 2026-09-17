@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * TokiPonaHome had NO test file at all, which is why /learn/toki-pona could go
  * blank in production while all 168 Learn tests stayed green. search.js is
@@ -14,11 +13,12 @@ import { MemoryRouter } from 'react-router-dom';
 
 import TokiPonaHome from './TokiPonaHome';
 
-const mount = () => render(
-  <MemoryRouter initialEntries={['/learn/toki-pona']}>
-    <TokiPonaHome />
-  </MemoryRouter>,
-);
+const mount = () =>
+  render(
+    <MemoryRouter initialEntries={['/learn/toki-pona']}>
+      <TokiPonaHome />
+    </MemoryRouter>,
+  );
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -59,7 +59,9 @@ describe('prototype keys must not crash the page', () => {
     test(`typing "${key}" does not throw`, () => {
       mount();
       const box = screen.getByLabelText(/search/i);
-      expect(() => fireEvent.change(box, { target: { value: key } })).not.toThrow();
+      expect(() =>
+        fireEvent.change(box, { target: { value: key } }),
+      ).not.toThrow();
     });
   });
 

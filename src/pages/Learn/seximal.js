@@ -82,20 +82,15 @@ export const fromDigits = (s) => {
  * Answer matching. Deliberately forgiving about the things that are typing,
  * not knowledge: case, hyphen-vs-space, commas, stray whitespace.
  */
-export const normalizeName = (s) => String(s)
-  .toLowerCase()
-  .replace(/[-,]/g, ' ')
-  .replace(/\s+/g, ' ')
-  .trim();
+export const normalizeName = (s) =>
+  String(s).toLowerCase().replace(/[-,]/g, ' ').replace(/\s+/g, ' ').trim();
 
 const randInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 
 const pick = (arr) => arr[randInt(0, arr.length - 1)];
 
 /** Every item carries both forms of its answer, so feedback can always show both. */
-const makeItem = ({
-  kind, prompt, promptSub, value, answerMode, explain,
-}) => ({
+const makeItem = ({ kind, prompt, promptSub, value, answerMode, explain }) => ({
   kind,
   prompt,
   promptSub,
@@ -123,21 +118,23 @@ export const isCorrect = (item, response) => {
 // (seximal-worksheets-L1-5-2026-07-24.pdf).
 // ---------------------------------------------------------------------------
 
-const nameIt = (value) => makeItem({
-  kind: 'name-it',
-  prompt: `${toDigits(value)}₆`,
-  promptSub: 'say the name',
-  value,
-  answerMode: 'name',
-});
+const nameIt = (value) =>
+  makeItem({
+    kind: 'name-it',
+    prompt: `${toDigits(value)}₆`,
+    promptSub: 'say the name',
+    value,
+    answerMode: 'name',
+  });
 
-const writeIt = (value) => makeItem({
-  kind: 'write-it',
-  prompt: seximalName(value),
-  promptSub: 'write the base-six numeral',
-  value,
-  answerMode: 'digits',
-});
+const writeIt = (value) =>
+  makeItem({
+    kind: 'write-it',
+    prompt: seximalName(value),
+    promptSub: 'write the base-six numeral',
+    value,
+    answerMode: 'digits',
+  });
 
 const level1 = () => {
   const value = randInt(1, 35);
@@ -179,7 +176,9 @@ const subtractItem = () => {
     promptSub: `${seximalName(a)} minus ${seximalName(b)}`,
     value: a - b,
     answerMode: 'digits',
-    explain: borrows ? 'The ones place went negative, so it borrowed a six.' : null,
+    explain: borrows
+      ? 'The ones place went negative, so it borrowed a six.'
+      : null,
   });
 };
 
@@ -220,7 +219,8 @@ const complementItem = () => {
     promptSub: `nif minus ${seximalName(n)}`,
     value: NIF - n,
     answerMode: 'digits',
-    explain: 'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.',
+    explain:
+      'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.',
   });
 };
 
@@ -242,7 +242,7 @@ const chainItem = () => {
     kind: 'chain',
     prompt: `(nif − ${toDigits(inner)}₆) + ${toDigits(b)}₆`,
     promptSub: `the complement of ${seximalName(inner)}, plus ${seximalName(b)}`,
-    value: (NIF - inner) + b,
+    value: NIF - inner + b,
     answerMode: 'digits',
     explain: 'A complement buried inside a chain — take the complement first.',
   });
@@ -254,7 +254,8 @@ export const LEVELS = [
   {
     id: '1',
     title: 'Counting & names',
-    blurb: 'The words themselves — six, dozen, thirsy, foursy, fifsy — up to fifsy-five.',
+    blurb:
+      'The words themselves — six, dozen, thirsy, foursy, fifsy — up to fifsy-five.',
     generate: level1,
   },
   {
