@@ -5,11 +5,19 @@
   z-index: 3;
   padding: 2px 8px;
   border-radius: 999px;
-  background: var(--main-accent-color);
   color: white;
   font-size: 0.7rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   opacity: 0.85;
   pointer-events: none;
+}
+
+/* dev = the accent colour; local = grey, so the two are told apart at a glance. */
+.dev-badge--dev {
+  background: var(--main-accent-color);
+}
+
+.dev-badge--local {
+  background: hsl(0, 0%, 40%);
 }
