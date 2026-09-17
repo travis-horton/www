@@ -92,19 +92,17 @@ export const seximalTriple = (n) => toDigits(n).padStart(3, '0');
  * Milliseconds since LOCAL midnight. Deliberately not `getTime() % MS_PER_DAY`,
  * which is midnight UTC — seven hours off in Boise.
  */
-export const msSinceLocalMidnight = (date) => (
-  ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000
-  + date.getMilliseconds()
-);
+export const msSinceLocalMidnight = (date) =>
+  ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000 +
+  date.getMilliseconds();
 
 /**
  * Whole ticks (seximal seconds) since local midnight, 0..46655. Multiplying
  * before dividing keeps this in exact integer arithmetic; MS_PER_TICK itself
  * is not representable, and 16:00 must come out as exactly 31104, not 31103.
  */
-export const ticksSinceMidnight = (date) => (
-  Math.floor((msSinceLocalMidnight(date) * TICKS_PER_DAY) / MS_PER_DAY)
-);
+export const ticksSinceMidnight = (date) =>
+  Math.floor((msSinceLocalMidnight(date) * TICKS_PER_DAY) / MS_PER_DAY);
 
 export const splitTicks = (ticks) => ({
   hour: Math.floor(ticks / (NIF * NIF)),
@@ -112,9 +110,8 @@ export const splitTicks = (ticks) => ({
   second: ticks % NIF,
 });
 
-export const joinTicks = ({ hour, minute, second }) => (
-  (hour * NIF + minute) * NIF + second
-);
+export const joinTicks = ({ hour, minute, second }) =>
+  (hour * NIF + minute) * NIF + second;
 
 export const dayFraction = (ticks) => ticks / TICKS_PER_DAY;
 
@@ -155,9 +152,8 @@ export const spokenTime = (ticks) => seximalName(ticks);
 const pad2 = (n) => String(n).padStart(2, '0');
 
 /** The ordinary clock, for orientation: "16:00:00". */
-export const decimalTime = (date) => (
-  [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad2).join(':')
-);
+export const decimalTime = (date) =>
+  [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad2).join(':');
 
 /*
  * The units have proper names, from seximal.net/units, and they are the units
@@ -211,13 +207,62 @@ export const UNIT_NAMES = {
  */
 export const UNIT_DEFINITIONS = [
   ['day', 'the Earth turning once', '1', '≈', '24 h', 'Misalian'],
-  ['watch', 'a sixth of a day — six in a day, as at sea', '1/10₆ day', '=', '4 h', 'proposed here'],
-  ['lapse', 'a niftiday — a nif of them in a day', '1/100₆ day', '=', '40 min', 'Misalian'],
-  ['span', 'a sixth of a lapse — six nif in a day, so the time is one number', '1/1000₆ day', '=', '6 min 40 s', 'Kunimunean'],
-  ['lull', 'a niftilapse (seximal.net: an untiday) — a nif in a lapse', '1/10000₆ day', '≈', '1 min 6.7 s', 'Misalian'],
-  ['breath', 'a sixth of a lull — about one slow breath', '1/100000₆ day', '≈', '11.1 s', 'proposed here'],
-  ['moment', 'a niftilull — a nif in a lull, and the tick of this clock', '1/1000000₆ day', '≈', '1.85 s', 'Misalian'],
-  ['snap', 'a sixth of a moment — near the pace of a syllable', '1/10000000₆ day', '≈', '0.309 s', 'Kunimunean'],
+  [
+    'watch',
+    'a sixth of a day — six in a day, as at sea',
+    '1/10₆ day',
+    '=',
+    '4 h',
+    'proposed here',
+  ],
+  [
+    'lapse',
+    'a niftiday — a nif of them in a day',
+    '1/100₆ day',
+    '=',
+    '40 min',
+    'Misalian',
+  ],
+  [
+    'span',
+    'a sixth of a lapse — six nif in a day, so the time is one number',
+    '1/1000₆ day',
+    '=',
+    '6 min 40 s',
+    'Kunimunean',
+  ],
+  [
+    'lull',
+    'a niftilapse (seximal.net: an untiday) — a nif in a lapse',
+    '1/10000₆ day',
+    '≈',
+    '1 min 6.7 s',
+    'Misalian',
+  ],
+  [
+    'breath',
+    'a sixth of a lull — about one slow breath',
+    '1/100000₆ day',
+    '≈',
+    '11.1 s',
+    'proposed here',
+  ],
+  [
+    'moment',
+    'a niftilull — a nif in a lull, and the tick of this clock',
+    '1/1000000₆ day',
+    '≈',
+    '1.85 s',
+    'Misalian',
+  ],
+  [
+    'snap',
+    'a sixth of a moment — near the pace of a syllable',
+    '1/10000000₆ day',
+    '≈',
+    '0.309 s',
+    'Kunimunean',
+  ],
 ];
 
 /**
@@ -231,6 +276,8 @@ export const UNIT_DEFINITIONS = [
  * throttled background tab, which a fixed interval cannot.
  */
 export const msToNextTick = (date) => {
-  const next = Math.ceil(((ticksSinceMidnight(date) + 1) * MS_PER_DAY) / TICKS_PER_DAY);
+  const next = Math.ceil(
+    ((ticksSinceMidnight(date) + 1) * MS_PER_DAY) / TICKS_PER_DAY,
+  );
   return Math.max(1, next - msSinceLocalMidnight(date));
 };

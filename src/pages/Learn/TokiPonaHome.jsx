@@ -18,21 +18,13 @@ function TokiPonaHome() {
       </p>
       <p>
         A complete language in about a hundred and twenty words. Every word has
-        a logogram —
-        {' '}
-        <em>sitelen pona</em>
-        , &quot;good writing&quot; — and you meet them from the first lesson,
-        because reading the glyphs is half of what makes the language fun.
+        a logogram — <em>sitelen pona</em>, &quot;good writing&quot; — and you
+        meet them from the first lesson, because reading the glyphs is half of
+        what makes the language fun.
       </p>
       <p>
-        Vowels as in Italian, stress the first syllable,
-        {' '}
-        <em>j</em>
-        {' '}
-        sounds like
-        {' '}
-        <em>y</em>
-        . Twelve new words a level.
+        Vowels as in Italian, stress the first syllable, <em>j</em> sounds like{' '}
+        <em>y</em>. Twelve new words a level.
       </p>
 
       <TokiPonaSearch />
@@ -42,7 +34,10 @@ function TokiPonaHome() {
           const stats = summarize('toki-pona', level.id);
           return (
             <li key={level.id} className="learn__level">
-              <Link to={`/learn/toki-pona/${level.id}`} className="learn__level-title">
+              <Link
+                to={`/learn/toki-pona/${level.id}`}
+                className="learn__level-title"
+              >
                 {`${level.id}. ${level.title}`}
               </Link>
               <p className="learn__level-blurb">{level.blurb}</p>
@@ -64,8 +59,8 @@ function TokiPonaHome() {
           <p className="learn__level-blurb">
             Generated drilling over every word you have met, in all three
             directions: read the glyph, give the meaning, and the hard one —
-            produce the word from its meaning. It does not run out, and what
-            you have been missing comes back more often.
+            produce the word from its meaning. It does not run out, and what you
+            have been missing comes back more often.
           </p>
           {reviewStats && (
             <p className="learn__level-stats">
@@ -87,54 +82,21 @@ function TokiPonaHome() {
       </p>
       <ul className="learn__levels">
         <li>
-          <strong>e marks noun objects, full stop.</strong>
-          {' '}
-          A word after the verb without
-          {' '}
-          <em>e</em>
-          {' '}
-          is a modifier, not an object.
+          <strong>e marks noun objects, full stop.</strong> A word after the
+          verb without <em>e</em> is a modifier, not an object.
         </li>
         <li>
-          <strong>Prepositions take their noun directly</strong>
-          {' '}
-          — no
-          {' '}
-          <em>e</em>
-          {' '}
-          after
-          {' '}
-          <em>tawa</em>
-          ,
-          {' '}
-          <em>lon</em>
-          ,
-          {' '}
-          <em>tan</em>
-          ,
-          {' '}
-          <em>kepeken</em>
-          .
+          <strong>Prepositions take their noun directly</strong> — no <em>e</em>{' '}
+          after <em>tawa</em>, <em>lon</em>, <em>tan</em>, <em>kepeken</em>.
         </li>
         <li>
-          <strong>The 120 words of pu</strong>
-          {' '}
-          are the syllabus. The later community words —
-          {' '}
-          <em>kijetesantakalu</em>
-          ,
-          {' '}
-          <em>soko</em>
-          ,
-          {' '}
-          <em>misikeke</em>
-          {' '}
-          — are real and widely used, but they are an appendix, not the ladder.
+          <strong>The 120 words of pu</strong> are the syllabus. The later
+          community words — <em>kijetesantakalu</em>, <em>soko</em>,{' '}
+          <em>misikeke</em> — are real and widely used, but they are an
+          appendix, not the ladder.
         </li>
         <li>
-          <strong>Numbers add up.</strong>
-          {' '}
-          <em>wan</em>
+          <strong>Numbers add up.</strong> <em>wan</em>
           {' 1 · '}
           <em>tu</em>
           {' 2 · '}
@@ -144,25 +106,17 @@ function TokiPonaHome() {
           {' 20 · '}
           <em>ale</em>
           {' 100 — biggest piece first, then add: '}
-          <em>luka tu</em>
-          {' '}
-          is seven. That is pu&apos;s own second system. Its first —
-          {' '}
-          <em>wan</em>
-          ,
-          {' '}
-          <em>tu</em>
-          , then
-          {' '}
-          <em>mute</em>
-          {' '}
-          for anything more — is real too, and is what most speakers reach for
-          when the exact count does not matter; but it cannot stack, so it is not
-          the one this course counts with. Level 9 says the same thing where the
-          numbers are taught.
+          <em>luka tu</em> is seven. That is pu&apos;s own second system. Its
+          first — <em>wan</em>, <em>tu</em>, then <em>mute</em> for anything
+          more — is real too, and is what most speakers reach for when the exact
+          count does not matter; but it cannot stack, so it is not the one this
+          course counts with. Level 9 says the same thing where the numbers are
+          taught.
         </li>
         <li>
-          <strong>Latin letters, with sitelen pona alongside from day one.</strong>
+          <strong>
+            Latin letters, with sitelen pona alongside from day one.
+          </strong>
         </li>
       </ul>
     </div>

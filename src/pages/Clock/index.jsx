@@ -43,7 +43,9 @@ const MODES = [SEXIMAL, NIFTIMAL];
 
 const loadMode = () => {
   try {
-    return window.localStorage.getItem(MODE_KEY) === NIFTIMAL ? NIFTIMAL : SEXIMAL;
+    return window.localStorage.getItem(MODE_KEY) === NIFTIMAL
+      ? NIFTIMAL
+      : SEXIMAL;
   } catch (e) {
     return SEXIMAL;
   }
@@ -130,22 +132,22 @@ function Clock() {
       <div className="clock">
         <h1>Clock</h1>
         {/*
-          * The lede has to hand the reader the word before it starts using it
-          * (Travis, 26.0905). It used to say "thirty-six hours" and then reach
-          * for "a nif of minutes" one clause later, which teaches the term
-          * backwards: the gloss arrived after the word it was glossing.
-          */}
+         * The lede has to hand the reader the word before it starts using it
+         * (Travis, 26.0905). It used to say "thirty-six hours" and then reach
+         * for "a nif of minutes" one clause later, which teaches the term
+         * backwards: the gloss arrived after the word it was glossing.
+         */}
         <p className="clock__lede">
-          The day cut into a
-          {' '}
-          <dfn className="clock__dfn" data-testid="nif-def">nif</dfn>
-          {' '}
-          of hours — a nif is thirty-six, written 100 in base six and 10 in
-          base thirty-six, and it is the word this page uses from here on. Each
-          hour is a nif of minutes, each minute a nif of seconds. Written in
-          base six that is three pairs; written in base thirty-six it is three
-          glyphs. The names never change — a niftimal digit is spoken as its
-          seximal pair.
+          The day cut into a{' '}
+          <dfn className="clock__dfn" data-testid="nif-def">
+            nif
+          </dfn>{' '}
+          of hours — a nif is thirty-six, written 100 in base six and 10 in base
+          thirty-six, and it is the word this page uses from here on. Each hour
+          is a nif of minutes, each minute a nif of seconds. Written in base six
+          that is three pairs; written in base thirty-six it is three glyphs.
+          The names never change — a niftimal digit is spoken as its seximal
+          pair.
         </p>
 
         <div className="clock__modes" role="group" aria-label="Notation">
@@ -165,7 +167,11 @@ function Clock() {
         <div className={`clock__face clock__face--${mode}`}>
           {UNITS.map((unit, i) => (
             <React.Fragment key={unit}>
-              {i > 0 && <span className="clock__colon" aria-hidden="true">:</span>}
+              {i > 0 && (
+                <span className="clock__colon" aria-hidden="true">
+                  :
+                </span>
+              )}
               <span className="clock__unit">
                 <span className="clock__digits" data-testid={`digits-${unit}`}>
                   {write(parts[unit])}
@@ -182,9 +188,7 @@ function Clock() {
         </div>
 
         <p className="clock__spoken">
-          read as one number:
-          {' '}
-          <strong>{spokenTime(ticks)}</strong>
+          read as one number: <strong>{spokenTime(ticks)}</strong>
         </p>
 
         {/* aria-valuenow carries the ROUNDED value, matching the visible text.
@@ -224,21 +228,18 @@ function Clock() {
 
         <h2 className="clock__h2">the units have names</h2>
         <p className="clock__lede">
-          They are not invented here. They come from
-          {' '}
-          <a href="https://www.seximal.net/units">seximal.net</a>
-          , and they are the units this clock already had — the generic hour,
-          minute and second were standing in for them. The definitions look odd
-          at first because that page writes its numbers in seximal: a moment is
-          &ldquo;exactly 1.504 seconds&rdquo;, and 1.504₆ is 1.85. The span and
-          the snap are Justin Kunimune&rsquo;s, adopted there as canon.
+          They are not invented here. They come from{' '}
+          <a href="https://www.seximal.net/units">seximal.net</a>, and they are
+          the units this clock already had — the generic hour, minute and second
+          were standing in for them. The definitions look odd at first because
+          that page writes its numbers in seximal: a moment is &ldquo;exactly
+          1.504 seconds&rdquo;, and 1.504₆ is 1.85. The span and the snap are
+          Justin Kunimune&rsquo;s, adopted there as canon.
         </p>
         <p className="clock__lede">
           The published ladder skips two rungs, so two names below are
-          <strong> ours, not canon</strong> — marked ✳. A <em>watch</em>
-          {' '}
-          because a ship&rsquo;s watch is already four hours, six to a day; a
-          {' '}
+          <strong> ours, not canon</strong> — marked ✳. A <em>watch</em> because
+          a ship&rsquo;s watch is already four hours, six to a day; a{' '}
           <em>breath</em> because a slow breath runs about eleven seconds, which
           gives it the same body-paced case the snap has. With both, every rung
           from a day down to a snap has a name and each is a sixth of the one
@@ -246,11 +247,18 @@ function Clock() {
         </p>
         <dl className="clock__units">
           {UNIT_DEFINITIONS.map(([name, gloss, fraction, sign, si, source]) => (
-            <div className="clock__unit-def" key={name} data-testid={`def-${name}`}>
+            <div
+              className="clock__unit-def"
+              key={name}
+              data-testid={`def-${name}`}
+            >
               <dt>
                 {name}
                 {source === 'proposed here' && (
-                  <span className="clock__unit-flag" title="not canon — proposed on this page">
+                  <span
+                    className="clock__unit-flag"
+                    title="not canon — proposed on this page"
+                  >
                     ✳
                   </span>
                 )}
