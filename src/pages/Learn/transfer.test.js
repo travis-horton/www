@@ -13,17 +13,29 @@
  */
 
 import {
-  FORMAT, VERSION, buildPayload, checksum, exportCode, importCode,
-  mergeSessions, parseCode, previewImport,
+  FORMAT,
+  VERSION,
+  buildPayload,
+  checksum,
+  exportCode,
+  importCode,
+  mergeSessions,
+  parseCode,
+  previewImport,
 } from './transfer';
 import { MAX_SESSIONS, load, recordSession } from './progress';
 
 const KEY = 'travish.learn.v1';
 
 const raw = () => window.localStorage.getItem(KEY);
-const seed = (sessions) => window.localStorage.setItem(KEY, JSON.stringify({ sessions }));
+const seed = (sessions) =>
+  window.localStorage.setItem(KEY, JSON.stringify({ sessions }));
 const run = (over) => ({
-  course: 'toki-pona', levelId: '1', total: 12, correct: 9, ...over,
+  course: 'toki-pona',
+  levelId: '1',
+  total: 12,
+  correct: 9,
+  ...over,
 });
 
 beforeEach(() => {
@@ -103,8 +115,16 @@ describe('merge semantics — it adds, it never removes', () => {
   });
 
   test('the merged list stays chronological, so "last" still means last', () => {
-    const older = { ...run({ levelId: '1', correct: 3 }), id: 'a', at: '2026-01-01T00:00:00.000Z' };
-    const newer = { ...run({ levelId: '1', correct: 11 }), id: 'b', at: '2026-06-01T00:00:00.000Z' };
+    const older = {
+      ...run({ levelId: '1', correct: 3 }),
+      id: 'a',
+      at: '2026-01-01T00:00:00.000Z',
+    };
+    const newer = {
+      ...run({ levelId: '1', correct: 11 }),
+      id: 'b',
+      at: '2026-06-01T00:00:00.000Z',
+    };
 
     // The newer session is the one already here; the older one arrives by paste.
     seed([newer]);
@@ -114,13 +134,17 @@ describe('merge semantics — it adds, it never removes', () => {
   });
 
   test('a merge that overflows the cap loses the OLDEST, exactly as recording does', () => {
-    const many = (n, prefix, month) => Array.from({ length: n }, (_, i) => ({
-      ...run(),
-      id: `${prefix}${i}`,
-      at: `2026-${month}-01T00:00:00.000Z`,
-    }));
+    const many = (n, prefix, month) =>
+      Array.from({ length: n }, (_, i) => ({
+        ...run(),
+        id: `${prefix}${i}`,
+        at: `2026-${month}-01T00:00:00.000Z`,
+      }));
 
-    const merged = mergeSessions(many(150, 'old', '01'), many(150, 'new', '02'));
+    const merged = mergeSessions(
+      many(150, 'old', '01'),
+      many(150, 'new', '02'),
+    );
 
     expect(merged.sessions).toHaveLength(MAX_SESSIONS);
     expect(merged.dropped).toBe(100);
@@ -131,7 +155,10 @@ describe('merge semantics — it adds, it never removes', () => {
 
 describe('sessions from before the bridge existed (no id, no timestamp)', () => {
   const legacy = {
-    course: 'seximal', levelId: '2', total: 10, correct: 7,
+    course: 'seximal',
+    levelId: '2',
+    total: 10,
+    correct: 7,
   };
 
   test('they survive an export and an import', () => {
@@ -194,12 +221,16 @@ describe('a corrupt paste is visible and costs nothing', () => {
   });
 
   test('valid JSON that is not a progress code is refused', () => {
-    expect(survives('{"hello":"world"}')).toMatch(/not a \/learn progress code/);
+    expect(survives('{"hello":"world"}')).toMatch(
+      /not a \/learn progress code/,
+    );
     expect(survives('[1,2,3]')).toMatch(/not a \/learn progress code/);
   });
 
   test('an edited payload is caught by the checksum even though it parses', () => {
-    const payload = buildPayload([run({ id: 'a', at: '2026-01-01T00:00:00.000Z' })]);
+    const payload = buildPayload([
+      run({ id: 'a', at: '2026-01-01T00:00:00.000Z' }),
+    ]);
     payload.sessions[0].correct = 12; // "improve" the score by hand
 
     expect(survives(JSON.stringify(payload))).toMatch(/truncated or edited/);
@@ -220,7 +251,9 @@ describe('a corrupt paste is visible and costs nothing', () => {
   });
 
   test('a code with no sessions list is refused', () => {
-    expect(survives(JSON.stringify({ format: FORMAT, version: VERSION }))).toMatch(/no sessions list/);
+    expect(
+      survives(JSON.stringify({ format: FORMAT, version: VERSION })),
+    ).toMatch(/no sessions list/);
   });
 });
 
@@ -229,10 +262,16 @@ describe('individually broken sessions are skipped, not fatal', () => {
     const payload = buildPayload([
       run({ id: 'good', at: '2026-01-01T00:00:00.000Z' }),
       {
-        course: 'toki-pona', levelId: '1', total: 0, correct: 0,
+        course: 'toki-pona',
+        levelId: '1',
+        total: 0,
+        correct: 0,
       }, // unscoreable
       {
-        course: '', levelId: '1', total: 5, correct: 1,
+        course: '',
+        levelId: '1',
+        total: 5,
+        correct: 1,
       }, // no course
       null,
       'nonsense',

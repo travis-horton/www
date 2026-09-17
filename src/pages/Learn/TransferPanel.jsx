@@ -139,13 +139,13 @@ function ProgressTransfer() {
 
               {preview && preview.ok && (
                 <p className="drill__verdict is-right">
-                  {`${preview.incoming} sessions in this code. `
-                    + `${preview.added} are new here, ${preview.alreadyHad} this device already has. `
-                    + 'Nothing is removed — importing only adds.'
-                    + (preview.skipped > 0
+                  {`${preview.incoming} sessions in this code. ` +
+                    `${preview.added} are new here, ${preview.alreadyHad} this device already has. ` +
+                    'Nothing is removed — importing only adds.' +
+                    (preview.skipped > 0
                       ? ` ${preview.skipped} unreadable sessions will be skipped.`
-                      : '')
-                    + (preview.dropped > 0
+                      : '') +
+                    (preview.dropped > 0
                       ? ` ${preview.dropped} of the oldest will fall off the 200-session limit.`
                       : '')}
                 </p>
@@ -173,7 +173,9 @@ function ProgressTransfer() {
           </section>
 
           <p className="learn__meta">
-            {'Temporary. When /learn gets a backend, every device will read the same record and this panel goes away.'}
+            {
+              'Temporary. When /learn gets a backend, every device will read the same record and this panel goes away.'
+            }
           </p>
         </div>
       )}
