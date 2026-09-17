@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { LearnSearch } from './LearnSearch';
 
+import ProgressTransfer from './TransferPanel';
+
 function LearnHome() {
   return (
     <div className="learn">
@@ -35,6 +37,13 @@ function LearnHome() {
       </ul>
 
       <LearnSearch />
+
+      {/*
+        A BRIDGE — delete with the rest of the transfer files when the www Zig
+        backend (Phases 2/3/4) gives progress a server-side home. It sits here,
+        below both courses, because one localStorage record covers both.
+      */}
+      <ProgressTransfer />
     </div>
   );
 }
