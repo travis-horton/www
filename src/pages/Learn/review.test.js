@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Guards review mode's two promises: it only ever asks about words you have
  * actually met, and it never runs out. Both are properties of every generated

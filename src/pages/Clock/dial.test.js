@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * The analog face's geometry. What is pinned here is the relationship between
  * time and angle — never a hand's literal degrees at some literal instant,

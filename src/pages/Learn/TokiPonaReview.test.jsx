@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * The review screens. Same discipline as index.test.jsx: the questions are
  * generated, so nothing here asserts on a particular one — only on the thing

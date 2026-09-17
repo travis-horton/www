@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Guards the content, not the UI. The glyphs are private-use codepoints taken
  * from the linku API — a typo in one is invisible on screen (it renders as a
