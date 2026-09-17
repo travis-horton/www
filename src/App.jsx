@@ -10,7 +10,7 @@ import {
   Learn,
   NotFound,
 } from './pages';
-import { Header, Footer } from './sharedComponents';
+import { Header, Footer, DevBadge } from './sharedComponents';
 
 function App() {
   return (
@@ -34,6 +34,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+      {/* Only ever visible on kiddspazz.com — the sandbox deploy. */}
+      <DevBadge />
     </BrowserRouter>
   );
 }
