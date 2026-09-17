@@ -5,7 +5,14 @@
  */
 
 import {
-  buildSession, getLevel, GLYPHS, isCorrect, LEVELS, SELF_GRADED, taughtIn, toGlyphs,
+  buildSession,
+  getLevel,
+  GLYPHS,
+  isCorrect,
+  LEVELS,
+  SELF_GRADED,
+  taughtIn,
+  toGlyphs,
 } from './tokipona';
 
 describe('glyphs', () => {
@@ -63,9 +70,18 @@ describe('glyphs', () => {
 
 describe('levels', () => {
   test('all ten are here, in order', () => {
-    expect(LEVELS.map((l) => l.id)).toEqual(
-      ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-    );
+    expect(LEVELS.map((l) => l.id)).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+    ]);
   });
 
   test('each has twelve new words and one rule', () => {

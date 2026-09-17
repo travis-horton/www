@@ -151,21 +151,35 @@ describe('the two faces', () => {
   });
 
   test('the faces agree with the generic conversion', () => {
-    expect(niftimalTime(t).replace(/:/g, '')).toBe(toNiftimal(t).padStart(3, '0'));
+    expect(niftimalTime(t).replace(/:/g, '')).toBe(
+      toNiftimal(t).padStart(3, '0'),
+    );
   });
 });
 
 describe('digit naming', () => {
   test('each unit is named by its seximal pair', () => {
-    expect(unitNames(31104)).toEqual({ hour: 'foursy', minute: 'zero', second: 'zero' });
-    expect(unitNames(joinTicks({ hour: 15, minute: 25, second: 5 })))
-      .toEqual({ hour: 'dozen-three', minute: 'foursy-one', second: 'five' });
+    expect(unitNames(31104)).toEqual({
+      hour: 'foursy',
+      minute: 'zero',
+      second: 'zero',
+    });
+    expect(unitNames(joinTicks({ hour: 15, minute: 25, second: 5 }))).toEqual({
+      hour: 'dozen-three',
+      minute: 'foursy-one',
+      second: 'five',
+    });
   });
 
   test('a niftimal glyph is spoken as its pair name', () => {
-    const spoken = (glyph) => unitNames(joinTicks({
-      hour: niftimalValue(glyph), minute: 0, second: 0,
-    })).hour;
+    const spoken = (glyph) =>
+      unitNames(
+        joinTicks({
+          hour: niftimalValue(glyph),
+          minute: 0,
+          second: 0,
+        }),
+      ).hour;
     expect(spoken('6')).toBe('six');
     expect(spoken('A')).toBe('ten');
     expect(spoken('B')).toBe('eleven');
@@ -179,15 +193,20 @@ describe('digit naming', () => {
 
   test('the whole time reads as one number by the pair rule', () => {
     expect(spokenTime(0)).toBe('zero');
-    expect(spokenTime(joinTicks({ hour: 15, minute: 25, second: 5 })))
-      .toBe('dozen-three unexian, foursy-one nif five');
-    expect(spokenTime(46655)).toBe('fifsy-five unexian, fifsy-five nif fifsy-five');
+    expect(spokenTime(joinTicks({ hour: 15, minute: 25, second: 5 }))).toBe(
+      'dozen-three unexian, foursy-one nif five',
+    );
+    expect(spokenTime(46655)).toBe(
+      'fifsy-five unexian, fifsy-five nif fifsy-five',
+    );
     expect(spokenTime(31104)).toBe('foursy unexian');
   });
 
   test('a leading one-nif minute is spoken bare, per the /learn module', () => {
     // 00:01:05₆ — same open question as blockName in Learn/seximal.js.
-    expect(spokenTime(joinTicks({ hour: 0, minute: 1, second: 5 }))).toBe('nif five');
+    expect(spokenTime(joinTicks({ hour: 0, minute: 1, second: 5 }))).toBe(
+      'nif five',
+    );
   });
 });
 
@@ -202,7 +221,9 @@ describe('the unit definitions', () => {
   test('the sign is exact only where the SI length actually is', () => {
     // A lapse is 86400/36 = 2400 s on the nose. The other three repeat, or
     // are the Earth turning, so they are approximations and say so.
-    const sign = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]));
+    const sign = Object.fromEntries(
+      UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]),
+    );
     expect(sign.lapse).toBe('=');
     expect(sign.lull).toBe('≈');
     expect(sign.moment).toBe('≈');
@@ -211,12 +232,21 @@ describe('the unit definitions', () => {
 
   test('the ladder is unbroken: eight rungs, each a sixth of the one above', () => {
     expect(UNIT_DEFINITIONS.map(([n]) => n)).toEqual([
-      'day', 'watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap',
+      'day',
+      'watch',
+      'lapse',
+      'span',
+      'lull',
+      'breath',
+      'moment',
+      'snap',
     ]);
   });
 
   test('what is canon says so, and what is ours says so', () => {
-    const source = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , , , s]) => [n, s]));
+    const source = Object.fromEntries(
+      UNIT_DEFINITIONS.map(([n, , , , , s]) => [n, s]),
+    );
     expect(source.span).toBe('Kunimunean');
     expect(source.snap).toBe('Kunimunean');
     expect(source.lapse).toBe('Misalian');
@@ -227,11 +257,22 @@ describe('the unit definitions', () => {
 
   test('exact down to the span, repeating below it — because 3^3 runs out', () => {
     const SI_DAY = 24 * 60 * 60; // 86400 = 2^7 · 3^3 · 5^2
-    [1, 2, 3].forEach((n) => expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(true));
-    [4, 5, 6, 7].forEach((n) => expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(false));
-    const sign = Object.fromEntries(UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]));
+    [1, 2, 3].forEach((n) =>
+      expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(true),
+    );
+    [4, 5, 6, 7].forEach((n) =>
+      expect(Number.isInteger(SI_DAY / 6 ** n)).toBe(false),
+    );
+    const sign = Object.fromEntries(
+      UNIT_DEFINITIONS.map(([n, , , s]) => [n, s]),
+    );
     expect([sign.watch, sign.lapse, sign.span]).toEqual(['=', '=', '=']);
-    expect([sign.lull, sign.breath, sign.moment, sign.snap]).toEqual(['≈', '≈', '≈', '≈']);
+    expect([sign.lull, sign.breath, sign.moment, sign.snap]).toEqual([
+      '≈',
+      '≈',
+      '≈',
+      '≈',
+    ]);
   });
 
   test('and the claim behind that sign holds', () => {
@@ -248,19 +289,26 @@ describe('ticking on the seximal second', () => {
   test('the wait always lands on the next tick, never inside one', () => {
     // The relationship, not a pinned literal: from any instant, waiting
     // msToNextTick lands on a tick index exactly one higher.
-    [at(0, 0, 0), at(0, 0, 1, 7), at(9, 41, 33, 555), at(16, 0, 0), at(23, 59, 58)]
-      .forEach((d) => {
-        const landed = new Date(d.getTime() + msToNextTick(d));
-        expect(ticksSinceMidnight(landed)).toBe(ticksSinceMidnight(d) + 1);
-      });
+    [
+      at(0, 0, 0),
+      at(0, 0, 1, 7),
+      at(9, 41, 33, 555),
+      at(16, 0, 0),
+      at(23, 59, 58),
+    ].forEach((d) => {
+      const landed = new Date(d.getTime() + msToNextTick(d));
+      expect(ticksSinceMidnight(landed)).toBe(ticksSinceMidnight(d) + 1);
+    });
   });
 
   test('the wait is a positive span no longer than one tick', () => {
-    [at(0, 0, 0), at(4, 20, 0, 1), at(16, 0, 0), at(21, 15, 45, 999)].forEach((d) => {
-      const wait = msToNextTick(d);
-      expect(wait).toBeGreaterThan(0);
-      expect(wait).toBeLessThanOrEqual(Math.ceil(MS_PER_TICK));
-    });
+    [at(0, 0, 0), at(4, 20, 0, 1), at(16, 0, 0), at(21, 15, 45, 999)].forEach(
+      (d) => {
+        const wait = msToNextTick(d);
+        expect(wait).toBeGreaterThan(0);
+        expect(wait).toBeLessThanOrEqual(Math.ceil(MS_PER_TICK));
+      },
+    );
   });
 
   test('re-aiming each tick does not drift over a whole hour of them', () => {
@@ -277,6 +325,8 @@ describe('ticking on the seximal second', () => {
     // face repeated, then skipped.
     const d = at(9, 41, 33, 0);
     const afterOneDecimalSecond = new Date(d.getTime() + 1000);
-    expect(ticksSinceMidnight(afterOneDecimalSecond)).toBe(ticksSinceMidnight(d));
+    expect(ticksSinceMidnight(afterOneDecimalSecond)).toBe(
+      ticksSinceMidnight(d),
+    );
   });
 });

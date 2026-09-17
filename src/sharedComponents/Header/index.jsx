@@ -12,22 +12,16 @@ const Header = () => {
   return (
     <header className="main-header">
       <nav className="main-header__nav" aria-label="Main navigation">
-        {
-          pages.map((page) => (
-            <Link
-              to={`/${page.path}`}
-              key={page.name}
-              className={`nav__item ${currentTab === page.path ? 'nav__item--selected' : ''}`}
-            >
-              <span className="nav__label">{page.name}</span>
-              <img
-                className="nav__icon"
-                src={page.icon}
-                alt={page.name}
-              />
-            </Link>
-          ))
-        }
+        {pages.map((page) => (
+          <Link
+            to={`/${page.path}`}
+            key={page.name}
+            className={`nav__item ${currentTab === page.path ? 'nav__item--selected' : ''}`}
+          >
+            <span className="nav__label">{page.name}</span>
+            <img className="nav__icon" src={page.icon} alt={page.name} />
+          </Link>
+        ))}
       </nav>
     </header>
   );

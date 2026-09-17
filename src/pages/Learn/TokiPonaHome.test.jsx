@@ -13,11 +13,12 @@ import { MemoryRouter } from 'react-router-dom';
 
 import TokiPonaHome from './TokiPonaHome';
 
-const mount = () => render(
-  <MemoryRouter initialEntries={['/learn/toki-pona']}>
-    <TokiPonaHome />
-  </MemoryRouter>,
-);
+const mount = () =>
+  render(
+    <MemoryRouter initialEntries={['/learn/toki-pona']}>
+      <TokiPonaHome />
+    </MemoryRouter>,
+  );
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -58,7 +59,9 @@ describe('prototype keys must not crash the page', () => {
     test(`typing "${key}" does not throw`, () => {
       mount();
       const box = screen.getByLabelText(/search/i);
-      expect(() => fireEvent.change(box, { target: { value: key } })).not.toThrow();
+      expect(() =>
+        fireEvent.change(box, { target: { value: key } }),
+      ).not.toThrow();
     });
   });
 

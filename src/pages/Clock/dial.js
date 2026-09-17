@@ -83,14 +83,16 @@ const MS_PER_BREATH = MS_PER_MINUTE / 6;
  * This is what seximal.net says the span is FOR — six nif of them in a day, so
  * you can say the time without colons, good to 6 min 40 s.
  */
-export const spanIndex = (msSinceMidnight) => Math.floor(msSinceMidnight / MS_PER_SPAN);
+export const spanIndex = (msSinceMidnight) =>
+  Math.floor(msSinceMidnight / MS_PER_SPAN);
 
 /**
  * Which sixth of the day we are in, 0..5 — the watch, as a REGION rather than
  * a pointer. The dial already has six major marks, so a watch is the wedge
  * between two of them and needs no hand.
  */
-export const watchIndex = (msSinceMidnight) => Math.floor(msSinceMidnight / MS_PER_WATCH);
+export const watchIndex = (msSinceMidnight) =>
+  Math.floor(msSinceMidnight / MS_PER_WATCH);
 
 /**
  * Watch and breath AS HANDS, for the sketch that shows why they are a weak
@@ -122,7 +124,15 @@ export const extraHandAngles = (msSinceMidnight) => ({
  * hands; this packs one digit per hand and needs seven. Same information, and
  * this one is honest about the base: six marks, six of everything.
  */
-export const LADDER = ['watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap'];
+export const LADDER = [
+  'watch',
+  'lapse',
+  'span',
+  'lull',
+  'breath',
+  'moment',
+  'snap',
+];
 
 /**
  * Digit `n` (1-based) of the day's seximal expansion, 0..5.
@@ -139,22 +149,24 @@ export const LADDER = ['watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'sn
  * is 86400000 × 6⁷ ≈ 2.4e13, comfortably inside 2^53. Same trick, and the same
  * reason, as ticksSinceMidnight in clock.js.
  */
-export const ladderDigit = (msSinceMidnight, n) => (
-  Math.floor((msSinceMidnight * 6 ** n) / MS_PER_DAY) % 6
-);
+export const ladderDigit = (msSinceMidnight, n) =>
+  Math.floor((msSinceMidnight * 6 ** n) / MS_PER_DAY) % 6;
 
 /** All seven digits, outermost rung first. */
-export const ladderDigits = (msSinceMidnight) => (
-  LADDER.map((_, i) => ladderDigit(msSinceMidnight, i + 1))
-);
+export const ladderDigits = (msSinceMidnight) =>
+  LADDER.map((_, i) => ladderDigit(msSinceMidnight, i + 1));
 
 /**
  * Where each DIGIT sits: the mark a hand's current digit occupies. Stepped by
  * definition — this is the digit's home, not the hand's animation.
  */
-export const ladderAngles = (msSinceMidnight) => Object.fromEntries(
-  LADDER.map((unit, i) => [unit, turnToDegrees(ladderDigit(msSinceMidnight, i + 1) / 6)]),
-);
+export const ladderAngles = (msSinceMidnight) =>
+  Object.fromEntries(
+    LADDER.map((unit, i) => [
+      unit,
+      turnToDegrees(ladderDigit(msSinceMidnight, i + 1) / 6),
+    ]),
+  );
 
 /**
  * The seven hands as DRAWN — sweeping (Travis, 26.0905: "smoothly from tick to
@@ -167,13 +179,16 @@ export const ladderAngles = (msSinceMidnight) => Object.fromEntries(
  * it has last passed. Stepping and sweeping therefore agree at every boundary
  * and nowhere else, which is what the test pins.
  */
-export const ladderTurn = (msSinceMidnight, n) => (
-  (msSinceMidnight / (MS_PER_DAY / 6 ** (n - 1))) % 1
-);
+export const ladderTurn = (msSinceMidnight, n) =>
+  (msSinceMidnight / (MS_PER_DAY / 6 ** (n - 1))) % 1;
 
-export const ladderSweepAngles = (msSinceMidnight) => Object.fromEntries(
-  LADDER.map((unit, i) => [unit, turnToDegrees(ladderTurn(msSinceMidnight, i + 1))]),
-);
+export const ladderSweepAngles = (msSinceMidnight) =>
+  Object.fromEntries(
+    LADDER.map((unit, i) => [
+      unit,
+      turnToDegrees(ladderTurn(msSinceMidnight, i + 1)),
+    ]),
+  );
 
 /** Cartesian point on a circle of radius r, at mark `i` of MARKS, centre 0,0. */
 export const markPoint = (i, r) => {

@@ -38,7 +38,8 @@ h1 {
 
 h2 {
   color: black;
-  font-size: 22px; letter-spacing: 0.5px;
+  font-size: 22px;
+  letter-spacing: 0.5px;
   margin: 20px 0 8px 0;
   text-transform: uppercase;
 }
@@ -87,7 +88,8 @@ a:hover {
   text-decoration: underline;
 }
 
-code, code * {
+code,
+code * {
   margin: 0;
   background-color: var(--light-grey);
 }
@@ -99,7 +101,8 @@ main {
 }
 
 @media only screen and (max-width: 500px) {
-  h1, h2 {
+  h1,
+  h2 {
     text-align: center;
   }
 

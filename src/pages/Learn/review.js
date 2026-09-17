@@ -49,10 +49,11 @@ const shuffle = (arr) => {
 };
 
 /** Glosses are stored as one "a · b · c" string; the parts are all acceptable. */
-export const glossParts = (gloss) => String(gloss || '')
-  .split('·')
-  .map((g) => g.trim())
-  .filter(Boolean);
+export const glossParts = (gloss) =>
+  String(gloss || '')
+    .split('·')
+    .map((g) => g.trim())
+    .filter(Boolean);
 
 /**
  * How many levels to draw from. Anything unreadable — no store, a corrupt
@@ -83,7 +84,11 @@ export const knownVocab = (levelsKnown) => {
     (level.vocab || []).forEach((v) => {
       if (seen.has(v.word)) return;
       seen.add(v.word);
-      out.push({ word: v.word, gloss: v.gloss, glyph: v.glyph || GLYPHS[v.word] });
+      out.push({
+        word: v.word,
+        gloss: v.gloss,
+        glyph: v.glyph || GLYPHS[v.word],
+      });
     });
   });
   return out;
@@ -130,8 +135,10 @@ const wordItem = (v) => ({
 
 const meaningItem = (v, index) => {
   const parts = glossParts(v.gloss);
-  const asked = parts.length ? parts[Math.floor(Math.random() * parts.length)] : v.gloss;
-  const accepted = (index[String(asked).toLowerCase()] || [v.word]);
+  const asked = parts.length
+    ? parts[Math.floor(Math.random() * parts.length)]
+    : v.gloss;
+  const accepted = index[String(asked).toLowerCase()] || [v.word];
   const others = accepted.filter((w) => w !== v.word);
   return {
     kind: 'meaning',
@@ -158,10 +165,12 @@ const BUILDERS = {
 const MISS_WEIGHT = 1.5;
 const MISS_CAP = 4;
 
-export const weightFor = (word, misses) => 1 + MISS_WEIGHT * Math.min(misses[word] || 0, MISS_CAP);
+export const weightFor = (word, misses) =>
+  1 + MISS_WEIGHT * Math.min(misses[word] || 0, MISS_CAP);
 
 /** The same word twice running feels like a bug even when it is chance. */
-const without = (pool, word) => (pool.length > 1 ? pool.filter((v) => v.word !== word) : pool);
+const without = (pool, word) =>
+  pool.length > 1 ? pool.filter((v) => v.word !== word) : pool;
 
 const weightedPick = (pool, misses) => {
   const total = pool.reduce((acc, v) => acc + weightFor(v.word, misses), 0);
@@ -174,8 +183,11 @@ const weightedPick = (pool, misses) => {
 };
 
 /** The per-word miss tally as a plain map, read from local progress. */
-export const missTally = (course = COURSE) => weakWords(course)
-  .reduce((acc, { word, count }) => ({ ...acc, [word]: count }), {});
+export const missTally = (course = COURSE) =>
+  weakWords(course).reduce(
+    (acc, { word, count }) => ({ ...acc, [word]: count }),
+    {},
+  );
 
 /**
  * Build a review session over levels 1..levelsKnown.

@@ -7,14 +7,23 @@
 
 import { LEVELS } from './tokipona';
 import {
-  buildReviewSession, clampLevels, defaultLevelsKnown, glossParts, isCorrect,
-  knownVocab, missTally, REVIEW_KINDS, SESSION_LENGTH, weightFor,
+  buildReviewSession,
+  clampLevels,
+  defaultLevelsKnown,
+  glossParts,
+  isCorrect,
+  knownVocab,
+  missTally,
+  REVIEW_KINDS,
+  SESSION_LENGTH,
+  weightFor,
 } from './review';
 import { levelsReached, recordSession, weakWords } from './progress';
 
 const KEY = 'travish.learn.v1';
 
-const wordsIn = (n) => LEVELS.slice(0, n).flatMap((l) => l.vocab.map((v) => v.word));
+const wordsIn = (n) =>
+  LEVELS.slice(0, n).flatMap((l) => l.vocab.map((v) => v.word));
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -34,7 +43,9 @@ describe('the pool', () => {
 
   test('a session never asks about a level you have not reached', () => {
     const allowed = new Set(wordsIn(1));
-    const later = new Set(wordsIn(LEVELS.length).filter((w) => !allowed.has(w)));
+    const later = new Set(
+      wordsIn(LEVELS.length).filter((w) => !allowed.has(w)),
+    );
     expect(later.size).toBeGreaterThan(0); // the test would be vacuous otherwise
 
     const session = buildReviewSession(1, { count: 200 });
@@ -82,20 +93,26 @@ describe('endlessness', () => {
 describe('directions', () => {
   test('all three appear in every session of at least three questions', () => {
     for (let i = 0; i < 50; i += 1) {
-      const kinds = new Set(buildReviewSession(1, { count: 3 }).map((it) => it.kind));
+      const kinds = new Set(
+        buildReviewSession(1, { count: 3 }).map((it) => it.kind),
+      );
       expect([...kinds].sort()).toEqual([...REVIEW_KINDS].sort());
     }
   });
 
   test('glyph -> word shows the glyph and wants the word', () => {
-    const item = buildReviewSession(1, { count: 60 }).find((it) => it.kind === 'glyph');
+    const item = buildReviewSession(1, { count: 60 }).find(
+      (it) => it.kind === 'glyph',
+    );
     expect(item.promptIsGlyph).toBe(true);
     expect(item.prompt.codePointAt(0)).toBeGreaterThanOrEqual(0xf1900);
     expect(isCorrect(item, item.answer)).toBe(true);
   });
 
   test('word -> meaning accepts any listed gloss', () => {
-    const item = buildReviewSession(1, { count: 60 }).find((it) => it.kind === 'word');
+    const item = buildReviewSession(1, { count: 60 }).find(
+      (it) => it.kind === 'word',
+    );
     glossParts(item.answer).forEach((gloss) => {
       expect(isCorrect(item, gloss)).toBe(true);
     });
@@ -103,7 +120,9 @@ describe('directions', () => {
   });
 
   test('meaning -> word is the reverse: a gloss in, the toki pona word out', () => {
-    const item = buildReviewSession(1, { count: 60 }).find((it) => it.kind === 'meaning');
+    const item = buildReviewSession(1, { count: 60 }).find(
+      (it) => it.kind === 'meaning',
+    );
     const known = knownVocab(1);
     // The prompt is a meaning, not a word.
     expect(known.some((v) => v.word === item.prompt)).toBe(false);
@@ -134,14 +153,19 @@ describe('directions', () => {
 describe('weighting toward what is going wrong', () => {
   test('a missed word weighs more, with a cap', () => {
     expect(weightFor('telo', {})).toBe(1);
-    expect(weightFor('telo', { telo: 2 })).toBeGreaterThan(weightFor('telo', { telo: 1 }));
-    expect(weightFor('telo', { telo: 40 })).toBe(weightFor('telo', { telo: 4 }));
+    expect(weightFor('telo', { telo: 2 })).toBeGreaterThan(
+      weightFor('telo', { telo: 1 }),
+    );
+    expect(weightFor('telo', { telo: 40 })).toBe(
+      weightFor('telo', { telo: 4 }),
+    );
   });
 
   test('the weight actually moves the sampling', () => {
     const misses = { telo: 4 };
     const session = buildReviewSession(1, { count: 600, misses });
-    const teloShare = session.filter((it) => it.word === 'telo').length / session.length;
+    const teloShare =
+      session.filter((it) => it.word === 'telo').length / session.length;
     // Even weighting over twelve words would be ~8%; telo is weighted 7x.
     expect(teloShare).toBeGreaterThan(0.15);
   });
@@ -168,7 +192,11 @@ describe('how far the learner has got', () => {
 
   test('a drilled level joins the pool', () => {
     recordSession({
-      course: 'toki-pona', levelId: '2', total: 27, correct: 20, misses: [],
+      course: 'toki-pona',
+      levelId: '2',
+      total: 27,
+      correct: 20,
+      misses: [],
     });
     expect(levelsReached('toki-pona')).toBe(2);
     expect(defaultLevelsKnown()).toBe(2);
@@ -176,17 +204,29 @@ describe('how far the learner has got', () => {
 
   test('review sessions are not levels and never inflate the range', () => {
     recordSession({
-      course: 'toki-pona', levelId: '1', total: 27, correct: 27, misses: [],
+      course: 'toki-pona',
+      levelId: '1',
+      total: 27,
+      correct: 27,
+      misses: [],
     });
     recordSession({
-      course: 'toki-pona', levelId: 'review', total: 12, correct: 12, misses: [],
+      course: 'toki-pona',
+      levelId: 'review',
+      total: 12,
+      correct: 12,
+      misses: [],
     });
     expect(levelsReached('toki-pona')).toBe(1);
   });
 
   test('another course does not count', () => {
     recordSession({
-      course: 'seximal', levelId: '5', total: 12, correct: 12, misses: [],
+      course: 'seximal',
+      levelId: '5',
+      total: 12,
+      correct: 12,
+      misses: [],
     });
     expect(levelsReached('toki-pona')).toBe(0);
   });
@@ -198,7 +238,9 @@ describe('a broken or absent store degrades, it does not throw', () => {
     expect(() => weakWords('toki-pona')).not.toThrow();
     expect(() => missTally()).not.toThrow();
     expect(defaultLevelsKnown()).toBeGreaterThanOrEqual(1);
-    expect(buildReviewSession(defaultLevelsKnown())).toHaveLength(SESSION_LENGTH);
+    expect(buildReviewSession(defaultLevelsKnown())).toHaveLength(
+      SESSION_LENGTH,
+    );
   };
 
   test('absent', () => {
@@ -219,16 +261,27 @@ describe('a broken or absent store degrades, it does not throw', () => {
   });
 
   test('sessions from an older version, with no per-word record', () => {
-    window.localStorage.setItem(KEY, JSON.stringify({
-      sessions: [
-        {
-          course: 'toki-pona', levelId: '1', total: 27, correct: 21, misses: ['word'],
-        },
-        {
-          course: 'toki-pona', levelId: '2', total: 27, correct: 24, misses: ['glyph'],
-        },
-      ],
-    }));
+    window.localStorage.setItem(
+      KEY,
+      JSON.stringify({
+        sessions: [
+          {
+            course: 'toki-pona',
+            levelId: '1',
+            total: 27,
+            correct: 21,
+            misses: ['word'],
+          },
+          {
+            course: 'toki-pona',
+            levelId: '2',
+            total: 27,
+            correct: 24,
+            misses: ['glyph'],
+          },
+        ],
+      }),
+    );
     expect(weakWords('toki-pona')).toEqual([]);
     expect(missTally()).toEqual({});
     expect(defaultLevelsKnown()).toBe(2);
@@ -236,16 +289,27 @@ describe('a broken or absent store degrades, it does not throw', () => {
   });
 
   test('sessions full of junk', () => {
-    window.localStorage.setItem(KEY, JSON.stringify({
-      sessions: [null, 7, { course: 'toki-pona', levelId: {}, missedWords: [null, 3, ''] }],
-    }));
+    window.localStorage.setItem(
+      KEY,
+      JSON.stringify({
+        sessions: [
+          null,
+          7,
+          { course: 'toki-pona', levelId: {}, missedWords: [null, 3, ''] },
+        ],
+      }),
+    );
     survives();
   });
 
   test('and a session still records after all that', () => {
     window.localStorage.setItem(KEY, 'garbage');
     recordSession({
-      course: 'toki-pona', levelId: 'review', total: 12, correct: 11, missedWords: ['mun'],
+      course: 'toki-pona',
+      levelId: 'review',
+      total: 12,
+      correct: 11,
+      missedWords: ['mun'],
     });
     expect(weakWords('toki-pona')).toEqual([{ word: 'mun', count: 1 }]);
   });

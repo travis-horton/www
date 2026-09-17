@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
-  buildSession, getLevel, isCorrect, LEVELS, SESSION_LENGTH,
+  buildSession,
+  getLevel,
+  isCorrect,
+  LEVELS,
+  SESSION_LENGTH,
 } from './seximal';
 import { LESSONS } from './Lessons';
 import { recordSession } from './progress';
@@ -26,7 +30,10 @@ function Drill() {
   const level = getLevel(levelId);
 
   const [round, setRound] = useState(0);
-  const items = useMemo(() => (level ? buildSession(level) : []), [level, round]);
+  const items = useMemo(
+    () => (level ? buildSession(level) : []),
+    [level, round],
+  );
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState(TEACHING);
@@ -138,7 +145,10 @@ function Drill() {
   if (phase === DONE) {
     const correct = results.filter((r) => r.correct).length;
     const missed = results.filter((r) => !r.correct);
-    const byKind = missed.reduce((acc, r) => ({ ...acc, [r.kind]: (acc[r.kind] || 0) + 1 }), {});
+    const byKind = missed.reduce(
+      (acc, r) => ({ ...acc, [r.kind]: (acc[r.kind] || 0) + 1 }),
+      {},
+    );
     return (
       <div className="drill">
         <h2>{`${correct} / ${results.length}`}</h2>
@@ -167,16 +177,14 @@ function Drill() {
             }}
           >
             Another dozen
-          </button>
-          {' '}
+          </button>{' '}
           <button
             className="drill__link-button"
             type="button"
             onClick={() => setPhase(TEACHING)}
           >
             read the lesson again
-          </button>
-          {' '}
+          </button>{' '}
           <Link to="/learn/seximal">Back to the levels</Link>
         </p>
       </div>
@@ -215,7 +223,9 @@ function Drill() {
         />
 
         {checked && (
-          <div className={`drill__verdict ${wasRight ? 'is-right' : 'is-wrong'}`}>
+          <div
+            className={`drill__verdict ${wasRight ? 'is-right' : 'is-wrong'}`}
+          >
             <p className="drill__verdict-line">{wasRight ? 'Yes.' : 'No.'}</p>
             <p>
               {`${item.digits}₆`}
@@ -242,9 +252,7 @@ function Drill() {
         </p>
       </form>
 
-      <p className="drill__meta">
-        {`a dozen questions (${SESSION_LENGTH})`}
-      </p>
+      <p className="drill__meta">{`a dozen questions (${SESSION_LENGTH})`}</p>
     </div>
   );
 }
