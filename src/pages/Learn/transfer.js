@@ -80,7 +80,6 @@ export const VERSION = 1;
  * the quiet ones, like a note-taking app helpfully converting "quotes" to
  * smart quotes, which still parses and silently changes the data.
  */
-/* eslint-disable no-bitwise */
 export const checksum = (str) => {
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i += 1) {
@@ -89,15 +88,18 @@ export const checksum = (str) => {
   }
   return h.toString(16).padStart(8, '0');
 };
-/* eslint-enable no-bitwise */
 
 /** True for a session object this course can actually score. */
-const isUsable = (s) => Boolean(s)
-  && typeof s === 'object'
-  && typeof s.course === 'string' && s.course !== ''
-  && (typeof s.levelId === 'string' || typeof s.levelId === 'number')
-  && Number.isFinite(s.total) && s.total > 0
-  && Number.isFinite(s.correct) && s.correct >= 0;
+const isUsable = (s) =>
+  Boolean(s) &&
+  typeof s === 'object' &&
+  typeof s.course === 'string' &&
+  s.course !== '' &&
+  (typeof s.levelId === 'string' || typeof s.levelId === 'number') &&
+  Number.isFinite(s.total) &&
+  s.total > 0 &&
+  Number.isFinite(s.correct) &&
+  s.correct >= 0;
 
 /**
  * A dedupe key for each session in ONE list.
@@ -141,13 +143,14 @@ const atOf = (s) => (typeof s.at === 'string' && s.at !== '' ? s.at : null);
  * arrived in — the local device's before the imported ones, so a merge is
  * deterministic rather than dependent on object key order.
  */
-const chronological = (entries) => [...entries].sort((a, b) => {
-  if (a.at === null && b.at === null) return a.seq - b.seq;
-  if (a.at === null) return -1;
-  if (b.at === null) return 1;
-  if (a.at === b.at) return a.seq - b.seq;
-  return a.at < b.at ? -1 : 1;
-});
+const chronological = (entries) =>
+  [...entries].sort((a, b) => {
+    if (a.at === null && b.at === null) return a.seq - b.seq;
+    if (a.at === null) return -1;
+    if (b.at === null) return 1;
+    if (a.at === b.at) return a.seq - b.seq;
+    return a.at < b.at ? -1 : 1;
+  });
 
 /**
  * Union two session lists. Pure: no storage, no clock.
@@ -205,9 +208,8 @@ export const buildPayload = (sessions, now = new Date()) => {
 };
 
 /** Read this device's record and serialize it. One line, for the clipboard. */
-export const exportCode = (now = new Date()) => JSON.stringify(
-  buildPayload(load().sessions, now),
-);
+export const exportCode = (now = new Date()) =>
+  JSON.stringify(buildPayload(load().sessions, now));
 
 /*
  * Parse a pasted code. Never throws, never writes, and says what is wrong in
@@ -229,20 +231,32 @@ export const parseCode = (text) => {
   } catch (e) {
     return {
       ok: false,
-      error: 'That did not parse as a progress code. Copy the whole thing — from the first { to the last } — and paste it again.',
+      error:
+        'That did not parse as a progress code. Copy the whole thing — from the first { to the last } — and paste it again.',
     };
   }
 
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
-    return { ok: false, error: 'That is valid JSON, but not a /learn progress code.' };
+    return {
+      ok: false,
+      error: 'That is valid JSON, but not a /learn progress code.',
+    };
   }
 
   if (payload.format !== FORMAT) {
-    return { ok: false, error: 'That is not a /learn progress code — it came from something else.' };
+    return {
+      ok: false,
+      error:
+        'That is not a /learn progress code — it came from something else.',
+    };
   }
 
   if (!Number.isFinite(payload.version)) {
-    return { ok: false, error: 'That code has no version number, so there is no safe way to read it.' };
+    return {
+      ok: false,
+      error:
+        'That code has no version number, so there is no safe way to read it.',
+    };
   }
 
   if (payload.version > VERSION) {
@@ -256,11 +270,14 @@ export const parseCode = (text) => {
     return { ok: false, error: 'That code carries no sessions list.' };
   }
 
-  if (typeof payload.checksum === 'string'
-    && checksum(JSON.stringify(payload.sessions)) !== payload.checksum) {
+  if (
+    typeof payload.checksum === 'string' &&
+    checksum(JSON.stringify(payload.sessions)) !== payload.checksum
+  ) {
     return {
       ok: false,
-      error: 'That code looks truncated or edited — its checksum does not match its contents. Copy it again, all of it.',
+      error:
+        'That code looks truncated or edited — its checksum does not match its contents. Copy it again, all of it.',
     };
   }
 
@@ -269,7 +286,8 @@ export const parseCode = (text) => {
     ok: true,
     sessions,
     skipped: payload.sessions.length - sessions.length,
-    exportedAt: typeof payload.exportedAt === 'string' ? payload.exportedAt : null,
+    exportedAt:
+      typeof payload.exportedAt === 'string' ? payload.exportedAt : null,
   };
 };
 

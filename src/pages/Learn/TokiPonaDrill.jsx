@@ -2,7 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
-  buildSession, getLevel, GLYPHS, isCorrect, isSelfGraded, LEVELS, missLabels, RULES, taughtIn,
+  buildSession,
+  getLevel,
+  GLYPHS,
+  isCorrect,
+  isSelfGraded,
+  LEVELS,
+  missLabels,
+  RULES,
+  taughtIn,
 } from './tokipona';
 import { recordSession, weakRules } from './progress';
 
@@ -114,11 +122,14 @@ function TokiPonaDrill() {
       setPhase(CHECKED);
       return;
     }
-    setResults([...results, {
-      kind: item.kind,
-      rules: item.rules,
-      correct: isCorrect(item, input),
-    }]);
+    setResults([
+      ...results,
+      {
+        kind: item.kind,
+        rules: item.rules,
+        correct: isCorrect(item, input),
+      },
+    ]);
     setPhase(CHECKED);
   };
 
@@ -211,9 +222,11 @@ function TokiPonaDrill() {
      * lon supa" reads "no e after a preposition", not "en-tp".
      */
     const tally = {};
-    missed.forEach((r) => missLabels(r).forEach((label) => {
-      tally[label] = (tally[label] || 0) + 1;
-    }));
+    missed.forEach((r) =>
+      missLabels(r).forEach((label) => {
+        tally[label] = (tally[label] || 0) + 1;
+      }),
+    );
     const buckets = Object.entries(tally).sort((a, b) => b[1] - a[1]);
     /*
      * The standing weak list, across recent sessions — rules only, because a
@@ -244,7 +257,9 @@ function TokiPonaDrill() {
         )}
         {standing.length > 0 && (
           <>
-            <p className="learn__meta">Your weak list, across recent sessions:</p>
+            <p className="learn__meta">
+              Your weak list, across recent sessions:
+            </p>
             <ul className="drill__weak">
               {standing.map(({ rule, count }) => (
                 <li key={rule}>{`${RULES[rule] || rule} — ${count}`}</li>
@@ -351,14 +366,22 @@ function TokiPonaDrill() {
               <button
                 className="drill__button"
                 type="button"
-                onClick={() => advance({ kind: item.kind, rules: item.rules, correct: true })}
+                onClick={() =>
+                  advance({ kind: item.kind, rules: item.rules, correct: true })
+                }
               >
                 I had it
               </button>
               <button
                 className="drill__link-button"
                 type="button"
-                onClick={() => advance({ kind: item.kind, rules: item.rules, correct: false })}
+                onClick={() =>
+                  advance({
+                    kind: item.kind,
+                    rules: item.rules,
+                    correct: false,
+                  })
+                }
               >
                 I didn&apos;t
               </button>

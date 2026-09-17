@@ -159,8 +159,8 @@ export const weakWords = (course, limit = 20) => {
  * predates it and must keep working, so a missing field contributes nothing.
  */
 export const weakRules = (course, limit = 20) => {
-  const runs = load().sessions
-    .filter((s) => s && s.course === course)
+  const runs = load()
+    .sessions.filter((s) => s && s.course === course)
     .slice(-limit);
   const tally = {};
   runs.forEach((s) => {
