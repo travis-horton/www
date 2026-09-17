@@ -10,13 +10,13 @@
   color: var(--clrNeon);
   border: var(--clrNeon) 0.125em solid;
   padding: 0.25em 1em;
-  border-radius: .25em;
+  border-radius: 0.25em;
 
   text-shadow: 0 0 0.1em currentColor;
 
   box-shadow:
-  0 0 0.5em 0 var(--clrNeon),
-  inset 0 0 0.5em 0 var(--clrNeon);
+    0 0 0.5em 0 var(--clrNeon),
+    inset 0 0 0.5em 0 var(--clrNeon);
 
   position: relative;
   z-index: 3;
@@ -30,7 +30,7 @@
   --clrNeon: hsl(302 79% 37%);
   --clrBg: hsl(0 0% 10%);
   pointer-events: none;
-  content: "";
+  content: '';
   position: absolute;
   background: var(--clrNeon);
   top: 100%;
@@ -47,7 +47,7 @@
 .blog__neon-button::after {
   --clrNeon: hsl(302 79% 37%);
   --clrBg: hsl(0 0% 10%);
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   bottom: 0;
@@ -59,7 +59,8 @@
   transition: opacity 100ms linear;
 }
 
-.blog__neon-button:hover, .blog__neon-button:focus {
+.blog__neon-button:hover,
+.blog__neon-button:focus {
   --clrNeon: hsl(302 79% 37%);
   --clrBg: hsl(0 0% 10%);
   background: var(--clrNeon);
@@ -68,10 +69,12 @@
   text-decoration: none;
 }
 
-.blog__neon-button:hover::after, .blog__neon-button:focus::after  {
+.blog__neon-button:hover::after,
+.blog__neon-button:focus::after {
   opacity: 1;
 }
 
-.blog__neon-button:hover::before, .blog__neon-button:focus::before  {
+.blog__neon-button:hover::before,
+.blog__neon-button:focus::before {
   opacity: 1;
 }

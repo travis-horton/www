@@ -71,8 +71,8 @@ function Ballot({ now, ms, mode }) {
       <p className="clock__vote-note" data-testid="vote-pending">
         There is nowhere yet to put a vote. This site is static, with no API
         behind it, so a button here could only write your answer into your own
-        browser where nobody would ever read it. Counting these is the next
-        real thing the backend has to do.
+        browser where nobody would ever read it. Counting these is the next real
+        thing the backend has to do.
       </p>
 
       {CLOCK_OPTIONS.map((opt, i) => (
@@ -87,8 +87,7 @@ function Ballot({ now, ms, mode }) {
               {/* The space is required, not cosmetic: flex `gap` supplies the
                   LOOK, but the accessible name concatenates raw text nodes, so
                   without it every heading read "1Three hands on a nif-mark
-                  dial" in a screen reader's heading list. */}
-              {' '}
+                  dial" in a screen reader's heading list. */}{' '}
               {opt.title}
             </h3>
             <p className="clock__option-sub">{opt.subtitle}</p>
@@ -109,13 +108,17 @@ function Ballot({ now, ms, mode }) {
                 <div className="clock__case clock__case--pro">
                   <h4>for</h4>
                   <ul>
-                    {opt.pros.map((p) => <li key={p}>{p}</li>)}
+                    {opt.pros.map((p) => (
+                      <li key={p}>{p}</li>
+                    ))}
                   </ul>
                 </div>
                 <div className="clock__case clock__case--con">
                   <h4>against</h4>
                   <ul>
-                    {opt.cons.map((c) => <li key={c}>{c}</li>)}
+                    {opt.cons.map((c) => (
+                      <li key={c}>{c}</li>
+                    ))}
                   </ul>
                 </div>
               </div>

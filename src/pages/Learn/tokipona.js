@@ -146,10 +146,11 @@ export const GLYPHS = {
 const PUNCT = /[.,!?;:"']/g;
 
 /** A toki pona sentence rendered in glyphs. Unknown words fall through as-is. */
-export const toGlyphs = (sentence) => sentence
-  .split(/\s+/)
-  .map((w) => GLYPHS[w.toLowerCase().replace(PUNCT, '')] || w)
-  .join('');
+export const toGlyphs = (sentence) =>
+  sentence
+    .split(/\s+/)
+    .map((w) => GLYPHS[w.toLowerCase().replace(PUNCT, '')] || w)
+    .join('');
 
 const vocab = (word, gloss) => ({ word, gloss, glyph: GLYPHS[word] });
 
@@ -163,15 +164,20 @@ const vocab = (word, gloss) => ({ word, gloss, glyph: GLYPHS[word] });
  * spaced learning, not a duplication — Praxis leaf 9a1c55da, option 1.
  */
 const again = (word, gloss) => ({
-  word, gloss, glyph: GLYPHS[word], again: true,
+  word,
+  gloss,
+  glyph: GLYPHS[word],
+  again: true,
 });
 
 export const LEVELS = [
   {
     id: '1',
     title: 'The first twelve',
-    blurb: 'Twelve words, their glyphs, and the one particle that makes a sentence: li.',
-    intro: 'A complete language in about 120 words, so every word carries a lot of weight — and each one has its own logogram, sitelen pona ("good writing"). Vowels as in Italian, stress the first syllable, j sounds like y.',
+    blurb:
+      'Twelve words, their glyphs, and the one particle that makes a sentence: li.',
+    intro:
+      'A complete language in about 120 words, so every word carries a lot of weight — and each one has its own logogram, sitelen pona ("good writing"). Vowels as in Italian, stress the first syllable, j sounds like y.',
     vocab: [
       vocab('mi', 'I · me · my'),
       vocab('sina', 'you'),
@@ -186,7 +192,8 @@ export const LEVELS = [
       vocab('suno', 'sun · light'),
       vocab('mun', 'moon'),
     ],
-    vocabNote: 'The glyphs give a lot away: suli is a figure with arms spread wide, lili the same figure shrunk; tomo is a house; telo is waves.',
+    vocabNote:
+      'The glyphs give a lot away: suli is a figure with arms spread wide, lili the same figure shrunk; tomo is a house; telo is waves.',
     rule: {
       particle: 'li',
       body: 'li marks the predicate — it sits between the subject and what is said about it: kili li pona, "the fruit is good." There is no "is" in toki pona; li does that work. The single exception: when mi or sina is the WHOLE subject, li is dropped — mi moku, "I\'m eating." (Add anything else to that subject and li comes back — see Level 10.) That is genuinely the whole rule.',
@@ -204,14 +211,17 @@ export const LEVELS = [
       ['I am important.', 'mi suli'],
       ['The person is eating.', 'jan li moku'],
     ],
-    closingNote: 'Adjectives follow their noun — jan pona is "good person," which is also the idiom for friend. So "you are my friend" is sina jan pona mi. Read it back once out loud.',
+    closingNote:
+      'Adjectives follow their noun — jan pona is "good person," which is also the idiom for friend. So "you are my friend" is sina jan pona mi. Read it back once out loud.',
     decode: ['moku li pona suli', 'food is very good'],
   },
   {
     id: '2',
     title: 'e, and twelve more',
-    blurb: 'The little word that unlocks whole sentences — plus words 13 to 24.',
-    intro: 'You know twelve words and li. Level 2 adds the little word that unlocks whole sentences — e — plus twelve new words.',
+    blurb:
+      'The little word that unlocks whole sentences — plus words 13 to 24.',
+    intro:
+      'You know twelve words and li. Level 2 adds the little word that unlocks whole sentences — e — plus twelve new words.',
     vocab: [
       vocab('ona', 'he · she · it · they'),
       vocab('ni', 'this · that'),
@@ -226,7 +236,8 @@ export const LEVELS = [
       vocab('ike', 'bad'),
       vocab('ale', 'all · everything'),
     ],
-    vocabNote: 'Notice ike is pona\'s opposite number, and ona covers he, she, it and they — toki pona doesn\'t gender its pronouns.',
+    vocabNote:
+      "Notice ike is pona's opposite number, and ona covers he, she, it and they — toki pona doesn't gender its pronouns.",
     rule: {
       particle: 'e',
       body: 'e marks the direct object — it sits between the verb and the thing the verb lands on: mi moku e kili, "I eat fruit." jan li lukin e mun, "the person looks at the moon." One sharp edge: e comes before every object, no exceptions. li is the only particle that ever disappears (when mi or sina is the whole subject); e never does.',
@@ -244,14 +255,17 @@ export const LEVELS = [
       ['You are eating everything.', 'sina moku e ale'],
       ['They make good things.', 'ona li pali e ijo pona'],
     ],
-    closingNote: 'ni does double duty: ni li pona is "this is good" — and after a noun it points: jan ni "this person," tomo ni "this house."',
+    closingNote:
+      'ni does double duty: ni li pona is "this is good" — and after a noun it points: jan ni "this person," tomo ni "this house."',
     decode: ['mi olin e sina', 'I love you'],
   },
   {
     id: '3',
     title: 'Colours, and how words stack',
-    blurb: 'No new particles — just modifiers, which follow their noun and pile up left to right.',
-    intro: 'No new particles this time — Level 3 is about how words stack. Twelve new words (25–36 of ~120), most of them colors and qualities, which is exactly what stacking is for.',
+    blurb:
+      'No new particles — just modifiers, which follow their noun and pile up left to right.',
+    intro:
+      'No new particles this time — Level 3 is about how words stack. Twelve new words (25–36 of ~120), most of them colors and qualities, which is exactly what stacking is for.',
     vocab: [
       vocab('mute', 'many · very'),
       vocab('sin', 'new · fresh'),
@@ -266,7 +280,8 @@ export const LEVELS = [
       vocab('kule', 'color · colorful'),
       vocab('wawa', 'strong · energetic'),
     ],
-    vocabNote: 'laso covers blue AND green — one word for the whole cool end of the spectrum. The warm end gets loje and jelo.',
+    vocabNote:
+      'laso covers blue AND green — one word for the whole cool end of the spectrum. The warm end gets loje and jelo.',
     rule: {
       particle: 'stacking modifiers',
       body: 'Modifiers FOLLOW their noun: telo lete "cold water," kili loje "red fruit." They stack left to right — each new word modifies everything before it: kili loje lili "small red-fruit." Possession is just more stacking: tomo mi "my house," jan pona sina "your friend." And mute after a quality intensifies it: pona mute "very good."',
@@ -284,14 +299,20 @@ export const LEVELS = [
       ['The new thing is round.', 'ijo sin li sike'],
       ['You are very strong.', 'sina wawa mute'],
     ],
-    closingNote: 'For the bench: ijo kule = "a colorful thing." kule alone is any color at all; the specific ones you now own are loje · jelo · laso · pimeja · walo.',
-    decode: ['kili loje mi li pona mute', 'my red fruit (the tomatoes) is very good'],
+    closingNote:
+      'For the bench: ijo kule = "a colorful thing." kule alone is any color at all; the specific ones you now own are loje · jelo · laso · pimeja · walo.',
+    decode: [
+      'kili loje mi li pona mute',
+      'my red fruit (the tomatoes) is very good',
+    ],
   },
   {
     id: '4',
     title: 'Preverbs — want to, can, learn to',
-    blurb: 'A small set of verbs slides in front of another verb, with no e between them.',
-    intro: 'Level 4 is where sentences get ambitious: preverbs let you want, can, and learn to do things. Twelve new words (37–48), heavy on verbs and sounds.',
+    blurb:
+      'A small set of verbs slides in front of another verb, with no e between them.',
+    intro:
+      'Level 4 is where sentences get ambitious: preverbs let you want, can, and learn to do things. Twelve new words (37–48), heavy on verbs and sounds.',
     vocab: [
       vocab('ken', 'can · possible'),
       vocab('kama', 'to come · become'),
@@ -306,7 +327,8 @@ export const LEVELS = [
       vocab('mu', '(any animal sound)'),
       vocab('soweli', 'land animal'),
     ],
-    vocabNote: 'toki is the language\'s own name: toki pona = "the good/simple language." And mu is whatever noise the animal makes — moo, woof, meow, all of it.',
+    vocabNote:
+      'toki is the language\'s own name: toki pona = "the good/simple language." And mu is whatever noise the animal makes — moo, woof, meow, all of it.',
     rule: {
       particle: 'preverbs',
       body: 'A small set of verbs can slide in FRONT of another verb — with no e between them: mi wile lape "I want to sleep." sina ken toki "you can speak." The set so far: wile · ken · kama · awen · sona · open · pini · lukin ("try to"). Two lovely compounds: kama sona = come-to-know = to learn; sona toki = to know how to speak. An object still takes its e — after the MAIN verb: mi wile moku e kili.',
@@ -324,14 +346,16 @@ export const LEVELS = [
       ['The animal wants to eat.', 'soweli li wile moku'],
       ['You can learn.', 'sina ken kama sona'],
     ],
-    closingNote: 'kalama musi "musical sound" = music — the household art form. Someone in this house makes kalama musi for a living.',
+    closingNote:
+      'kalama musi "musical sound" = music — the household art form. Someone in this house makes kalama musi for a living.',
     decode: ['mi kama sona e toki pona', 'I am learning toki pona'],
   },
   {
     id: '5',
     title: 'Putting things in places',
     blurb: 'The prepositions — and they take their noun directly, with no e.',
-    intro: 'Level 5 puts things in places: the prepositions. Twelve new words (49–60), including the garden, the tools, and the great outdoors.',
+    intro:
+      'Level 5 puts things in places: the prepositions. Twelve new words (49–60), including the garden, the tools, and the great outdoors.',
     vocab: [
       vocab('lon', 'at · in · on'),
       vocab('tawa', 'to · toward · to go'),
@@ -346,7 +370,8 @@ export const LEVELS = [
       vocab('lupa', 'door · opening'),
       vocab('insa', 'inside · center'),
     ],
-    vocabNote: 'ma kasi "plant-land" = the garden. supa moku = the dining table. Your phone? ilo toki — the talking tool.',
+    vocabNote:
+      'ma kasi "plant-land" = the garden. supa moku = the dining table. Your phone? ilo toki — the talking tool.',
     rule: {
       particle: 'prepositions',
       body: 'Prepositions follow the verb phrase — no e: mi lon tomo "I\'m in the house." ona li tawa ma kasi "she\'s going to the garden." mi pali kepeken ilo "I work using a tool." sina sama mi "you\'re like me." They also stand alone as verbs: lon = to be there, tawa = to go — which gives the classic farewell: mi tawa! "I\'m off!"',
@@ -364,14 +389,17 @@ export const LEVELS = [
       ['The plant is on the table.', 'kasi li lon supa'],
       ['The person comes from the land.', 'jan li kama tan ma'],
     ],
-    closingNote: 'tan also answers "why": tan ni = "because of this." You\'ll meet its question-partner in Level 7.',
+    closingNote:
+      'tan also answers "why": tan ni = "because of this." You\'ll meet its question-partner in Level 7.',
     decode: ['kasi mute li lon ma mi', 'many plants are on my land'],
   },
   {
     id: '6',
     title: 'Time, and the word la',
-    blurb: 'la sets the scene for whatever comes after it — and tenpo builds the whole calendar.',
-    intro: 'Level 6 adds time — and la, the little word that sets the scene. Twelve new words (61–72), with a detour through the market.',
+    blurb:
+      'la sets the scene for whatever comes after it — and tenpo builds the whole calendar.',
+    intro:
+      'Level 6 adds time — and la, the little word that sets the scene. Twelve new words (61–72), with a detour through the market.',
     vocab: [
       vocab('tenpo', 'time'),
       vocab('la', '(sets the scene)'),
@@ -386,7 +414,8 @@ export const LEVELS = [
       vocab('moli', 'dead · death'),
       vocab('weka', 'away · gone'),
     ],
-    vocabNote: 'The glyph script itself is sitelen pona — "good writing." And la\'s glyph is the little closing-paren curve: it sets the scene, then steps aside.',
+    vocabNote:
+      'The glyph script itself is sitelen pona — "good writing." And la\'s glyph is the little closing-paren curve: it sets the scene, then steps aside.',
     rule: {
       particle: 'la',
       body: 'X la Y — the phrase before la sets the scene for the sentence after it: tenpo ni la mi moku "right now, I\'m eating." tenpo compounds carry the whole calendar: tenpo suno = day · tenpo mun = month · tenpo lete = winter · tenpo ale la… "always…"',
@@ -404,14 +433,17 @@ export const LEVELS = [
       ['The picture is different.', 'sitelen li ante'],
       ['Right now, you are at the shop.', 'tenpo ni la sina lon esun'],
     ],
-    closingNote: 'nimi sina = your name. People get jan + a toki-pona-ized name: jan Tawi is taken — pick yours (jan An? jan Ane?) and it\'s official.',
+    closingNote:
+      "nimi sina = your name. People get jan + a toki-pona-ized name: jan Tawi is taken — pick yours (jan An? jan Ane?) and it's official.",
     decode: ['tenpo ale la moku li pona', 'food is always good'],
   },
   {
     id: '7',
     title: 'Asking, and the body',
-    blurb: 'Two question shapes — seme in the slot you care about, or X ala X — plus the whole body.',
-    intro: 'Level 7 teaches you to ask. Twelve new words (73–84): the question words and the whole body.',
+    blurb:
+      'Two question shapes — seme in the slot you care about, or X ala X — plus the whole body.',
+    intro:
+      'Level 7 teaches you to ask. Twelve new words (73–84): the question words and the whole body.',
     vocab: [
       vocab('seme', 'what? · which?'),
       vocab('anu', 'or'),
@@ -426,7 +458,8 @@ export const LEVELS = [
       vocab('sinpin', 'front · face'),
       vocab('nasa', 'strange · silly'),
     ],
-    vocabNote: 'luka is hand AND the number five — count your fingers; Level 9 counts with it. pilin is the heart that feels, not the one that pumps.',
+    vocabNote:
+      'luka is hand AND the number five — count your fingers; Level 9 counts with it. pilin is the heart that feels, not the one that pumps.',
     rule: {
       particle: 'asking questions',
       body: 'Two shapes: ① drop seme into the slot you\'re asking about — sina moku e seme? "you\'re eating WHAT?" · sina pilin seme? "how do you feel?" ② yes/no = X ala X: sina pona ala pona? "are you good?" — answer by repeating the word (pona = yes) or negating it (pona ala = no). ala also negates anything: mi sona ala "I don\'t know."',
@@ -444,14 +477,17 @@ export const LEVELS = [
       ['My feet are big.', 'noka mi li suli'],
       ["I don't know.", 'mi sona ala'],
     ],
-    closingNote: 'anu offers the choice: telo anu kili? "water or fruit?" Answer with the one you want.',
+    closingNote:
+      'anu offers the choice: telo anu kili? "water or fruit?" Answer with the one you want.',
     decode: ['sina pilin seme?', 'how are you feeling?'],
   },
   {
     id: '8',
     title: 'pi, family, and the animals',
-    blurb: 'The trickiest particle: pi restarts the modifier pile and bundles what follows.',
-    intro: 'Level 8 brings the trickiest particle — pi — plus family and the animal kingdom. Twelve new words (85–96).',
+    blurb:
+      'The trickiest particle: pi restarts the modifier pile and bundles what follows.',
+    intro:
+      'Level 8 brings the trickiest particle — pi — plus family and the animal kingdom. Twelve new words (85–96).',
     vocab: [
       vocab('pi', '(regroups words)'),
       vocab('kulupu', 'group · community'),
@@ -466,7 +502,8 @@ export const LEVELS = [
       vocab('kiwen', 'stone · hard thing'),
       vocab('ko', 'paste · powder · goo'),
     ],
-    vocabNote: 'mama meli = mother · mama mije = father · kulupu mama = family. The animals sort by kind: soweli / waso / kala / akesi / pipi.',
+    vocabNote:
+      'mama meli = mother · mama mije = father · kulupu mama = family. The animals sort by kind: soweli / waso / kala / akesi / pipi.',
     rule: {
       particle: 'pi',
       body: 'Modifiers normally stack one at a time, each modifying the whole pile before it. pi restarts the pile: it bundles the next TWO-or-more words into a single modifier. ilo pi kalama musi = "tool of (musical sound)" = an instrument — without pi it would read as "musical tool-sound." Rule of thumb: pi is always followed by at least two words. Never pi + one word.',
@@ -484,14 +521,17 @@ export const LEVELS = [
       ['My family is big.', 'kulupu mama mi li suli'],
       ['The instrument is good.', 'ilo pi kalama musi li pona'],
     ],
-    closingNote: 'Jewelry has no official word — one reading: ijo kiwen pona lili, "small lovely stone-things." The maker would be jan pi ijo kiwen. Improve on it; the language expects you to.',
+    closingNote:
+      'Jewelry has no official word — one reading: ijo kiwen pona lili, "small lovely stone-things." The maker would be jan pi ijo kiwen. Improve on it; the language expects you to.',
     decode: ['mi olin e kulupu mama mi', 'I love my family'],
   },
   {
     id: '9',
     title: 'Commands, numbers, up and down',
-    blurb: 'o replaces li for commands and wishes; the numbers add up — wan 1 · tu 2 · luka 5 — so luka tu is seven.',
-    intro: 'Level 9 gives you commands, numbers, and the vertical axis. Twelve new words (97–108) — plus three you already own, back as numbers.',
+    blurb:
+      'o replaces li for commands and wishes; the numbers add up — wan 1 · tu 2 · luka 5 — so luka tu is seven.',
+    intro:
+      'Level 9 gives you commands, numbers, and the vertical axis. Twelve new words (97–108) — plus three you already own, back as numbers.',
     vocab: [
       vocab('o', 'hey! · do it!'),
       vocab('wan', 'one · united'),
@@ -512,7 +552,8 @@ export const LEVELS = [
       again('mute', 'twenty · many'),
       again('ale', 'hundred · all'),
     ],
-    vocabNote: 'Counting, all in one place — and a stance, said out loud: this course counts the additive way. wan 1 · tu 2 · luka 5 · mute 20 · ale 100 — biggest piece first, then add: luka tu = 7 · luka luka = 10 · mute luka tu = 27. luka is the hand from Level 7, counted on its five fingers; mute (Level 3) and ale (Level 2) are the same words wearing number hats. pu also offers the plainer wan · tu · mute "many" — real, and what most speakers use when nothing needs an exact count — but a system that stops at two cannot stack, so it is not the one taught here.',
+    vocabNote:
+      'Counting, all in one place — and a stance, said out loud: this course counts the additive way. wan 1 · tu 2 · luka 5 · mute 20 · ale 100 — biggest piece first, then add: luka tu = 7 · luka luka = 10 · mute luka tu = 27. luka is the hand from Level 7, counted on its five fingers; mute (Level 3) and ale (Level 2) are the same words wearing number hats. pu also offers the plainer wan · tu · mute "many" — real, and what most speakers use when nothing needs an exact count — but a system that stops at two cannot stack, so it is not the one taught here.',
     rule: {
       particle: 'o',
       body: 'o replaces li for commands and wishes: o moku! "eat!" · o lape pona "sleep well." Before a name it calls someone: jan An o, o lukin! "Anne — look!" And nanpa + a number makes ordinals: nanpa wan = "number one" = first, the best.',
@@ -530,14 +571,17 @@ export const LEVELS = [
       ['This is number one!', 'ni li nanpa wan'],
       ['Seven birds are up high.', 'waso luka tu li lon sewi'],
     ],
-    closingNote: 'The well-wish pattern runs on o: o tawa pona "travel well" · o moku pona "bon appétit" · o lape pona "good night."',
+    closingNote:
+      'The well-wish pattern runs on o: o tawa pona "travel well" · o moku pona "bon appétit" · o lape pona "good night."',
     decode: ['o lape pona', 'sleep well'],
   },
   {
     id: '10',
     title: 'The final eleven',
-    blurb: 'The last words — en, a, kin — plus the phrasebook that makes you sound like a native.',
-    intro: 'The last handful — eleven words (109–119) — plus the phrasebook that makes you sound like you\'ve been here all along.',
+    blurb:
+      'The last words — en, a, kin — plus the phrasebook that makes you sound like a native.',
+    intro:
+      "The last handful — eleven words (109–119) — plus the phrasebook that makes you sound like you've been here all along.",
     vocab: [
       vocab('a', 'ah! · (emphasis)'),
       vocab('en', 'and (joins subjects)'),
@@ -551,7 +595,8 @@ export const LEVELS = [
       vocab('utala', 'fight · battle'),
       vocab('unpa', 'intimacy'),
     ],
-    vocabNote: 'pu is the language\'s own founding book — "to interact with the official toki pona book" is genuinely its definition. The language contains itself.',
+    vocabNote:
+      'pu is the language\'s own founding book — "to interact with the official toki pona book" is genuinely its definition. The language contains itself.',
     rule: {
       particle: 'en, a, kin — and the phrasebook',
       body: 'en joins subjects — and li comes back even with mi/sina in the mix: mi en sina li musi "you and I are having fun." a adds feeling anywhere: pona a! "SO good!" kin = too: mi kin! "me too!" The phrasebook: toki! hello · pona! thanks/nice · kama pona! welcome · mi tawa bye · tawa pona go well · pakala! the all-purpose dang.',
@@ -559,7 +604,10 @@ export const LEVELS = [
     glyphReading: ['a', 'en', 'kin', 'nasin', 'suwi', 'kon'],
     toEnglish: [
       ['telo ni li jaki', 'this water is gross'],
-      ['nasin ni li pona tawa mi', 'I like this way (lit. this path is good to me)'],
+      [
+        'nasin ni li pona tawa mi',
+        'I like this way (lit. this path is good to me)',
+      ],
       ['kon li lete', 'the air is cold'],
       ['suwi a!', 'so cute/sweet!'],
       ['mi pakala', 'I messed up'],
@@ -569,7 +617,8 @@ export const LEVELS = [
       ['Me too!', 'mi kin!'],
       ['The fruit is sweet.', 'kili li suwi'],
     ],
-    closingNote: 'X li pona tawa mi ("X is good to me") = "I like X" — the most-used idiom in the language. And that\'s the whole vocabulary now on your sheets: sina sona e ale a! · ale li pini — sina jan pi toki pona. (There is no Level 11; now it\'s just talking.)',
+    closingNote:
+      'X li pona tawa mi ("X is good to me") = "I like X" — the most-used idiom in the language. And that\'s the whole vocabulary now on your sheets: sina sona e ale a! · ale li pini — sina jan pi toki pona. (There is no Level 11; now it\'s just talking.)',
     decode: ['mi en sina li kulupu wan', 'you and I are one'],
   },
 ];
@@ -577,7 +626,8 @@ export const LEVELS = [
 export const getLevel = (id) => LEVELS.find((l) => l.id === id) || null;
 
 /** The level whose vocab first taught `word` (where an `again` card points back to), or null. */
-export const taughtIn = (word) => LEVELS.find((l) => l.vocab.some((v) => v.word === word)) || null;
+export const taughtIn = (word) =>
+  LEVELS.find((l) => l.vocab.some((v) => v.word === word)) || null;
 
 /*
  * Item kinds and how each is judged.
@@ -673,11 +723,12 @@ export const buildSession = (level) => {
   return shuffle(items);
 };
 
-const normalize = (s) => String(s)
-  .toLowerCase()
-  .replace(/[.,!?;:"']/g, '')
-  .replace(/\s+/g, ' ')
-  .trim();
+const normalize = (s) =>
+  String(s)
+    .toLowerCase()
+    .replace(/[.,!?;:"']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 /** Only meaningful for the exact-matched kinds; sentence kinds are self-graded. */
 export const isCorrect = (item, response) => {
