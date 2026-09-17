@@ -1,16 +1,22 @@
 import React from 'react';
-import {
-  BrowserRouter, Navigate, Route, Routes,
-} from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import {
-  Home, Piano, Programming, Blog, Contact, Learn, NotFound,
+  Home,
+  Piano,
+  Programming,
+  Blog,
+  Contact,
+  Learn,
+  NotFound,
 } from './pages';
 import { Header, Footer } from './sharedComponents';
 
 function App() {
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <BrowserRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -21,7 +27,10 @@ function App() {
         <Route path="/learn/*" element={<Learn />} />
         {/* The clock moved under /programming (Travis, 26.0905). Kept as a
             redirect because the old path has been handed out. */}
-        <Route path="/clock" element={<Navigate to="/programming/clock" replace />} />
+        <Route
+          path="/clock"
+          element={<Navigate to="/programming/clock" replace />}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

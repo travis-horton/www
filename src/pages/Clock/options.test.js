@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * The ballot's data. The prose assertions here are deliberate: an option with
  * no case against it is not an option, it is an advertisement, and that is the

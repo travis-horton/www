@@ -15,31 +15,11 @@ function SeximalHome() {
       </p>
       <h1>Seximal</h1>
       <p>
-        Counting in base six, out loud. Six is written
-        {' '}
-        <code>10</code>
-        , a
-        {' '}
-        <strong>nif</strong>
-        {' '}
-        is
-        {' '}
-        <code>100</code>
-        {' '}
-        (thirty-six of them), and the numbers in between get their own
-        words: six, seven, eight, nine, ten, eleven, then
-        {' '}
-        <strong>dozen</strong>
-        ,
-        {' '}
-        <strong>thirsy</strong>
-        ,
-        {' '}
-        <strong>foursy</strong>
-        ,
-        {' '}
-        <strong>fifsy</strong>
-        .
+        Counting in base six, out loud. Six is written <code>10</code>, a{' '}
+        <strong>nif</strong> is <code>100</code> (thirty-six of them), and the
+        numbers in between get their own words: six, seven, eight, nine, ten,
+        eleven, then <strong>dozen</strong>, <strong>thirsy</strong>,{' '}
+        <strong>foursy</strong>, <strong>fifsy</strong>.
       </p>
       <p>
         Every question is generated, so a level never runs out. You answer
@@ -53,7 +33,10 @@ function SeximalHome() {
           const stats = summarize('seximal', level.id);
           return (
             <li key={level.id} className="learn__level">
-              <Link to={`/learn/seximal/${level.id}`} className="learn__level-title">
+              <Link
+                to={`/learn/seximal/${level.id}`}
+                className="learn__level-title"
+              >
                 {`${level.id}. ${level.title}`}
               </Link>
               <p className="learn__level-blurb">{level.blurb}</p>

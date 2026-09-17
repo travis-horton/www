@@ -1,8 +1,5 @@
-/* eslint-env jest */
 import React from 'react';
-import {
-  act, fireEvent, render, screen, within,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Clock from '.';
@@ -12,13 +9,21 @@ const MODE_KEY = 'travish.clock.mode';
 
 // Mounted where it actually lives: under the Programming section, which
 // supplies the <main> this page deliberately does not render itself.
-const renderAt = () => render(
-  <MemoryRouter initialEntries={['/programming/clock']}>
-    <Routes>
-      <Route path="/programming/clock" element={<main><Clock /></main>} />
-    </Routes>
-  </MemoryRouter>,
-);
+const renderAt = () =>
+  render(
+    <MemoryRouter initialEntries={['/programming/clock']}>
+      <Routes>
+        <Route
+          path="/programming/clock"
+          element={
+            <main>
+              <Clock />
+            </main>
+          }
+        />
+      </Routes>
+    </MemoryRouter>,
+  );
 
 // 16:00 local is exactly seximal hour 24 (40₆, niftimal O) — a clean face.
 beforeEach(() => {
@@ -33,7 +38,10 @@ afterEach(() => {
 
 test('opens in seximal, with the digits named', () => {
   renderAt();
-  expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   expect(screen.getByTestId('digits-hour')).toHaveTextContent('40');
   expect(screen.getByTestId('digits-minute')).toHaveTextContent('00');
   expect(screen.getByTestId('digits-second')).toHaveTextContent('00');
@@ -45,8 +53,14 @@ test('niftimal rewrites the digits and keeps the names', () => {
   renderAt();
   fireEvent.click(screen.getByRole('button', { name: 'niftimal' }));
 
-  expect(screen.getByRole('button', { name: 'niftimal' })).toHaveAttribute('aria-pressed', 'true');
-  expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute('aria-pressed', 'false');
+  expect(screen.getByRole('button', { name: 'niftimal' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
   expect(screen.getByTestId('digits-hour')).toHaveTextContent('O');
   expect(screen.getByTestId('digits-minute')).toHaveTextContent('0');
   expect(screen.getByTestId('name-hour')).toHaveTextContent('foursy');
@@ -56,14 +70,20 @@ test('niftimal rewrites the digits and keeps the names', () => {
 test('the chosen notation survives a reload', () => {
   window.localStorage.setItem(MODE_KEY, 'niftimal');
   renderAt();
-  expect(screen.getByRole('button', { name: 'niftimal' })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: 'niftimal' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   expect(screen.getByTestId('digits-hour')).toHaveTextContent('O');
 });
 
 test('an unknown stored value falls back to seximal', () => {
   window.localStorage.setItem(MODE_KEY, 'octal');
   renderAt();
-  expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: 'seximal' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
 });
 
 test('it ticks on the seximal second, not the decimal one', () => {
@@ -83,8 +103,10 @@ test('it ticks on the seximal second, not the decimal one', () => {
 
 test('the day percentage is fine enough that every tick moves it', () => {
   renderAt();
-  const read = () => screen.getByText(/% of the day gone/).textContent
-    .match(/([\d.]+)% of the day gone/)[1];
+  const read = () =>
+    screen
+      .getByText(/% of the day gone/)
+      .textContent.match(/([\d.]+)% of the day gone/)[1];
   const before = read();
   expect(before.split('.')[1]).toHaveLength(3);
   act(() => {
@@ -137,7 +159,8 @@ describe('the ballot at the bottom', () => {
     // to null. A new id would silently render an empty box.
     renderAt();
     CLOCK_OPTIONS.forEach((opt) => {
-      const demo = screen.getByTestId(`option-${opt.id}`)
+      const demo = screen
+        .getByTestId(`option-${opt.id}`)
         .querySelector('.clock__option-demo');
       expect(demo).not.toBeNull();
       expect(demo.childElementCount).toBeGreaterThan(0);
@@ -148,8 +171,9 @@ describe('the ballot at the bottom', () => {
     // The buttons came out because localStorage votes are uncountable. The
     // page has to say why, or their absence just reads as an oversight.
     renderAt();
-    expect(screen.getByTestId('vote-pending'))
-      .toHaveTextContent(/nowhere yet to put a vote/i);
+    expect(screen.getByTestId('vote-pending')).toHaveTextContent(
+      /nowhere yet to put a vote/i,
+    );
   });
 
   test('there are no vote buttons to click', () => {

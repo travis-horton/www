@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * The analog face's geometry. What is pinned here is the relationship between
  * time and angle — never a hand's literal degrees at some literal instant,
@@ -23,7 +22,11 @@ import {
   turnToDegrees,
 } from './dial';
 import {
-  MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE, MS_PER_TICK, seximalTriple,
+  MS_PER_DAY,
+  MS_PER_HOUR,
+  MS_PER_MINUTE,
+  MS_PER_TICK,
+  seximalTriple,
 } from './clock';
 
 describe('the dial', () => {
@@ -116,7 +119,13 @@ describe('the sketches', () => {
 describe('six ticks, seven hands', () => {
   test('one hand per rung, outermost first', () => {
     expect(LADDER).toEqual([
-      'watch', 'lapse', 'span', 'lull', 'breath', 'moment', 'snap',
+      'watch',
+      'lapse',
+      'span',
+      'lull',
+      'breath',
+      'moment',
+      'snap',
     ]);
   });
 
@@ -142,7 +151,10 @@ describe('six ticks, seven hands', () => {
     const expected = (ms) => {
       let v = Math.floor((ms * 6 ** 7) / MS_PER_DAY);
       const out = [];
-      for (let i = 0; i < 7; i += 1) { out.unshift(v % 6); v = Math.floor(v / 6); }
+      for (let i = 0; i < 7; i += 1) {
+        out.unshift(v % 6);
+        v = Math.floor(v / 6);
+      }
       return out;
     };
     const samples = [];
@@ -172,8 +184,9 @@ describe('six ticks, seven hands', () => {
       const step = MS_PER_DAY / 6 ** n;
       const unit = LADDER[n - 1];
       for (let k = 1; k < 6; k += 1) {
-        expect(ladderSweepAngles(step * k)[unit])
-          .toBeCloseTo(ladderAngles(step * k)[unit]);
+        expect(ladderSweepAngles(step * k)[unit]).toBeCloseTo(
+          ladderAngles(step * k)[unit],
+        );
       }
     });
   });
@@ -210,8 +223,14 @@ describe('the mark labels', () => {
   });
 
   test('the inner majors are the round seximal numbers', () => {
-    expect([0, 6, 12, 18, 24, 30].map(markLabel))
-      .toEqual(['00', '10', '20', '30', '40', '50']);
+    expect([0, 6, 12, 18, 24, 30].map(markLabel)).toEqual([
+      '00',
+      '10',
+      '20',
+      '30',
+      '40',
+      '50',
+    ]);
   });
 
   test('the outer ring names EVERY mark, in-between ones included', () => {

@@ -19,8 +19,20 @@ import data from '../../data/performances.json';
  * on a public page is worse than omitting.
  */
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 // Parsed as local parts, never `new Date(str)` — that reads a bare ISO date as
 // UTC and shows the previous evening for anyone west of Greenwich, which is
@@ -37,7 +49,9 @@ const formatTime = (t) => {
   const [h, min] = t.split(':').map(Number);
   const suffix = h < 12 ? 'am' : 'pm';
   const hour = h % 12 === 0 ? 12 : h % 12;
-  return min === 0 ? `${hour}${suffix}` : `${hour}:${String(min).padStart(2, '0')}${suffix}`;
+  return min === 0
+    ? `${hour}${suffix}`
+    : `${hour}:${String(min).padStart(2, '0')}${suffix}`;
 };
 
 const todayIso = () => {
@@ -55,11 +69,15 @@ const row = (p) => {
     <li className="piano__perf" key={p.id}>
       <div className="piano__perf-when">
         {formatDate(p.date)}
-        {p.startTime && <span className="piano__perf-time">{` · ${formatTime(p.startTime)}`}</span>}
+        {p.startTime && (
+          <span className="piano__perf-time">{` · ${formatTime(p.startTime)}`}</span>
+        )}
       </div>
       <div className="piano__perf-what">
         <span className="piano__perf-title">{p.title}</span>
-        {p.subtitle && <span className="piano__perf-sub">{`, ${p.subtitle}`}</span>}
+        {p.subtitle && (
+          <span className="piano__perf-sub">{`, ${p.subtitle}`}</span>
+        )}
       </div>
       <div className="piano__perf-where">
         {venue && <span>{venue.name}</span>}
@@ -86,15 +104,11 @@ function Performances() {
       {upcoming.length === 0 ? (
         <p>Nothing on the books at the moment.</p>
       ) : (
-        <ul className="piano__perfs">
-          {upcoming.map(row)}
-        </ul>
+        <ul className="piano__perfs">{upcoming.map(row)}</ul>
       )}
 
       <h4>Past concerts</h4>
-      <ul className="piano__perfs">
-        {past.map(row)}
-      </ul>
+      <ul className="piano__perfs">{past.map(row)}</ul>
 
       {runs.length > 0 && (
         <>
@@ -107,7 +121,9 @@ function Performances() {
                 </div>
                 <div className="piano__perf-where">
                   {r.note}
-                  {r.venueId && data.venues[r.venueId] && ` · ${data.venues[r.venueId].name}`}
+                  {r.venueId &&
+                    data.venues[r.venueId] &&
+                    ` · ${data.venues[r.venueId].name}`}
                 </div>
               </li>
             ))}

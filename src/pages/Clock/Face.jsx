@@ -14,8 +14,8 @@ import { msSinceLocalMidnight } from './clock';
 const R = 100;
 const R_MARK_IN = 84;
 const R_MARK_IN_MAJOR = 78;
-const R_LABEL = 66;       // seximal pairs, inside the rim, majors only
-const R_OUTER = 114;      // niftimal glyphs, outside the rim, every mark
+const R_LABEL = 66; // seximal pairs, inside the rim, majors only
+const R_OUTER = 114; // niftimal glyphs, outside the rim, every mark
 
 const HANDS = [
   { unit: 'lapse', length: 46, width: 5 },
@@ -30,9 +30,7 @@ const HANDS = [
  * than a CSS transition, deliberately: a transition tweens the short way round
  * and would visibly rubber-band backwards through the whole dial at each wrap.
  */
-function Face({
-  now, mode, extraHands = false, sextant = false,
-}) {
+function Face({ now, mode, extraHands = false, sextant = false }) {
   const ms = msSinceLocalMidnight(now);
   const angles = handAngles(ms);
   const extra = extraHandAngles(ms);
@@ -116,19 +114,20 @@ function Face({
         />
       ))}
 
-      {extraHands && ['watch', 'breath'].map((unit) => (
-        <line
-          key={unit}
-          className={`clock__dial-hand clock__dial-hand--${unit}`}
-          data-testid={`hand-${unit}`}
-          x1="0"
-          y1="0"
-          x2="0"
-          y2={unit === 'watch' ? -34 : -58}
-          strokeWidth={unit === 'watch' ? 7 : 2.4}
-          transform={`rotate(${extra[unit]})`}
-        />
-      ))}
+      {extraHands &&
+        ['watch', 'breath'].map((unit) => (
+          <line
+            key={unit}
+            className={`clock__dial-hand clock__dial-hand--${unit}`}
+            data-testid={`hand-${unit}`}
+            x1="0"
+            y1="0"
+            x2="0"
+            y2={unit === 'watch' ? -34 : -58}
+            strokeWidth={unit === 'watch' ? 7 : 2.4}
+            transform={`rotate(${extra[unit]})`}
+          />
+        ))}
 
       <circle className="clock__dial-pin" cx="0" cy="0" r="3.5" />
     </svg>
