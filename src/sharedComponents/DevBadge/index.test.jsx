@@ -33,11 +33,12 @@ test('renders nothing and touches no <head> on production', () => {
   expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
 });
 
-test('dev: renders the badge and a noindex meta, and cleans up', () => {
+test('dev: renders the ribbon and a noindex meta, and cleans up', () => {
   const { getByRole, unmount } = render(<DevBadge hostname="kiddspazz.com" />);
   const badge = getByRole('status');
-  expect(badge).toHaveTextContent('dev · kiddspazz.com');
+  expect(badge).toHaveTextContent(/^dev$/);
   expect(badge).toHaveClass('dev-badge--dev');
+  expect(badge).toHaveAttribute('aria-label', 'dev deployment: kiddspazz.com');
   const meta = document.head.querySelector('meta[name="robots"]');
   expect(meta).not.toBeNull();
   expect(meta.getAttribute('content')).toBe('noindex, nofollow');
@@ -45,15 +46,15 @@ test('dev: renders the badge and a noindex meta, and cleans up', () => {
   expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
 });
 
-test('local: renders the badge but no robots meta', () => {
+test('local: renders the ribbon but no robots meta', () => {
   const { getByRole } = render(<DevBadge hostname="localhost" />);
   const badge = getByRole('status');
-  expect(badge).toHaveTextContent('local · localhost');
+  expect(badge).toHaveTextContent(/^local$/);
   expect(badge).toHaveClass('dev-badge--local');
   expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
 });
 
 test('defaults to the real hostname, which is localhost under jest', () => {
   const { getByRole } = render(<DevBadge />);
-  expect(getByRole('status')).toHaveTextContent('local · localhost');
+  expect(getByRole('status')).toHaveTextContent(/^local$/);
 });
