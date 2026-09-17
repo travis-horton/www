@@ -28,13 +28,13 @@ test('sandboxLabel: production and unknown hosts get no label', () => {
 });
 
 test('renders nothing and touches no <head> on production', () => {
-  const { container } = render(<DevBadge hostname="travish.com" />);
+  const { container } = render(<DevBadge host="travish.com" />);
   expect(container).toBeEmptyDOMElement();
   expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
 });
 
-test('dev: renders the ribbon and a noindex meta, and cleans up', () => {
-  const { getByRole, unmount } = render(<DevBadge hostname="kiddspazz.com" />);
+test('dev: renders the tag and a noindex meta, and cleans up', () => {
+  const { getByRole, unmount } = render(<DevBadge host="kiddspazz.com" />);
   const badge = getByRole('status');
   expect(badge).toHaveTextContent(/^devkiddspazz\.com$/);
   expect(badge).toHaveClass('dev-badge--dev');
@@ -46,15 +46,20 @@ test('dev: renders the ribbon and a noindex meta, and cleans up', () => {
   expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
 });
 
-test('local: renders the ribbon but no robots meta', () => {
-  const { getByRole } = render(<DevBadge hostname="localhost" />);
+test('local: the port shows in the tag, decides nothing, and adds no meta', () => {
+  const { getByRole } = render(<DevBadge host="localhost:1234" />);
   const badge = getByRole('status');
-  expect(badge).toHaveTextContent(/^locallocalhost$/);
+  expect(badge).toHaveTextContent(/^locallocalhost:1234$/);
   expect(badge).toHaveClass('dev-badge--local');
   expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
 });
 
-test('defaults to the real hostname, which is localhost under jest', () => {
+test('local: an IPv6 loopback with a port is still local', () => {
+  const { getByRole } = render(<DevBadge host="[::1]:1234" />);
+  expect(getByRole('status')).toHaveClass('dev-badge--local');
+});
+
+test('defaults to the real host, which is localhost under jest', () => {
   const { getByRole } = render(<DevBadge />);
   expect(getByRole('status')).toHaveTextContent(/^locallocalhost$/);
 });
