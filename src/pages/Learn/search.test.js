@@ -1,4 +1,3 @@
-/* eslint-env jest */
 /*
  * Guards the search INDEX, not the UI — same split as tokipona.test.js vs.
  * TokiPonaReview.test.jsx. Three directions in, one result shape out; see the
@@ -22,7 +21,11 @@ describe('word -> lessons (toki pona in)', () => {
     // level that merely uses the word in a sentence.
     expect(luka.levels).toEqual([
       { levelId: '7', title: 'Asking, and the body', role: 'introduces' },
-      { levelId: '9', title: 'Commands, numbers, up and down', role: 'reintroduces' },
+      {
+        levelId: '9',
+        title: 'Commands, numbers, up and down',
+        role: 'reintroduces',
+      },
     ]);
   });
 
@@ -41,7 +44,9 @@ describe('word -> lessons (toki pona in)', () => {
     // Level 3 tag has to stay 'introduces'.
     const [mute] = search('mute');
     expect(mute.levels.find((l) => l.levelId === '3').role).toBe('introduces');
-    expect(mute.levels.find((l) => l.levelId === '9').role).toBe('reintroduces');
+    expect(mute.levels.find((l) => l.levelId === '9').role).toBe(
+      'reintroduces',
+    );
   });
 
   test('is case-insensitive', () => {
@@ -52,7 +57,11 @@ describe('word -> lessons (toki pona in)', () => {
   test('a word used across levels lists every one of them, in order', () => {
     // "pona" is taught in Level 1 and shows up constantly afterward.
     const [pona] = search('pona');
-    expect(pona.levels[0]).toEqual({ levelId: '1', title: 'The first twelve', role: 'introduces' });
+    expect(pona.levels[0]).toEqual({
+      levelId: '1',
+      title: 'The first twelve',
+      role: 'introduces',
+    });
     expect(pona.levels.length).toBeGreaterThan(1);
     const ids = pona.levels.map((l) => Number(l.levelId));
     expect(ids).toEqual([...ids].sort((a, b) => a - b));
@@ -72,7 +81,11 @@ describe('words mentioned only in prose (the "luka bug" fix, generalized)', () =
     // its closingNote's naming-convention explanation ("jan Tawi", "jan An?").
     const [jan] = search('jan');
     const level6 = jan.levels.find((l) => l.levelId === '6');
-    expect(level6).toEqual({ levelId: '6', title: 'Time, and the word la', role: 'mentioned' });
+    expect(level6).toEqual({
+      levelId: '6',
+      title: 'Time, and the word la',
+      role: 'mentioned',
+    });
   });
 
   test('a "mentioned" role never overrides an existing "introduces" or "uses" tag for that level', () => {
@@ -91,7 +104,9 @@ describe('words mentioned only in prose (the "luka bug" fix, generalized)', () =
     const [a] = search('a');
     expect(a.levels.some((l) => l.levelId === '1')).toBe(false);
     // It should still resolve, from its own Level 10 vocab card.
-    expect(a.levels.some((l) => l.levelId === '10' && l.role === 'introduces')).toBe(true);
+    expect(
+      a.levels.some((l) => l.levelId === '10' && l.role === 'introduces'),
+    ).toBe(true);
   });
 });
 
@@ -122,7 +137,9 @@ describe('glyph -> word', () => {
   test('a run of glyphs with no spaces (a copy-paste from lipu tenpo) resolves all of them', () => {
     // Exactly how toGlyphs() renders "mi olin e sina" — see tokipona.js.
     const pasted = GLYPHS.mi + GLYPHS.olin + GLYPHS.e + GLYPHS.sina;
-    expect(wordsOf(search(pasted)).sort()).toEqual(['e', 'mi', 'olin', 'sina'].sort());
+    expect(wordsOf(search(pasted)).sort()).toEqual(
+      ['e', 'mi', 'olin', 'sina'].sort(),
+    );
   });
 
   test('glyph input takes priority over any coincidental text match', () => {

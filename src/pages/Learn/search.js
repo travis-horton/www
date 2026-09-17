@@ -49,10 +49,11 @@ const PARTICLE_GLOSSES = {
 // PUNCT), plus the parens/ampersand that show up inside a gloss aside.
 const STRIP = /[.,!?;:"'()&]/g;
 
-const wordsIn = (sentence) => String(sentence)
-  .split(/\s+/)
-  .map((w) => w.toLowerCase().replace(STRIP, ''))
-  .filter(Boolean);
+const wordsIn = (sentence) =>
+  String(sentence)
+    .split(/\s+/)
+    .map((w) => w.toLowerCase().replace(STRIP, ''))
+    .filter(Boolean);
 
 /*
  * English words that are ALSO valid toki pona word keys, so a naive scan of
@@ -106,7 +107,8 @@ const buildWordEntries = () => {
   const entries = Object.create(null);
   LEVELS.forEach((level) => {
     level.vocab.forEach((v) => {
-      if (!entries[v.word]) entries[v.word] = { word: v.word, gloss: v.gloss, glyph: v.glyph };
+      if (!entries[v.word])
+        entries[v.word] = { word: v.word, gloss: v.gloss, glyph: v.glyph };
     });
   });
   Object.entries(PARTICLE_GLOSSES).forEach(([word, gloss]) => {
@@ -138,7 +140,10 @@ const buildWordEntries = () => {
  * a level a word was already properly introduced or used in.
  */
 const ROLE_RANK = {
-  mentioned: 0, uses: 1, reintroduces: 2, introduces: 3,
+  mentioned: 0,
+  uses: 1,
+  reintroduces: 2,
+  introduces: 3,
 };
 
 const buildAppearances = (entries) => {
@@ -158,11 +163,20 @@ const buildAppearances = (entries) => {
     level.vocab.forEach((v) => touch(v.word, level, 'introduces'));
     (level.again || []).forEach((v) => touch(v.word, level, 'reintroduces'));
     level.glyphReading.forEach((w) => touch(w, level, 'uses'));
-    level.toEnglish.forEach(([tp]) => wordsIn(tp).forEach((w) => touch(w, level, 'uses')));
-    level.toTokiPona.forEach(([, tp]) => wordsIn(tp).forEach((w) => touch(w, level, 'uses')));
+    level.toEnglish.forEach(([tp]) =>
+      wordsIn(tp).forEach((w) => touch(w, level, 'uses')),
+    );
+    level.toTokiPona.forEach(([, tp]) =>
+      wordsIn(tp).forEach((w) => touch(w, level, 'uses')),
+    );
     wordsIn(level.decode[0]).forEach((w) => touch(w, level, 'uses'));
 
-    const prose = [level.intro, level.vocabNote, level.closingNote, level.rule && level.rule.body];
+    const prose = [
+      level.intro,
+      level.vocabNote,
+      level.closingNote,
+      level.rule && level.rule.body,
+    ];
     prose.forEach((text) => {
       if (!text) return;
       wordsIn(text).forEach((w) => {
@@ -201,11 +215,15 @@ const buildEnglishIndex = (entries) => {
   Object.values(entries).forEach(({ word, gloss }) => {
     const asides = Array.from(gloss.matchAll(PAREN)).map(([, inner]) => inner);
     const primaryText = gloss.replace(PAREN, ' ');
-    const primaryTokens = wordsIn(primaryText).filter((t) => !ENGLISH_STOPWORDS.has(t));
+    const primaryTokens = wordsIn(primaryText).filter(
+      (t) => !ENGLISH_STOPWORDS.has(t),
+    );
 
     primaryTokens.forEach((t) => addToken(t, word));
     if (primaryTokens.length > 0) {
-      asides.forEach((aside) => wordsIn(aside).forEach((t) => addToken(t, word)));
+      asides.forEach((aside) =>
+        wordsIn(aside).forEach((t) => addToken(t, word)),
+      );
     }
   });
 
@@ -223,8 +241,11 @@ const buildEnglishIndex = (entries) => {
 };
 
 /** glyph codepoint string -> the word it renders. The exact inverse of GLYPHS. */
-const buildGlyphIndex = () => Object.entries(GLYPHS)
-  .reduce((acc, [word, glyph]) => Object.assign(acc, { [glyph]: word }), Object.create(null));
+const buildGlyphIndex = () =>
+  Object.entries(GLYPHS).reduce(
+    (acc, [word, glyph]) => Object.assign(acc, { [glyph]: word }),
+    Object.create(null),
+  );
 
 /*
  * PROTOTYPELESS ON PURPOSE — this fixes a blank page in production.
@@ -295,7 +316,19 @@ const normalizeSpelling = (token) => token.replace(/our$/, 'or');
  * "4" still correctly find nothing — there's no card that means them, and
  * this table doesn't pretend otherwise.
  */
-const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const NUMBER_WORDS = [
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+];
 const ROUND_NUMBER_WORDS = { 20: 'twenty', 100: 'hundred' };
 const numeralWord = (token) => {
   if (!/^\d+$/.test(token)) return null;

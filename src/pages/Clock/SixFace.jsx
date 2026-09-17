@@ -121,9 +121,7 @@ function SixFace() {
       <ol className="clock__six-key">
         {LADDER.map((unit, i) => (
           <li key={unit}>
-            <span className="clock__six-key-digit">{digits[i]}</span>
-            {' '}
-            {unit}
+            <span className="clock__six-key-digit">{digits[i]}</span> {unit}
           </li>
         ))}
       </ol>

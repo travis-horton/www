@@ -24,7 +24,7 @@ export const CLOCK_OPTIONS = [
       sixth of that sixth — and two seximal digits are one niftimal digit.`,
     pros: [
       'Three hands, so it reads like a clock anyone already owns.',
-      'A hand\'s position IS a seximal pair, so the face teaches the pair rule by pointing at it instead of asserting it.',
+      "A hand's position IS a seximal pair, so the face teaches the pair rule by pointing at it instead of asserting it.",
       'Both notations live on the same tick: the inner ring carries the pair, the outer carries the glyph.',
     ],
     cons: [
