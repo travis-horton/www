@@ -462,7 +462,7 @@ export const LEVELS = [
       'luka is hand AND the number five — count your fingers; Level 9 counts with it. pilin is the heart that feels, not the one that pumps.',
     rule: {
       particle: 'asking questions',
-      body: 'Two shapes: ① drop seme into the slot you\'re asking about — sina moku e seme? "you\'re eating WHAT?" · sina pilin seme? "how do you feel?" ② yes/no = X ala X: sina pona ala pona? "are you good?" — answer by repeating the word (pona = yes) or negating it (pona ala = no). ala also negates anything: mi sona ala "I don\'t know."',
+      body: 'Two shapes: ① drop seme into the slot you\'re asking about — sina moku e seme? "you\'re eating WHAT?" · sina pilin seme? "how do you feel?" ② yes/no = X ala X: sina pona ala pona? "are you good?" — answer by repeating the word (pona = yes) or negating it (pona ala = no). ala also negates anything: mi sona ala "I don\'t know." And seme rides a preposition too: tan seme? "why?" — mi pali tan seme? "why am I working?" That is the question-partner Level 5 promised.',
     },
     glyphReading: ['seme', 'pilin', 'lawa', 'luka', 'noka', 'nasa'],
     toEnglish: [
