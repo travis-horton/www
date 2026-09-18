@@ -212,8 +212,8 @@ export const LEVELS = [
       ['The person is eating.', 'jan li moku'],
     ],
     closingNote:
-      'Adjectives follow their noun — jan pona is "good person," which is also the idiom for friend. So "you are my friend" is sina jan pona mi. Read it back once out loud.',
-    decode: ['moku li pona suli', 'food is very good'],
+      'Adjectives follow their noun — jan pona is "good person," which is also the idiom for friend. So "you are my friend" is sina jan pona mi. Read it back once out loud. The plain intensifier "very" arrives in Level 3, as mute.',
+    decode: ['moku li pona suli', 'food is greatly good — a big good'],
   },
   {
     id: '2',
@@ -327,6 +327,10 @@ export const LEVELS = [
       vocab('mu', '(any animal sound)'),
       vocab('soweli', 'land animal'),
     ],
+    // The preverb rule below lists lukin as "try to" — a sense its Level 2
+    // card ("to see · look") does not carry. Brought back the way Level 9
+    // brings luka back as five: drilled and searchable, taught only once.
+    again: [again('lukin', 'to try · to see')],
     vocabNote:
       'toki is the language\'s own name: toki pona = "the good/simple language." And mu is whatever noise the animal makes — moo, woof, meow, all of it.',
     rule: {
@@ -348,7 +352,7 @@ export const LEVELS = [
     ],
     closingNote:
       'kalama musi "musical sound" = music — the household art form. Someone in this house makes kalama musi for a living.',
-    decode: ['mi kama sona e toki pona', 'I am learning toki pona'],
+    decode: ['ona li sona toki', 'she knows how to speak'],
   },
   {
     id: '5',
@@ -462,7 +466,7 @@ export const LEVELS = [
       'luka is hand AND the number five — count your fingers; Level 9 counts with it. pilin is the heart that feels, not the one that pumps.',
     rule: {
       particle: 'asking questions',
-      body: 'Two shapes: ① drop seme into the slot you\'re asking about — sina moku e seme? "you\'re eating WHAT?" · sina pilin seme? "how do you feel?" ② yes/no = X ala X: sina pona ala pona? "are you good?" — answer by repeating the word (pona = yes) or negating it (pona ala = no). ala also negates anything: mi sona ala "I don\'t know."',
+      body: 'Two shapes: ① drop seme into the slot you\'re asking about — sina moku e seme? "you\'re eating WHAT?" · sina pilin seme? "how do you feel?" ② yes/no = X ala X: sina pona ala pona? "are you good?" — answer by repeating the word (pona = yes) or negating it (pona ala = no). ala also negates anything: mi sona ala "I don\'t know." And seme rides a preposition too: tan seme? "why?" — mi pali tan seme? "why am I working?" That is the question-partner Level 5 promised.',
     },
     glyphReading: ['seme', 'pilin', 'lawa', 'luka', 'noka', 'nasa'],
     toEnglish: [
@@ -832,6 +836,28 @@ const shuffle = (arr) => {
   return out;
 };
 
+/**
+ * The accepted answers for a word card, from its "a · b (c)" gloss: every part,
+ * plus each part with its parenthetical removed — so luka "hand · arm (& five)"
+ * takes "hand", "arm (& five)" and plain "arm". A part that is ONLY a
+ * parenthetical ("(any animal sound)") is kept as it is; normalize strips the
+ * brackets at match time. Shared with review mode's word direction.
+ */
+export const acceptedFromGloss = (gloss) => {
+  const out = [];
+  String(gloss || '')
+    .split('·')
+    .map((g) => g.trim())
+    .filter(Boolean)
+    .forEach((part) => {
+      const bare = part.replace(/\s*\([^)]*\)/g, '').trim();
+      [part, bare].forEach((a) => {
+        if (a && !out.includes(a)) out.push(a);
+      });
+    });
+  return out;
+};
+
 export const buildSession = (level) => {
   const items = [];
 
@@ -853,7 +879,7 @@ export const buildSession = (level) => {
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean?',
       answer: gloss,
-      accepted: gloss.split('·').map((g) => g.trim()),
+      accepted: acceptedFromGloss(gloss),
     });
   });
 
@@ -866,7 +892,7 @@ export const buildSession = (level) => {
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean here? (back from an earlier level)',
       answer: gloss,
-      accepted: gloss.split('·').map((g) => g.trim()),
+      accepted: acceptedFromGloss(gloss),
     });
   });
 
@@ -908,10 +934,13 @@ export const buildSession = (level) => {
   return shuffle(items);
 };
 
+// Parentheses and the ampersand are gloss punctuation ("(any animal sound)",
+// "arm (& five)"), never part of an answer — w14 #13. The \s+ collapse after
+// this handles the double space that removing "&" leaves behind.
 const normalize = (s) =>
   String(s)
     .toLowerCase()
-    .replace(/[.,!?;:"']/g, '')
+    .replace(/[.,!?;:"'()&]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 

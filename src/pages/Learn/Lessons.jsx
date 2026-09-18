@@ -109,8 +109,10 @@ const Two = () => (
     </p>
     <p>
       Above four digits the same idea repeats one level up: <code>10000</code>{' '}
-      is a <strong>unexian</strong>, and numbers group into four-digit blocks,
-      each block read as its own pair-nif-pair.
+      is an <strong>unexian</strong>, and numbers group into four-digit blocks,
+      each block read as its own pair-nif-pair. So <code>13132</code> is one
+      unexian, thirsy-one nif thirsy-two: the top digit is its own block, then
+      the usual pair-nif-pair.
     </p>
   </div>
 );
@@ -168,6 +170,13 @@ const Four = () => (
     <p>
       That is not a party trick — thirds turn up constantly, and a base that
       cannot write them is a base that rounds.
+    </p>
+    <p>
+      A two-digit multiplication is the same long multiplication you already do
+      — just carry at six. <code>23</code> × <code>4</code>: four threes is a
+      dozen, write <code>0</code> carry <code>2</code>; four twos is eight,
+      plus the carried two is ten, which is <code>14</code>. Answer{' '}
+      <code>140</code>. Division is long division with the same wall.
     </p>
     <p className="lesson__dim">
       Division here is always exact; nothing in this level has a remainder.
