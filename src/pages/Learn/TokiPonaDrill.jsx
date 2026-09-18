@@ -194,9 +194,12 @@ function TokiPonaDrill() {
 
         <h2>{`The new grammar: ${level.rule.particle}`}</h2>
         <div className="tp__rule">
-          <p className="tp__glyph tp__glyph--rule">
-            {GLYPHS[level.rule.particle]}
-          </p>
+          {/* Five rules are labels, not glyph keys (stacking modifiers · preverbs · prepositions · asking questions · en, a, kin — and the phrasebook): no glyph block for those. */}
+          {GLYPHS[level.rule.particle] && (
+            <p className="tp__glyph tp__glyph--rule">
+              {GLYPHS[level.rule.particle]}
+            </p>
+          )}
           <p>{level.rule.body}</p>
         </div>
 

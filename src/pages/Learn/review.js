@@ -25,7 +25,7 @@
  * grammatical sentences is Tier 3 and is deliberately not here.
  */
 
-import { GLYPHS, isCorrect, LEVELS } from './tokipona';
+import { acceptedFromGloss, GLYPHS, isCorrect, LEVELS } from './tokipona';
 import { levelsReached, weakWords } from './progress';
 
 export const COURSE = 'toki-pona';
@@ -130,7 +130,8 @@ const wordItem = (v) => ({
   promptGlyph: v.glyph,
   promptSub: 'what does it mean?',
   answer: v.gloss,
-  accepted: glossParts(v.gloss),
+  // The level drill's list, so "arm" is right for luka here too (w14 #13).
+  accepted: acceptedFromGloss(v.gloss),
 });
 
 const meaningItem = (v, index) => {
