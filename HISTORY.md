@@ -12,18 +12,18 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
-**www #104: the development copy keeps up with the live one · the history now updates itself** · [PR #104](https://github.com/travis-horton/www/pull/104) · merged 26.0918.1513
+**www #104: the development copy keeps up with the live one · the history now updates itself** · [PR #104](https://github.com/travis-horton/www/pull/104) · merged 26.0918.1513 · v3.27.0
 - **[the development copy keeps up with the live one](https://github.com/travis-horton/www/pull/103)** · merged 26.0918.1513
   Behind the scenes: after each release, GitHub now moves the development branch up to match the live branch, so it no longer shows as dozens of commits "behind". If the development branch already has new work waiting, it's left untouched, and nothing redeploys.
 - **[the history now updates itself](https://github.com/travis-horton/www/pull/102)** · merged 26.0918.1513
   New: every change now carries its own plain-language note, and when changes go live, GitHub collects the notes into one entry at the top of this file, with the time it went live. Automatic library updates get a standard line of their own.
   Try it: open https://github.com/travis-horton/www/blob/main/HISTORY.md
 
-**www #101: this history** · [PR #101](https://github.com/travis-horton/www/pull/101) · merged 26.0918.1414
+**www #101: this history** · [PR #101](https://github.com/travis-horton/www/pull/101) · merged 26.0918.1414 · v3.26.0
 - **[this history](https://github.com/travis-horton/www/pull/100)** · merged 26.0918.1414
   New: this file — seven years of the website in plain words, from its first hand-built pages on 19.0522 to today, newest first, each entry saying what changed on the site and, where it still exists, the address to go see it.
 
-**www #99: /learn content fixes** · [PR #99](https://github.com/travis-horton/www/pull/99) · merged 26.0918.1034
+**www #99: /learn content fixes** · [PR #99](https://github.com/travis-horton/www/pull/99) · merged 26.0918.1034 · v3.25.0
 - **[lukin comes back in Level 4](https://github.com/travis-horton/www/commit/09a8653)** · merged 26.0918.1023
   New: Level 4 of the toki pona course now brings back lukin from Level 2 in its new sense "to try", on a card marked "again — from Level 2". Every Level 4 session is now 28 items instead of 27, and searching /learn for "try" now finds it.
   Try it: open https://www.travish.com/learn/toki-pona/4
@@ -54,11 +54,11 @@ This is the whole history of my website, www.travish.com, newest first, written 
   Fixed: Level 1 translated pona suli as "very good", but "very" is the job of mute, which isn't taught until Level 3. It now reads "food is greatly good — a big good", and the closing note says "very" arrives in Level 3.
   Try it: open https://www.travish.com/learn/toki-pona/1
 
-**www #97: travish.com forwards to www.travish.com** · [PR #97](https://github.com/travis-horton/www/pull/97) · merged 26.0917.1114
+**www #97: travish.com forwards to www.travish.com** · [PR #97](https://github.com/travis-horton/www/pull/97) · merged 26.0917.1114 · v3.24.0
 - New: typing travish.com without the "www" now takes you to the same page on www.travish.com, which is now the site's one official address. Before, both addresses served the site separately, and Google flagged the pages as duplicates.
   Try it: open https://travish.com/piano and you land on https://www.travish.com/piano
 
-**www #95: /learn progress transfer and self-checking answers** · [PR #95](https://github.com/travis-horton/www/pull/95) · merged 26.0917.1050
+**www #95: /learn progress transfer and self-checking answers** · [PR #95](https://github.com/travis-horton/www/pull/95) · merged 26.0917.1050 · v3.23.0
 - **[Tidy-up](https://github.com/travis-horton/www/commit/b53b43d)** · merged 26.0917.1046
   Behind the scenes: the two features below were written on 26.0829 and only published now. On the way in they went through the new code formatter, and one out-of-date note telling the code checker to skip a line was removed.
 - **[Answers checked for you, and misses by rule](https://github.com/travis-horton/www/commit/fa33c37)** · merged 26.0917.1046
@@ -68,7 +68,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
   New: your /learn scores live only in the browser you practiced in, so the iPad and the laptop each kept their own. A "Move progress between devices" button now gives you a code to copy on one device and paste on the other. Pasting only ever adds sessions, never removes them, and it tells you how many it will add before you press the button. (The same commit also gave luka a card to drill, but that had already been done another way, so it added nothing new.)
   Try it: open https://www.travish.com/learn and press "Move progress between devices"
 
-**www #93: code checking, the DEV badge, and a real page title** · [PR #93](https://github.com/travis-horton/www/pull/93) · merged 26.0917.1035
+**www #93: code checking, the DEV badge, and a real page title** · [PR #93](https://github.com/travis-horton/www/pull/93) · merged 26.0917.1035 · v3.22.0
 - **[The badge becomes a tab](https://github.com/travis-horton/www/commit/79008c0)** · merged 26.0917.1032
   New: the DEV marker on the dev copy of the site is now a small carmine tab hanging off the left edge, sitting on the line just under the header. A second line shows the full address. The live site shows nothing.
   Try it: open https://kiddspazz.com (compare https://www.travish.com, which has no tab)
@@ -86,7 +86,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
   Try it: open Terminal and paste
       cd ~/dev/www && npm run lint
 
-**www #88: About and Piano pages rewritten, plus two fixes** · [PR #88](https://github.com/travis-horton/www/pull/88) · merged 26.0916.1305
+**www #88: About and Piano pages rewritten, plus two fixes** · [PR #88](https://github.com/travis-horton/www/pull/88) · merged 26.0916.1305 · v3.21.0
 - **[Outbound links](https://github.com/travis-horton/www/commit/a4d3913)** · merged 26.0916.1302
   New: the About page now links the places it names: Boise State, the Boise Philharmonic Master Chorale, the Brooklyn Youth Chorus, the College of Idaho, UNC-CH, UNC School of the Arts, the New England Conservatory and NYU. It also links "base six" to seximal.net and your remark about calendars to Wikipedia's Calendar reform article.
   Try it: open https://www.travish.com
@@ -120,17 +120,17 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Toki pona search no longer blanks the page](https://github.com/travis-horton/www/commit/bfb613c)** · merged 26.0916.0145
   Fixed: typing certain words into the toki pona search box, like "constructor", made the whole page go blank instead of just showing no results. Those words now simply find nothing.
 
-**www #86: the li rule, and the asteroids game's address** · [PR #86](https://github.com/travis-horton/www/pull/86) · merged 26.0916.0143
+**www #86: the li rule, and the asteroids game's address** · [PR #86](https://github.com/travis-horton/www/pull/86) · merged 26.0916.0143 · v3.20.2
 - **[The li rule, stated correctly](https://github.com/travis-horton/www/commit/fc396b4)** · merged 26.0916.0135
   Fixed: Levels 1 and 2 of the toki pona course said li is dropped "after mi and sina", which is wrong. It's dropped only when mi or sina is the whole subject, so "mi en sina li musi" keeps it. Both levels now say that, and Level 1 points ahead to Level 10, where it's taught in full.
   Try it: open https://www.travish.com/learn/toki-pona/1
 - **[Asteroids game address](https://github.com/travis-horton/www/commit/78b40a6)** · merged 26.0916.0130
   Behind the scenes: the site's link to your asteroids game's code now uses its new GitHub address under travis-horton instead of the old kiddspazz name. The old address still forwarded, so nothing had been broken, and the game itself didn't change.
 
-**www #83: private material removed** · [PR #83](https://github.com/travis-horton/www/pull/83) · merged 26.0913.1817
+**www #83: private material removed** · [PR #83](https://github.com/travis-horton/www/pull/83) · merged 26.0913.1817 · v3.20.1
 - Behind the scenes: private material was removed from the site's files and history.
 
-**www #80: /learn search for both courses, and the phone menu icons** · [PR #80](https://github.com/travis-horton/www/pull/80) · merged 26.0911.1113
+**www #80: /learn search for both courses, and the phone menu icons** · [PR #80](https://github.com/travis-horton/www/pull/80) · merged 26.0911.1113 · v3.20.0
 - **[Seximal search, and one box for both courses](https://github.com/travis-horton/www/pull/78)** · merged 26.0911.1025
   New: the seximal course page got its own search box. Type a number word ("dozen", "nif"), a whole spoken number ("thirsy-two nif fifsy-one"), a numeral like 20 (answered both ways: read as base six, and read as an ordinary number), or a topic like "carry", and it links you to the level where that lives. The main /learn page now has one search box that covers both courses, with the answers grouped under "toki pona" and "seximal".
   Try it: open https://www.travish.com/learn and type 20
@@ -139,7 +139,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
   Behind the scenes: added an automatic check that fails if a menu icon ever loses its picture again.
   Try it: open https://www.travish.com on your phone
 
-**www #76: asteroids high score, and library updates** · [PR #76](https://github.com/travis-horton/www/pull/76) · merged 26.0910.2047
+**www #76: asteroids high score, and library updates** · [PR #76](https://github.com/travis-horton/www/pull/76) · merged 26.0910.2047 · v3.19.3
 - **[Page-navigation update made to work](https://github.com/travis-horton/www/commit/8f0b7ab)** · merged 26.0910.2044
   Behind the scenes: brought the page-navigation library update from www #70 (below) into the dev copy of the site, and made the two adjustments it needed before the site would build and its automatic checks would pass. With it, the site's list of known security warnings from outside code libraries went from 2 to 0.
 - **[Security patch to a code-style tool](https://github.com/travis-horton/www/commit/bfc7fa6)** · merged 26.0910.2034
@@ -149,13 +149,13 @@ This is the whole history of my website, www.travish.com, newest first, written 
   Behind the scenes: the online-database code, which every page of the site was downloading just for that one number, is gone, cutting the known security warnings from 13 to 3.
   Try it: open https://www.travish.com/programming/asteroids
 
-**www #70: page-navigation library update** · [PR #70](https://github.com/travis-horton/www/pull/70) · merged 26.0910.2035
+**www #70: page-navigation library update** · [PR #70](https://github.com/travis-horton/www/pull/70) · merged 26.0910.2035 · v3.19.2
 - Behind the scenes: an automatic security update to the library that moves you between the site's pages (React Router, version 6 to 7). It needed two small adjustments before the site would build with it; those came in with www #76 (above).
 
-**www #72: www.travish.com back online** · [PR #72](https://github.com/travis-horton/www/pull/72) · merged 26.0908.0732
+**www #72: www.travish.com back online** · [PR #72](https://github.com/travis-horton/www/pull/72) · merged 26.0908.0732 · v3.19.1
 - Fixed: for about 12 hours after the 26.0907.1900 release, www.travish.com showed a "service unavailable" page, while plain travish.com kept working. The new calendar doorbell (www #69, below) needed a folder to write its notes in, that folder had only been set up for the copy of the site serving plain travish.com, and the copy behind www.travish.com refused to start without it. The site now creates that folder itself, so both start on their own ([PR #71](https://github.com/travis-horton/www/pull/71)).
 
-**www #69: /learn search, the seximal clock, and the calendar doorbell** · [PR #69](https://github.com/travis-horton/www/pull/69) · merged 26.0907.1900
+**www #69: /learn search, the seximal clock, and the calendar doorbell** · [PR #69](https://github.com/travis-horton/www/pull/69) · merged 26.0907.1900 · v3.19.0
 - **[Calendar doorbell for Praxis](https://github.com/travis-horton/www/pull/68)** · merged 26.0907.1856
   New: the site gained a private address that Google Calendar "rings" whenever your calendar changes, so Praxis learns that something changed instead of having to keep re-checking the calendar itself. The site only writes down that the bell rang (Google never says what changed); Praxis on your laptop reads that note and fetches the change itself.
 - **[Clock: big face moved off the top](https://github.com/travis-horton/www/commit/8797eea)** · merged 26.0906.0914
@@ -202,7 +202,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## August 2026
 
-**www #64: /learn arrives** · [PR #64](https://github.com/travis-horton/www/pull/64) · merged 26.0818.1714
+**www #64: /learn arrives** · [PR #64](https://github.com/travis-horton/www/pull/64) · merged 26.0818.1714 · v3.18.0
 - **[Switched from yarn to npm](https://github.com/travis-horton/www/commit/ee62f84)** · merged 26.0818.1708
   Behind the scenes: the site switched the tool that installs its outside code libraries from yarn to npm, in the build that makes the live site and in the setup instructions.
   Try it: open Terminal and paste
@@ -220,7 +220,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## March 2026
 
-**Follow-up fixes and a version number in the footer** · [commits](https://github.com/travis-horton/www/commits/main?since=2026-03-09&until=2026-03-09) · merged 26.0309.1222
+**Follow-up fixes and a version number in the footer** · [commits](https://github.com/travis-horton/www/commits/main?since=2026-03-09&until=2026-03-09) · merged 26.0309.1222 · v3.17.0
 - **[Journal page cleanup](https://github.com/travis-horton/www/commit/72441ce)** · merged 26.0309.1222
   Fixed: the hidden journal page showed an out-of-date date, and it could break on a day that was missing one of its scores. Both were fixed, and the site's version number went up to 2.2.1. <!-- unsure: the journal page's own files were later removed from the repo's history, so only the version change can still be seen; this reading comes from the commit message --> (The journal page was later removed on 26.0913.)
 - **[Dev-site build fix](https://github.com/travis-horton/www/commit/40a3d21)** · merged 26.0309.1201
@@ -240,7 +240,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## February 2026
 
-**The first modernization with Claude** · [commits](https://github.com/travis-horton/www/commits/main?since=2026-02-26&until=2026-02-26) · merged 26.0226.1929
+**The first modernization with Claude** · [commits](https://github.com/travis-horton/www/commits/main?since=2026-02-26&until=2026-02-26) · merged 26.0226.1929 · v3.16.0
 - **[Page-address upgrade](https://github.com/travis-horton/www/commit/6fcba74)** · merged 26.0226.1929
   Behind the scenes: the part of the site that decides which page to show for each address was upgraded to its next major version (React Router 6). Every page kept its address, and the blog's table of contents became its own separate piece.
 - **[Asteroids restart](https://github.com/travis-horton/www/commit/0470235)** · merged 26.0226.1923
@@ -280,34 +280,34 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## July 2024
 
-**www #58: hidden journal page** · [PR #58](https://github.com/travis-horton/www/pull/58) · merged 24.0702.1615
+**www #58: hidden journal page** · [PR #58](https://github.com/travis-horton/www/pull/58) · merged 24.0702.1615 · v3.15.0
 - **[Journal page](https://github.com/travis-horton/www/pull/57)** · merged 24.0702.1615
   New: your daily journal was added to the site as a hidden page at /journal, not linked from the menu. (Later removed on 26.0913.)
 - **[Catching up](https://github.com/travis-horton/www/commit/36867fd)** · merged 24.0702.1615
   Behind the scenes: the working copy was caught up with the main copy before release; no change of its own.
 
-**www #56: seximal clock tidy** · [PR #56](https://github.com/travis-horton/www/pull/56) · merged 24.0702.1603
+**www #56: seximal clock tidy** · [PR #56](https://github.com/travis-horton/www/pull/56) · merged 24.0702.1603 · v3.14.3
 - Behind the scenes: the seximal clock's code was tidied to the style rules, with no visible change.
 
-**www #53: security update** · [PR #53](https://github.com/travis-horton/www/pull/53) · merged 24.0702.1017
+**www #53: security update** · [PR #53](https://github.com/travis-horton/www/pull/53) · merged 24.0702.1017 · v3.14.2
 - Behind the scenes: an automatic security update to a networking library that came along with the Firebase database tools.
 
-**www #54: security update** · [PR #54](https://github.com/travis-horton/www/pull/54) · merged 24.0702.1017
+**www #54: security update** · [PR #54](https://github.com/travis-horton/www/pull/54) · merged 24.0702.1017 · v3.14.1
 - Behind the scenes: an automatic security update to a library the build tools use to match groups of file names.
 
-**www #55: homepage wording** · [PR #55](https://github.com/travis-horton/www/pull/55) · merged 24.0702.1011
+**www #55: homepage wording** · [PR #55](https://github.com/travis-horton/www/pull/55) · merged 24.0702.1011 · v3.14.0
 - New: the homepage stopped listing "Choir Director" among your roles at the College of Idaho; it now says Professor of Piano and staff pianist.
   Behind the scenes: the homepage and Programming page code was tidied to the style rules, with no other change to their words.
 
 ## June 2024
 
-**www #48: security update** · [PR #48](https://github.com/travis-horton/www/pull/48) · merged 24.0606.1314
+**www #48: security update** · [PR #48](https://github.com/travis-horton/www/pull/48) · merged 24.0606.1314 · v3.13.2
 - Behind the scenes: an automatic security update to a library the build tools use to read settings files.
 
-**www #52: linting (duplicate)** · [PR #52](https://github.com/travis-horton/www/pull/52) · merged 24.0606.1314
+**www #52: linting (duplicate)** · [PR #52](https://github.com/travis-horton/www/pull/52) · merged 24.0606.1314 · v3.13.1
 - Behind the scenes: brought in the dev copy of the same "Linting" change that had been put straight onto main nine minutes earlier (the entry below), so nothing new reached the site.
 
-**Linting, Piano page and seximal clock** · [commits](https://github.com/travis-horton/www/commits/main?since=2024-06-06&until=2024-06-06) · merged 24.0606.1305
+**Linting, Piano page and seximal clock** · [commits](https://github.com/travis-horton/www/commits/main?since=2024-06-06&until=2024-06-06) · merged 24.0606.1305 · v3.13.0
 - **[Piano page](https://github.com/travis-horton/www/commit/62075b7)** · merged 24.0606.1305
   New: the Piano page gained two paragraphs about your 23–24 school year at the college: stepping in as choir director, and then being offered a place on the piano faculty. (Later replaced on 26.0916 by a rewritten Piano page.)
 - **[Seximal clock touches](https://github.com/travis-horton/www/commit/62075b7)** · merged 24.0606.1305
@@ -320,7 +320,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## February 2024
 
-**www #51: binary numerals** · [PR #51](https://github.com/travis-horton/www/pull/51) · merged 24.0201.1202
+**www #51: binary numerals** · [PR #51](https://github.com/travis-horton/www/pull/51) · merged 24.0201.1202 · v3.12.0
 - **[Binary page](https://github.com/travis-horton/www/commit/c5cc0f9)** · merged 24.0201.1202
   New: a work-in-progress "Binary" page. Type a number into the box and it is drawn in a made-up way of writing binary, where each digit is a short or tall stroke and the strokes come in groups of four on an underline; below it is a chart of 0 through 15 written the same way.
   Try it: open https://www.travish.com/programming/binary
@@ -329,7 +329,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## January 2024
 
-**www #50: seximal clock** · [PR #50](https://github.com/travis-horton/www/pull/50) · merged 24.0110.1218
+**www #50: seximal clock** · [PR #50](https://github.com/travis-horton/www/pull/50) · merged 24.0110.1218 · v3.11.0
 - **[Seximal clock](https://github.com/travis-horton/www/commit/30b7227)** · merged 24.0110.1218
   New: a work-in-progress clock page in seximal (base six). The day is split into 36 "hours" of 36 "minutes" of 36 "seconds", drawn as hexagons turning inside hexagons, with a clock face and the time written out.
   Try it: open https://www.travish.com/programming/seximal-time-keeping
@@ -337,7 +337,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
   New: on the Programming page, the old "Works in progress" paragraphs about rebuilding the site in React and its automatic builds were replaced by a list holding the seximal clock link, which moved there from the Personal Projects list.
   Behind the scenes: the build tool's list of browser versions was refreshed.
 
-**www #49: bio update and asteroids fix** · [PR #49](https://github.com/travis-horton/www/pull/49) · merged 24.0103.1959
+**www #49: bio update and asteroids fix** · [PR #49](https://github.com/travis-horton/www/pull/49) · merged 24.0103.1959 · v3.10.0
 - **[Asteroids fix](https://github.com/travis-horton/www/commit/2fa2168)** · merged 24.0103.1959
   Fixed: the rocks in the asteroids game had lost track of their own size, so they didn't draw properly. They draw at the right size again. <!-- unsure: the change restores the rock's size value; the exact on-screen symptom (invisible vs. misshapen rocks) is inferred -->
 - **[Homepage bio](https://github.com/travis-horton/www/commit/6a9116d)** · merged 24.0103.1959
@@ -348,23 +348,23 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## December 2022
 
-**www #47: the About Me biography rewritten** · [PR #47](https://github.com/travis-horton/www/pull/47) · merged 22.1230.1401
+**www #47: the About Me biography rewritten** · [PR #47](https://github.com/travis-horton/www/pull/47) · merged 22.1230.1401 · v3.9.0
 - New: the About Me biography was rewritten. It now opens with how your days were split between programming in the morning and piano teaching in the afternoon and evening, adds Python to the languages you list, and moves your life story under a new "A little background" heading, ending with a link to the Recurse Center and a "Here are a few things I've built" link to the Software Engineer page. The photo of your cat was taken off the page. (Later replaced on 26.0916 by a rewritten About Me page.)
 
-**www #46: the Python quote, one line at a time** · [PR #46](https://github.com/travis-horton/www/pull/46) · merged 22.1230.1339
+**www #46: the Python quote, one line at a time** · [PR #46](https://github.com/travis-horton/www/pull/46) · merged 22.1230.1339 · v3.8.3
 - Fixed: the "Fun quotes" section on the Software Engineer page ran all nineteen lines of the Python quote together as one long paragraph. Each line now sits on its own line.
   Try it: open https://www.travish.com/programming and scroll to "Fun quotes".
 
-**www #45: deploy clean-up step removed; Asteroids gets tests** · [PR #45](https://github.com/travis-horton/www/pull/45) · merged 22.1230.1325
+**www #45: deploy clean-up step removed; Asteroids gets tests** · [PR #45](https://github.com/travis-horton/www/pull/45) · merged 22.1230.1325 · v3.8.2
 - **[Deploy clean-up step removed](https://github.com/travis-horton/www/commit/a4c9c97)** · merged 22.1230.1325
   Behind the scenes: took back out the step that deleted leftover old copies of the site from both servers after every update, 18 minutes after www #43 brought it to main. <!-- unsure: no reason is recorded; most likely the step failed whenever there was nothing to delete -->
 - **[Asteroids code reorganized](https://github.com/travis-horton/www/commit/a4c9c97)** · merged 22.1230.1325
   Behind the scenes: the site picked up the newest version of your Asteroids game, whose code had been sorted into folders and given automatic tests. The game plays the same.
 
-**www #41: security update** · [PR #41](https://github.com/travis-horton/www/pull/41) · merged 22.1230.1307
+**www #41: security update** · [PR #41](https://github.com/travis-horton/www/pull/41) · merged 22.1230.1307 · v3.8.1
 - Behind the scenes: an automatic security update to the tool that shrinks the site's code so pages load faster.
 
-**www #43: a Python quote, and server housekeeping** · [PR #43](https://github.com/travis-horton/www/pull/43) · merged 22.1230.1307
+**www #43: a Python quote, and server housekeeping** · [PR #43](https://github.com/travis-horton/www/pull/43) · merged 22.1230.1307 · v3.8.0
 - **[Fun quotes](https://github.com/travis-horton/www/commit/37aa4cb)** · merged 22.1230.1307
   New: a "Fun quotes" section at the bottom of the Software Engineer page, with the short poem Python prints when you type `import this`. At first its lines ran together as one paragraph (fixed 22.1230 in www #46).
   Try it: open https://www.travish.com/programming and scroll to "Fun quotes".
@@ -377,7 +377,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## June 2022
 
-**www #40: Asteroids cleaned up** · [PR #40](https://github.com/travis-horton/www/pull/40) · merged 22.0620.2259
+**www #40: Asteroids cleaned up** · [PR #40](https://github.com/travis-horton/www/pull/40) · merged 22.0620.2259 · v3.7.0
 - **[Asteroids rewritten](https://github.com/travis-horton/www/commit/221a177)** · merged 22.0620.2259
   New: the site picked up a rewritten version of your Asteroids game, with its code cleaned up and the playing area made a little smaller (432 pixels square instead of 512) so it fits the page better.
   Try it: open https://www.travish.com/programming/asteroids
@@ -388,10 +388,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Code checker](https://github.com/travis-horton/www/commit/d6f5ccf)** · merged 22.0620.2259
   Behind the scenes: added an automatic style checker for the site's code and deleted a leftover helper file for listing blog posts that nothing used.
 
-**www #39: an unused leftover removed** · [PR #39](https://github.com/travis-horton/www/pull/39) · merged 22.0620.1457
+**www #39: an unused leftover removed** · [PR #39](https://github.com/travis-horton/www/pull/39) · merged 22.0620.1457 · v3.6.3
 - Behind the scenes: removed one unused piece of code from the Software Engineer page. Nothing visible changed.
 
-**www #38: Polygon race tidied, and a security update** · [PR #38](https://github.com/travis-horton/www/pull/38) · merged 22.0620.1445
+**www #38: Polygon race tidied, and a security update** · [PR #38](https://github.com/travis-horton/www/pull/38) · merged 22.0620.1445 · v3.6.2
 - **[Polygon race reorganized](https://github.com/travis-horton/www/commit/8cc36cb)** · merged 22.0620.1445
   Behind the scenes: the site picked up a version of your Polygon race project whose code had been rewritten in about forty small steps for readability (clearer names, smaller pieces). It draws the same thing.
 - **[Security update](https://github.com/travis-horton/www/pull/37)** · merged 22.0620.1445
@@ -401,7 +401,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## April 2022
 
-**www #36: library refresh and a footer fix** · [PR #36](https://github.com/travis-horton/www/pull/36) · merged 22.0415.1511
+**www #36: library refresh and a footer fix** · [PR #36](https://github.com/travis-horton/www/pull/36) · merged 22.0415.1511 · v3.6.1
 - **[Library refresh](https://github.com/travis-horton/www/commit/a36aeb8)** · merged 22.0415.1511
   Behind the scenes: brought all the outside code libraries the site is built with up to date (feature PR [#35](https://github.com/travis-horton/www/pull/35)), with the small adjustments the newer build tool needed.
 - **[Footer cursor](https://github.com/travis-horton/www/commit/a36aeb8)** · merged 22.0415.1511
@@ -409,29 +409,29 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## November 2021
 
-**www #30: build fix for the Mac** · [PR #30](https://github.com/travis-horton/www/pull/30) · merged 21.1128.1155
+**www #30: build fix for the Mac** · [PR #30](https://github.com/travis-horton/www/pull/30) · merged 21.1128.1155 · v3.6.0
 - **[Image tool upgrade](https://github.com/travis-horton/www/commit/32c24f0)** · merged 21.1128.1155
   Fixed: the site couldn't be built on your Mac, because the old version of the image-resizing tool the build uses didn't work on macOS. It now uses a newer version that does.
 - **[Employer link wording](https://github.com/travis-horton/www/commit/32c24f0)** · merged 21.1128.1155
   New: the link to your then-employer, Honor, on the Software Engineer page now shows the company's name instead of its web address. (Later removed on 24.0103.)
 
-**www #29: employer link fixed** · [PR #29](https://github.com/travis-horton/www/pull/29) · merged 21.1127.0933
+**www #29: employer link fixed** · [PR #29](https://github.com/travis-horton/www/pull/29) · merged 21.1127.0933 · v3.5.2
 - Fixed: the link to your then-employer, Honor, on the Software Engineer page was missing its "https://", so it led to a nonexistent page on your own site instead. It now goes to the company's website. (Later removed on 24.0103.)
 
-**www #26: security update** · [PR #26](https://github.com/travis-horton/www/pull/26) · merged 21.1126.1217
+**www #26: security update** · [PR #26](https://github.com/travis-horton/www/pull/26) · merged 21.1126.1217 · v3.5.1
 - Behind the scenes: an automatic security update to a small library the build tools use to read page styles.
 
-**www #28: grey code snippets** · [PR #28](https://github.com/travis-horton/www/pull/28) · merged 21.1126.1217
+**www #28: grey code snippets** · [PR #28](https://github.com/travis-horton/www/pull/28) · merged 21.1126.1217 · v3.5.0
 - **[Code snippets shaded](https://github.com/travis-horton/www/commit/3d281e1)** · merged 21.1126.1217
   New: bits of code in the blog posts and on the Software Engineer page now sit on a light grey background, so they stand out from the text around them.
   Try it: open https://www.travish.com/blog/js-this
 - **[GitHub name](https://github.com/travis-horton/www/commit/0ffb55e)** · merged 21.1126.1217
   Fixed: the capitalization pass had changed your GitHub name on the Contact page to "Kiddspazz". It's back to "kiddspazz", the way the account is actually spelled.
 
-**www #27: capitalization, already live** · [PR #27](https://github.com/travis-horton/www/pull/27) · merged 21.1125.2154
+**www #27: capitalization, already live** · [PR #27](https://github.com/travis-horton/www/pull/27) · merged 21.1125.2154 · v3.4.1
 - Behind the scenes: this release carried the About Me capitalization pass you wrote on 21.1113, but the same edits had already reached the live site directly on 21.1114 (the entry below), so no page changed. The only lasting difference was an upgrade to the image-resizing tool the site's build uses.
 
-**Capital letters and a new job paragraph** · [commits](https://github.com/travis-horton/www/commits/main?since=2021-11-14&until=2021-11-14) · merged 21.1114.1651
+**Capital letters and a new job paragraph** · [commits](https://github.com/travis-horton/www/commits/main?since=2021-11-14&until=2021-11-14) · merged 21.1114.1651 · v3.4.0
 - **[Capital letters](https://github.com/travis-horton/www/commit/4a2116f)** · merged 21.1114.1651
   New: every page switched from all-lowercase to normal capitalization: headings, the About Me biography, the Pianist and Contact pages, the blog button, and the descriptions under each programming project.
   Try it: open https://www.travish.com/programming/perlin-noise
@@ -440,31 +440,31 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## August 2021
 
-**www #25: typo fix** · [PR #25](https://github.com/travis-horton/www/pull/25) · merged 21.0804.2101
+**www #25: typo fix** · [PR #25](https://github.com/travis-horton/www/pull/25) · merged 21.0804.2101 · v3.3.1
 - Fixed: "the paragraph your reading now" in the Works in progress section now reads "you're". (Later removed on 24.0103, with the paragraph.)
 
 ## July 2021
 
-**www #24: a works-in-progress update** · [PR #24](https://github.com/travis-horton/www/pull/24) · merged 21.0729.1109
+**www #24: a works-in-progress update** · [PR #24](https://github.com/travis-horton/www/pull/24) · merged 21.0729.1109 · v3.3.0
 - **[Works in progress](https://github.com/travis-horton/www/commit/15634f3)** · merged 21.0729.1109
   New: the Software Engineer page's "Works in progress" section replaced its Battleship link with three paragraphs about rebuilding this site: the design makeover, React, and the automatic updates to the test copy and the live site. It ended by noting that the paragraph was written 21.0729 at 1100 and was live by 1110. (Later replaced on 24.0103.)
 - **[Setup instructions](https://github.com/travis-horton/www/commit/abb2462)** · merged 21.0729.1109
   Behind the scenes: the project's GitHub front page now explains the two extra commands needed to download the programming projects that live in their own repositories.
 
-**www #23: status badges rearranged** · [PR #23](https://github.com/travis-horton/www/pull/23) · merged 21.0728.1808
+**www #23: status badges rearranged** · [PR #23](https://github.com/travis-horton/www/pull/23) · merged 21.0728.1808 · v3.2.4
 - Behind the scenes: on the project's GitHub front page, the live-site badge now comes before the test-copy badge, the badge for a styling library the site no longer used was removed, and a "last commit" badge was added.
 
-**www #22: status badges fixed** · [PR #22](https://github.com/travis-horton/www/pull/22) · merged 21.0728.1742
+**www #22: status badges fixed** · [PR #22](https://github.com/travis-horton/www/pull/22) · merged 21.0728.1742 · v3.2.3
 - Fixed: the live-site badge on the project's GitHub front page was checking a branch that doesn't exist. It now reports on main, so it shows whether the latest live update succeeded.
 
-**www #21: deploy names and badges** · [PR #21](https://github.com/travis-horton/www/pull/21) · merged 21.0728.1734
+**www #21: deploy names and badges** · [PR #21](https://github.com/travis-horton/www/pull/21) · merged 21.0728.1734 · v3.2.2
 - Behind the scenes: the two automatic updates are now named "development environment" and "production environment" instead of both being called "ci", and the status badges on the project's GitHub front page became clickable.
 
-**www #20: the flip-flop code sample** · [PR #20](https://github.com/travis-horton/www/pull/20) · merged 21.0728.1522
+**www #20: the flip-flop code sample** · [PR #20](https://github.com/travis-horton/www/pull/20) · merged 21.0728.1522 · v3.2.1
 - Fixed: the code sample at the end of "The D Flip-Flop, pt 1" showed its curly braces as garbled text codes and had no indentation. It now shows real braces with the lines indented. <!-- unsure: that the braces showed as literal text codes; the change swapped HTML brace codes for real braces -->
   Try it: open https://www.travish.com/blog/the-flip-flop-1 and scroll to the bottom.
 
-**www #19: the blog posts, readable** · [PR #19](https://github.com/travis-horton/www/pull/19) · merged 21.0728.0800
+**www #19: the blog posts, readable** · [PR #19](https://github.com/travis-horton/www/pull/19) · merged 21.0728.0800 · v3.2.0
 - **[Blog posts filled in](https://github.com/travis-horton/www/commit/3f21af1)** · merged 21.0728.0800
   New: your three 2019 blog posts ("The First Blog Post", "The D Flip-Flop, pt 1" and "JavaScript's `this`") now open as real pages, including the AND-gate diagram. Until now each one only said "i'm working on making these each programmatically displayed...".
   Try it: open https://www.travish.com/blog and click any post.
@@ -472,16 +472,16 @@ This is the whole history of my website, www.travish.com, newest first, written 
   Fixed: clicking the "here" link on About Me took you to the Software Engineer page, but the header still underlined "about me". The underline now moves to the page you land on.
   Try it: open https://www.travish.com and click "software engineer" in the last paragraph.
 
-**www #18: setup instructions** · [PR #18](https://github.com/travis-horton/www/pull/18) · merged 21.0727.1820
+**www #18: setup instructions** · [PR #18](https://github.com/travis-horton/www/pull/18) · merged 21.0727.1820 · v3.1.3
 - Behind the scenes: tidied the setup instructions on the project's GitHub front page, replaced its "to do: deploy to production" note with "production automatically deploys on merge with main", and added "write tests" to its to-do list.
 
-**www #17: www.travish.com updates reliably** · [PR #17](https://github.com/travis-horton/www/pull/17) · merged 21.0727.1803
+**www #17: www.travish.com updates reliably** · [PR #17](https://github.com/travis-horton/www/pull/17) · merged 21.0727.1803 · v3.1.2
 - Fixed: each live update started a fresh copy of the site for www.travish.com without first stopping the old one, so that address could be left showing the previous version. The old copy is now stopped and removed first. <!-- unsure: inferred from the change; the fix is plain but no failure was recorded -->
 
-**www #16: "stage" becomes "dev"** · [PR #16](https://github.com/travis-horton/www/pull/16) · merged 21.0727.1759
+**www #16: "stage" becomes "dev"** · [PR #16](https://github.com/travis-horton/www/pull/16) · merged 21.0727.1759 · v3.1.1
 - Behind the scenes: the automatic update for the test copy was renamed from "stage" to "dev", and the project's GitHub front page gained a badge for each automatic update and a note on the helpers that handle https.
 
-**www #15: the live site updates itself** · [PR #15](https://github.com/travis-horton/www/pull/15) · merged 21.0727.1748
+**www #15: the live site updates itself** · [PR #15](https://github.com/travis-horton/www/pull/15) · merged 21.0727.1748 · v3.1.0
 - **[www.travish.com](https://github.com/travis-horton/www/commit/7febbbd)** · merged 21.0727.1748
   New: each live update now starts the site at both travish.com and www.travish.com, each with its own https certificate. (Later changed on 26.0917: travish.com now forwards to www.travish.com.)
 - **[About Me links to your projects](https://github.com/travis-horton/www/commit/fd6331f)** · merged 21.0727.1748
@@ -491,7 +491,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Live-site updates finished](https://github.com/travis-horton/www/commit/6b0e043)** · merged 21.0727.1748
   Behind the scenes: the automatic update for travish.com was fixed so it can log in to the live server, finishing what www #14 started: merging into main now updates the live site.
 
-**www #14: the big update** · [PR #14](https://github.com/travis-horton/www/pull/14) · merged 21.0727.1034
+**www #14: the big update** · [PR #14](https://github.com/travis-horton/www/pull/14) · merged 21.0727.1034 · v3.0.0
 - **[Automatic updates](https://github.com/travis-horton/www/commit/8d56f57)** · merged 21.0727.1034
   Behind the scenes: from here on, pushing work to the dev branch automatically builds the site and puts it on kiddspazz.com, your test copy, and merging into main was set up to do the same for travish.com (that half was finished in www #15). Each copy runs as a self-contained package behind a helper that fetches its https security certificates automatically.
 - **[Blog contents page](https://github.com/travis-horton/www/commit/a7811cb)** · merged 21.0727.1034
@@ -514,7 +514,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Steady tab labels](https://github.com/travis-horton/www/commit/ec924a6)** · merged 21.0727.1034
   Fixed: clicking a tab in the header made the row of tab labels jump slightly as the purple underline appeared. The labels now stay put.
 - **[About Me at the plain address](https://github.com/travis-horton/www/commit/f012046)** · merged 21.0727.1034
-  New: travish.com now opens About Me directly, instead of jumping to travish.com/home.
+  Breaking: travish.com now opens About Me directly, instead of jumping to travish.com/home.
   Try it: open https://www.travish.com
 - **[About Me wording](https://github.com/travis-horton/www/commit/7c6771f)** · merged 21.0727.1034
   New: the About Me introduction dropped its aside about never having enough time to learn Rust. (Later replaced on 22.1230.)
@@ -523,30 +523,30 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## June 2021
 
-**Automatic-check experiment removed** · [commits](https://github.com/travis-horton/www/commits/main?since=2021-06-08&until=2021-06-08) · merged 21.0608.2101
+**Automatic-check experiment removed** · [commits](https://github.com/travis-horton/www/commits/main?since=2021-06-08&until=2021-06-08) · merged 21.0608.2101 · v2.1.6
 - Behind the scenes: deleted the automatic-check experiment from 21.0328 (the entries below). Its replacement, real automatic updates, arrived with www #14.
 
 ## March 2021
 
-**www #9: experiment, step 4** · [PR #9](https://github.com/travis-horton/www/pull/9) · merged 21.0328.1812
+**www #9: experiment, step 4** · [PR #9](https://github.com/travis-horton/www/pull/9) · merged 21.0328.1812 · v2.1.5
 - Fixed: a formatting mistake in the automatic check's instructions, left by www #8, kept it from running. It could run after this. (Later removed on 21.0608.)
 
-**www #8: experiment, step 3** · [PR #8](https://github.com/travis-horton/www/pull/8) · merged 21.0328.1810
+**www #8: experiment, step 3** · [PR #8](https://github.com/travis-horton/www/pull/8) · merged 21.0328.1810 · v2.1.4
 - Behind the scenes: the automatic check tried logging in to your web server as a test, and was limited to pull requests into main. (Later removed on 21.0608.)
 
-**www #7: experiment, step 2** · [PR #7](https://github.com/travis-horton/www/pull/7) · merged 21.0328.1805
+**www #7: experiment, step 2** · [PR #7](https://github.com/travis-horton/www/pull/7) · merged 21.0328.1805 · v2.1.3
 - Fixed: the automatic check was set to start on an event GitHub doesn't have, so it never ran. It now starts when a pull request is opened into dev or main. (Later removed on 21.0608.)
 
-**www #6: experiment, step 1** · [PR #6](https://github.com/travis-horton/www/pull/6) · merged 21.0328.1802
+**www #6: experiment, step 1** · [PR #6](https://github.com/travis-horton/www/pull/6) · merged 21.0328.1802 · v2.1.2
 - Behind the scenes: added one line to the project's GitHub front page, only to see whether the new automatic check would run. (Later removed on 21.0608.)
 
-**An automatic check, first try** · [commits](https://github.com/travis-horton/www/commits/main?since=2021-03-28&until=2021-03-28) · merged 21.0328.1801
+**An automatic check, first try** · [commits](https://github.com/travis-horton/www/commits/main?since=2021-03-28&until=2021-03-28) · merged 21.0328.1801 · v2.1.1
 - **[Trigger changed](https://github.com/travis-horton/www/commit/97e3372)** · merged 21.0328.1801
   Behind the scenes: tried to make the check run on merges into dev or main instead, using an event name GitHub doesn't recognise (fixed in www #7). (Later removed on 21.0608.)
 - **[GitHub's sample check](https://github.com/travis-horton/www/commit/0646079)** · merged 21.0328.1758
   Behind the scenes: added GitHub's sample automatic check, which only printed "Hello, world!" whenever work reached main. (Later removed on 21.0608.)
 
-**www #5: browser-tab icon** · [PR #5](https://github.com/travis-horton/www/pull/5) · merged 21.0328.1753
+**www #5: browser-tab icon** · [PR #5](https://github.com/travis-horton/www/pull/5) · merged 21.0328.1753 · v2.1.0
 - **[Tab icon](https://github.com/travis-horton/www/commit/7732cb5)** · merged 21.0328.1753
   Fixed: the rebuilt site pointed at its browser-tab icon by a path that didn't survive the build, so no icon showed. The icon is now packaged with the site and appears in the tab.
   Try it: open https://www.travish.com and look at the icon on the browser tab.
@@ -555,10 +555,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Library pin](https://github.com/travis-horton/www/commit/7732cb5)** · merged 21.0328.1753
   Behind the scenes: pinned a small image-checking library to a specific newer version. <!-- unsure: probably to avoid a known security problem in older versions; the commit doesn't say -->
 
-**www #4: security update** · [PR #4](https://github.com/travis-horton/www/pull/4) · merged 21.0328.1627
+**www #4: security update** · [PR #4](https://github.com/travis-horton/www/pull/4) · merged 21.0328.1627 · v2.0.1
 - Behind the scenes: an automatic security update to a helper library used by the React starter kit's development tools.
 
-**www #3: the site rebuilt in React (v2.0.0)** · [PR #3](https://github.com/travis-horton/www/pull/3) · merged 21.0328.1624
+**www #3: the site rebuilt in React (v2.0.0)** · [PR #3](https://github.com/travis-horton/www/pull/3) · merged 21.0328.1624 · v2.0.0
 - **[Crisp tab icons](https://github.com/travis-horton/www/commit/c4810cc)** · merged 21.0328.1624
   New: the five header tabs got sharp drawn icons that stay crisp at any size (an "i" for about me, a keyboard, a piano, a blog icon and a contact icon). On a phone the icons stand in for the tab names.
   Try it: open https://www.travish.com on your phone.
@@ -577,18 +577,18 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[The five pages](https://github.com/travis-horton/www/commit/5c99e42)** · merged 21.0328.1624
   New: About Me (your headshot, the titles "software engineer, pianist, accountant", a short biography and a photo of your cat), a Software Engineer page (your then-current job at Bodybuilding.com, personal projects, goals, works in progress and next projects), a Pianist page about where you teach and accompany, and a one-line Blog placeholder; the browser tab read "thor". About Me lived at travish.com/home. (About Me moved to the plain address on 21.0727; the tab title changed on 26.0917.)
 - **[Starting from scratch](https://github.com/travis-horton/www/commit/1884056)** · merged 21.0328.1624
-  Behind the scenes: on 21.0214 the whole hand-built site was deleted to start over in React: the portfolio pages, the old blog, the contact page and the PHP hit counter. The project links on the new Software Engineer page still pointed at the old addresses until 21.0727. <!-- unsure: whether those project links worked on the live server in between -->
+  Removed: on 21.0214 the whole hand-built site was deleted to start over in React: the portfolio pages, the old blog, the contact page and the PHP hit counter. The project links on the new Software Engineer page still pointed at the old addresses until 21.0727. <!-- unsure: whether those project links worked on the live server in between -->
 - **[The journal comes back out](https://github.com/travis-horton/www/commit/93c4147)** · merged 21.0328.1624
   Behind the scenes: your daily journal, added to the site on 20.1216, was moved into a hidden folder four minutes later and then removed from the site's files on 20.1223.
 
 ## December 2020
 
-**Your journal comes back to the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-12-16&until=2020-12-16) · merged 20.1216.1939
+**Your journal comes back to the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-12-16&until=2020-12-16) · merged 20.1216.1939 · v1.6.0
 - New: your daily journal was added back to the site's files, as a shortcut pointing at the folder where the journal lived rather than a copy of it. <!-- unsure: a shortcut only works if that folder exists on the machine serving the site, so it isn't certain the journal actually appeared on the live site --> (Later removed on 21.0328, when the site was rebuilt.)
 
 ## April 2020
 
-**A README, and the journal comes off the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-04-26&until=2020-04-26) · merged 20.0426.1118
+**A README, and the journal comes off the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-04-26&until=2020-04-26) · merged 20.0426.1118 · v1.5.0
 - **[README](https://github.com/travis-horton/www/commit/6b9b04f)** · merged 20.0426.1111
   New: a short note at the top of the project's GitHub page saying this is the code for your personal website at travish.com. It admits the real write-up is still to do, and muses that your little projects are just copied in and should probably become separately linked projects. Seven minutes later you retitled its to-do heading ([c750cb2](https://github.com/travis-horton/www/commit/c750cb2)). (Later replaced on 21.0328, when the site was rebuilt.)
 - **[Journal removed](https://github.com/travis-horton/www/commit/6b9b04f)** · merged 20.0426.1111
@@ -596,11 +596,11 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## February 2020
 
-**Battleship goes up** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1039
+**Battleship goes up** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1039 · v1.4.0
 - New: the Portfolio page got a "Works in Progress" section linking to a playable Battleship game, added as a ready-built copy of your separate Battleship project. (Later removed on 21.0328, when the site was rebuilt.)
   Behind the scenes: the older linked copy of Battleship's source code was taken out, and git was told to ignore a database command-history file.
 
-**A blog typo and the footer year** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1034
+**A blog typo and the footer year** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1034 · v1.3.0
 - **[Typo in the JavaScript post](https://github.com/travis-horton/www/commit/de15d4f)** · merged 20.0207.1034
   Fixed: the JavaScript `this` post said a constructor's `this` is "the new object beign created". It now says "being created".
   Try it: open https://www.travish.com/blog/js-this
@@ -611,22 +611,22 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## November 2019
 
-**Two draft posts touched up** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-06&until=2019-11-06) · merged 19.1106.1425
+**Two draft posts touched up** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-06&until=2019-11-06) · merged 19.1106.1425 · v1.2.2
 - **[Compiler draft](https://github.com/travis-horton/www/commit/9f032ec)** · merged 19.1106.1425
   Behind the scenes: the draft "What is a compiler and why do I need it?" gained a remark from jfo (Jeff Fowler) that "compile" really means, more generally, turning something into another format. It was still a draft and didn't appear on the blog.
 - **[Flip-Flop pt 2 tab title](https://github.com/travis-horton/www/commit/c071df2)** · merged 19.1106.0833
   Fixed: the draft of "The D Flip-Flop, pt 2" showed "pt 1" in the browser tab. It now says "pt 2".
 
-**The compiler draft grows** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1908
+**The compiler draft grows** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1908 · v1.2.1
 - Behind the scenes: the draft "What is a compiler and why do I need it?" got tighter definitions of a compiler and a linker, plus a new section walking through Rust's compiler step by step, from the code you write to a runnable program. It stayed a draft and was never listed on the blog.
 
-**A visitor counter** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1827
+**A visitor counter** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1827 · v1.2.0
 - **[Visitor counter](https://github.com/travis-horton/www/commit/9ab0101)** · merged 19.1104.1827
   New: a page that says "Number of visitors:" and a count, adding one each time it's opened and keeping the total in a small database on the server. It had its own address and wasn't linked from the menu; your notes file got a line about the database behind it. (Later removed on 21.0328, when the site was rebuilt.)
 - **[Ray Tracer at its old address](https://github.com/travis-horton/www/commit/9ab0101)** · merged 19.1104.1827
   New: a copy of the Ray Tracer was put back at the address it had in 19.0522, captioned "first working raytracer". <!-- unsure: nothing on the site links to it; most likely it was so an old link kept working --> (Later removed on 21.0328, when the site was rebuilt.)
 
-**The JavaScript post goes live** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-01&until=2019-11-01) · merged 19.1101.1007
+**The JavaScript post goes live** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-01&until=2019-11-01) · merged 19.1101.1007 · v1.1.0
 - **[Centered post titles](https://github.com/travis-horton/www/commit/ccf10f5)** · merged 19.1101.1007
   New: blog post titles are centered and underlined, on every post and draft. (Later replaced on 21.0328 by the rebuilt site's blog.)
 - **[Recaman tab title](https://github.com/travis-horton/www/commit/198ae12)** · merged 19.1101.0958
@@ -648,7 +648,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2019
 
-**Two new draft posts** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-10-18&until=2019-10-18) · merged 19.1018.1307
+**Two new draft posts** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-10-18&until=2019-10-18) · merged 19.1018.1307 · v1.0.5
 - **[Draft posts](https://github.com/travis-horton/www/commit/176f446)** · merged 19.1018.1246
   Behind the scenes: two new drafts, "Studying DNS" (breaking a web address into its parts) and "JavaScript `this`, `apply`, `call`, and `bind`", plus a blank template for starting new posts. At 13:07 you edited the JavaScript draft ([e0e8264](https://github.com/travis-horton/www/commit/e0e8264)); neither was on the blog list yet.
 - **[Journal link changed](https://github.com/travis-horton/www/commit/176f446)** · merged 19.1018.1246
@@ -656,10 +656,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## August 2019
 
-**The live copy merged back in** · [merge](https://github.com/travis-horton/www/commit/6f18d30) · merged 19.0802.1204
+**The live copy merged back in** · [merge](https://github.com/travis-horton/www/commit/6f18d30) · merged 19.0802.1204 · v1.0.4
 - Behind the scenes: brought in a change made on the live copy of the site that took the journal out "for the master branch to be clean". The merge kept the journal, so nothing on the site changed.
 
-**Battleship linked in, and notes on running the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-08-02&until=2019-08-02) · merged 19.0802.0957
+**Battleship linked in, and notes on running the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-08-02&until=2019-08-02) · merged 19.0802.0957 · v1.0.3
 - **[Battleship](https://github.com/travis-horton/www/commit/2ec3b76)** · merged 19.0802.0957
   Behind the scenes: your separate Battleship project was linked into the site's files as a work in progress. It wasn't listed on any page yet.
 - **[Site notes](https://github.com/travis-horton/www/commit/2ec3b76)** · merged 19.0802.0957
@@ -669,32 +669,33 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## July 2019
 
-**The journal hooked up, second try** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-09&until=2019-07-09) · merged 19.0709.0941
+**The journal hooked up, second try** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-09&until=2019-07-09) · merged 19.0709.0941 · v1.0.2
 - **[Journal link](https://github.com/travis-horton/www/commit/2d1d2b7)** · merged 19.0709.0941
   Behind the scenes: over half an hour you reworked how the journal is attached: first fixing its shortcut, then replacing the shortcut with a linked copy of the journal's own GitHub project, removing that, and adding it back. It ended linked to the GitHub project; nothing else on the site changed.
 - **[Binary draft](https://github.com/travis-horton/www/commit/6b57f15)** · merged 19.0709.0931
   Behind the scenes: a short draft post on why computers use binary. It was never listed on the blog.
 
-**Blog tidying** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-04&until=2019-07-04) · merged 19.0704.1020
+**Blog tidying** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-04&until=2019-07-04) · merged 19.0704.1020 · v1.0.1
 - **[First post spacing](https://github.com/travis-horton/www/commit/4e90e35)** · merged 19.0704.1020
   Fixed: "The First Blog Post" still had hand-placed blank lines between its paragraphs, doubling the spacing the stylesheet now adds; they're gone. You also tried underlining its title and took the underline back off minutes later ([1fce87a](https://github.com/travis-horton/www/commit/1fce87a), [70b3791](https://github.com/travis-horton/www/commit/70b3791)).
   Try it: open https://www.travish.com/blog/the-first-blog
 - **[Flip-Flop pt 2 draft](https://github.com/travis-horton/www/commit/f283701)** · merged 19.0704.0710
   Behind the scenes: the pt 2 draft grew paragraphs explaining NAND gates and how the clock drives a flip-flop, and the blog's pictures moved into the site's shared images folder. Despite the commit message ("does this add my journal?"), nothing about the journal changed.
 
-**A change from the live copy merged in** · [merge](https://github.com/travis-horton/www/commit/c644390) · merged 19.0704.0802
+**A change from the live copy merged in** · [merge](https://github.com/travis-horton/www/commit/c644390) · merged 19.0704.0802 · v1.0.0
 - Behind the scenes: brought in a new headshot that had been swapped in directly on the live copy of the site on 19.0701. Where the two versions disagreed you kept the one you'd been working on, so the only thing actually added was the server's log of errors.
 
-**Flip-Flop pt 1 polished, pt 2 started** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-03&until=2019-07-03) · merged 19.0703.1738
+**Flip-Flop pt 1 polished, pt 2 started** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-03&until=2019-07-03) · merged 19.0703.1738 · v0.4.0
 - **[Flip-Flop pt 1](https://github.com/travis-horton/www/commit/66edbad)** · merged 19.0703.1738
-  Fixed: "The D Flip-Flop, pt 1" lost its stacked blank lines, got a smaller centered AND-gate diagram, and small wording fixes ("turned in" became "turned into"). It also moved to a new address, so the old one stopped working.
+  Fixed: "The D Flip-Flop, pt 1" lost its stacked blank lines, got a smaller centered AND-gate diagram, and small wording fixes ("turned in" became "turned into").
+  Breaking: it also moved to a new address, so the old one stopped working.
   Try it: open https://www.travish.com/blog/the-flip-flop-1
 - **[Flip-Flop pt 2 draft](https://github.com/travis-horton/www/commit/66edbad)** · merged 19.0703.1738
   Behind the scenes: started a draft of pt 2 with a diagram of a D flip-flop. Its line on the blog list is there but hidden until the post is done.
 - **[Even spacing](https://github.com/travis-horton/www/commit/66edbad)** · merged 19.0703.1738
   New: paragraphs and headings get even spacing from the stylesheet instead of hand-placed blank lines, starting with the About page. (Later replaced on 21.0328, when the site was rebuilt.)
 
-**About page rewrite and the first blog posts** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-01&until=2019-07-01) · merged 19.0701.1859
+**About page rewrite and the first blog posts** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-01&until=2019-07-01) · merged 19.0701.1859 · v0.3.0
 - **[Job title](https://github.com/travis-horton/www/commit/e69791e)** · merged 19.0701.1859
   New: the About page's heading changed from "Travis Horton, Web Developer" to "Travis Horton, Software Developer".
 - **[About page](https://github.com/travis-horton/www/commit/b361569)** · merged 19.0701.1806
@@ -705,20 +706,21 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Journal added](https://github.com/travis-horton/www/commit/b361569)** · merged 19.0701.1806
   New: your daily journal was added to the site, as a shortcut pointing at the folder where it lived. The word "I" in the About page's last paragraph became a hidden link to it. (Later removed on 20.0426; the whole About page was replaced on 21.0328.)
 - **[Contact and resume](https://github.com/travis-horton/www/commit/b361569)** · merged 19.0701.1806
-  Fixed: the resume link pointed at a file that existed only on your own computer, so it couldn't work on the live site; the resume PDF is now part of the site and opens in the browser. The Contact page also moved to its own address, and the menu's links got shorter addresses.
+  Fixed: the resume link pointed at a file that existed only on your own computer, so it couldn't work on the live site; the resume PDF is now part of the site and opens in the browser.
+  Breaking: the Contact page also moved to its own address, and the menu's links got shorter addresses.
 - **[Styles and a stray file](https://github.com/travis-horton/www/commit/b361569)** · merged 19.0701.1806
   Behind the scenes: new styles for quoted passages and blog pictures. A text-editor slip also saved a stray file named ":w" into the portfolio folder (removed 19.0802).
 
 ## June 2019
 
-**Perlin noise, and the About page catches up** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-06-24&until=2019-06-24) · merged 19.0624.1812
+**Perlin noise, and the About page catches up** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-06-24&until=2019-06-24) · merged 19.0624.1812 · v0.2.2
 - **[Perlin Noise Animation](https://github.com/travis-horton/www/commit/9f8a304)** · merged 19.0624.1812
   New: the Portfolio got a Perlin Noise Animation: a white dot circles over a cloudy grey field of Perlin noise, and a thin bar below shows how light or dark the spot under the dot is.
   Try it: open https://www.travish.com/programming/perlin-noise
 - **[About page](https://github.com/travis-horton/www/commit/9f8a304)** · merged 19.0624.1812
   New: the Recurse Center line now says you attended the Spring 1, 2019 batch (19.0218 to 19.0509) and learned a ton. The "here's my work" link now goes to the Portfolio page, and the mention of an archive of your old piano website was dropped. (Later replaced on 21.0328, when the site was rebuilt.)
 
-**Broken links fixed, new colors, old pieces cleared out** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-06-23&until=2019-06-23) · merged 19.0623.1916
+**Broken links fixed, new colors, old pieces cleared out** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-06-23&until=2019-06-23) · merged 19.0623.1916 · v0.2.1
 - **[Broken links fixed](https://github.com/travis-horton/www/commit/0171258)** · merged 19.0623.1916
   Fixed: links to styles, the menu, and several project pages pointed at places that had moved, so parts of the site came up broken or unstyled. They all point at the right places now, and every page shares one stylesheet.
 - **[Old pieces removed](https://github.com/travis-horton/www/commit/0171258)** · merged 19.0623.1916
@@ -735,7 +737,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Unfinished projects removed](https://github.com/travis-horton/www/commit/f66e6d8)** · merged 19.0623.1828
   Behind the scenes: removed the unfinished Battleship draft and the "a square of circles" animation, and renamed three project folders (Colorful Life, Ray Tracer, Perlin noise) to one consistent style.
 
-**The site gets its shape: About, Portfolio, Blog, Contact** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-06-22&until=2019-06-22) · merged 19.0622.1910
+**The site gets its shape: About, Portfolio, Blog, Contact** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-06-22&until=2019-06-22) · merged 19.0622.1910 · v0.2.0
 - **[Project pages join the site](https://github.com/travis-horton/www/commit/1c8abf4)** · merged 19.0622.1910
   New: the Orbits, Polygon Race and Ray Tracer pages now show the site's menu and footer like every other page. The menu order became About, Portfolio, Blog, Contact, and the little social icons came off the Contact list.
 - **[Asteroids restart button](https://github.com/travis-horton/www/commit/7d8af56)** · merged 19.0622.1859
@@ -749,11 +751,12 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Contact page and project list](https://github.com/travis-horton/www/commit/99c4369)** · merged 19.0622.1445
   New: a Contact page with your email, Twitter, Instagram, GitHub, LinkedIn, and a resume download. The Code page became a tidy Portfolio list (Ray Tracer, Asteroids, Orbits, Polygon Race, Game of Life, Colorful Life Exercise), with Orbits and Polygon Race promoted out of the animations. (Later replaced on 21.0328 by the rebuilt site's Programming page.)
 - **[New look and menu](https://github.com/travis-horton/www/commit/4e7dfc7)** · merged 19.0622.1310
-  New: the whole site switched to the Zilla Slab typeface, and the menu changed from code / home / piano to Code / Bio / Contact. The piano page (a pointer to your old Wix pianist site) and the placeholder blog page were removed, and the site's images and scripts moved into one shared folder. (Later replaced on 21.0328, when the site was rebuilt.)
+  New: the whole site switched to the Zilla Slab typeface, and the menu changed from code / home / piano to Code / Bio / Contact. (Later replaced on 21.0328, when the site was rebuilt.)
+  Removed: the piano page (a pointer to your old Wix pianist site) and the placeholder blog page were removed, and the site's images and scripts moved into one shared folder.
 
 ## May 2019
 
-**The site begins** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-05-22&until=2019-05-22) · merged 19.0522.1548
+**The site begins** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-05-22&until=2019-05-22) · merged 19.0522.1548 · v0.1.0
 - **[First version of the site](https://github.com/travis-horton/www/commit/a28c3f5)** · merged 19.0522.1541
   New: the first hand-built travish.com: a home page introducing you, your piano training and New York career, your year of part-time programming, and your acceptance to the Recurse Center; a menu of code / home / piano; and a piano page pointing to your old Wix pianist site. Every page shared a footer with a copyright line and Twitter and Instagram icons, and a "404 file not found ¯\\\_(ツ)\_/¯" page caught bad addresses. (Later replaced on 21.0328, when the site was rebuilt.)
 - **[The Code page](https://github.com/travis-horton/www/commit/a28c3f5)** · merged 19.0522.1541
