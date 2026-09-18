@@ -832,6 +832,28 @@ const shuffle = (arr) => {
   return out;
 };
 
+/**
+ * The accepted answers for a word card, from its "a · b (c)" gloss: every part,
+ * plus each part with its parenthetical removed — so luka "hand · arm (& five)"
+ * takes "hand", "arm (& five)" and plain "arm". A part that is ONLY a
+ * parenthetical ("(any animal sound)") is kept as it is; normalize strips the
+ * brackets at match time. Shared with review mode's word direction.
+ */
+export const acceptedFromGloss = (gloss) => {
+  const out = [];
+  String(gloss || '')
+    .split('·')
+    .map((g) => g.trim())
+    .filter(Boolean)
+    .forEach((part) => {
+      const bare = part.replace(/\s*\([^)]*\)/g, '').trim();
+      [part, bare].forEach((a) => {
+        if (a && !out.includes(a)) out.push(a);
+      });
+    });
+  return out;
+};
+
 export const buildSession = (level) => {
   const items = [];
 
@@ -853,7 +875,7 @@ export const buildSession = (level) => {
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean?',
       answer: gloss,
-      accepted: gloss.split('·').map((g) => g.trim()),
+      accepted: acceptedFromGloss(gloss),
     });
   });
 
@@ -866,7 +888,7 @@ export const buildSession = (level) => {
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean here? (back from an earlier level)',
       answer: gloss,
-      accepted: gloss.split('·').map((g) => g.trim()),
+      accepted: acceptedFromGloss(gloss),
     });
   });
 
@@ -908,10 +930,13 @@ export const buildSession = (level) => {
   return shuffle(items);
 };
 
+// Parentheses and the ampersand are gloss punctuation ("(any animal sound)",
+// "arm (& five)"), never part of an answer — w14 #13. The \s+ collapse after
+// this handles the double space that removing "&" leaves behind.
 const normalize = (s) =>
   String(s)
     .toLowerCase()
-    .replace(/[.,!?;:"']/g, '')
+    .replace(/[.,!?;:"'()&]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 

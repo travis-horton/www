@@ -5,6 +5,7 @@
  */
 
 import {
+  acceptedFromGloss,
   buildSession,
   getLevel,
   GLYPHS,
@@ -544,5 +545,60 @@ describe('the numbers lesson drills the numbers it teaches', () => {
       l.vocab.some((v) => v.word === 'luka'),
     );
     expect(taughtIn.map((l) => l.id)).toEqual(['7']);
+  });
+});
+
+/*
+ * w14 #13 (= w4 #11a). Six glosses carry a parenthetical — mu "(any animal
+ * sound)", la "(sets the scene)", pi "(regroups words)", a "(emphasis)", en
+ * "and (joins subjects)", luka "arm (& five)" — and the matcher stripped
+ * .,!?;:"' but not ()&, so the ONLY accepted answer for mu was the literal
+ * string "(any animal sound)", and "arm" alone was wrong for luka. Two halves
+ * to the fix: normalize ignores ()& as well, and a card's accepted list also
+ * carries each gloss part with its parenthetical removed.
+ */
+describe('parenthetical glosses are answerable without the parentheses', () => {
+  const card = (levelId, word) =>
+    buildSession(getLevel(levelId)).find(
+      (i) => i.kind === 'word' && i.prompt === word,
+    );
+
+  test('the plain words inside or beside the parentheses are accepted', () => {
+    [
+      ['4', 'mu', 'any animal sound'],
+      ['6', 'la', 'sets the scene'],
+      ['7', 'luka', 'hand'],
+      ['7', 'luka', 'arm'],
+      ['8', 'pi', 'regroups words'],
+      ['10', 'en', 'and'],
+      ['10', 'a', 'emphasis'],
+    ].forEach(([levelId, word, answer]) => {
+      expect(`${word}/${answer}:${isCorrect(card(levelId, word), answer)}`).toBe(
+        `${word}/${answer}:true`,
+      );
+    });
+  });
+
+  test('widening the match did not make wrong answers right', () => {
+    expect(isCorrect(card('4', 'mu'), 'moo')).toBe(false);
+    // five is Level 9's again-card sense of luka, not the Level 7 gloss.
+    expect(isCorrect(card('7', 'luka'), 'five')).toBe(false);
+  });
+
+  test('acceptedFromGloss keeps every part and adds the de-parenthesised one', () => {
+    expect(acceptedFromGloss('hand · arm (& five)')).toEqual([
+      'hand',
+      'arm (& five)',
+      'arm',
+    ]);
+    expect(acceptedFromGloss('and (joins subjects)')).toEqual([
+      'and (joins subjects)',
+      'and',
+    ]);
+    // A gloss that is ONLY a parenthetical stays as it is; normalize does the rest.
+    expect(acceptedFromGloss('(any animal sound)')).toEqual([
+      '(any animal sound)',
+    ]);
+    expect(acceptedFromGloss('')).toEqual([]);
   });
 });
