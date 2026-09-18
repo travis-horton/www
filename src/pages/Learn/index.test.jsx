@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Learn from '.';
 import { recordSession } from './progress';
-import { fromDigits, seximalName } from './seximal';
+import { fromDigits, seximalName, toDigits } from './seximal';
 import { GLYPHS } from './tokipona';
 
 /*
@@ -170,6 +170,15 @@ describe('the seximal lessons agree with the engine', () => {
     expect(spoken).toBe('one unexian, thirsy-one nif thirsy-two');
     const { container } = renderAt('/learn/seximal/2');
     expect(container.textContent).toContain(`13132 is ${spoken}`);
+  });
+
+  test('Lesson Four works a two-digit multiplication the engine agrees with', () => {
+    // 23 in base six is fifteen; four of them is sixty, which is 140 in base six.
+    const product = toDigits(fromDigits('23') * 4);
+    expect(product).toBe('140');
+    const { container } = renderAt('/learn/seximal/4');
+    expect(container.textContent).toContain('carry at six');
+    expect(container.textContent).toContain(`Answer ${product}`);
   });
 });
 
