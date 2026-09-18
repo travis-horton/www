@@ -130,27 +130,70 @@ export function buildReleaseEntry({ number, title, url, mergedAt, body, features
   return `**${label} #${number}: ${name}** · [PR #${number}](${url}) · merged ${stamp}\n${lines.join("\n")}`;
 }
 
+/** GitHub REST, read-only, with the workflow's token. */
+async function gh(path) {
+  const r = await fetch(`https://api.github.com${path}`, { headers: { authorization: `Bearer ${process.env.GITHUB_TOKEN}`, accept: "application/vnd.github+json" } });
+  if (!r.ok) throw new Error(`GitHub API ${path}: HTTP ${r.status}`);
+  return r.json();
+}
+
+/** The feature PRs (merged into the release branch) that own any of these commits, newest first. */
+async function featuresOf(shas, exclude = null) {
+  const repo = process.env.GITHUB_REPOSITORY;
+  const found = new Map();
+  for (const sha of shas) {
+    for (const p of await gh(`/repos/${repo}/commits/${sha}/pulls`)) {
+      if (p.number !== exclude && p.merged_at && p.base?.ref === RELEASE_FROM && !found.has(p.number)) found.set(p.number, p);
+    }
+  }
+  return [...found.values()].sort((a, b) => b.merged_at.localeCompare(a.merged_at));
+}
+
 /** The feature PRs a release carried: PRs merged into the release branch that own a commit of this one. */
 async function releaseFeatures(pr) {
   const repo = process.env.GITHUB_REPOSITORY;
-  const gh = async (path) => {
-    const r = await fetch(`https://api.github.com${path}`, { headers: { authorization: `Bearer ${process.env.GITHUB_TOKEN}`, accept: "application/vnd.github+json" } });
-    if (!r.ok) throw new Error(`GitHub API ${path}: HTTP ${r.status}`);
-    return r.json();
-  };
   const shas = [];
   for (let page = 1; page <= 3; page++) {
     const c = await gh(`/repos/${repo}/pulls/${pr.number}/commits?per_page=100&page=${page}`);
     shas.push(...c.map((x) => x.sha));
     if (c.length < 100) break;
   }
-  const found = new Map();
-  for (const sha of shas) {
-    for (const p of await gh(`/repos/${repo}/commits/${sha}/pulls`)) {
-      if (p.number !== pr.number && p.merged_at && p.base?.ref === RELEASE_FROM && !found.has(p.number)) found.set(p.number, p);
-    }
+  return featuresOf(shas, pr.number);
+}
+
+/** The version the NEXT release will carry, given the default branch's HISTORY.md and the feature
+ *  PRs now waiting on the release branch — the same calculation the release's own merge will make.
+ *  Nothing waiting → the current version (the newest stamp). */
+export function predictVersion(mainDoc, waiting) {
+  const current = splitEntries(mainDoc).map(versionIn).find(Boolean) ?? replay(mainDoc).at(-1)?.version ?? "0.0.0";
+  if (!waiting.length) return current;
+  const entry = buildReleaseEntry({ number: 0, title: "release", url: "", mergedAt: new Date(0).toISOString(), body: "", features: waiting });
+  return versionForNew(mainDoc, entry);
+}
+
+/** --predict: for a SANDBOX build of a release repo. Reads the default branch's HISTORY.md and the
+ *  feature PRs on the release branch that the default branch doesn't have yet. (26.0918: production
+ *  runs the exact sandbox image, so the version must be decided when the sandbox builds — Travis:
+ *  "nothing can get to prod that hasn't been in the sandbox environment".) */
+async function predictCli() {
+  const repo = process.env.GITHUB_REPOSITORY;
+  const base = process.env.DEFAULT_BRANCH || "main";
+  const docAt = async (ref) => {
+    try { return Buffer.from((await gh(`/repos/${repo}/contents/HISTORY.md?ref=${encodeURIComponent(ref)}`)).content, "base64").toString("utf8"); }
+    catch { return ""; }
+  };
+  // Whichever copy carries the NEWER stamp: the release branch has version changes the default
+  // branch hasn't released yet (e.g. a first stamping); the default branch has the bot's newest
+  // entry when the release branch wasn't fast-forwarded after the last release.
+  const docs = [await docAt(base), RELEASE_FROM ? await docAt(RELEASE_FROM) : ""];
+  const newestIn = (d) => splitEntries(d).map(versionIn).find(Boolean) ?? null;
+  const mainDoc = docs.reduce((a, b) => (compareVersions(newestIn(b), newestIn(a)) > 0 ? b : a));
+  let waiting = [];
+  if (RELEASE_FROM) {
+    const cmp = await gh(`/repos/${repo}/compare/${base}...${RELEASE_FROM}`);
+    waiting = await featuresOf(cmp.commits.map((c) => c.sha));
   }
-  return [...found.values()].sort((a, b) => b.merged_at.localeCompare(a.merged_at));
+  return { version: predictVersion(mainDoc, waiting), waiting: waiting.map((p) => p.number) };
 }
 
 // ── SEMVER FROM THE HISTORY (26.0918) ──────────────────────────────────────
@@ -170,6 +213,14 @@ export function bumpFor(entry) {
   if (/^[ \t]*(?:- )?(?:Removed|Breaking)\b[^:\n]*:/m.test(entry)) return "major";
   if (/^[ \t]*(?:- )?New\b[^:\n]*:/m.test(entry)) return "minor";
   return "patch";
+}
+
+/** Compare two versions (null sorts lowest): >0 when a is newer. */
+export function compareVersions(a, b) {
+  if (!a || !b) return a ? 1 : b ? -1 : 0;
+  const pa = a.split(".").map(Number), pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) if (pa[i] !== pb[i]) return pa[i] - pb[i];
+  return 0;
 }
 
 /** `1.4.2` + a bump → the next version. */
@@ -322,6 +373,12 @@ function selfTest() {
   ok(rp.map((x) => `${x.kind}:${x.version}`).join(" ") === "first:1.0.0 minor:1.1.0 major:2.0.0", "replay: oldest first, the first entry is 1.0.0, then each entry's bump");
   const hist4 = "# H\n\n## September 2026\n\n**d** · [PR #4](u) · merged 26.0919.1200\n- Removed: y.\n\n**c** · [PR #3](u) · merged 26.0918.1200\n- New: x.\n\n**b** · [PR #2](u) · merged 26.0917.1200\n- Breaking: moved.\n\n**a** · [PR #1](u) · merged 26.0801.1200\n- New: first.\n";
   ok(replay(hist4, { zeroThrough: "[PR #2]" }).map((x) => x.version).join(" ") === "0.1.0 0.2.0 1.0.0 2.0.0", "replay 0.x: a break during initial development bumps the minor; the next entry is declared 1.0.0; then the normal rule");
+  const stamped = "# H\n\n## September 2026\n\n**www #104: x** · [PR #104](u) · merged 26.0918.1513 · v3.27.0\n- New: y.\n";
+  const feat = (n, body, login = "t") => ({ number: n, title: `pr ${n}`, html_url: `u/${n}`, merged_at: "2026-09-18T22:00:00Z", user: { login }, body });
+  ok(compareVersions("3.28.0", "3.27.9") > 0 && compareVersions("2.10.0", "2.9.0") > 0 && compareVersions(null, "1.0.0") < 0 && compareVersions("1.0.0", "1.0.0") === 0, "compare: numeric, not alphabetical; a missing stamp sorts lowest");
+  ok(predictVersion(stamped, []) === "3.27.0", "predict: nothing waiting on dev → the current version");
+  ok(predictVersion(stamped, [feat(105, "<!-- history -->\n**a**\n- New: b.\n<!-- /history -->"), feat(106, "<!-- history -->\n**c**\n- Fixed: d.\n<!-- /history -->")]) === "3.28.0", "predict: a New among the waiting features → the next minor, exactly what the release will stamp");
+  ok(predictVersion(stamped, [feat(107, "", "dependabot[bot]")]) === "3.27.1", "predict: only an automatic update waiting → the next patch");
   const [st, newest] = stampAll(hist);
   ok(newest === "2.0.0" && st.includes("merged 26.0918.1200 · v2.0.0") && st.includes("merged 26.0801.1200 · v1.0.0") && stampAll(st)[0] === st, "stamp: every header gets its version; stamping twice changes nothing");
   ok(versionForNew(st, "**d** · x\n- Fixed: y.") === "2.0.1" && versionForNew(hist, "**d** · x\n- New: y.") === "2.1.0", "next: from the newest stamp, or from a replay when nothing is stamped yet");
@@ -349,6 +406,11 @@ else if (mode === "--stamp") {
   writeFileSync(DOC, stamped);
   if (newest) setPackageVersion(newest);
   console.log(`history: every entry stamped; the repo is at v${newest}.`);
+} else if (mode === "--predict") {
+  // node scripts/history-append.mjs --predict   (GITHUB_TOKEN, GITHUB_REPOSITORY, HISTORY_RELEASE_FROM, DEFAULT_BRANCH)
+  const { version, waiting } = await predictCli();
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+  console.log(`history: the next release will be v${version} (waiting: ${waiting.length ? waiting.map((n) => `#${n}`).join(", ") : "nothing"})`);
 } else if (mode === "--replay") {
   // node history-append.mjs --replay [HISTORY.md] [--zero-through "…"] — what version every entry would carry.
   const file = process.argv[3] && !process.argv[3].startsWith("--") ? process.argv[3] : DOC;
