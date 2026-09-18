@@ -4,6 +4,10 @@ WORKDIR /app
 
 ARG GIT_HASH=unknown
 ENV GIT_HASH=$GIT_HASH
+# When this build was made, Boise time, YY.MMDD.HHMM — the footer shows it as
+# semver build metadata (v3.27.0+26.0918.1600.11033ea). Empty = a local build.
+ARG BUILD_DATE=
+ENV BUILD_DATE=$BUILD_DATE
 
 COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json

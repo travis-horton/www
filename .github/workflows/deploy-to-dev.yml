@@ -27,6 +27,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       -
+        # The build's own time, Boise, YY.MMDD.HHMM — shown in the footer after the
+        # version (v3.27.0+26.0918.1600.11033ea). Production runs this same image.
+        name: Stamp the build time
+        id: stamp
+        run: echo "build_date=$(TZ=America/Boise date +%y.%m%d.%H%M)" >> "$GITHUB_OUTPUT"
+
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -36,6 +43,7 @@ jobs:
           tags: kiddspazz/www_web:latest
           build-args: |
             GIT_HASH=${{ github.sha }}
+            BUILD_DATE=${{ steps.stamp.outputs.build_date }}
 
       -
         name: Deploy web app to kiddspazz.com
