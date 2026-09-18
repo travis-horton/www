@@ -12,6 +12,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
+**www #101: this history** · [PR #101](https://github.com/travis-horton/www/pull/101) · merged 26.0918.1414
+- **[this history](https://github.com/travis-horton/www/pull/100)** · merged 26.0918.1414
+  New: this file — seven years of the website in plain words, from its first hand-built pages on 19.0522 to today, newest first, each entry saying what changed on the site and, where it still exists, the address to go see it.
+
 **www #99: /learn content fixes** · [PR #99](https://github.com/travis-horton/www/pull/99) · merged 26.0918.1034
 - **[lukin comes back in Level 4](https://github.com/travis-horton/www/commit/09a8653)** · merged 26.0918.1023
   New: Level 4 of the toki pona course now brings back lukin from Level 2 in its new sense "to try", on a card marked "again — from Level 2". Every Level 4 session is now 28 items instead of 27, and searching /learn for "try" now finds it.
