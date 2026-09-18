@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Learn from '.';
 import { recordSession } from './progress';
+import { fromDigits, seximalName } from './seximal';
 import { GLYPHS } from './tokipona';
 
 /*
@@ -160,6 +161,15 @@ describe('the seximal lessons agree with the engine', () => {
     const { container } = renderAt('/learn/seximal/2');
     expect(container.textContent).toMatch(/is an unexian/);
     expect(container.textContent).not.toMatch(/is a unexian/);
+  });
+
+  test('Lesson Two works the unexian example the engine names', () => {
+    // The spec's own worked example, pinned in seximal.test.js — the lesson
+    // must say exactly what the drill will say.
+    const spoken = seximalName(fromDigits('13132'));
+    expect(spoken).toBe('one unexian, thirsy-one nif thirsy-two');
+    const { container } = renderAt('/learn/seximal/2');
+    expect(container.textContent).toContain(`13132 is ${spoken}`);
   });
 });
 

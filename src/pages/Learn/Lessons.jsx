@@ -110,7 +110,9 @@ const Two = () => (
     <p>
       Above four digits the same idea repeats one level up: <code>10000</code>{' '}
       is an <strong>unexian</strong>, and numbers group into four-digit blocks,
-      each block read as its own pair-nif-pair.
+      each block read as its own pair-nif-pair. So <code>13132</code> is one
+      unexian, thirsy-one nif thirsy-two: the top digit is its own block, then
+      the usual pair-nif-pair.
     </p>
   </div>
 );
