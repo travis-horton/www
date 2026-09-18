@@ -136,6 +136,35 @@ describe('levels', () => {
     expect(level1.closingNote).toMatch(/"very" arrives in Level 3, as mute\.$/);
   });
 
+  /*
+   * w14 #4. The decode is the capstone — the one sentence assembled from the
+   * whole lesson — so it may not be a repeat of a to-English prompt (Level 4
+   * once drilled "mi kama sona e toki pona" twice in a 27-item session). And
+   * being the capstone, it may only use words the learner has met by then.
+   */
+  test('the decode sentence is new to its level, not a repeat of a prompt', () => {
+    LEVELS.forEach((level) => {
+      const prompts = level.toEnglish.map(([tp]) => tp);
+      expect(`${level.id}:${prompts.includes(level.decode[0])}`).toBe(
+        `${level.id}:false`,
+      );
+    });
+  });
+
+  test('the decode sentence only uses words taught by that level', () => {
+    LEVELS.forEach((level) => {
+      level.decode[0]
+        .split(/\s+/)
+        .map((t) => t.replace(/[.,!?;:"']/g, ''))
+        .filter((w) => w !== 'li' && w !== 'e')
+        .forEach((w) => {
+          const from = taughtIn(w);
+          const ok = Boolean(from) && Number(from.id) <= Number(level.id);
+          expect(`${level.id}/${w}:${ok}`).toBe(`${level.id}/${w}:true`);
+        });
+    });
+  });
+
   test('getLevel finds and misses correctly', () => {
     expect(getLevel('1').title).toBe('The first twelve');
     expect(getLevel('99')).toBeNull();
