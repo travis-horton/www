@@ -27,6 +27,28 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       -
+        # The build's own time, Boise, YY.MMDD.HHMM — shown in the footer after the
+        # version (v3.28.0+26.0918.1600). Production runs this same image.
+        name: Stamp the build time
+        id: stamp
+        run: echo "build_date=$(TZ=America/Boise date +%y.%m%d.%H%M)" >> "$GITHUB_OUTPUT"
+
+      -
+        # The version this build will carry when it is released: HISTORY.md's newest
+        # stamp, bumped by the feature PRs waiting on dev — the same calculation the
+        # release's own merge makes (scripts/history-append.mjs). Production runs this
+        # exact image, so the number has to be decided here. Never blocks a deploy:
+        # on any failure the footer falls back to package.json's version.
+        name: Work out the release version
+        id: version
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HISTORY_RELEASE_FROM: ${{ vars.HISTORY_RELEASE_FROM }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: node scripts/history-append.mjs --predict
+
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -36,6 +58,8 @@ jobs:
           tags: kiddspazz/www_web:latest
           build-args: |
             GIT_HASH=${{ github.sha }}
+            BUILD_DATE=${{ steps.stamp.outputs.build_date }}
+            APP_VERSION=${{ steps.version.outputs.version }}
 
       -
         name: Deploy web app to kiddspazz.com

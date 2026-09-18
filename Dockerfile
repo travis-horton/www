@@ -4,6 +4,14 @@ WORKDIR /app
 
 ARG GIT_HASH=unknown
 ENV GIT_HASH=$GIT_HASH
+# The footer: v<APP_VERSION>+<BUILD_DATE>, e.g. v3.28.0+26.0918.1600 (semver with
+# build metadata). APP_VERSION = the release this sandbox build will become
+# (predicted from HISTORY.md); BUILD_DATE = Boise time, YY.MMDD.HHMM. Empty values
+# fall back to package.json / "local".
+ARG APP_VERSION=
+ENV APP_VERSION=$APP_VERSION
+ARG BUILD_DATE=
+ENV BUILD_DATE=$BUILD_DATE
 
 COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json
