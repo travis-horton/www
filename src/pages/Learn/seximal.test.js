@@ -7,6 +7,7 @@
 
 import {
   fromDigits,
+  getLevel,
   isCorrect,
   pairName,
   seximalName,
@@ -103,5 +104,39 @@ describe('answer matching', () => {
 
   test('an empty answer is never right', () => {
     expect(isCorrect(item, '')).toBe(false);
+  });
+});
+
+describe('the complement drill', () => {
+  /*
+   * Level 5 teaches nif − XY as a two-digit rule: (five−X)(six−Y). The prompt
+   * has to show two digits too, or a learner meets "nif − 4₆" against a rule
+   * about pairs and is never told to pad. Math.random is pinned so the
+   * generator's first pick (index 0 of [complement, chain]) and the draw of n
+   * are both deterministic — no sampling, no flakes.
+   */
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('the smallest n is prompted with a leading zero', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0); // pick → complement, n → 1
+    const item = getLevel('5').generate();
+    expect(item.kind).toBe('complement');
+    expect(item.prompt).toBe('nif − 01₆');
+    expect(item.value).toBe(35);
+    expect(item.digits).toBe('55');
+  });
+
+  test('the largest n stays two digits — the pad never adds a third', () => {
+    jest
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0) // pick → complement
+      .mockReturnValue(0.99); // n → 35
+    const item = getLevel('5').generate();
+    expect(item.kind).toBe('complement');
+    expect(item.prompt).toBe('nif − 55₆');
+    expect(item.prompt).toMatch(/^nif − [0-5]{2}₆$/);
+    expect(item.value).toBe(1);
   });
 });

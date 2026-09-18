@@ -215,7 +215,7 @@ const complementItem = () => {
   const n = randInt(1, 35);
   return makeItem({
     kind: 'complement',
-    prompt: `nif − ${toDigits(n)}₆`,
+    prompt: `nif − ${toDigits(n).padStart(2, '0')}₆`,
     promptSub: `nif minus ${seximalName(n)}`,
     value: NIF - n,
     answerMode: 'digits',
