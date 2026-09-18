@@ -12,6 +12,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import TokiPonaHome from './TokiPonaHome';
+import { LEVELS } from './tokipona';
 
 const mount = () =>
   render(
@@ -31,6 +32,25 @@ test('the page renders at all', () => {
 test('it renders the lesson list and the search box', () => {
   mount();
   expect(screen.getByLabelText(/search/i)).toBeInTheDocument();
+});
+
+/*
+ * w14 #6. The page used to make three claims about the size of the syllabus
+ * that disagreed with each other ("119 words" · "Twelve new words a level" ·
+ * "The 120 words of pu"). The count is derived from LEVELS here so the page
+ * can never drift from the course again; the rest is the wording that makes
+ * the three claims true at once: cards vs the two particles taught as rules,
+ * eleven in the last level, and kin on top of pu's 120.
+ */
+test('the syllabus size it states is the size the course actually is', () => {
+  mount();
+  const cards = LEVELS.reduce((n, l) => n + l.vocab.length, 0);
+  expect(screen.getByText(new RegExp(`${cards} word cards`))).toBeInTheDocument();
+  expect(
+    screen.getByText(/plus li and e, which are taught as rules/),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/eleven in the last one/)).toBeInTheDocument();
+  expect(screen.getByText(/120 words of pu, plus kin/)).toBeInTheDocument();
 });
 
 /*
