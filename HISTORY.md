@@ -12,6 +12,15 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
+**www #107: the footer shows the true version and when it was built · version numbers from the history** · [PR #107](https://github.com/travis-horton/www/pull/107) · merged 26.0918.1604 · v3.28.0
+- **[the footer shows the true version and when it was built](https://github.com/travis-horton/www/pull/106)** · merged 26.0918.1604
+  New: the version at the bottom of every page now shows the site's real version followed by the date and time it was built, like v3.28.0+26.0918.1600. It's decided when the sandbox builds, so the live site, running that same build, shows the right number from the moment it goes live. Before it read v2.2.1 plus a commit code, and that number hadn't moved since 26.0309.
+  Try it: open https://kiddspazz.com and look at the bottom of the page.
+  New: a pull request into the live branch now gets a red X unless it comes from the development branch, so nothing reaches the live site without passing through the sandbox first.
+- **[version numbers from the history](https://github.com/travis-horton/www/pull/105)** · merged 26.0918.1604
+  New: every entry in this history now shows its version, worked out from what it changed: something removed or broken → a new first number, something new → a new middle number, anything else → a new last number. The hand-built years count as early development (version 0.x) until 20.1216, so 20.1216 is v1.0.0 and the React rebuild of 21.0328 is v2.0.0, exactly where your own old tags put them, and the site is at v3.27.0 today.
+  Try it: open https://github.com/travis-horton/www/blob/main/HISTORY.md
+
 **www #104: the development copy keeps up with the live one · the history now updates itself** · [PR #104](https://github.com/travis-horton/www/pull/104) · merged 26.0918.1513 · v3.27.0
 - **[the development copy keeps up with the live one](https://github.com/travis-horton/www/pull/103)** · merged 26.0918.1513
   Behind the scenes: after each release, GitHub now moves the development branch up to match the live branch, so it no longer shows as dozens of commits "behind". If the development branch already has new work waiting, it's left untouched, and nothing redeploys.
