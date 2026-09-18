@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Learn from '.';
 import { recordSession } from './progress';
+import { GLYPHS } from './tokipona';
 
 /*
  * The drill is generated, so these tests avoid asserting on any particular
@@ -173,6 +174,27 @@ describe('toki pona', () => {
 
     start();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  /*
+   * w14 #7. A level's rule.particle doubles as the heading label, and five of
+   * the ten ("stacking modifiers", "preverbs", "prepositions", "asking
+   * questions", "en, a, kin — and the phrasebook") are labels, not glyph keys.
+   * Those levels rendered an empty glyph block above the rule.
+   */
+  test('the rule glyph renders only where the rule is a particle', () => {
+    const li = renderAt('/learn/toki-pona/1');
+    const glyph = li.container.querySelector('.tp__glyph--rule');
+    expect(glyph).not.toBeNull();
+    expect(glyph.textContent).toBe(GLYPHS.li);
+    li.unmount();
+
+    ['3', '4', '5', '7', '10'].forEach((id) => {
+      const page = renderAt(`/learn/toki-pona/${id}`);
+      const empty = page.container.querySelector('.tp__glyph--rule');
+      expect(`${id}:${empty === null}`).toBe(`${id}:true`);
+      page.unmount();
+    });
   });
 
   test('the search box finds a word by English gloss ("five" -> luka) and links its lesson', () => {
