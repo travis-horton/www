@@ -81,6 +81,15 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0 # the release-branch sync below needs real ancestry
+          # A repo whose default branch has a RULESET (www: "main: releases only from dev")
+          # stores a write deploy key as HISTORY_PUSH_KEY; the ruleset lets deploy keys
+          # through, so the bot's commits, tags and release-branch sync still land. (On a
+          # personal account GitHub will not let the Actions bot itself bypass a ruleset —
+          # tried 26.0918: "must be part of the ruleset source or owner organization".)
+          # No secret → the built-in token, as everywhere else. NOTE: a deploy-key push,
+          # unlike a token push, DOES trigger other workflows — in www that means one extra
+          # production redeploy of the same image per release, and a sandbox rebuild.
+          ssh-key: ${{ secrets.HISTORY_PUSH_KEY }}
       - name: add the entry to HISTORY.md (and its semver version)
         id: add
         run: node scripts/history-append.mjs --append
