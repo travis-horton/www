@@ -4,6 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Learn from '.';
 import { recordSession } from './progress';
+import { fromDigits, seximalName, toDigits } from './seximal';
+import { GLYPHS } from './tokipona';
 
 /*
  * The drill is generated, so these tests avoid asserting on any particular
@@ -149,6 +151,37 @@ test('an unknown level does not explode', () => {
   expect(screen.getByText('No such level')).toBeInTheDocument();
 });
 
+/*
+ * The seximal lessons are prose about an engine that lives next door. Where a
+ * lesson states a fact the engine also computes, the two are checked against
+ * each other here, so the copy cannot drift from what the drill will accept.
+ */
+describe('the seximal lessons agree with the engine', () => {
+  test('Lesson Two says "an unexian", not "a unexian"', () => {
+    const { container } = renderAt('/learn/seximal/2');
+    expect(container.textContent).toMatch(/is an unexian/);
+    expect(container.textContent).not.toMatch(/is a unexian/);
+  });
+
+  test('Lesson Two works the unexian example the engine names', () => {
+    // The spec's own worked example, pinned in seximal.test.js — the lesson
+    // must say exactly what the drill will say.
+    const spoken = seximalName(fromDigits('13132'));
+    expect(spoken).toBe('one unexian, thirsy-one nif thirsy-two');
+    const { container } = renderAt('/learn/seximal/2');
+    expect(container.textContent).toContain(`13132 is ${spoken}`);
+  });
+
+  test('Lesson Four works a two-digit multiplication the engine agrees with', () => {
+    // 23 in base six is fifteen; four of them is sixty, which is 140 in base six.
+    const product = toDigits(fromDigits('23') * 4);
+    expect(product).toBe('140');
+    const { container } = renderAt('/learn/seximal/4');
+    expect(container.textContent).toContain('carry at six');
+    expect(container.textContent).toContain(`Answer ${product}`);
+  });
+});
+
 describe('toki pona', () => {
   test('the level list renders and states its house style', () => {
     renderAt('/learn/toki-pona');
@@ -173,6 +206,27 @@ describe('toki pona', () => {
 
     start();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  /*
+   * w14 #7. A level's rule.particle doubles as the heading label, and five of
+   * the ten ("stacking modifiers", "preverbs", "prepositions", "asking
+   * questions", "en, a, kin — and the phrasebook") are labels, not glyph keys.
+   * Those levels rendered an empty glyph block above the rule.
+   */
+  test('the rule glyph renders only where the rule is a particle', () => {
+    const li = renderAt('/learn/toki-pona/1');
+    const glyph = li.container.querySelector('.tp__glyph--rule');
+    expect(glyph).not.toBeNull();
+    expect(glyph.textContent).toBe(GLYPHS.li);
+    li.unmount();
+
+    ['3', '4', '5', '7', '10'].forEach((id) => {
+      const page = renderAt(`/learn/toki-pona/${id}`);
+      const empty = page.container.querySelector('.tp__glyph--rule');
+      expect(`${id}:${empty === null}`).toBe(`${id}:true`);
+      page.unmount();
+    });
   });
 
   test('the search box finds a word by English gloss ("five" -> luka) and links its lesson', () => {
