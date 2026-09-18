@@ -171,6 +171,13 @@ const Four = () => (
       That is not a party trick — thirds turn up constantly, and a base that
       cannot write them is a base that rounds.
     </p>
+    <p>
+      A two-digit multiplication is the same long multiplication you already do
+      — just carry at six. <code>23</code> × <code>4</code>: four threes is a
+      dozen, write <code>0</code> carry <code>2</code>; four twos is eight,
+      plus the carried two is ten, which is <code>14</code>. Answer{' '}
+      <code>140</code>. Division is long division with the same wall.
+    </p>
     <p className="lesson__dim">
       Division here is always exact; nothing in this level has a remainder.
     </p>
