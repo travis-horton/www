@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { version } from '../../../package.json';
+import { versionLabel } from './versionLabel';
 
 import './styles.css';
 
-const gitHash = (process.env.GIT_HASH || 'local').slice(0, 7);
+// Baked in at build time (Dockerfile ARGs, passed by deploy-to-dev); package.json is the fallback.
+const label = versionLabel(process.env.APP_VERSION || version, process.env.BUILD_DATE);
 
 /*
  * The Twitter and Instagram links came out on 26.0905. Travis does not use
@@ -26,7 +28,7 @@ const Footer = () => (
       is the way to reach me.
     </small>
     <small className="main-footer__content main-footer__content--static">
-      &copy;&apos;26 kiddspazz &middot; v{version}.{gitHash}
+      &copy;&apos;26 kiddspazz &middot; {label}
     </small>
   </footer>
 );
