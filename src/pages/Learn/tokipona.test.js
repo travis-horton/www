@@ -120,6 +120,22 @@ describe('levels', () => {
     });
   });
 
+  /*
+   * w14 #2. Level 1's decode is "moku li pona suli" — a modifier stack, and
+   * the only one Level 1 shows, so it stays. What must NOT be said about it is
+   * "very": suli is big/important, and the plain intensifier is mute, a Level
+   * 3 word. Level 1 has no business saying "very" anywhere.
+   */
+  test('Level 1 never glosses anything as "very" — mute is a Level 3 word', () => {
+    const level1 = getLevel('1');
+    const english = [...level1.toEnglish.map(([, en]) => en), level1.decode[1]];
+    english.forEach((en) => {
+      expect(`${en}:${/\bvery\b/i.test(en)}`).toBe(`${en}:false`);
+    });
+    expect(level1.decode[0]).toBe('moku li pona suli');
+    expect(level1.closingNote).toMatch(/"very" arrives in Level 3, as mute\.$/);
+  });
+
   test('getLevel finds and misses correctly', () => {
     expect(getLevel('1').title).toBe('The first twelve');
     expect(getLevel('99')).toBeNull();
