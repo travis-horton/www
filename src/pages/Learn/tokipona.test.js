@@ -165,6 +165,17 @@ describe('levels', () => {
     });
   });
 
+  /*
+   * w14 #3. Level 5 closes by promising tan's question-partner "in Level 7".
+   * A promise across levels is content the later level must keep, or the
+   * learner arrives at Level 7 and finds neither tan nor "why" anywhere in it.
+   */
+  test('Level 7 keeps the question-partner Level 5 promised: tan seme', () => {
+    expect(getLevel('5').closingNote).toMatch(/Level 7/);
+    expect(getLevel('7').rule.body).toMatch(/tan seme\? "why\?"/);
+    expect(getLevel('7').rule.body).toMatch(/mi pali tan seme\?/);
+  });
+
   test('getLevel finds and misses correctly', () => {
     expect(getLevel('1').title).toBe('The first twelve');
     expect(getLevel('99')).toBeNull();
