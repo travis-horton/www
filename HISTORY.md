@@ -12,6 +12,13 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
+**www #104: the development copy keeps up with the live one · the history now updates itself** · [PR #104](https://github.com/travis-horton/www/pull/104) · merged 26.0918.1513
+- **[the development copy keeps up with the live one](https://github.com/travis-horton/www/pull/103)** · merged 26.0918.1513
+  Behind the scenes: after each release, GitHub now moves the development branch up to match the live branch, so it no longer shows as dozens of commits "behind". If the development branch already has new work waiting, it's left untouched, and nothing redeploys.
+- **[the history now updates itself](https://github.com/travis-horton/www/pull/102)** · merged 26.0918.1513
+  New: every change now carries its own plain-language note, and when changes go live, GitHub collects the notes into one entry at the top of this file, with the time it went live. Automatic library updates get a standard line of their own.
+  Try it: open https://github.com/travis-horton/www/blob/main/HISTORY.md
+
 **www #101: this history** · [PR #101](https://github.com/travis-horton/www/pull/101) · merged 26.0918.1414
 - **[this history](https://github.com/travis-horton/www/pull/100)** · merged 26.0918.1414
   New: this file — seven years of the website in plain words, from its first hand-built pages on 19.0522 to today, newest first, each entry saying what changed on the site and, where it still exists, the address to go see it.
