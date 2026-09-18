@@ -5,6 +5,7 @@
  */
 
 import {
+  acceptedFromGloss,
   buildSession,
   getLevel,
   GLYPHS,
@@ -118,6 +119,62 @@ describe('levels', () => {
       const known = level.vocab.map((v) => v.word);
       level.glyphReading.forEach((w) => expect(known).toContain(w));
     });
+  });
+
+  /*
+   * w14 #2. Level 1's decode is "moku li pona suli" — a modifier stack, and
+   * the only one Level 1 shows, so it stays. What must NOT be said about it is
+   * "very": suli is big/important, and the plain intensifier is mute, a Level
+   * 3 word. Level 1 has no business saying "very" anywhere.
+   */
+  test('Level 1 never glosses anything as "very" — mute is a Level 3 word', () => {
+    const level1 = getLevel('1');
+    const english = [...level1.toEnglish.map(([, en]) => en), level1.decode[1]];
+    english.forEach((en) => {
+      expect(`${en}:${/\bvery\b/i.test(en)}`).toBe(`${en}:false`);
+    });
+    expect(level1.decode[0]).toBe('moku li pona suli');
+    expect(level1.closingNote).toMatch(/"very" arrives in Level 3, as mute\.$/);
+  });
+
+  /*
+   * w14 #4. The decode is the capstone — the one sentence assembled from the
+   * whole lesson — so it may not be a repeat of a to-English prompt (Level 4
+   * once drilled "mi kama sona e toki pona" twice in a 27-item session). And
+   * being the capstone, it may only use words the learner has met by then.
+   */
+  test('the decode sentence is new to its level, not a repeat of a prompt', () => {
+    LEVELS.forEach((level) => {
+      const prompts = level.toEnglish.map(([tp]) => tp);
+      expect(`${level.id}:${prompts.includes(level.decode[0])}`).toBe(
+        `${level.id}:false`,
+      );
+    });
+  });
+
+  test('the decode sentence only uses words taught by that level', () => {
+    LEVELS.forEach((level) => {
+      level.decode[0]
+        .split(/\s+/)
+        .map((t) => t.replace(/[.,!?;:"']/g, ''))
+        .filter((w) => w !== 'li' && w !== 'e')
+        .forEach((w) => {
+          const from = taughtIn(w);
+          const ok = Boolean(from) && Number(from.id) <= Number(level.id);
+          expect(`${level.id}/${w}:${ok}`).toBe(`${level.id}/${w}:true`);
+        });
+    });
+  });
+
+  /*
+   * w14 #3. Level 5 closes by promising tan's question-partner "in Level 7".
+   * A promise across levels is content the later level must keep, or the
+   * learner arrives at Level 7 and finds neither tan nor "why" anywhere in it.
+   */
+  test('Level 7 keeps the question-partner Level 5 promised: tan seme', () => {
+    expect(getLevel('5').closingNote).toMatch(/Level 7/);
+    expect(getLevel('7').rule.body).toMatch(/tan seme\? "why\?"/);
+    expect(getLevel('7').rule.body).toMatch(/mi pali tan seme\?/);
   });
 
   test('getLevel finds and misses correctly', () => {
@@ -488,5 +545,85 @@ describe('the numbers lesson drills the numbers it teaches', () => {
       l.vocab.some((v) => v.word === 'luka'),
     );
     expect(taughtIn.map((l) => l.id)).toEqual(['7']);
+  });
+});
+
+/*
+ * w14 #13 (= w4 #11a). Six glosses carry a parenthetical — mu "(any animal
+ * sound)", la "(sets the scene)", pi "(regroups words)", a "(emphasis)", en
+ * "and (joins subjects)", luka "arm (& five)" — and the matcher stripped
+ * .,!?;:"' but not ()&, so the ONLY accepted answer for mu was the literal
+ * string "(any animal sound)", and "arm" alone was wrong for luka. Two halves
+ * to the fix: normalize ignores ()& as well, and a card's accepted list also
+ * carries each gloss part with its parenthetical removed.
+ */
+describe('the preverb lesson brings lukin back as "try to"', () => {
+  /*
+   * Level 4's rule lists lukin among the preverbs as "try to", but lukin's only
+   * card was Level 2's "to see · look" — so the sense was taught in prose and
+   * could never be drilled or found (w14 audit, item 10). The same mechanism
+   * Level 9 uses for luka-as-five carries it: one `again` card, pointing back
+   * at Level 2. sona's "know how to" is NOT carried this way — sona is Level
+   * 4's own vocabulary, and an again card may never name its own level.
+   */
+  const level4 = getLevel('4');
+
+  test('lukin is the one again card, back from Level 2', () => {
+    expect(level4.again.map((v) => v.word)).toEqual(['lukin']);
+    expect(taughtIn('lukin').id).toBe('2');
+  });
+
+  test('the again card is drilled on top of the 27-item exercise set', () => {
+    const session = buildSession(level4);
+    expect(session).toHaveLength(27 + 1);
+    const lukin = session.find((i) => i.kind === 'word' && i.prompt === 'lukin');
+    expect(lukin.promptSub).toMatch(/back from an earlier level/);
+    expect(lukin.accepted).toContain('to try');
+  });
+});
+
+describe('parenthetical glosses are answerable without the parentheses', () => {
+  const card = (levelId, word) =>
+    buildSession(getLevel(levelId)).find(
+      (i) => i.kind === 'word' && i.prompt === word,
+    );
+
+  test('the plain words inside or beside the parentheses are accepted', () => {
+    [
+      ['4', 'mu', 'any animal sound'],
+      ['6', 'la', 'sets the scene'],
+      ['7', 'luka', 'hand'],
+      ['7', 'luka', 'arm'],
+      ['8', 'pi', 'regroups words'],
+      ['10', 'en', 'and'],
+      ['10', 'a', 'emphasis'],
+    ].forEach(([levelId, word, answer]) => {
+      expect(`${word}/${answer}:${isCorrect(card(levelId, word), answer)}`).toBe(
+        `${word}/${answer}:true`,
+      );
+    });
+  });
+
+  test('widening the match did not make wrong answers right', () => {
+    expect(isCorrect(card('4', 'mu'), 'moo')).toBe(false);
+    // five is Level 9's again-card sense of luka, not the Level 7 gloss.
+    expect(isCorrect(card('7', 'luka'), 'five')).toBe(false);
+  });
+
+  test('acceptedFromGloss keeps every part and adds the de-parenthesised one', () => {
+    expect(acceptedFromGloss('hand · arm (& five)')).toEqual([
+      'hand',
+      'arm (& five)',
+      'arm',
+    ]);
+    expect(acceptedFromGloss('and (joins subjects)')).toEqual([
+      'and (joins subjects)',
+      'and',
+    ]);
+    // A gloss that is ONLY a parenthetical stays as it is; normalize does the rest.
+    expect(acceptedFromGloss('(any animal sound)')).toEqual([
+      '(any animal sound)',
+    ]);
+    expect(acceptedFromGloss('')).toEqual([]);
   });
 });
