@@ -212,8 +212,8 @@ export const LEVELS = [
       ['The person is eating.', 'jan li moku'],
     ],
     closingNote:
-      'Adjectives follow their noun — jan pona is "good person," which is also the idiom for friend. So "you are my friend" is sina jan pona mi. Read it back once out loud.',
-    decode: ['moku li pona suli', 'food is very good'],
+      'Adjectives follow their noun — jan pona is "good person," which is also the idiom for friend. So "you are my friend" is sina jan pona mi. Read it back once out loud. The plain intensifier "very" arrives in Level 3, as mute.',
+    decode: ['moku li pona suli', 'food is greatly good — a big good'],
   },
   {
     id: '2',
