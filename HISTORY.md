@@ -583,12 +583,12 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## December 2020
 
-**Your journal comes back to the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-12-16&until=2020-12-16) · merged 20.1216.1939 · v1.6.0
+**Your journal comes back to the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-12-16&until=2020-12-16) · merged 20.1216.1939 · v1.0.0
 - New: your daily journal was added back to the site's files, as a shortcut pointing at the folder where the journal lived rather than a copy of it. <!-- unsure: a shortcut only works if that folder exists on the machine serving the site, so it isn't certain the journal actually appeared on the live site --> (Later removed on 21.0328, when the site was rebuilt.)
 
 ## April 2020
 
-**A README, and the journal comes off the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-04-26&until=2020-04-26) · merged 20.0426.1118 · v1.5.0
+**A README, and the journal comes off the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-04-26&until=2020-04-26) · merged 20.0426.1118 · v0.4.13
 - **[README](https://github.com/travis-horton/www/commit/6b9b04f)** · merged 20.0426.1111
   New: a short note at the top of the project's GitHub page saying this is the code for your personal website at travish.com. It admits the real write-up is still to do, and muses that your little projects are just copied in and should probably become separately linked projects. Seven minutes later you retitled its to-do heading ([c750cb2](https://github.com/travis-horton/www/commit/c750cb2)). (Later replaced on 21.0328, when the site was rebuilt.)
 - **[Journal removed](https://github.com/travis-horton/www/commit/6b9b04f)** · merged 20.0426.1111
@@ -596,11 +596,11 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## February 2020
 
-**Battleship goes up** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1039 · v1.4.0
+**Battleship goes up** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1039 · v0.4.12
 - New: the Portfolio page got a "Works in Progress" section linking to a playable Battleship game, added as a ready-built copy of your separate Battleship project. (Later removed on 21.0328, when the site was rebuilt.)
   Behind the scenes: the older linked copy of Battleship's source code was taken out, and git was told to ignore a database command-history file.
 
-**A blog typo and the footer year** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1034 · v1.3.0
+**A blog typo and the footer year** · [commits](https://github.com/travis-horton/www/commits/main?since=2020-02-07&until=2020-02-07) · merged 20.0207.1034 · v0.4.11
 - **[Typo in the JavaScript post](https://github.com/travis-horton/www/commit/de15d4f)** · merged 20.0207.1034
   Fixed: the JavaScript `this` post said a constructor's `this` is "the new object beign created". It now says "being created".
   Try it: open https://www.travish.com/blog/js-this
@@ -611,22 +611,22 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## November 2019
 
-**Two draft posts touched up** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-06&until=2019-11-06) · merged 19.1106.1425 · v1.2.2
+**Two draft posts touched up** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-06&until=2019-11-06) · merged 19.1106.1425 · v0.4.10
 - **[Compiler draft](https://github.com/travis-horton/www/commit/9f032ec)** · merged 19.1106.1425
   Behind the scenes: the draft "What is a compiler and why do I need it?" gained a remark from jfo (Jeff Fowler) that "compile" really means, more generally, turning something into another format. It was still a draft and didn't appear on the blog.
 - **[Flip-Flop pt 2 tab title](https://github.com/travis-horton/www/commit/c071df2)** · merged 19.1106.0833
   Fixed: the draft of "The D Flip-Flop, pt 2" showed "pt 1" in the browser tab. It now says "pt 2".
 
-**The compiler draft grows** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1908 · v1.2.1
+**The compiler draft grows** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1908 · v0.4.9
 - Behind the scenes: the draft "What is a compiler and why do I need it?" got tighter definitions of a compiler and a linker, plus a new section walking through Rust's compiler step by step, from the code you write to a runnable program. It stayed a draft and was never listed on the blog.
 
-**A visitor counter** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1827 · v1.2.0
+**A visitor counter** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-04&until=2019-11-04) · merged 19.1104.1827 · v0.4.8
 - **[Visitor counter](https://github.com/travis-horton/www/commit/9ab0101)** · merged 19.1104.1827
   New: a page that says "Number of visitors:" and a count, adding one each time it's opened and keeping the total in a small database on the server. It had its own address and wasn't linked from the menu; your notes file got a line about the database behind it. (Later removed on 21.0328, when the site was rebuilt.)
 - **[Ray Tracer at its old address](https://github.com/travis-horton/www/commit/9ab0101)** · merged 19.1104.1827
   New: a copy of the Ray Tracer was put back at the address it had in 19.0522, captioned "first working raytracer". <!-- unsure: nothing on the site links to it; most likely it was so an old link kept working --> (Later removed on 21.0328, when the site was rebuilt.)
 
-**The JavaScript post goes live** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-01&until=2019-11-01) · merged 19.1101.1007 · v1.1.0
+**The JavaScript post goes live** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-11-01&until=2019-11-01) · merged 19.1101.1007 · v0.4.7
 - **[Centered post titles](https://github.com/travis-horton/www/commit/ccf10f5)** · merged 19.1101.1007
   New: blog post titles are centered and underlined, on every post and draft. (Later replaced on 21.0328 by the rebuilt site's blog.)
 - **[Recaman tab title](https://github.com/travis-horton/www/commit/198ae12)** · merged 19.1101.0958
@@ -648,7 +648,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2019
 
-**Two new draft posts** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-10-18&until=2019-10-18) · merged 19.1018.1307 · v1.0.5
+**Two new draft posts** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-10-18&until=2019-10-18) · merged 19.1018.1307 · v0.4.6
 - **[Draft posts](https://github.com/travis-horton/www/commit/176f446)** · merged 19.1018.1246
   Behind the scenes: two new drafts, "Studying DNS" (breaking a web address into its parts) and "JavaScript `this`, `apply`, `call`, and `bind`", plus a blank template for starting new posts. At 13:07 you edited the JavaScript draft ([e0e8264](https://github.com/travis-horton/www/commit/e0e8264)); neither was on the blog list yet.
 - **[Journal link changed](https://github.com/travis-horton/www/commit/176f446)** · merged 19.1018.1246
@@ -656,10 +656,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## August 2019
 
-**The live copy merged back in** · [merge](https://github.com/travis-horton/www/commit/6f18d30) · merged 19.0802.1204 · v1.0.4
+**The live copy merged back in** · [merge](https://github.com/travis-horton/www/commit/6f18d30) · merged 19.0802.1204 · v0.4.5
 - Behind the scenes: brought in a change made on the live copy of the site that took the journal out "for the master branch to be clean". The merge kept the journal, so nothing on the site changed.
 
-**Battleship linked in, and notes on running the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-08-02&until=2019-08-02) · merged 19.0802.0957 · v1.0.3
+**Battleship linked in, and notes on running the site** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-08-02&until=2019-08-02) · merged 19.0802.0957 · v0.4.4
 - **[Battleship](https://github.com/travis-horton/www/commit/2ec3b76)** · merged 19.0802.0957
   Behind the scenes: your separate Battleship project was linked into the site's files as a work in progress. It wasn't listed on any page yet.
 - **[Site notes](https://github.com/travis-horton/www/commit/2ec3b76)** · merged 19.0802.0957
@@ -669,20 +669,20 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## July 2019
 
-**The journal hooked up, second try** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-09&until=2019-07-09) · merged 19.0709.0941 · v1.0.2
+**The journal hooked up, second try** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-09&until=2019-07-09) · merged 19.0709.0941 · v0.4.3
 - **[Journal link](https://github.com/travis-horton/www/commit/2d1d2b7)** · merged 19.0709.0941
   Behind the scenes: over half an hour you reworked how the journal is attached: first fixing its shortcut, then replacing the shortcut with a linked copy of the journal's own GitHub project, removing that, and adding it back. It ended linked to the GitHub project; nothing else on the site changed.
 - **[Binary draft](https://github.com/travis-horton/www/commit/6b57f15)** · merged 19.0709.0931
   Behind the scenes: a short draft post on why computers use binary. It was never listed on the blog.
 
-**Blog tidying** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-04&until=2019-07-04) · merged 19.0704.1020 · v1.0.1
+**Blog tidying** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-04&until=2019-07-04) · merged 19.0704.1020 · v0.4.2
 - **[First post spacing](https://github.com/travis-horton/www/commit/4e90e35)** · merged 19.0704.1020
   Fixed: "The First Blog Post" still had hand-placed blank lines between its paragraphs, doubling the spacing the stylesheet now adds; they're gone. You also tried underlining its title and took the underline back off minutes later ([1fce87a](https://github.com/travis-horton/www/commit/1fce87a), [70b3791](https://github.com/travis-horton/www/commit/70b3791)).
   Try it: open https://www.travish.com/blog/the-first-blog
 - **[Flip-Flop pt 2 draft](https://github.com/travis-horton/www/commit/f283701)** · merged 19.0704.0710
   Behind the scenes: the pt 2 draft grew paragraphs explaining NAND gates and how the clock drives a flip-flop, and the blog's pictures moved into the site's shared images folder. Despite the commit message ("does this add my journal?"), nothing about the journal changed.
 
-**A change from the live copy merged in** · [merge](https://github.com/travis-horton/www/commit/c644390) · merged 19.0704.0802 · v1.0.0
+**A change from the live copy merged in** · [merge](https://github.com/travis-horton/www/commit/c644390) · merged 19.0704.0802 · v0.4.1
 - Behind the scenes: brought in a new headshot that had been swapped in directly on the live copy of the site on 19.0701. Where the two versions disagreed you kept the one you'd been working on, so the only thing actually added was the server's log of errors.
 
 **Flip-Flop pt 1 polished, pt 2 started** · [commits](https://github.com/travis-horton/www/commits/main?since=2019-07-03&until=2019-07-03) · merged 19.0703.1738 · v0.4.0
