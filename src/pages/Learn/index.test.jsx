@@ -150,6 +150,19 @@ test('an unknown level does not explode', () => {
   expect(screen.getByText('No such level')).toBeInTheDocument();
 });
 
+/*
+ * The seximal lessons are prose about an engine that lives next door. Where a
+ * lesson states a fact the engine also computes, the two are checked against
+ * each other here, so the copy cannot drift from what the drill will accept.
+ */
+describe('the seximal lessons agree with the engine', () => {
+  test('Lesson Two says "an unexian", not "a unexian"', () => {
+    const { container } = renderAt('/learn/seximal/2');
+    expect(container.textContent).toMatch(/is an unexian/);
+    expect(container.textContent).not.toMatch(/is a unexian/);
+  });
+});
+
 describe('toki pona', () => {
   test('the level list renders and states its house style', () => {
     renderAt('/learn/toki-pona');
