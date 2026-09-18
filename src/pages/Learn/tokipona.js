@@ -327,6 +327,10 @@ export const LEVELS = [
       vocab('mu', '(any animal sound)'),
       vocab('soweli', 'land animal'),
     ],
+    // The preverb rule below lists lukin as "try to" — a sense its Level 2
+    // card ("to see · look") does not carry. Brought back the way Level 9
+    // brings luka back as five: drilled and searchable, taught only once.
+    again: [again('lukin', 'to try · to see')],
     vocabNote:
       'toki is the language\'s own name: toki pona = "the good/simple language." And mu is whatever noise the animal makes — moo, woof, meow, all of it.',
     rule: {

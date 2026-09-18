@@ -557,6 +557,31 @@ describe('the numbers lesson drills the numbers it teaches', () => {
  * to the fix: normalize ignores ()& as well, and a card's accepted list also
  * carries each gloss part with its parenthetical removed.
  */
+describe('the preverb lesson brings lukin back as "try to"', () => {
+  /*
+   * Level 4's rule lists lukin among the preverbs as "try to", but lukin's only
+   * card was Level 2's "to see · look" — so the sense was taught in prose and
+   * could never be drilled or found (w14 audit, item 10). The same mechanism
+   * Level 9 uses for luka-as-five carries it: one `again` card, pointing back
+   * at Level 2. sona's "know how to" is NOT carried this way — sona is Level
+   * 4's own vocabulary, and an again card may never name its own level.
+   */
+  const level4 = getLevel('4');
+
+  test('lukin is the one again card, back from Level 2', () => {
+    expect(level4.again.map((v) => v.word)).toEqual(['lukin']);
+    expect(taughtIn('lukin').id).toBe('2');
+  });
+
+  test('the again card is drilled on top of the 27-item exercise set', () => {
+    const session = buildSession(level4);
+    expect(session).toHaveLength(27 + 1);
+    const lukin = session.find((i) => i.kind === 'word' && i.prompt === 'lukin');
+    expect(lukin.promptSub).toMatch(/back from an earlier level/);
+    expect(lukin.accepted).toContain('to try');
+  });
+});
+
 describe('parenthetical glosses are answerable without the parentheses', () => {
   const card = (levelId, word) =>
     buildSession(getLevel(levelId)).find(
