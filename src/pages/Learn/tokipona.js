@@ -348,7 +348,7 @@ export const LEVELS = [
     ],
     closingNote:
       'kalama musi "musical sound" = music — the household art form. Someone in this house makes kalama musi for a living.',
-    decode: ['mi kama sona e toki pona', 'I am learning toki pona'],
+    decode: ['ona li sona toki', 'she knows how to speak'],
   },
   {
     id: '5',
