@@ -93,7 +93,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Code-checking rules](https://github.com/travis-horton/www/pull/90)** · merged 26.0917.1010
   Behind the scenes: the automatic code-checking rules were replaced with a newer set that flags only likely bugs, not matters of taste. Your editor had been painting perfectly good code red. A formatter now handles code layout, and every file was reformatted once, with no change to what the site shows.
   Try it: open Terminal and paste
-      cd ~/dev/www && npm run lint
+      cd ~/code/www && npm run lint
 
 **www #88: About and Piano pages rewritten, plus two fixes** · [PR #88](https://github.com/travis-horton/www/pull/88) · merged 26.0916.1305 · v3.21.0
 - **[Outbound links](https://github.com/travis-horton/www/commit/a4d3913)** · merged 26.0916.1302
@@ -215,7 +215,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Switched from yarn to npm](https://github.com/travis-horton/www/commit/ee62f84)** · merged 26.0818.1708
   Behind the scenes: the site switched the tool that installs its outside code libraries from yarn to npm, in the build that makes the live site and in the setup instructions.
   Try it: open Terminal and paste
-      cd ~/dev/www && npm test
+      cd ~/code/www && npm test
 - **[Claude Code settings kept out](https://github.com/travis-horton/www/commit/d6accda)** · merged 26.0818.1615
   Behind the scenes: the site's files now ignore Claude Code's personal settings folder, so it can't be saved into this public repo by accident.
 - **[toki pona course](https://github.com/travis-horton/www/commit/9d4b313)** · merged 26.0817.1505
@@ -285,7 +285,7 @@ This is the whole history of my website, www.travish.com, newest first, written 
 - **[Automatic tests and upgrades](https://github.com/travis-horton/www/commit/8dbad61)** · merged 26.0226.0742
   Behind the scenes: the site got its first automatic tests, checking that the whole site, each page (home, programming, piano, blog, contact) and the header and picture pieces load without crashing. It also moved up to React 18, a newer version of the Firebase database tools, and the finished release of the Parcel build tool instead of a test version.
   Try it: open Terminal and paste
-      cd ~/dev/www && npm test
+      cd ~/code/www && npm test
 
 ## July 2024
 
