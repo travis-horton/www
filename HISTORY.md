@@ -12,6 +12,12 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
+**www #109: history's Try it lines follow the move to ~/code** · [PR #109](https://github.com/travis-horton/www/pull/109) · merged 26.0919.1332 · v3.28.1
+- **[history's Try it lines follow the move to ~/code](https://github.com/travis-horton/www/pull/108)** · merged 26.0919.1332
+  Fixed: three "Try it" commands in the site's history (running the checks, running the tests twice) said `cd ~/dev/www`, a folder that was renamed to `~/code` on 26.0919. They now paste and run as written.
+  Try it: open Terminal and paste
+      cd ~/code/www && npm test
+
 **www #107: the footer shows the true version and when it was built · version numbers from the history** · [PR #107](https://github.com/travis-horton/www/pull/107) · merged 26.0918.1604 · v3.28.0
 - **[the footer shows the true version and when it was built](https://github.com/travis-horton/www/pull/106)** · merged 26.0918.1604
   New: the version at the bottom of every page now shows the site's real version followed by the date and time it was built, like v3.28.0+26.0918.1600. It's decided when the sandbox builds, so the live site, running that same build, shows the right number from the moment it goes live. Before it read v2.2.1 plus a commit code, and that number hadn't moved since 26.0309.
