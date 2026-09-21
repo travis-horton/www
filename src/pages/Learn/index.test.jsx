@@ -95,10 +95,45 @@ describe('seximal search', () => {
       '/learn/seximal/1',
     );
     // Level 4 is listed because its summary says "dozen-scale". The drills of
-    // every level use dozen, so "used here" on Level 4 alone would mislead.
+    // every level use dozen, so "used here" on Level 4 alone would mislead —
+    // where it is drilled is the second line, below.
     expect(container.querySelector('.tp__search-levels')).toHaveTextContent(
       'Level 1 (taught here) · Level 4 (mentioned here)',
     );
+  });
+
+  test('a word every level drills says so in one line instead of listing five', () => {
+    const { container } = renderAt('/learn/seximal');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'dozen' },
+    });
+    const lines = container.querySelectorAll('.tp__search-levels');
+    expect(lines).toHaveLength(2);
+    expect(lines[1]).toHaveTextContent('drilled in every level');
+  });
+
+  test('"nif" names the two levels that drill it without saying so, and links them', () => {
+    const { container } = renderAt('/learn/seximal');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'nif' },
+    });
+    const lines = container.querySelectorAll('.tp__search-levels');
+    expect(lines[0]).toHaveTextContent(
+      'Level 2 (taught here) · Level 5 (mentioned here)',
+    );
+    expect(lines[1]).toHaveTextContent('also drilled in: Level 3 · Level 4');
+    expect(screen.getByRole('link', { name: 'Level 3' })).toHaveAttribute(
+      'href',
+      '/learn/seximal/3',
+    );
+  });
+
+  test('a word with nothing to add gets no second line', () => {
+    const { container } = renderAt('/learn/seximal');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'unexian' },
+    });
+    expect(container.querySelectorAll('.tp__search-levels')).toHaveLength(1);
   });
 
   test('a topic result links straight to its level', () => {

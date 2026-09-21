@@ -3,8 +3,13 @@
  * index.test.jsx) — same split as search.test.js.
  */
 
-import { LEVELS, seximalName } from './seximal';
-import { HOMES, NAMED_NUMBERS, searchSeximal } from './seximalSearch';
+import { LEVELS, normalizeName, seximalName } from './seximal';
+import {
+  DRILLED_IN,
+  HOMES,
+  NAMED_NUMBERS,
+  searchSeximal,
+} from './seximalSearch';
 
 const kinds = (results) => results.map((r) => r.kind);
 const numbers = (results) => results.filter((r) => r.kind === 'number');
@@ -86,6 +91,80 @@ describe("named numbers (built from seximal.js's own naming functions)", () => {
   test('zero … five find nothing — they are digits, not seximal words', () => {
     ['zero', 'one', 'two', 'three', 'four', 'five'].forEach((w) => {
       expect(searchSeximal(w)).toEqual([]);
+    });
+  });
+});
+
+describe('"also drilled in" — the levels that ASK about a word', () => {
+  test('"dozen" is drilled in all five levels, so the line collapses', () => {
+    const [r] = searchSeximal('dozen');
+    expect(DRILLED_IN.dozen).toEqual(['1', '2', '3', '4', '5']);
+    expect(r.drilledEverywhere).toBe(true);
+  });
+
+  test('"nif" is drilled in Levels 3 and 4, which never say the word', () => {
+    const [r] = searchSeximal('nif');
+    // Its summaries name Levels 2 and 5 (see the levels test above), so those
+    // two drop out of the "also" line — 3 and 4 are what it adds.
+    expect(DRILLED_IN.nif).toEqual(['2', '3', '4', '5']);
+    expect(r.drilledEverywhere).toBe(false);
+    expect(r.drilledIn).toEqual(['3', '4']);
+  });
+
+  test('"unexian" is drilled only where it is taught, so it adds nothing', () => {
+    const [r] = searchSeximal('unexian');
+    expect(DRILLED_IN.unexian).toEqual(['2']);
+    expect(r.drilledEverywhere).toBe(false);
+    expect(r.drilledIn).toEqual([]);
+  });
+
+  test('a numeral result carries no drill line — it is a number, not a word', () => {
+    const [r] = numbers(searchSeximal('3251₆'));
+    expect(r.drilledIn).toBeUndefined();
+  });
+
+  /*
+   * The drift guard, and the reason the index is derived from each level's
+   * declared drillRange rather than typed out: it is checked against what the
+   * generators actually produce. Math.random is replaced by a small LCG so
+   * the sample is the same on every run — a flaky guard is worse than none.
+   */
+  describe('the declared ranges match the drills themselves', () => {
+    const seeded = (seed) => {
+      let s = seed;
+      return () => {
+        s = (s * 1664525 + 1013904223) % 4294967296;
+        return s / 4294967296;
+      };
+    };
+
+    const namedWordsIn = (text) =>
+      normalizeName(text)
+        .split(/\s+/)
+        .filter((t) => t in NAMED_NUMBERS);
+
+    const declaredFor = (levelId) =>
+      Object.keys(NAMED_NUMBERS)
+        .filter((w) => DRILLED_IN[w].includes(levelId))
+        .sort();
+
+    afterEach(() => jest.restoreAllMocks());
+
+    test('every level says exactly the named numbers its range claims', () => {
+      jest.spyOn(Math, 'random').mockImplementation(seeded(6));
+      LEVELS.forEach((level) => {
+        const said = new Set();
+        for (let i = 0; i < 4000; i += 1) {
+          const item = level.generate();
+          namedWordsIn(
+            `${item.prompt} ${item.promptSub || ''} ${item.name}`,
+          ).forEach((w) => said.add(w));
+        }
+        expect([[...said].sort(), level.id]).toEqual([
+          declaredFor(level.id),
+          level.id,
+        ]);
+      });
     });
   });
 });
