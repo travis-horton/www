@@ -27,7 +27,8 @@ const ROLE_LABELS = {
 // A seximal word's other levels come from the level summaries (the blurbs),
 // not from the drills — and the drills use every pair word in all five
 // levels. So they say "mentioned": "used here" on Level 4 alone would read
-// as "not used in 2, 3 or 5", which is false.
+// as "not used in 2, 3 or 5", which is false. Where the word is actually
+// drilled is its own line, below.
 const SEXIMAL_ROLE_LABELS = { ...ROLE_LABELS, mentioned: ' (mentioned here)' };
 
 const levelLinks = (course, levels, labels = ROLE_LABELS) => (
@@ -50,6 +51,32 @@ const tokiPonaItem = (r) => (
     {levelLinks('toki-pona', r.levels)}
   </li>
 );
+
+/*
+ * The second line of a seximal word: the levels that DRILL it, grouped into
+ * one sentence under the line that says where it is taught. It is capped
+ * rather than enumerated, because "every level" is the true answer for ten of
+ * the twelve named numbers and a five-link list says that badly. Three cases,
+ * all of which occur: every level (dozen), some levels the summaries never
+ * mention (nif -> 3 and 4), and nothing to add (unexian, drilled only where
+ * it is taught), which prints no line at all.
+ */
+const drillLine = ({ drilledEverywhere, drilledIn }) => {
+  if (drilledEverywhere)
+    return <p className="tp__search-levels">drilled in every level</p>;
+  if (drilledIn.length === 0) return null;
+  return (
+    <p className="tp__search-levels">
+      {'also drilled in: '}
+      {drilledIn.map((id, i) => (
+        <React.Fragment key={id}>
+          {i > 0 && ' · '}
+          <Link to={`/learn/seximal/${id}`}>{`Level ${id}`}</Link>
+        </React.Fragment>
+      ))}
+    </p>
+  );
+};
 
 // What a seximal number result says about itself, by how it was read.
 const NUMBER_GLOSS = {
@@ -76,6 +103,7 @@ const seximalItem = (r) => {
       <span className="tp__word">{r.term}</span>
       <span className="tp__gloss">{gloss}</span>
       {levelLinks('seximal', r.levels, SEXIMAL_ROLE_LABELS)}
+      {r.kind === 'word' && drillLine(r)}
     </li>
   );
 };
