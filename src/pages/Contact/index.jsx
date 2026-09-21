@@ -45,8 +45,12 @@ const Contact = () => (
     <h2>Projects</h2>
     <p>
       Github:{' '}
-      <a href="https://github.com/kiddspazz" target="_blank" rel="noreferrer">
-        kiddspazz
+      <a
+        href="https://github.com/travis-horton"
+        target="_blank"
+        rel="noreferrer"
+      >
+        travis-horton
       </a>
     </p>
     <h2>Blogs I follow</h2>
