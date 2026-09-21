@@ -14,7 +14,8 @@
  *     "times table") a learner half-remembers from a lesson.
  *
  * Four ways in, tried in this order, all returned:
- *   a named number   "dozen" -> 20₆ · 12, taught in Level 1, comes up in 4
+ *   a named number   "dozen" -> 20₆ · 12, taught in Level 1, comes up in 4,
+ *                    and drilled in every level (see wordsDrilledIn)
  *   a spoken number  "thirsy-two nif fifsy-one" -> 3251₆ · 751
  *   a numeral        "20" -> BOTH readings: 20₆ (= 12, dozen) and decimal 20
  *                    (= 32₆, thirsy-two). "20₆" or "20s6" pins it to base six.
@@ -95,6 +96,42 @@ const homeOf = (word, fallback) =>
 const PAIR_HOME = homeOf(seximalName(6), LEVELS[0]); // 'six'
 const BLOCK_HOME = homeOf(seximalName(NIF), LEVELS[1]); // 'nif'
 const homeFor = (value) => (value < NIF ? PAIR_HOME : BLOCK_HOME);
+
+/*
+ * Where a word is DRILLED, as opposed to where a level's summary happens to
+ * name it. Searching a word you just got wrong is a question about practice —
+ * "which level will ask me this again?" — and the blurbs cannot answer it: the
+ * summaries name six words between them, while the drills ask about all of
+ * them constantly.
+ *
+ * Derived from each level's declared drillRange (seximal.js), which is built
+ * from the same constants its generator uses, so this index cannot drift from
+ * the drill. The walk stops as soon as every named number has turned up, which
+ * is why Level 2's span of thirty-odd thousand values costs about thirteen
+ * hundred iterations rather than all of them.
+ */
+const wordsDrilledIn = ({ drillRange }) => {
+  const found = new Set();
+  const total = Object.keys(NAMED).length;
+  for (let v = drillRange.min; v <= drillRange.max; v += 1) {
+    tokens(seximalName(v)).forEach((t) => {
+      if (t in NAMED) found.add(t);
+    });
+    if (found.size === total) break;
+  }
+  return found;
+};
+
+const DRILLS = (() => {
+  const index = {};
+  Object.keys(NAMED).forEach((word) => {
+    index[word] = [];
+  });
+  LEVELS.forEach((level) => {
+    wordsDrilledIn(level).forEach((word) => index[word].push(level.id));
+  });
+  return index;
+})();
 
 const byLevelOrder = (a, b) => Number(a.levelId) - Number(b.levelId);
 
@@ -236,15 +273,28 @@ const numberLevels = (value) => {
   return [{ levelId: home.id, title: home.title, role: 'reads' }];
 };
 
-const namedResult = (term) => ({
-  course: 'seximal',
-  kind: 'word',
-  key: `word-${term}`,
-  term,
-  value: NAMED[term],
-  digits: toDigits(NAMED[term]),
-  levels: appearancesOf(term, NAMED[term]),
-});
+/*
+ * A named number, with both halves of "where did I meet this?": `levels` is
+ * what the lessons SAY about it, `drilledIn` is where it is ASKED — minus the
+ * levels already named above, so the second line only ever adds. Ten of the
+ * twelve named numbers are drilled in all five levels; `drilledEverywhere`
+ * lets the view say that in a phrase instead of listing the whole course.
+ */
+const namedResult = (term) => {
+  const levels = appearancesOf(term, NAMED[term]);
+  const named = new Set(levels.map((l) => l.levelId));
+  return {
+    course: 'seximal',
+    kind: 'word',
+    key: `word-${term}`,
+    term,
+    value: NAMED[term],
+    digits: toDigits(NAMED[term]),
+    levels,
+    drilledIn: DRILLS[term].filter((id) => !named.has(id)),
+    drilledEverywhere: DRILLS[term].length === LEVELS.length,
+  };
+};
 
 const numberResult = (value, reading) => ({
   course: 'seximal',
@@ -298,3 +348,4 @@ export const searchSeximal = (query) => {
 // Exposed for tests.
 export const NAMED_NUMBERS = NAMED;
 export const HOMES = { pair: PAIR_HOME.id, block: BLOCK_HOME.id };
+export const DRILLED_IN = DRILLS;
