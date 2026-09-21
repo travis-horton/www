@@ -12,6 +12,17 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
+**www #112: a dead link on the Contact page, and a plan that no longer matched the site · seximal search says where a word is drilled** · [PR #112](https://github.com/travis-horton/www/pull/112) · merged 26.0921.0914 · v3.29.0
+- **[The Contact page's Projects link](https://github.com/travis-horton/www/commit/2dd5091)** · merged 26.0921.0914
+  Fixed: the Github link under "Projects" on your Contact page led to a page that no longer exists, so anyone who clicked it got GitHub's "not found" screen. It now goes to your GitHub account.
+  Try it: open https://www.travish.com/contact and click the Github link under "Projects"
+- **[The written plan for putting your journal on the site](https://github.com/travis-horton/www/commit/10fbbd9)** · merged 26.0921.0914
+  Fixed: the plan described a journal page that was never actually built, said your entries were already loaded into the website when they are not, and counted 2,918 daily entries when there are 3,141. Two of its check-your-work steps told you to expect 2,918, so following them would have made a correct run look like a failure.
+  Behind the scenes: those steps now tell you to count the entry files fresh and compare against that, instead of trusting a number written down months ago that grows by one every day.
+- **[seximal search says where a word is drilled](https://github.com/travis-horton/www/pull/110)** · merged 26.0921.0914
+  New: on the seximal course, a search result now has a second line for the levels that actually drill the word, under the line saying where it is taught. Look up "nif" and it tells you Levels 3 and 4 drill it too, though neither lesson summary mentions it; look up "dozen" and it says "drilled in every level", because that is true of ten of the twelve number words and five links would say it worse.
+  Try it: open https://www.travish.com/learn/seximal and type dozen, then nif, then unexian, into the search box.
+
 **www #109: history's Try it lines follow the move to ~/code** · [PR #109](https://github.com/travis-horton/www/pull/109) · merged 26.0919.1332 · v3.28.1
 - **[history's Try it lines follow the move to ~/code](https://github.com/travis-horton/www/pull/108)** · merged 26.0919.1332
   Fixed: three "Try it" commands in the site's history (running the checks, running the tests twice) said `cd ~/dev/www`, a folder that was renamed to `~/code` on 26.0919. They now paste and run as written.
