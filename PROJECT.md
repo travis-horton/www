@@ -3,9 +3,17 @@
 Personal website for Travis Horton at travish.com. Currently a static React app deployed via Docker + nginx-proxy on DigitalOcean. Backend is the active project: a Zig API server with PostgreSQL, magic link auth, and a journal sync pipeline.
 
 **Why Zig:** Learning project — Travis knows Zig's creator one-friend-removed.
-**Frontend:** JS, React 18, Parcel 2, React Router v6. Deployed via Docker + GitHub Actions.
+**Frontend:** JS, React 18, Parcel 2, React Router 7 (`react-router-dom` ^7.18.3). Deployed via Docker + GitHub Actions.
 **Stage:** kiddspazz.com (`dev` branch) | **Prod:** travish.com (`main` branch)
-**Journal data:** ~2,918 daily HTML entries (Oct 2017–present) in `~/journal/`, structured **`YY/MM/YYMMDD.html`** (e.g. `26/06/260625.html` — note the two nesting levels: year dir, then month dir, then 6-digit day file). ⚠️ **Also a real `04/` dir of genuine 2004 entries** — the journal predates the daily run, so the parser must handle years 2004 + 2017→present, not just "from 2017." Currently baked into the frontend as a JSON blob. Entries from ~2020 onward have structured metrics; earlier ones less so. *(The old Node prep script `clean_blog_data.mjs` — written for the pre-rename `blog/YYMM/` layout (one level, 4-digit names) — is **archived in `_archive/`**, defunct after the blog→journal rename. Its job is superseded by the Phase 2/3 Zig migration + journal API below, so it's intentionally not being fixed.)*
+**Journal data:** daily HTML entries (Oct 2017–present) in `~/journal/`, structured **`YY/MM/YYMMDD.html`** (e.g. `26/06/260625.html` — note the two nesting levels: year dir, then month dir, then 6-digit day file). **Count: 3,141 as of 26.0921.** Re-count rather than trusting that number — it grows by one a day:
+
+```sh
+find ~/journal -type f -name '??????.html' | wc -l
+```
+
+⚠️ **`~/journal/04/` is NOT a year of entries.** It holds exactly one file, `04/07/colsta_ricak.txt`, and no HTML at all (`find ~/journal/04 -type f` → that one path, 26.0921). The parser handles **2017→present only**; there is no 2004 case to write. The entries run 17, 18, 19 … 26, and those ten year-dirs sum to the 3,141 above.
+
+Journal data is **not in the frontend in any form** — no page renders it and there is no JSON blob. The only data file the app ships is `src/data/performances.json` (performances, unrelated to the journal). Phase 2/3 below is what first puts journal data anywhere the site can reach. Entries from ~2020 onward have structured metrics; earlier ones less so. *(The old Node prep script `clean_blog_data.mjs` — written for the pre-rename `blog/YYMM/` layout (one level, 4-digit names) — is **archived in `_archive/`**, defunct after the blog→journal rename. Its job is superseded by the Phase 2/3 Zig migration + journal API below, so it's intentionally not being fixed.)*
 
 **Division of labor:** Travis writes code himself — Zig, infra, all of it. Claude is tutor, not author.
 
@@ -15,7 +23,9 @@ Personal website for Travis Horton at travish.com. Currently a static React app 
 
 - Frontend: deployed, stable
 - Backend: not started
-- Frontend TODOs: add blog posts, write tests (expand beyond smoke tests — priorities: Image lazy-load, Journal date logic, Header active route highlighting)
+- Frontend TODOs: add blog posts, write tests (expand beyond smoke tests — priority: image lazy-load, which is still genuinely absent: `grep -rn 'loading="lazy"' src/` → no matches)
+  - ~~Header active route highlighting~~ — **done.** `src/sharedComponents/Header/index.jsx:19` sets `nav__item--selected` from `useLocation()`.
+  - ~~Journal date logic~~ — there is no Journal page to test; see Phase 6, where it gets built.
 
 ---
 
@@ -103,7 +113,7 @@ api/
 **Verify:** `cd api && zig build run`, then `curl localhost:8080/api/health`
 
 ### Phase 2: PostgreSQL + Schema + Data Migration
-**Goal:** 2,918 journal entries queryable in PostgreSQL
+**Goal:** every journal entry queryable in PostgreSQL (3,141 of them as of 26.0921)
 **(Postgres = Docker container on the droplet, NOT a managed DB cluster — see Hosting & Cost Consolidation above.)**
 
 13 tasks: Design SQL schema (from `~/journal/create_table.txt`, 24 fields) -> write `001_create_journal.sql` -> write `002_create_auth.sql` -> set up local Postgres -> run migrations -> Node.js HTML parser for journal entries x2 -> DB seeder script -> seed and verify -> pg.zig basics x2 -> connect Zig to Postgres -> test query.
@@ -119,9 +129,14 @@ api/
   - Generates SQL INSERTs
 - Wire up pg.zig in the Zig app (`api/src/db.zig` — connection pool setup)
 
-Journal data: ~2,918 HTML files in `~/journal/` (YY/MM/YYMMDD.html, Oct 2017-present). Entries from ~2020 onward have structured metrics; earlier entries are less structured.
+Journal data: HTML files in `~/journal/` (YY/MM/YYMMDD.html, Oct 2017-present); 3,141 as of 26.0921. Entries from ~2020 onward have structured metrics; earlier entries are less structured.
 
-**Verify:** `psql -c "SELECT count(*) FROM journal;"` → 2918
+**Verify:** the seeded row count equals the file count on the day you seed — take the file count first, then compare. Do **not** compare against a number written in this doc; it grows by one a day.
+
+```sh
+find ~/journal -type f -name '??????.html' | wc -l   # 3141 on 26.0921
+psql -c "SELECT count(*) FROM journal;"              # must match the line above
+```
 
 ### Phase 3: Journal API Endpoints (no auth yet)
 **Goal:** CRUD API for journal entries
@@ -141,7 +156,7 @@ Files:
 - `api/src/app_state.zig` — shared state struct (holds pg.Pool + config)
 - Update `api/src/main.zig` — register routes, init AppState
 
-**Verify:** `curl localhost:8080/api/journal | jq '.entries | length'` → 2918
+**Verify:** `curl localhost:8080/api/journal | jq '.entries | length'` — must equal the seeded row count from Phase 2, not a number written here (3,141 on 26.0921).
 
 ### Phase 4: Magic Link Authentication (backend)
 **Goal:** Email-based login flow, session management
@@ -182,18 +197,20 @@ New/modified files:
 ### Phase 6: Frontend Auth Integration (React)
 **Goal:** Journal page requires login, fetches data from API
 
-6 tasks: Build AuthContext + useAuth hook -> LoginForm component -> wire Journal to fetch from API x2 -> handle magic link callback -> test end-to-end.
+⚠️ **`src/pages/Journal/` does not exist and never has** (`git log --all -- src/pages/Journal` → no commits; `ls src/pages/` → Blog, Clock, Contact, Home, Learn, NotFound, Piano, Programming). The Journal page is **built here**, from nothing — it is not an existing component being rewired. Budget accordingly: this phase is larger than "wire Journal to fetch from API" implies.
+
+7 tasks: Build AuthContext + useAuth hook -> LoginForm component -> **build the Journal page and its grid** -> wire it to fetch from the API -> add the `/journal` route -> handle magic link callback -> test end-to-end.
 
 New files:
 - `src/auth/AuthContext.jsx` — React context providing auth state
 - `src/auth/useAuth.js` — hook: checkSession, login, logout
 - `src/auth/LoginForm.jsx` — email input + submit
+- `src/pages/Journal/index.jsx` — **new page.** Fetches from `/api/journal`, shows LoginForm if not authenticated, handles the `?token=` query param for the magic link callback
 
 Modified files:
-- `src/App.jsx` — wrap with AuthProvider, add protected route logic for `/journal`
-- `src/pages/Journal/index.jsx` — fetch from `/api/journal` instead of importing static JSON, show LoginForm if not authenticated, handle `?token=` query param for magic link callback
+- `src/App.jsx` — wrap with AuthProvider, register the `/journal` route, add protected route logic
 
-The Journal component stays hidden from navigation (already not in `pages.js`). When unauthenticated users hit `/journal`, they see the login form. After magic link verification, the journal grid loads from the API.
+The Journal page stays out of the nav — `src/assets/pages.js` lists only about me / programming / piano / blog / contact, and Journal is simply not added to it. When unauthenticated users hit `/journal`, they see the login form. After magic link verification, the journal grid loads from the API.
 
 **Verify:** Visit `/journal` → see login form → enter email → receive email → click link → journal loads
 
@@ -221,18 +238,18 @@ The Journal component stays hidden from navigation (already not in `pages.js`). 
 - `migrations/002_create_auth.sql`
 - `scripts/migrate_journal_html.mjs`
 
-**New (frontend auth):**
+**New (frontend auth + the Journal page):**
 - `src/auth/AuthContext.jsx`
 - `src/auth/useAuth.js`
 - `src/auth/LoginForm.jsx`
+- `src/pages/Journal/index.jsx` — the page itself is new; it does not exist today
 
 **Modified:**
 - `docker-compose.yml` — add api + db services
 - `nginx/nginx.conf` — add /api/ proxy_pass
 - `.github/workflows/deploy-to-dev.yml` — build/deploy api
 - `.github/workflows/deploy-to-prod.yml` — deploy api + db
-- `src/App.jsx` — AuthProvider, protected Journal route
-- `src/pages/Journal/index.jsx` — fetch from API instead of static import
+- `src/App.jsx` — AuthProvider, register + protect the `/journal` route
 - `.env` / `.env.example` — new variables
 
 ---
