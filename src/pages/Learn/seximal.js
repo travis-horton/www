@@ -116,7 +116,23 @@ export const isCorrect = (item, response) => {
 // ---------------------------------------------------------------------------
 // Generators, one per level. Levels mirror the printed L1-5 worksheet set
 // (seximal-worksheets-L1-5-2026-07-24.pdf).
+//
+// The numbers a level works with are named constants rather than literals
+// inside the generators, because each LEVEL below also declares a
+// `drillRange` — the span of values that level can say out loud, operands and
+// answers alike, since every item carries seximalName(value) and the feedback
+// shows it. The search's "also drilled in" line is derived from those spans,
+// so they are built out of the same constants the generator uses and cannot
+// quietly disagree with it. seximalSearch.test.js samples the real generators
+// against the declared spans.
 // ---------------------------------------------------------------------------
+
+const PAIR_MAX = NIF - 1; // 55s6 — the biggest two-digit pair
+const OPERAND_MIN = 2; // adding or multiplying by one teaches nothing
+const SUB_MIN = 8; // a subtraction needs room under it
+const FACTOR_MAX = 11; // 15s6 — the times table proper
+const BIG_FACTOR_MAX = 17; // 25s6 — Level 4's "dozen-scale" half
+const UNEXIAN_MAX = UNEXIAN * 30; // Level 2's occasional four-digit block
 
 const nameIt = (value) =>
   makeItem({
@@ -137,7 +153,7 @@ const writeIt = (value) =>
   });
 
 const level1 = () => {
-  const value = randInt(1, 35);
+  const value = randInt(1, PAIR_MAX);
   return pick([nameIt, writeIt])(value);
 };
 
@@ -145,7 +161,7 @@ const level2 = () => {
   const roll = Math.random();
   if (roll < 0.15) {
     // The unexian bonus: four-digit blocks.
-    const value = randInt(UNEXIAN, UNEXIAN * 30);
+    const value = randInt(UNEXIAN, UNEXIAN_MAX);
     return pick([nameIt, writeIt])(value);
   }
   const value = randInt(NIF, UNEXIAN - 1);
@@ -153,8 +169,8 @@ const level2 = () => {
 };
 
 const addItem = () => {
-  const a = randInt(2, 35);
-  const b = randInt(2, 35);
+  const a = randInt(OPERAND_MIN, PAIR_MAX);
+  const b = randInt(OPERAND_MIN, PAIR_MAX);
   const carries = (a % 6) + (b % 6) >= 6;
   return makeItem({
     kind: 'add',
@@ -167,8 +183,8 @@ const addItem = () => {
 };
 
 const subtractItem = () => {
-  const a = randInt(8, 35);
-  const b = randInt(2, a - 1);
+  const a = randInt(SUB_MIN, PAIR_MAX);
+  const b = randInt(OPERAND_MIN, a - 1);
   const borrows = a % 6 < b % 6;
   return makeItem({
     kind: 'subtract',
@@ -185,8 +201,11 @@ const subtractItem = () => {
 const level3 = () => pick([addItem, subtractItem])();
 
 const multiplyItem = () => {
-  const a = randInt(2, 11);
-  const b = Math.random() < 0.3 ? randInt(6, 17) : randInt(2, 11);
+  const a = randInt(OPERAND_MIN, FACTOR_MAX);
+  const b =
+    Math.random() < 0.3
+      ? randInt(6, BIG_FACTOR_MAX)
+      : randInt(OPERAND_MIN, FACTOR_MAX);
   return makeItem({
     kind: 'multiply',
     prompt: `${toDigits(a)}₆ × ${toDigits(b)}₆`,
@@ -197,8 +216,8 @@ const multiplyItem = () => {
 };
 
 const divideItem = () => {
-  const divisor = randInt(2, 11);
-  const quotient = randInt(2, 11);
+  const divisor = randInt(OPERAND_MIN, FACTOR_MAX);
+  const quotient = randInt(OPERAND_MIN, FACTOR_MAX);
   const dividend = divisor * quotient;
   return makeItem({
     kind: 'divide',
@@ -212,7 +231,7 @@ const divideItem = () => {
 const level4 = () => pick([multiplyItem, divideItem])();
 
 const complementItem = () => {
-  const n = randInt(1, 35);
+  const n = randInt(1, PAIR_MAX);
   return makeItem({
     kind: 'complement',
     prompt: `nif − ${toDigits(n).padStart(2, '0')}₆`,
@@ -225,9 +244,9 @@ const complementItem = () => {
 };
 
 const chainItem = () => {
-  const a = randInt(2, 17);
-  const b = randInt(2, 11);
-  const c = randInt(2, 11);
+  const a = randInt(OPERAND_MIN, BIG_FACTOR_MAX);
+  const b = randInt(OPERAND_MIN, FACTOR_MAX);
+  const c = randInt(OPERAND_MIN, FACTOR_MAX);
   if (Math.random() < 0.5) {
     return makeItem({
       kind: 'chain',
@@ -237,7 +256,7 @@ const chainItem = () => {
       answerMode: 'digits',
     });
   }
-  const inner = randInt(1, 35);
+  const inner = randInt(1, PAIR_MAX);
   return makeItem({
     kind: 'chain',
     prompt: `(nif − ${toDigits(inner)}₆) + ${toDigits(b)}₆`,
@@ -257,30 +276,40 @@ export const LEVELS = [
     blurb:
       'The words themselves — six, dozen, thirsy, foursy, fifsy — up to fifsy-five.',
     generate: level1,
+    drillRange: { min: 1, max: PAIR_MAX },
   },
   {
     id: '2',
     title: 'Place value & pair-reading',
     blurb: 'Bigger numbers read as pairs around nif. Occasional unexian.',
     generate: level2,
+    drillRange: { min: NIF, max: UNEXIAN_MAX },
   },
   {
     id: '3',
     title: 'Adding & subtracting',
     blurb: 'Carries and borrows, where six is the wall instead of ten.',
     generate: level3,
+    // A subtraction can land on one; a sum can reach two full pairs.
+    drillRange: { min: 1, max: PAIR_MAX * 2 },
   },
   {
     id: '4',
     title: 'Times table & division',
     blurb: 'Multiplication back in, including dozen-scale.',
     generate: level4,
+    drillRange: { min: OPERAND_MIN, max: FACTOR_MAX * BIG_FACTOR_MAX },
   },
   {
     id: '5',
     title: 'Complements & chains',
     blurb: 'nif-complements, then complements buried inside longer chains.',
     generate: level5,
+    // The widest chain is (a + b) × c; a complement never leaves the pairs.
+    drillRange: {
+      min: 1,
+      max: (BIG_FACTOR_MAX + FACTOR_MAX) * FACTOR_MAX,
+    },
   },
 ];
 
