@@ -49,13 +49,29 @@ jobs:
         run: node scripts/history-append.mjs --predict
 
       -
+        # The image's CONTENT ADDRESS: git's hash of the whole checked-out tree.
+        # Production looks its image up by this (deploy-to-prod.yml), so prod can
+        # only ever run a build the sandbox made from exactly the files on main —
+        # never "whatever dev built last". A release merge has the same tree as
+        # the dev commit it releases, so the tag is already here when prod asks.
+        name: Name the image by its content
+        id: tree
+        run: echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
+
+      -
+        # Three tags on one image: :latest (kept for hand use on the droplets),
+        # :<commit> (this deploy pulls it — immutable, so a slower run can never
+        # pick up a newer build) and :tree-<content hash> (what production pulls).
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: kiddspazz/www_web:latest
+          tags: |
+            kiddspazz/www_web:latest
+            kiddspazz/www_web:${{ github.sha }}
+            kiddspazz/www_web:tree-${{ steps.tree.outputs.tree }}
           build-args: |
             GIT_HASH=${{ github.sha }}
             BUILD_DATE=${{ steps.stamp.outputs.build_date }}
@@ -69,7 +85,10 @@ jobs:
           username: ${{ secrets.DIGITALOCEAN_USERNAME }}
           key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
-            docker pull kiddspazz/www_web
+            # The exact build this run just pushed — not :latest, which a newer
+            # push can move while this run is still going.
+            IMAGE=kiddspazz/www_web:${{ github.sha }}
+            docker pull "$IMAGE"
             # --restart unless-stopped (not --rm): the containers come back by
             # themselves when the droplet reboots. With --rm a reboot DELETED
             # them and the site stayed down until the next push (26.0913).
@@ -92,10 +111,10 @@ jobs:
               -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
               -v /etc/gcal-hook:/etc/nginx/gcal:ro \
-              -d kiddspazz/www_web
+              -d "$IMAGE"
             docker run --restart unless-stopped --name www_web -e VIRTUAL_HOST=www.kiddspazz.com \
               -e LETSENCRYPT_HOST=www.kiddspazz.com -e VIRTUAL_PORT=80 \
-              -d kiddspazz/www_web
+              -d "$IMAGE"
             # kiddspazz.com is the SANDBOX and must never be indexed: the same
             # bundle serves travish.com, and Search Console flagged the pair as
             # "duplicate without user-selected canonical" (26.0917). nginx-proxy

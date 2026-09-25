@@ -10,6 +10,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        # Only to read the content hash below; nothing is built here. Production
+        # never builds (Travis, 26.0918: "nothing can get to prod that hasn't been
+        # in the sandbox environment").
+        name: Checkout
+        uses: actions/checkout@v4
+
+      -
+        # Production runs the sandbox's build OF THESE EXACT FILES: the image
+        # tagged tree-<git's hash of main's tree>, which deploy-to-dev pushes for
+        # every dev commit. Before this, prod pulled :latest — whatever dev built
+        # last, which a main merge would ship even when it wasn't what the merge
+        # contained (26.0910).
+        #
+        # A release merge has the same tree as the dev commit it releases, so its
+        # image is already on Docker Hub. The history bot's follow-up commit on
+        # main (HISTORY.md + the version bump) is new content: dev rebuilds it
+        # once the bot fast-forwards dev (~2.5 min), so this step waits for that
+        # build. If it never appears, the job fails and NOTHING is deployed —
+        # the running site is left exactly as it was.
+        name: Wait for the sandbox build of this content
+        id: image
+        run: |
+          TREE=$(git rev-parse 'HEAD^{tree}')
+          TAG="tree-$TREE"
+          URL="https://hub.docker.com/v2/repositories/kiddspazz/www_web/tags/$TAG"
+          for i in $(seq 1 45); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$URL")
+            if [ "$code" = 200 ]; then
+              echo "found kiddspazz/www_web:$TAG"
+              echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "no sandbox build of $TAG yet (Docker Hub answered $code); waiting 20 s ($i/45)"
+            sleep 20
+          done
+          echo "::error::The sandbox (dev) never built main's exact content (kiddspazz/www_web:$TAG) within 15 min. Nothing was deployed. Check the 'development environment' run for this commit, then re-run this job."
+          exit 1
+
+      -
         name: Deploy web app to travish.com
         uses: appleboy/ssh-action@v0.1.3
         with:
@@ -17,7 +56,8 @@ jobs:
           username: ${{ secrets.DIGITALOCEAN_USERNAME_PROD }}
           key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
-            docker pull kiddspazz/www_web
+            IMAGE=kiddspazz/www_web:${{ steps.image.outputs.tag }}
+            docker pull "$IMAGE"
             # --restart unless-stopped (not --rm): the containers come back by
             # themselves when the droplet reboots. With --rm a reboot DELETED
             # them and the site stayed down until the next push (26.0913).
@@ -40,7 +80,7 @@ jobs:
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
               -v /etc/gcal-hook:/etc/nginx/gcal:ro \
-              -d kiddspazz/www_web
+              -d "$IMAGE"
             docker run --restart unless-stopped --name www_web -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
-              -d kiddspazz/www_web
+              -d "$IMAGE"
