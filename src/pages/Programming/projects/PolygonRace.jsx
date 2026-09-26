@@ -3,8 +3,13 @@ import React, { useEffect } from 'react';
 import renderPolygonRaceInElement from './polygon-race/index.js';
 
 export const PolygonRace = () => {
+  // The demo returns a stop function; calling it when this page closes
+  // ends its animation loop and keyboard listeners.
   useEffect(() => {
-    renderPolygonRaceInElement('box');
+    const stop = renderPolygonRaceInElement('box');
+    return () => {
+      if (typeof stop === 'function') stop();
+    };
   }, []);
 
   return (
