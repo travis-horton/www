@@ -132,17 +132,26 @@ jobs:
             # status, which until now was the reload above. The cleanup below
             # must not be able to hide a failed deploy, or cause one.
             deploy_rc=$?
-            # Is the new site actually up? Both containers must be RUNNING and
-            # started from $IMAGE, the build this run just pulled. Checked after
-            # a short wait so a container that dies on start (a bad nginx config
-            # exits at once) is caught instead of passing in its first second.
+            # Is the new site actually up? Both containers must be RUNNING,
+            # started from $IMAGE (the build this run just pulled), and must
+            # NEVER have restarted. The last part is what makes this reliable:
+            # with --restart unless-stopped a container that dies on start (a
+            # bad nginx config exits at once) is not removed, it crash-loops,
+            # and Docker shows it "running" for the moment between restarts.
+            # Its restart count, though, only goes up. Checked after a short
+            # wait so a container that dies in its first seconds has done so.
             # Before this, the job only knew whether the LAST command succeeded,
             # so it could go green with the site down (26.0925).
             sleep 5
             site_up=1
             for c in web www_web; do
+              restarts=$(docker inspect -f '{{.RestartCount}}' "$c" 2>/dev/null || echo unknown)
               if [ -z "$(docker ps -q --filter "name=^/?$c\$" --filter status=running --filter "ancestor=$IMAGE")" ]; then
                 echo "DEPLOY FAILED: container '$c' is not running $IMAGE"
+                docker ps -a --filter "name=^/?$c\$" || true
+                site_up=0
+              elif [ "$restarts" != 0 ]; then
+                echo "DEPLOY FAILED: container '$c' has restarted since it started (restart count: $restarts), so it is crash-looping"
                 docker ps -a --filter "name=^/?$c\$" || true
                 site_up=0
               fi
