@@ -317,3 +317,23 @@ describe('no match', () => {
     expect(searchSeximal('zzzzzz')).toEqual([]);
   });
 });
+
+/*
+ * The toki pona half got this fix on 26.0905 (search.js, the PROTOTYPELESS
+ * note); the seximal index was written after it with plain `{}` tables, so a
+ * word that Object.prototype already owns threw inside render. /learn's box
+ * searches both courses, so "constructor" blanked the whole site.
+ */
+describe('words Object.prototype already owns are not numbers or topics', () => {
+  test.each([
+    'constructor',
+    '__proto__',
+    'toString',
+    'hasOwnProperty',
+    'nif constructor',
+    'constructor unexian',
+    'two unexian constructor',
+  ])('%s finds nothing, and does not throw', (query) => {
+    expect(searchSeximal(query)).toEqual([]);
+  });
+});

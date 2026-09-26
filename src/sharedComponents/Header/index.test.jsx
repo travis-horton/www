@@ -56,6 +56,25 @@ test('does not mark other links as selected', () => {
   );
 });
 
+// The selected tab is only a coloured border; a screen reader has to be told.
+test('the current page link says so to assistive tech, and no other does', () => {
+  const { getByText } = render(
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      initialEntries={['/programming/clock']}
+    >
+      <Header />
+    </MemoryRouter>,
+  );
+  expect(getByText('software engineer').closest('a')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  expect(getByText('about me').closest('a')).not.toHaveAttribute(
+    'aria-current',
+  );
+});
+
 // The icons are the whole nav below 500px (the labels are hidden), so a broken
 // src leaves phones with no readable navigation. Parcel resolves an image to a
 // URL only through the `url:` scheme; a bare import is `{}` (bareAssetMock),
