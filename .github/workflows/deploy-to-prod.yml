@@ -57,7 +57,11 @@ jobs:
           key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
             IMAGE=kiddspazz/www_web:${{ steps.image.outputs.tag }}
-            docker pull "$IMAGE"
+            # Stop HERE if the pull fails (Docker Hub blip, rate limit): this
+            # script has no set -e, and the old site's image is under a
+            # different tag, so carrying on would remove the running
+            # containers and then fail to start the new ones — nothing serving.
+            docker pull "$IMAGE" || { echo "pull of $IMAGE failed; live site left untouched"; exit 1; }
             # --restart unless-stopped (not --rm): the containers come back by
             # themselves when the droplet reboots. With --rm a reboot DELETED
             # them and the site stayed down until the next push (26.0913).
