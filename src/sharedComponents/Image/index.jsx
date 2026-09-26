@@ -15,9 +15,12 @@ function Image({
 
   return (
     <div className={className} style={size}>
+      {/* A placeholder for the same picture: the full image below carries
+          the alt text, so a screen reader hears it once. */}
       <img
         className="image thumb"
-        alt={alt}
+        alt=""
+        aria-hidden="true"
         src={thumb}
         style={{ visibility: isLoaded ? 'hidden' : 'visible', ...size }}
       />
