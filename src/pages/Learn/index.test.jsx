@@ -187,6 +187,72 @@ test('an unknown level does not explode', () => {
 });
 
 /*
+ * "read the lesson again" on the DONE screen used to keep the finished
+ * session's position and results. Start then resumed on the LAST question, and
+ * answering it recorded a session of 13 out of a dozen. Both drills had it.
+ */
+describe('"read the lesson again" starts a fresh session', () => {
+  const lastSession = () => {
+    const { sessions } = JSON.parse(
+      window.localStorage.getItem('travish.learn.v1'),
+    );
+    return sessions[sessions.length - 1];
+  };
+
+  // Gives up on every question until the DONE screen shows `doneButton`.
+  const finishDrill = (doneButton) => {
+    let guard = 0;
+    while (!screen.queryByRole('button', { name: doneButton }) && guard < 60) {
+      const giveUp = screen.queryByRole('button', { name: 'show me' });
+      if (giveUp) fireEvent.click(giveUp);
+      else fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+      fireEvent.click(
+        screen.queryByRole('button', { name: 'Next' }) ||
+          screen.getByRole('button', { name: "I didn't" }),
+      );
+      guard += 1;
+    }
+  };
+
+  test('seximal', () => {
+    window.localStorage.clear();
+    renderAt('/learn/seximal/1');
+    start();
+    finishDrill('Another dozen');
+    expect(lastSession().total).toBe(12);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'read the lesson again' }),
+    );
+    start();
+    expect(screen.getByText(/· 1 of 12$/)).toBeInTheDocument();
+
+    finishDrill('Another dozen');
+    expect(lastSession().total).toBe(12);
+  });
+
+  test('toki pona', () => {
+    window.localStorage.clear();
+    renderAt('/learn/toki-pona/1');
+    start();
+    const total = Number(
+      screen.getByText(/^Level 1 · 1 of \d+$/).textContent.split(' of ')[1],
+    );
+    finishDrill('Again');
+    expect(lastSession().total).toBe(total);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'read the lesson again' }),
+    );
+    start();
+    expect(screen.getByText(`Level 1 · 1 of ${total}`)).toBeInTheDocument();
+
+    finishDrill('Again');
+    expect(lastSession().total).toBe(total);
+  });
+});
+
+/*
  * The seximal lessons are prose about an engine that lives next door. Where a
  * lesson states a fact the engine also computes, the two are checked against
  * each other here, so the copy cannot drift from what the drill will accept.
@@ -276,6 +342,20 @@ describe('toki pona', () => {
     expect(screen.getByText('hand · arm (& five)')).toBeInTheDocument();
     const link = screen.getByRole('link', { name: /Level 7/ });
     expect(link).toHaveAttribute('href', '/learn/toki-pona/7');
+  });
+
+  test('a level that only mentions a word in its prose says "mentioned", not "used"', () => {
+    // search.js tags jan in Level 6 as 'mentioned' (its closingNote only).
+    renderAt('/learn/toki-pona');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'jan' },
+    });
+    const levels = screen
+      .getByText('jan', { selector: '.tp__word' })
+      .closest('li')
+      .querySelector('.tp__search-levels').textContent;
+    expect(levels).toContain('Level 6 (mentioned here)');
+    expect(levels).not.toContain('Level 6 (used here)');
   });
 
   test('the same search box finds it by "hand" too', () => {
