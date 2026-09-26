@@ -3,16 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import Programming from '.';
 
-jest.mock('./projects', () => ({
-  PerlinNoise: () => null,
-  RayTracer: () => null,
-  Orbitz: () => null,
-  Asteroids: () => null,
-  PolygonRace: () => null,
-  SeximalTimeKeeping: () => null,
-  BinaryNumerals: () => null,
-}));
-
 test('an unknown project path renders the 404 inside the one <main>', () => {
   const { container } = render(
     <MemoryRouter
@@ -37,4 +27,18 @@ test('renders without crashing', () => {
       <Programming />
     </MemoryRouter>,
   );
+});
+
+test('the seximal time-keeping project renders its hexagon clock', () => {
+  const { container } = render(
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      initialEntries={['/programming/seximal-time-keeping']}
+    >
+      <Routes>
+        <Route path="/programming/*" element={<Programming />} />
+      </Routes>
+    </MemoryRouter>,
+  );
+  expect(container.querySelector('main svg polygon')).not.toBeNull();
 });
