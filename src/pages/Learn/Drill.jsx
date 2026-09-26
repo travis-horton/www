@@ -181,7 +181,15 @@ function Drill() {
           <button
             className="drill__link-button"
             type="button"
-            onClick={() => setPhase(TEACHING)}
+            onClick={() => {
+              // A fresh dozen after the lesson, not the finished one resumed
+              // on its last question (which recorded 13 out of 12).
+              setResults([]);
+              setIndex(0);
+              setInput('');
+              setRound(round + 1);
+              setPhase(TEACHING);
+            }}
           >
             read the lesson again
           </button>{' '}
