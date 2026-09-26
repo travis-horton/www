@@ -60,7 +60,7 @@ const levelTokens = (level) => tokens(`${level.title} ${level.blurb}`);
  * noise next to toki pona's luka on the combined search.
  */
 const buildNamedNumbers = () => {
-  const named = {};
+  const named = Object.create(null); // prototypeless: see searchSeximal
   for (let n = 6; n < NIF; n += 1) {
     const name = pairName(n);
     if (!name.includes('-')) named[name] = n;
@@ -123,7 +123,7 @@ const wordsDrilledIn = ({ drillRange }) => {
 };
 
 const DRILLS = (() => {
-  const index = {};
+  const index = Object.create(null);
   Object.keys(NAMED).forEach((word) => {
     index[word] = [];
   });
@@ -172,7 +172,7 @@ const TOPIC_STOPWORDS = new Set([
 ]);
 
 const buildTopicIndex = () => {
-  const index = {};
+  const index = Object.create(null);
   const add = (token, levelId) => {
     if (!index[token]) index[token] = new Set();
     index[token].add(levelId);
@@ -214,7 +214,7 @@ const topicHits = (raw) => {
  * and a search box should not reject the form the spec has not ruled out.
  */
 const BLOCK_VALUES = (() => {
-  const table = {};
+  const table = Object.create(null);
   for (let n = 0; n < UNEXIAN; n += 1) table[normalizeName(blockName(n))] = n;
   return table;
 })();
@@ -324,6 +324,12 @@ const topicResult = (levelId) => {
  * each tagged `kind`: 'word' (a named number), 'number' (a numeral or a
  * spoken name, with `reading` = 'seximal' | 'decimal' | 'name'), or 'topic'
  * (a level whose title/blurb matches).
+ *
+ * PROTOTYPELESS ON PURPOSE, same as search.js: NAMED, DRILLS, TOPICS and
+ * BLOCK_VALUES are all looked up with words the user typed, so every one is
+ * built with Object.create(null). With a plain `{}`, "constructor" is `in`
+ * NAMED and TOPICS.constructor is a function — both threw during render, and
+ * /learn's shared box took the whole page down with them.
  */
 export const searchSeximal = (query) => {
   const raw = String(query).trim();
