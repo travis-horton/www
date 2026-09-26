@@ -6,6 +6,7 @@
  */
 
 import {
+  buildSession,
   fromDigits,
   getLevel,
   isCorrect,
@@ -105,6 +106,36 @@ describe('answer matching', () => {
   test('an empty answer is never right', () => {
     expect(isCorrect(item, '')).toBe(false);
   });
+
+  /*
+   * A write-it card PROMPTS with the name ("fifsy-one — write the base-six
+   * numeral"). Accepting the name there means typing the prompt back is graded
+   * right, which is every write-it card in Levels 1 and 2, free.
+   */
+  test('a write-it card will not accept its own prompt typed back', () => {
+    const writeIt = {
+      kind: 'write-it',
+      prompt: 'fifsy-one',
+      answerMode: 'digits',
+      value: 31,
+      digits: '51',
+      name: 'fifsy-one',
+    };
+    expect(isCorrect(writeIt, 'fifsy-one')).toBe(false);
+    expect(isCorrect(writeIt, 'Fifsy one')).toBe(false);
+    expect(isCorrect(writeIt, '51')).toBe(true);
+  });
+
+  test('no generated write-it card is answered by its own prompt', () => {
+    ['1', '2'].forEach((id) => {
+      buildSession(getLevel(id), 60)
+        .filter((i) => i.kind === 'write-it')
+        .forEach((i) => {
+          expect(isCorrect(i, i.prompt)).toBe(false);
+          expect(isCorrect(i, i.digits)).toBe(true);
+        });
+    });
+  });
 });
 
 describe('the complement drill', () => {
@@ -138,5 +169,21 @@ describe('the complement drill', () => {
     expect(item.prompt).toBe('nif − 55₆');
     expect(item.prompt).toMatch(/^nif − [0-5]{2}₆$/);
     expect(item.value).toBe(1);
+  });
+
+  // The same rule, where the complement is buried inside a chain.
+  test('a chain with a complement inside pads it to two digits too', () => {
+    jest
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0.99) // pick → chain
+      .mockReturnValueOnce(0) // a
+      .mockReturnValueOnce(0) // b → 2
+      .mockReturnValueOnce(0) // c
+      .mockReturnValueOnce(0.99) // → the complement form
+      .mockReturnValue(0); // inner → 1
+    const item = getLevel('5').generate();
+    expect(item.kind).toBe('chain');
+    expect(item.prompt).toBe('(nif − 01₆) + 2₆');
+    expect(item.value).toBe(37);
   });
 });
