@@ -3,8 +3,13 @@ import React, { useEffect } from 'react';
 import renderOrbitzInElement from './orbitz/index.js';
 
 export const Orbitz = () => {
+  // The demo returns a stop function; calling it when this page closes
+  // ends its animation loop and keyboard listeners.
   useEffect(() => {
-    renderOrbitzInElement('box');
+    const stop = renderOrbitzInElement('box');
+    return () => {
+      if (typeof stop === 'function') stop();
+    };
   }, []);
 
   return (
