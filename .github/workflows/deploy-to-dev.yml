@@ -132,3 +132,23 @@ jobs:
               docker exec nginx-proxy sh -c "printf 'add_header X-Robots-Tag \"noindex, nofollow\" always;\n' > /etc/nginx/vhost.d/$h"
             done
             docker exec nginx-proxy nginx -s reload
+            # Keep the job's verdict: ssh-action reports the script's LAST exit
+            # status, which until now was the reload above. The cleanup below
+            # must not be able to hide a failed deploy, or cause one.
+            deploy_rc=$?
+            # Clean up old images, ONLY once the new site is up. Every build is
+            # tagged (:<commit>, :tree-<hash>), so replaced images no longer
+            # turn into <none> — without this they pile up until the disk fills.
+            # `prune -a` never touches an image any container uses (running OR
+            # stopped: the new site, nginx-proxy, acme-companion), and
+            # until=168h also spares anything BUILT in the last 7 days, so a
+            # week of builds stays on hand for a rollback. Older builds are
+            # still on Docker Hub: `docker pull kiddspazz/www_web:<commit>`.
+            if [ "$deploy_rc" -eq 0 ] \
+              && [ -n "$(docker ps -q --filter 'name=^/?web$' --filter status=running --filter "ancestor=$IMAGE")" ] \
+              && [ -n "$(docker ps -q --filter 'name=^/?www_web$' --filter status=running --filter "ancestor=$IMAGE")" ]; then
+              docker image prune -a -f --filter 'until=168h' || echo "image prune failed; the deploy itself is fine"
+            else
+              echo "Skipping image cleanup: the new containers are not both running $IMAGE"
+            fi
+            exit "$deploy_rc"
