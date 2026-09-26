@@ -851,7 +851,10 @@ export const acceptedFromGloss = (gloss) => {
     .filter(Boolean)
     .forEach((part) => {
       const bare = part.replace(/\s*\([^)]*\)/g, '').trim();
-      [part, bare].forEach((a) => {
+      // "to love" also takes "love": toki pona has no infinitive, so the "to"
+      // is English grammar, not the meaning. A bare "to" (tawa) is untouched.
+      const verb = bare.replace(/^to\s+/, '');
+      [part, bare, verb].forEach((a) => {
         if (a && !out.includes(a)) out.push(a);
       });
     });
