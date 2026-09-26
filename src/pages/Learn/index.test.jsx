@@ -344,6 +344,20 @@ describe('toki pona', () => {
     expect(link).toHaveAttribute('href', '/learn/toki-pona/7');
   });
 
+  test('a level that only mentions a word in its prose says "mentioned", not "used"', () => {
+    // search.js tags jan in Level 6 as 'mentioned' (its closingNote only).
+    renderAt('/learn/toki-pona');
+    fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
+      target: { value: 'jan' },
+    });
+    const levels = screen
+      .getByText('jan', { selector: '.tp__word' })
+      .closest('li')
+      .querySelector('.tp__search-levels').textContent;
+    expect(levels).toContain('Level 6 (mentioned here)');
+    expect(levels).not.toContain('Level 6 (used here)');
+  });
+
   test('the same search box finds it by "hand" too', () => {
     renderAt('/learn/toki-pona');
     fireEvent.change(screen.getByRole('textbox', { name: /search/i }), {
