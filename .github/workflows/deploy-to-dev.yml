@@ -132,6 +132,21 @@ jobs:
             # status, which until now was the reload above. The cleanup below
             # must not be able to hide a failed deploy, or cause one.
             deploy_rc=$?
+            # Is the new site actually up? Both containers must be RUNNING and
+            # started from $IMAGE, the build this run just pulled. Checked after
+            # a short wait so a container that dies on start (a bad nginx config
+            # exits at once) is caught instead of passing in its first second.
+            # Before this, the job only knew whether the LAST command succeeded,
+            # so it could go green with the site down (26.0925).
+            sleep 5
+            site_up=1
+            for c in web www_web; do
+              if [ -z "$(docker ps -q --filter "name=^/?$c\$" --filter status=running --filter "ancestor=$IMAGE")" ]; then
+                echo "DEPLOY FAILED: container '$c' is not running $IMAGE"
+                docker ps -a --filter "name=^/?$c\$" || true
+                site_up=0
+              fi
+            done
             # Clean up old images, ONLY once the new site is up. Every build is
             # tagged (:<commit>, :tree-<hash>), so replaced images no longer
             # turn into <none> — without this they pile up until the disk fills.
@@ -140,11 +155,13 @@ jobs:
             # until=168h also spares anything BUILT in the last 7 days, so a
             # week of builds stays on hand for a rollback. Older builds are
             # still on Docker Hub: `docker pull kiddspazz/www_web:<commit>`.
-            if [ "$deploy_rc" -eq 0 ] \
-              && [ -n "$(docker ps -q --filter 'name=^/?web$' --filter status=running --filter "ancestor=$IMAGE")" ] \
-              && [ -n "$(docker ps -q --filter 'name=^/?www_web$' --filter status=running --filter "ancestor=$IMAGE")" ]; then
+            if [ "$deploy_rc" -eq 0 ] && [ "$site_up" -eq 1 ]; then
               docker image prune -a -f --filter 'until=168h' || echo "image prune failed; the deploy itself is fine"
             else
-              echo "Skipping image cleanup: the new containers are not both running $IMAGE"
+              echo "Skipping image cleanup: the deploy did not finish with the new site up"
             fi
-            exit "$deploy_rc"
+            # The verdict: a failed deploy command keeps its own exit status;
+            # otherwise the job fails when the site is not up.
+            if [ "$deploy_rc" -ne 0 ]; then exit "$deploy_rc"; fi
+            if [ "$site_up" -ne 1 ]; then exit 1; fi
+            exit 0
