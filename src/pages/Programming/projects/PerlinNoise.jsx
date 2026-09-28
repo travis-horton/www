@@ -3,8 +3,13 @@ import React, { useEffect } from 'react';
 import renderPerlinNoiseInElement from './perlin-noise/src';
 
 export const PerlinNoise = () => {
+  // The demo returns a stop function; calling it when this page closes
+  // ends its animation loop and keyboard listeners.
   useEffect(() => {
-    renderPerlinNoiseInElement('box');
+    const stop = renderPerlinNoiseInElement('box');
+    return () => {
+      if (typeof stop === 'function') stop();
+    };
   }, []);
 
   return (

@@ -576,7 +576,9 @@ describe('the preverb lesson brings lukin back as "try to"', () => {
   test('the again card is drilled on top of the 27-item exercise set', () => {
     const session = buildSession(level4);
     expect(session).toHaveLength(27 + 1);
-    const lukin = session.find((i) => i.kind === 'word' && i.prompt === 'lukin');
+    const lukin = session.find(
+      (i) => i.kind === 'word' && i.prompt === 'lukin',
+    );
     expect(lukin.promptSub).toMatch(/back from an earlier level/);
     expect(lukin.accepted).toContain('to try');
   });
@@ -598,9 +600,9 @@ describe('parenthetical glosses are answerable without the parentheses', () => {
       ['10', 'en', 'and'],
       ['10', 'a', 'emphasis'],
     ].forEach(([levelId, word, answer]) => {
-      expect(`${word}/${answer}:${isCorrect(card(levelId, word), answer)}`).toBe(
-        `${word}/${answer}:true`,
-      );
+      expect(
+        `${word}/${answer}:${isCorrect(card(levelId, word), answer)}`,
+      ).toBe(`${word}/${answer}:true`);
     });
   });
 
@@ -625,5 +627,43 @@ describe('parenthetical glosses are answerable without the parentheses', () => {
       '(any animal sound)',
     ]);
     expect(acceptedFromGloss('')).toEqual([]);
+  });
+
+  /*
+   * A verb card's gloss is written with its infinitive "to" ("to love"), but
+   * toki pona has no infinitive and "love" is a complete answer. Grading it
+   * wrong breaks the course's own admission rule: marking a right answer wrong
+   * is the worse failure. "to" as a word in its own right (tawa) stays.
+   */
+  test('a verb gloss also takes the verb without its "to"', () => {
+    expect(acceptedFromGloss('to love')).toEqual(['to love', 'love']);
+    expect(acceptedFromGloss('to see · look')).toEqual([
+      'to see',
+      'see',
+      'look',
+    ]);
+    expect(acceptedFromGloss('to · toward · to go')).toEqual([
+      'to',
+      'toward',
+      'to go',
+      'go',
+    ]);
+    expect(acceptedFromGloss('together')).toEqual(['together']);
+  });
+
+  test('"love" is right for olin, "sleep" for lape, "know" for sona', () => {
+    [
+      ['olin', 'love'],
+      ['lape', 'sleep'],
+      ['sona', 'know'],
+      ['kama', 'come'],
+    ].forEach(([word, answer]) => {
+      const level = LEVELS.find((l) => l.vocab.some((v) => v.word === word));
+      const card = buildSession(level).find(
+        (i) => i.kind === 'word' && i.prompt === word,
+      );
+      expect(isCorrect(card, answer)).toBe(true);
+      expect(isCorrect(card, 'to '.concat(answer))).toBe(true);
+    });
   });
 });
