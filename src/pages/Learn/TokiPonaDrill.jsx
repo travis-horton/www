@@ -78,13 +78,17 @@ function TokiPonaDrill() {
     );
   }
 
-  const restart = () => {
+  // `then` is where the fresh session starts: straight into the questions
+  // ("Again"), or back at the lesson ("read the lesson again"). Either way the
+  // finished session's position and results must not carry over — resuming on
+  // its last question recorded one answer more than the drill has.
+  const restart = (then = ANSWERING) => {
     setItems(buildSession(level));
     setResults([]);
     setIndex(0);
     setInput('');
     setRound(round + 1);
-    setPhase(ANSWERING);
+    setPhase(then);
   };
 
   const finish = (finalResults) => {
@@ -272,13 +276,17 @@ function TokiPonaDrill() {
         )}
         <p className="lesson__dim">{level.closingNote}</p>
         <p className="drill__actions">
-          <button className="drill__button" type="button" onClick={restart}>
+          <button
+            className="drill__button"
+            type="button"
+            onClick={() => restart()}
+          >
             Again
           </button>{' '}
           <button
             className="drill__link-button"
             type="button"
-            onClick={() => setPhase(TEACHING)}
+            onClick={() => restart(TEACHING)}
           >
             read the lesson again
           </button>{' '}
