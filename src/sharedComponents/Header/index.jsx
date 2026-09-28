@@ -17,6 +17,7 @@ const Header = () => {
             to={`/${page.path}`}
             key={page.name}
             className={`nav__item ${currentTab === page.path ? 'nav__item--selected' : ''}`}
+            aria-current={currentTab === page.path ? 'page' : undefined}
           >
             <span className="nav__label">{page.name}</span>
             <img className="nav__icon" src={page.icon} alt={page.name} />

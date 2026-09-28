@@ -63,7 +63,8 @@
     "testEnvironment": "jsdom",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/src/pages/Programming/projects/asteroids/"
+      "/src/pages/Programming/projects/asteroids/",
+      "<rootDir>/.claude/"
     ],
     "moduleNameMapper": {
       "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
@@ -91,6 +92,9 @@
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.claude/"
     ]
   },
   "@parcel/resolver-default": {
