@@ -12,6 +12,39 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## September 2026
 
+**www #123: toki pona: "love" is right for olin · the programming projects are really tested + 8 more** · [PR #123](https://github.com/travis-horton/www/pull/123) · merged 26.0927.2017 · v3.30.0
+- **[toki pona: "love" is right for olin](https://github.com/travis-horton/www/pull/120)** · merged 26.0927.2017
+  Fixed: on the 21 toki pona word cards whose meaning is a verb written with "to" (olin "to love", lape "to sleep", sona "to know"), typing just the verb was marked wrong. Both "love" and "to love" are right now, in the level drills and in review.
+- **[the programming projects are really tested](https://github.com/travis-horton/www/pull/122)** · merged 26.0927.2017
+  Behind the scenes: the automatic tests for the Programming page used stand-ins for every project, because one of them, the seximal clock, stopped the test tool with a "duplicate name" error. The clock is fixed, so the tests now load the real projects and check that the seximal time-keeping page draws its hexagon clock.
+- **[programming demos stop when you leave them](https://github.com/travis-horton/www/pull/121)** · merged 26.0927.2017
+  Fixed: after you visited the perlin noise, orbitz, polygon race or Asteroids demo in the Programming section, it kept drawing out of sight after you moved to another page, and every visit added one more; after three rounds of all four, the browser was drawing 540 hidden frames a second. After visiting Asteroids, pressing R on any page also restarted the hidden game. Leaving a demo's page now stops it completely.
+  Try it: once this is on the site, open https://www.travish.com/programming/asteroids, then click Software Engineer at the top and press R: nothing happens.
+- **[Typing the question back](https://github.com/travis-horton/www/commit/6ba3576)** · merged 26.0927.2017
+  Fixed: on the base-six "write the base-six numeral" cards, which show a number's spoken name, typing that same name back was marked right. Only the digits count now. And the complement question buried inside a Level 5 chain now shows two digits (nif − 04₆), the same as the plain complement question.
+- **["Read the lesson again"](https://github.com/travis-horton/www/commit/9cb7a0f)** · merged 26.0927.2017
+  Fixed: after finishing a drill, choosing "read the lesson again" and then Start reopened the finished drill on its last question, and saved a score with one answer too many (13 out of a dozen). It now starts a fresh drill after the lesson, in both courses.
+- **[Search labels](https://github.com/travis-horton/www/commit/f649bb4)** · merged 26.0927.2017
+  Fixed: searching a toki pona word listed a level that only mentions it in passing as "used here". It now says "mentioned here", the same as the base-six search already did.
+- **[Search crash](https://github.com/travis-horton/www/commit/741803e)** · merged 26.0927.2017
+  Fixed: typing a few particular words into the search box on /learn (for example "constructor") made the whole site go blank until you reloaded. Those words now simply find nothing.
+- **[Safety net for broken pages](https://github.com/travis-horton/www/commit/325c230)** · merged 26.0927.2017
+  New: if a page ever fails while it is drawing, you now see "Something went wrong on this page" with a reload link and a link home, and the menu and footer stay put. Before, the whole site went white.
+- **[Test runs](https://github.com/travis-horton/www/commit/786abff)** · merged 26.0927.2017
+  Behind the scenes: running the site's tests on the laptop no longer also runs the old copies left behind by Claude's working folders, so a pass or fail now describes the site itself.
+- **[Screen readers](https://github.com/travis-horton/www/commit/150c4d3)** · merged 26.0927.2017
+  Fixed: a screen reader could not tell which menu item was the page you were on (it was shown only by a coloured border), and it read the home-page photo's description twice. It now announces the current page and reads the photo once.
+- **[a publish fails when the site isn't running](https://github.com/travis-horton/www/pull/117)** · merged 26.0927.2017
+  Fixed: a publish to kiddspazz.com or www.travish.com could be marked successful while the site was down, because only its last step was checked. Now, a few seconds after starting the new site, the publish checks that both parts (travish.com and www.travish.com, and the same pair on the sandbox) are running the version it just installed and haven't crashed and restarted. If either fails that, the publish is marked failed and old builds are not cleaned up.
+- **[sandbox publishing tools updated](https://github.com/travis-horton/www/pull/116)** · merged 26.0927.2017
+  Behind the scenes: the three Docker tools the sandbox publish uses (build setup, sign-in to the image store, build-and-upload) were moved from versions that ran on software GitHub has retired to their current versions. What gets built and published is unchanged.
+- **[old website builds are cleaned off the servers automatically](https://github.com/travis-horton/www/pull/115)** · merged 26.0927.2017
+  Behind the scenes: after each successful publish to kiddspazz.com or www.travish.com, the server now deletes stored website builds that no running part of the site uses and that were built more than a week ago. It runs only after the new site is confirmed running, and a failed cleanup never marks a publish as failed. Older builds can still be fetched again from the image store when a rollback needs one.
+- **[the live site runs exactly what the practice site tested](https://github.com/travis-horton/www/pull/114)** · merged 26.0927.2017
+  Behind the scenes: every build on the practice site is now labelled with a fingerprint of its exact files. Publishing to www.travish.com looks up the build with the same fingerprint and runs that one, waiting up to 15 minutes for it; before, it ran whichever build the practice site had made last. If the matching build never appears, or the server can't download it, nothing is published and the site stays as it was.
+- **[the website comes back by itself after a server restart](https://github.com/travis-horton/www/pull/113)** · merged 26.0927.2017
+  Fixed: when the server that runs the website restarted, the website went down and stayed down until someone published a new change. Now it starts itself again as soon as the server is back, on both www.travish.com and the practice site.
+
 **www #112: a dead link on the Contact page, and a plan that no longer matched the site · seximal search says where a word is drilled** · [PR #112](https://github.com/travis-horton/www/pull/112) · merged 26.0921.0914 · v3.29.0
 - **[The Contact page's Projects link](https://github.com/travis-horton/www/commit/2dd5091)** · merged 26.0921.0914
   Fixed: the Github link under "Projects" on your Contact page led to a page that no longer exists, so anyone who clicked it got GitHub's "not found" screen. It now goes to your GitHub account.
