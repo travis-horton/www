@@ -108,7 +108,13 @@ const makeItem = ({ kind, prompt, promptSub, value, answerMode, explain }) => ({
 export const isCorrect = (item, response) => {
   const raw = String(response).trim();
   if (raw === '') return false;
-  if (normalizeName(raw) === normalizeName(item.name)) return true;
+  // A write-it card PROMPTS with the name, so there the name is the question
+  // typed back, not an answer.
+  if (
+    item.kind !== 'write-it' &&
+    normalizeName(raw) === normalizeName(item.name)
+  )
+    return true;
   if (item.answerMode === 'name') return false;
   return fromDigits(raw) === item.value;
 };
@@ -259,7 +265,7 @@ const chainItem = () => {
   const inner = randInt(1, PAIR_MAX);
   return makeItem({
     kind: 'chain',
-    prompt: `(nif − ${toDigits(inner)}₆) + ${toDigits(b)}₆`,
+    prompt: `(nif − ${toDigits(inner).padStart(2, '0')}₆) + ${toDigits(b)}₆`,
     promptSub: `the complement of ${seximalName(inner)}, plus ${seximalName(b)}`,
     value: NIF - inner + b,
     answerMode: 'digits',
