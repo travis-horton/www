@@ -6,4 +6,9 @@
 // string where production saw `{}` — which is how five broken nav icons
 // shipped behind a green suite. Import images with `url:` (see Footer);
 // those map to fileMock and get a real string.
+//
+// It also stands in for a bare pdf or font import. There Parcel does not hand
+// back `{}`: it fails the build ("No transformers found"). A mock cannot fail
+// a build, so `{}` is the nearest it can get — a test that checks the href or
+// src still goes red on "[object Object]". The fix is the same: `url:`.
 module.exports = {};
