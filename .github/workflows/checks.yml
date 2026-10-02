@@ -3,7 +3,15 @@
 # Until this file the tests, the linter and the build ran only when someone
 # remembered to run them on a laptop: a pull request could be merged, and a
 # deploy could start, with all of them red. Now every pull request and every
-# push to dev gets a `test` result beside it.
+# push to dev gets these results beside it:
+#
+#   test       the jest tests, eslint, the build, and a look inside the bundle
+#   image      builds the real Docker image, starts it, and asks it what the
+#              live site is asked (scripts/image-smoke.sh). Nothing is pushed
+#              anywhere and no secret is used. This is the test of the
+#              Dockerfile and of nginx/nginx.conf BEFORE a merge; without it
+#              the first test is the sandbox deploy.
+#   workflows  actionlint reads the workflow files themselves
 #
 # ⚠️ IT REPORTS; IT DOES NOT BLOCK. Nothing here stops a merge or a deploy. That
 # takes a ruleset on the branch, which is a repository setting and not a file.
@@ -71,6 +79,51 @@ jobs:
         run: npm run build
 
       -
-        # Keeps package.json out of what visitors download.
+        # Keeps package.json out of what visitors download, and the real
+        # version number in.
         name: Nothing from package.json is in the bundle
         run: node scripts/check-bundle.mjs dist
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        # The Dockerfile copies src/, and the project pages in it are submodules.
+        name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      -
+        # Plain `docker build`, no build arguments: the footer of this image
+        # says v<package.json's version>+local. It never leaves the runner.
+        name: Build the image
+        run: docker build -t www_web:ci .
+
+      -
+        name: Start it and ask it what the live site is asked
+        run: bash scripts/image-smoke.sh www_web:ci
+
+      -
+        name: The site's compose file is valid
+        run: docker compose -f docker-compose.yml config -q
+
+      -
+        name: The proxy's compose file is valid
+        run: docker compose -f reverse-proxy/docker-compose.yml config -q
+
+  workflows:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      -
+        # actionlint from its own image, pinned by version AND by content
+        # (the sha256), so the linter cannot change under the same name.
+        name: Lint the workflow files
+        run: docker run --rm -v "$PWD:/repo:ro" --workdir /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color .github/workflows/checks.yml .github/workflows/deploy-to-dev.yml .github/workflows/deploy-to-prod.yml .github/workflows/history.yml
