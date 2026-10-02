@@ -252,6 +252,48 @@ describe('nginx.conf', () => {
     ]);
   });
 
+  test('add_header is the only thing that says what a browser may keep', () => {
+    // `expires` writes a Cache-Control (and an Expires) of its own, beside the
+    // one the location already sets, and a browser would be handed two.
+    expect(findAll(conf, 'expires')).toEqual([]);
+  });
+
+  test('the calendar routes do what they did: 204 for a ring, the log for the drain, 404 for anything else', () => {
+    // Everything in the two locations but the security headers and the cache
+    // header, which have tests of their own above. A doorbell that answers
+    // anything but a 2xx makes Google drop the channel.
+    const rest = (label) =>
+      (
+        locations.find(
+          ({ directive }) => args(directive).join(' ') === label,
+        ) || { directive: { block: [] } }
+      ).directive.block
+        .filter((inner) => !['include', 'add_header'].includes(name(inner)))
+        .map((inner) => [
+          name(inner),
+          ...args(inner),
+          ...(inner.block
+            ? [inner.block.map((line) => [name(line), ...args(line)])]
+            : []),
+        ]);
+    expect(rest('^~ /gcal-hook/')).toEqual([
+      ['if', '($gcal_route', '!=', 'hook', ')', [['return', '404']]],
+      [
+        'access_log',
+        '/var/log/gcal-hook/hits.log',
+        'gcal_hook',
+        'if=$gcal_log_hook',
+      ],
+      ['return', '204'],
+    ]);
+    expect(rest('^~ /gcal-drain/')).toEqual([
+      ['if', '($gcal_route', '!=', 'drain', ')', [['return', '404']]],
+      ['root', '/var/log/gcal-hook'],
+      ['try_files', '/hits.log', '=404'],
+      ['default_type', 'text/plain'],
+    ]);
+  });
+
   test('the server does not print its version', () => {
     const server = findAll(conf, 'server')[0].directive.block;
     const tokens = server.filter((inner) => name(inner) === 'server_tokens');
@@ -370,11 +412,36 @@ describe('security-headers.conf', () => {
 });
 
 describe('the Dockerfile', () => {
-  const copies = read('Dockerfile')
+  // Every instruction as one line: a `\` at a line's end continues it on the
+  // next, and a line that starts with `#` is a comment.
+  const instructions = read('Dockerfile')
+    .replace(/\\\r?\n/g, ' ')
     .split('\n')
-    .map((line) => /^\s*COPY\s+(?!--from)(\S+)\s+(\S+)\s*$/.exec(line))
+    .map((line) => line.trim())
+    .filter((line) => line !== '' && !line.startsWith('#'));
+  // COPY and ADD both put files into the image: `[--flag…] <from…> <to>`, one
+  // entry per source. A copy from the build stage (`--from=…`) is read too.
+  const copies = instructions
+    .map((line) => /^(?:COPY|ADD)\s+(.+)$/i.exec(line))
     .filter(Boolean)
-    .map((match) => ({ from: match[1], to: match[2] }));
+    .flatMap((match) => {
+      const words = match[1]
+        .split(/\s+/)
+        .filter((word) => !word.startsWith('--'));
+      const to = words[words.length - 1];
+      return words.slice(0, -1).map((from) => ({ from, to }));
+    });
+
+  test('the reader saw the three copies that are there', () => {
+    // An empty list would pass both tests below for the wrong reason.
+    expect(copies.map((copy) => copy.to)).toEqual(
+      expect.arrayContaining([
+        '/etc/nginx/conf.d/default.conf',
+        SNIPPET,
+        '/var/www/html',
+      ]),
+    );
+  });
 
   test('puts the headers file exactly where nginx.conf includes it', () => {
     const snippetCopies = copies.filter((copy) =>
@@ -399,6 +466,14 @@ describe('the Dockerfile', () => {
     );
     expect(intoConfD).toEqual([
       { from: './nginx/nginx.conf', to: '/etc/nginx/conf.d/default.conf' },
+    ]);
+  });
+
+  test('no other instruction reaches conf.d', () => {
+    // The net under the two tests above, for a way in they do not read: a RUN
+    // that copies or moves a file there, a COPY written as a JSON list.
+    expect(instructions.filter((line) => line.includes('conf.d'))).toEqual([
+      'COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf',
     ]);
   });
 });
