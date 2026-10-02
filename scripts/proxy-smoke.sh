@@ -5,8 +5,11 @@
 #   bash scripts/proxy-smoke.sh <image>          e.g. www_web:ci
 #
 # ⚠️ FOR A THROWAWAY MACHINE ONLY (GitHub's runner). It starts a container
-# called `nginx-proxy` on ports 80 and 443. It refuses to start where a
-# container of that name already exists, and it is never to be run on a server.
+# called `nginx-proxy` on ports 80 and 443, and it is never to be run on a
+# server. It refuses to start where it finds what a server has: a container of
+# that name, a container called `proxy` or `acme` (the README's names for the
+# pair), any container of the proxy's or the certificate companion's image
+# whatever it is called, or anything already published on port 80 or 443.
 #
 # Why it exists: the two servers run a proxy from 2021 and 2022, and replacing
 # it is done by hand, once, on a machine no check can reach. This is the part
@@ -50,9 +53,22 @@ PORT="${PROXY_SMOKE_PORT:-80}"
 ZEROS=00000000000000000000000000000000
 IMMUTABLE='public, max-age=31536000, immutable'
 
-if docker ps -a --format '{{.Names}}' | grep -qx "$PROXY"; then
-  echo "A container named $PROXY already exists here. This rehearsal is for a"
-  echo "throwaway machine, never a server. Nothing was started or changed."
+# Never on a server. One line per container, running or not: its name, its
+# image, the ports it publishes. The list is read into a variable first and awk
+# reads all of it, so a `docker ps` that fails stops the script right here
+# (set -e) instead of reading as "nothing there", and no early exit of a reader
+# can turn a match into a miss under `pipefail`.
+existing="$(docker ps -a --format '{{.Names}} {{.Image}} {{.Ports}}')"
+found="$(printf '%s\n' "$existing" | awk -v proxy="$PROXY" '
+  $1 == proxy || $1 == "proxy" || $1 == "acme" ||
+  $2 ~ /nginx-proxy|acme-companion/ ||
+  $0 ~ /:(80|443)->/ { print "  " $0 }
+')"
+if [ -n "$found" ]; then
+  echo "This machine already has a proxy, or something on port 80 or 443:"
+  echo "$found"
+  echo "This rehearsal is for a throwaway machine, never a server."
+  echo "Nothing was started or changed."
   exit 2
 fi
 
