@@ -33,16 +33,4 @@ test('renders all nav links', () => {
   expect(nav.getByRole('link', { name: /contact/i })).toBeInTheDocument();
 });
 
-test('has no React StrictMode incompatible components', () => {
-  const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-  render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-  );
-  const unsafeWarnings = consoleSpy.mock.calls.filter(
-    ([msg]) => typeof msg === 'string' && msg.includes('UNSAFE_'),
-  );
-  consoleSpy.mockRestore();
-  expect(unsafeWarnings).toHaveLength(0);
-});
+// The StrictMode check lives in App.strict.test.jsx, where nothing is mocked.

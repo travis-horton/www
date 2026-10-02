@@ -18,7 +18,7 @@ test('an unknown project path renders the 404 inside the one <main>', () => {
   expect(container.querySelectorAll('main')).toHaveLength(1);
 });
 
-test('renders without crashing', () => {
+test('the programming index lists the personal projects', () => {
   render(
     <MemoryRouter
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
@@ -27,6 +27,9 @@ test('renders without crashing', () => {
       <Programming />
     </MemoryRouter>,
   );
+  expect(
+    screen.getByRole('heading', { level: 2, name: 'Personal Projects' }),
+  ).toBeInTheDocument();
 });
 
 test('the seximal time-keeping project renders its hexagon clock', () => {
