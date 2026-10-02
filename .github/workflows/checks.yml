@@ -113,6 +113,16 @@ jobs:
         name: The proxy's compose file is valid
         run: docker compose -f reverse-proxy/docker-compose.yml config -q
 
+      -
+        # The proxy that stands in front of the site on both servers, at the
+        # version reverse-proxy/docker-compose.yml names, with two containers
+        # of the image just built behind it. On the servers that proxy is
+        # replaced by hand; this is the part of that step a check can try
+        # first. It proves routing and headers. It does NOT prove certificates:
+        # none is issued here and the companion container is not started.
+        name: Rehearse the pinned proxy in front of the image
+        run: bash scripts/proxy-smoke.sh www_web:ci
+
   workflows:
     runs-on: ubuntu-latest
     steps:
