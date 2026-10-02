@@ -1,4 +1,5 @@
-// Two checks on the built site, both about the footer's version.
+// Three checks on the built site: two about the footer's version, one about
+// the built files' names.
 //
 //   node scripts/check-bundle.mjs <dist-dir>
 //
@@ -19,13 +20,25 @@
 //    in). So this looks for "v<version>+" in the built .js, where <version> is
 //    APP_VERSION if the build was given one and package.json's otherwise.
 //
-// Exit 0: both hold. Exit 1: either fails (the file or the missing string is
+// 3. Every built file except index.html has a hash of its content in its name,
+//    in the shape nginx/nginx.conf's built-files location matches (the pattern
+//    is READ from that file, so the two cannot drift). That location tells
+//    browsers to keep a file for a year without asking again, which is only
+//    safe for a file whose name changes when its content does. A built file
+//    the pattern does not take would be served by the pages' location instead:
+//    never cached, and answered with the app's page when it is missing. So the
+//    long-cache rule must cover every built file, and index.html (the one name
+//    that never changes) must stay outside it.
+//
+// Exit 0: all hold. Exit 1: one fails (the file or the missing string is
 // named), or there was nothing to check. An empty or missing folder is a
 // failure on purpose, so a build that silently produced nothing cannot pass.
 import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 const MARKERS = ['devDependencies', 'testPathIgnorePatterns'];
+// The one built file whose name must NOT carry a hash.
+const PAGE = 'index.html';
 
 const dir = process.argv[2];
 if (!dir) {
@@ -33,12 +46,12 @@ if (!dir) {
   process.exit(1);
 }
 
-function jsFilesUnder(folder) {
+function filesUnder(folder) {
   const found = [];
   for (const entry of readdirSync(folder, { withFileTypes: true })) {
     const path = join(folder, entry.name);
-    if (entry.isDirectory()) found.push(...jsFilesUnder(path));
-    else if (entry.isFile() && entry.name.endsWith('.js')) found.push(path);
+    if (entry.isDirectory()) found.push(...filesUnder(path));
+    else if (entry.isFile()) found.push(path);
   }
   return found.sort();
 }
@@ -47,13 +60,14 @@ function count(text, word) {
   return text.split(word).length - 1;
 }
 
-let files;
+let everyFile;
 try {
-  files = jsFilesUnder(dir);
+  everyFile = filesUnder(dir);
 } catch (error) {
   console.error(`FAIL  cannot read ${dir}: ${error.message}`);
   process.exit(1);
 }
+const files = everyFile.filter((path) => path.endsWith('.js'));
 
 if (files.length === 0) {
   console.error(
@@ -93,11 +107,58 @@ if (failures === 0 && versionSeen === 0) {
   );
 }
 
+// 3. The names. The pattern comes from nginx.conf's one regex location.
+const conf = readFileSync(
+  new URL('../nginx/nginx.conf', import.meta.url),
+  'utf8',
+);
+const patterns = [...conf.matchAll(/^\s*location\s+~\s+"([^"]+)"\s*\{/gm)].map(
+  (match) => match[1],
+);
+let named = 0;
+if (patterns.length !== 1) {
+  failures += 1;
+  console.error(
+    `FAIL  nginx/nginx.conf has ${patterns.length} quoted \`location ~ "…"\` lines, and exactly one (the built files') is expected: the names could not be checked.`,
+  );
+} else {
+  const built = new RegExp(patterns[0]);
+  const addresses = everyFile.map(
+    (path) => `/${relative(dir, path).split(sep).join('/')}`,
+  );
+  if (!addresses.includes(`/${PAGE}`)) {
+    failures += 1;
+    console.error(`FAIL  no ${PAGE} under ${dir}: there is no page to serve.`);
+  }
+  for (const address of addresses) {
+    if (address === `/${PAGE}`) {
+      if (built.test(address)) {
+        failures += 1;
+        console.error(
+          `FAIL  ${address} fits the built files' pattern: the page itself would be kept for a year.`,
+        );
+      }
+    } else if (!built.test(address)) {
+      failures += 1;
+      console.error(
+        `FAIL  ${address} has no hash of its content in its name (it does not fit ${patterns[0]} from nginx/nginx.conf). It would be served with no long cache, and answered with the app's page when it is missing.`,
+      );
+    } else {
+      named += 1;
+    }
+  }
+}
+
 if (failures > 0) {
-  console.error(`${failures} finding(s) in ${files.length} .js file(s).`);
+  console.error(
+    `${failures} finding(s) in ${everyFile.length} built file(s), ${files.length} of them .js.`,
+  );
   process.exit(1);
 }
 
 console.log(
   `OK    ${files.length} .js file(s) under ${dir}: none carries package.json, and "${wanted}" is there (${versionSeen}x)`,
+);
+console.log(
+  `OK    ${named} built file(s) besides ${PAGE} carry a hash of their content in their name; ${PAGE} does not`,
 );
