@@ -572,4 +572,109 @@ describe('toki pona', () => {
       expect(weak[level.glyphReading[0]]).toBe(2);
     },
   );
+
+  /*
+   * The test above misses everything, so it cannot tell "missed" from "asked":
+   * a drill that wrote down the word of EVERY card, right or wrong, would pass
+   * it — and then every drilled word is weak, which flattens review's
+   * weighting with nothing on screen to show for it. So the two below answer
+   * one half of the vocabulary cards correctly, miss the rest, and require
+   * that only the missed half is written down. Once each way round.
+   */
+
+  // The vocabulary card on screen: which word, and whether it is asked as a
+  // glyph ("which word is this?") or as a word ("what does it mean?"), with
+  // an answer the drill accepts. null on a sentence.
+  const cardOnScreen = (container, level) => {
+    const glyph = container.querySelector('.tp__glyph--prompt');
+    if (glyph) {
+      const word = level.glyphReading.find(
+        (w) => GLYPHS[w] === glyph.textContent,
+      );
+      return { kind: 'glyph', word, right: word };
+    }
+    const sub = container.querySelector('.drill__sub').textContent;
+    if (!sub.startsWith('what does it mean')) return null;
+    // The prompt is the word, then its glyph in a span of its own.
+    const word =
+      container.querySelector('.drill__prompt').firstChild.textContent;
+    const cards = sub.includes('here?') ? level.again : level.vocab;
+    const { gloss } = cards.find((v) => v.word === word);
+    // "hand · arm (& five)": any one part of the gloss is a right answer.
+    return { kind: 'word', word, right: gloss.split('·')[0].trim() };
+  };
+
+  // Runs a whole level drill, answering the cards of `rightKind` correctly
+  // and missing everything else, and returns what the session stored.
+  const drillAnswering = (id, rightKind) => {
+    window.localStorage.clear();
+    const level = getLevel(id);
+    const { container } = renderAt(`/learn/toki-pona/${id}`);
+    start();
+    let guard = 0;
+    while (!screen.queryByRole('button', { name: 'Again' }) && guard < 60) {
+      const card = cardOnScreen(container, level);
+      if (card && card.kind === rightKind) {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: card.right },
+        });
+      }
+      fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+      fireEvent.click(
+        screen.queryByRole('button', { name: 'Next' }) ||
+          screen.getByRole('button', { name: "I didn't" }),
+      );
+      guard += 1;
+    }
+    const { sessions } = JSON.parse(
+      window.localStorage.getItem('travish.learn.v1'),
+    );
+    expect(sessions).toHaveLength(1);
+    const weak = {};
+    weakWords('toki-pona').forEach(({ word, count }) => {
+      weak[word] = count;
+    });
+    return { level, session: sessions[0], weak };
+  };
+
+  // How often each word appears in a list: the shape weakWords reports.
+  const timesEach = (words) => {
+    const counts = {};
+    words.forEach((word) => {
+      counts[word] = (counts[word] || 0) + 1;
+    });
+    return counts;
+  };
+
+  test.each(['1', '4', '9'])(
+    'a level %s drill with every glyph read right charges only the word cards',
+    (id) => {
+      const { level, session, weak } = drillAnswering(id, 'glyph');
+      const wordCards = [...level.vocab, ...(level.again || [])].map(
+        (v) => v.word,
+      );
+
+      // The glyphs really were marked right — this is not the miss-everything
+      // drill again under another name.
+      expect(session.correct).toBe(level.glyphReading.length);
+      expect([...session.missedWords].sort()).toEqual([...wordCards].sort());
+      // A word read right as a glyph and missed as a word card was missed
+      // once, not twice; a word only ever read right is not on the list.
+      expect(weak).toEqual(timesEach(wordCards));
+    },
+  );
+
+  test.each(['1', '4', '9'])(
+    'a level %s drill with every word card answered right charges only the glyphs',
+    (id) => {
+      const { level, session, weak } = drillAnswering(id, 'word');
+      const wordCards = [...level.vocab, ...(level.again || [])];
+
+      expect(session.correct).toBe(wordCards.length);
+      expect([...session.missedWords].sort()).toEqual(
+        [...level.glyphReading].sort(),
+      );
+      expect(weak).toEqual(timesEach(level.glyphReading));
+    },
+  );
 });
