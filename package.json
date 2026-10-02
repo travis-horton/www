@@ -6,7 +6,7 @@
     "test": "jest",
     "build": "parcel build ./src/index.html",
     "serve": "parcel serve ./src/index.html",
-    "rebuild": "docker stop web; docker-compose build && docker-compose up -d",
+    "rebuild": "docker build -t www_web . && docker run --rm -p 8080:80 www_web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\"",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kiddspazz/www.git"
+    "url": "git+https://github.com/travis-horton/www.git"
   },
   "author": "kiddspazz (https://www.travish.com/)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kiddspazz/www/issues"
+    "url": "https://github.com/travis-horton/www/issues"
   },
-  "homepage": "https://github.com/kiddspazz/www#readme",
+  "homepage": "https://github.com/travis-horton/www#readme",
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

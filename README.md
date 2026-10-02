@@ -1,6 +1,6 @@
-[![production environment](https://github.com/kiddspazz/www/actions/workflows/deploy-to-prod.yml/badge.svg?branch=main)](https://github.com/kiddspazz/www/actions/workflows/deploy-to-prod.yml)
-[![development environment](https://github.com/kiddspazz/www/actions/workflows/deploy-to-dev.yml/badge.svg?branch=dev)](https://github.com/kiddspazz/www/actions/workflows/deploy-to-dev.yml)
-[![Last Commit](https://img.shields.io/github/last-commit/kiddspazz/www)](https://github.com/kiddspazz/www)
+[![production environment](https://github.com/travis-horton/www/actions/workflows/deploy-to-prod.yml/badge.svg?branch=main)](https://github.com/travis-horton/www/actions/workflows/deploy-to-prod.yml)
+[![development environment](https://github.com/travis-horton/www/actions/workflows/deploy-to-dev.yml/badge.svg?branch=dev)](https://github.com/travis-horton/www/actions/workflows/deploy-to-dev.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/travis-horton/www)](https://github.com/travis-horton/www)
 
 # website repo
 
@@ -31,11 +31,11 @@ simply `npm install`
 
 ### usage
 
-`npm serve` runs `parcel serve`, which sets up a version of the app on `localhost:1234`
+`npm run serve` runs `parcel serve`, which sets up a version of the app on `localhost:1234`
 
 ### run tests
 
-*TODO* write tests
+`npm test` runs the tests (jest); `npm run lint` runs eslint
 
 ### deployment
 
@@ -45,14 +45,13 @@ production automatically deploys on merge with `main`.
 
 # authors
 
-* kiddspazz/thor/travis, [github](https://github.com/kiddspazz)
+* kiddspazz/thor/travis, [github](https://github.com/travis-horton)
 
 uses kiddspazz's perlin noise, asteroids, ray-tracer, polygon-race and orbitz repos
 
 # TODOS
 
 * add blog posts
-* write tests
 
 # docker notes
 ok... here's the deal. the following commands will set everything up basically how it should be,
