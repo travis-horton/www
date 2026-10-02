@@ -125,5 +125,9 @@ jobs:
       -
         # actionlint from its own image, pinned by version AND by content
         # (the sha256), so the linter cannot change under the same name.
+        # -ignore: ONE known finding is let through, an unused loop counter
+        # (`for attempt in 1 2 3`) in history.yml. That file is an installed
+        # copy whose master lives outside this repo, so it is not fixed here.
+        # Everything else in all four files is still checked.
         name: Lint the workflow files
-        run: docker run --rm -v "$PWD:/repo:ro" --workdir /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color .github/workflows/checks.yml .github/workflows/deploy-to-dev.yml .github/workflows/deploy-to-prod.yml .github/workflows/history.yml
+        run: docker run --rm -v "$PWD:/repo:ro" --workdir /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color -ignore 'SC2034:warning:\d+:\d+. attempt appears unused' .github/workflows/checks.yml .github/workflows/deploy-to-dev.yml .github/workflows/deploy-to-prod.yml .github/workflows/history.yml
