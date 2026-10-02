@@ -1,5 +1,12 @@
 # syntax=docker/dockerfile:1
-FROM node:latest AS build
+# Both base images are named by version, never `latest` (26.1002). With `latest`
+# the same Dockerfile built a different site whenever Docker Hub moved the tag,
+# and nothing in this repo's history said when. These two are exactly what
+# `latest` pointed at on the day they were pinned, so a new version is now a
+# change to one of these lines that can be read, tested and reverted.
+# ⚠️ node's major must equal `node-version` in .github/workflows/checks.yml:
+# move both together (scripts/repo-pins.test.js fails if they drift).
+FROM node:26-trixie AS build
 WORKDIR /app
 
 ARG GIT_HASH=unknown
@@ -20,7 +27,7 @@ RUN npm ci
 COPY ./src /app/src
 RUN npm run build
 
-FROM nginx:latest
+FROM nginx:1.31
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # ⚠️ THE IMAGE MUST OWN THIS DIRECTORY, NOT THE RUN COMMAND. nginx.conf declares
