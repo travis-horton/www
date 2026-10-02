@@ -35,14 +35,15 @@ import { CLOCK_OPTIONS } from './options';
  * Each option's live demo, by id. Kept here so options.js stays pure data —
  * the arguments are testable without rendering an SVG.
  *
- * `now` is a Date for the faces, `ms` the milliseconds since local midnight
- * for the span. The seven-hand face takes neither: it runs its own
- * animation-frame clock, because its finest hand turns faster than the page.
+ * `ms` is the milliseconds since local midnight as of the page's last tick,
+ * for the span: a number that steps. The four analog faces are handed no time
+ * at all. Each runs its own animation-frame clock, because a swept hand moves
+ * between ticks and the page around it does not.
  */
-const demo = (id, now, ms, mode) => {
+const demo = (id, ms, mode) => {
   switch (id) {
     case 'three-hands':
-      return <Face now={now} mode={mode} />;
+      return <Face mode={mode} />;
     case 'span':
       return (
         <div className="clock__sketch-span" data-testid="demo-span">
@@ -50,9 +51,9 @@ const demo = (id, now, ms, mode) => {
         </div>
       );
     case 'extra-hands':
-      return <Face now={now} mode={mode} extraHands />;
+      return <Face mode={mode} extraHands />;
     case 'sextant':
-      return <Face now={now} mode={mode} sextant />;
+      return <Face mode={mode} sextant />;
     case 'seven-hands':
       return <SixFace />;
     default:
@@ -60,7 +61,7 @@ const demo = (id, now, ms, mode) => {
   }
 };
 
-function Ballot({ now, ms, mode }) {
+function Ballot({ ms, mode }) {
   return (
     <section className="clock__options">
       <h2 className="clock__h2">five clocks, none of them decided</h2>
@@ -98,7 +99,7 @@ function Ballot({ now, ms, mode }) {
                 class names with the others and sets its own stroke-opacity,
                 so any per-hand rule has to name the option it belongs to. */}
             <div className={`clock__option-demo clock__option-demo--${opt.id}`}>
-              {demo(opt.id, now, ms, mode)}
+              {demo(opt.id, ms, mode)}
             </div>
 
             <div className="clock__option-text">

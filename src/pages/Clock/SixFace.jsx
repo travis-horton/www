@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { LADDER, ladderDigits, ladderSweepAngles, markPoint } from './dial';
 import { msSinceLocalMidnight } from './clock';
+import useAnimationFrameDate from './useAnimationFrameDate';
 
 const R = 100;
 const MARKS = 6;
@@ -43,18 +44,7 @@ const OPACITY = [0.45, 0.54, 0.63, 0.72, 0.81, 0.9, 1];
  * useless.
  */
 function SixFace() {
-  const [now, setNow] = useState(() => new Date());
-  const frame = useRef(0);
-
-  useEffect(() => {
-    const draw = () => {
-      setNow(new Date());
-      frame.current = window.requestAnimationFrame(draw);
-    };
-    frame.current = window.requestAnimationFrame(draw);
-    return () => window.cancelAnimationFrame(frame.current);
-  }, []);
-
+  const now = useAnimationFrameDate();
   const ms = msSinceLocalMidnight(now);
   const angles = ladderSweepAngles(ms);
   const digits = ladderDigits(ms);

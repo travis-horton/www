@@ -10,6 +10,7 @@ import {
   MARKS,
 } from './dial';
 import { msSinceLocalMidnight } from './clock';
+import useAnimationFrameDate from './useAnimationFrameDate';
 
 const R = 100;
 const R_MARK_IN = 84;
@@ -29,8 +30,12 @@ const HANDS = [
  * Hands are positioned with an SVG transform straight off the angle rather
  * than a CSS transition, deliberately: a transition tweens the short way round
  * and would visibly rubber-band backwards through the whole dial at each wrap.
+ *
+ * The face keeps its own time, one reading per drawn frame, so the hands
+ * sweep and nothing outside this component is re-rendered to move them.
  */
-function Face({ now, mode, extraHands = false, sextant = false }) {
+function Face({ mode, extraHands = false, sextant = false }) {
+  const now = useAnimationFrameDate();
   const ms = msSinceLocalMidnight(now);
   const angles = handAngles(ms);
   const extra = extraHandAngles(ms);
