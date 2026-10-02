@@ -31,6 +31,16 @@
 #      the app draws its footer. curl cannot tell whether a header stops a
 #      browser from running the site; this can. Skipped with a notice where
 #      there is no Chrome, except under CI=true, where that is a FAIL.
+#   6. What a browser may keep, and for how long. A page (index.html, whatever
+#      the address) says `no-cache`: ask again every time, so a visitor gets
+#      the new site after an update. A built file, whose name holds a hash of
+#      its content, says a year and `immutable`: a changed file has a new name.
+#      And a built file that is NOT there answers a real 404, with no cache
+#      header and without the app's page: before, the server answered a missing
+#      script with index.html and a 200, the browser tried to run a web page as
+#      a script, and the visitor saw a blank page until a hard reload. An
+#      unknown PAGE address still gets the app (the server cannot know the
+#      app's routes); the app shows its own "not found".
 #
 # The map used here is made up on the spot (thirty-two 1s, thirty-two 2s). The
 # real one lives only on the server and is never in this repository.
@@ -51,6 +61,8 @@ VERSION="${SMOKE_VERSION:-$(sed -n 's/^  "version": "\([^"]*\)",$/\1/p' "$here/.
 ZEROS=00000000000000000000000000000000
 ONES=11111111111111111111111111111111
 TWOS=22222222222222222222222222222222
+# What a built file (its name holds a hash of its content) says about caching.
+IMMUTABLE='public, max-age=31536000, immutable'
 
 work="$(mktemp -d)"
 passes=0
@@ -137,6 +149,11 @@ header_once() {
   check "$1: $2" "$(header_count "$2")x $(header "$2")" "1x $3"
 }
 
+# header_absent <what> <name>: the last response does not carry that header.
+header_absent() {
+  check "$1: no $2 header" "$(header_count "$2")x" "0x"
+}
+
 # security_headers <what>: the three headers of nginx/security-headers.conf,
 # each exactly once, on the last response.
 security_headers() {
@@ -191,12 +208,25 @@ else
   fail "index.html names no .js file"
   bundle="/no-script-named-in-index.js"
 fi
+stylesheet="$(grep -oE 'href="?/[^" >]+\.css' "$work/body" | head -n 1 | sed -E 's/^href="?//' || true)"
+if [ -n "$stylesheet" ]; then
+  pass "index.html names a stylesheet ($stylesheet)"
+else
+  fail "index.html names no .css file"
+  stylesheet="/no-stylesheet-named-in-index.css"
+fi
 security_headers "www host, GET /"
+# The page itself is asked for again on every visit: it is the one file whose
+# name never changes, and it names all the others.
+header_once "www host, GET /" Cache-Control "no-cache"
+# The server says what it is, not which version.
+header_once "www host, GET /" Server "nginx"
 
 req "$PORT_PLAIN" www.travish.com GET /piano
 check "www host, GET /piano status (the app answers every page)" "$STATUS" 200
 check "www host, GET /piano content type" "$CTYPE" text/html
 security_headers "www host, GET /piano"
+header_once "www host, GET /piano" Cache-Control "no-cache"
 
 req "$PORT_PLAIN" www.travish.com GET "$bundle"
 check "www host, GET $bundle status" "$STATUS" 200
@@ -212,11 +242,60 @@ else
   fail "the served bundle does not carry the footer version v${VERSION}+"
 fi
 security_headers "www host, GET the bundle"
+header_once "www host, GET the bundle" Cache-Control "$IMMUTABLE"
+
+req "$PORT_PLAIN" www.travish.com GET "$stylesheet"
+check "www host, GET the stylesheet status" "$STATUS" 200
+check "www host, GET the stylesheet content type" "$CTYPE" text/css
+header_once "www host, GET the stylesheet" Cache-Control "$IMMUTABLE"
+
+req "$PORT_PLAIN" www.travish.com GET "${bundle}.map"
+check "www host, GET the bundle's source map status" "$STATUS" 200
+header_once "www host, GET the bundle's source map" Cache-Control "$IMMUTABLE"
+
+# A built file that is not there (what a browser holding last week's page asks
+# for after an update). It must be a real 404: no cache header at all (least of
+# all the year-long one), not the app's page, and no nginx version in the body.
+req "$PORT_PLAIN" www.travish.com GET /definitely-missing.1234abcd.js
+check "www host, GET a missing built .js status" "$STATUS" 404
+header_absent "www host, a missing built .js" Cache-Control
+if grep -qF '<script' "$work/body"; then
+  fail "www host, a missing built .js is answered with a page that has a <script (the app's page)"
+else
+  pass "www host, a missing built .js is not answered with the app's page (no <script in the body)"
+fi
+if grep -qF 'nginx/' "$work/body"; then
+  fail "www host, a missing built .js: the body prints the nginx version"
+else
+  pass "www host, a missing built .js: the body does not print the nginx version"
+fi
+security_headers "www host, a missing built .js"
+req "$PORT_PLAIN" www.travish.com GET /definitely-missing.1234abcd.css
+check "www host, GET a missing built .css status" "$STATUS" 404
+
+# An unknown PAGE address is still answered by the app, dots or no dots.
+req "$PORT_PLAIN" www.travish.com GET /no-such-page
+check "www host, GET /no-such-page status (an unknown page still gets the app)" "$STATUS" 200
+check "www host, GET /no-such-page content type" "$CTYPE" text/html
+req "$PORT_PLAIN" www.travish.com GET /blog/some.thing
+check "www host, GET /blog/some.thing status (an unknown page still gets the app)" "$STATUS" 200
+check "www host, GET /blog/some.thing content type" "$CTYPE" text/html
 
 req "$PORT_PLAIN" travish.com GET "/piano?x=1"
 check "bare host, GET /piano?x=1 status" "$STATUS" 301
 check "bare host, GET /piano?x=1 goes to" "$REDIRECT" "https://www.travish.com/piano?x=1"
 security_headers "bare host, the 301"
+# A side effect, pinned so it is a decision and not an accident: the redirect
+# is given by the same location as the pages, so it says no-cache too and a
+# browser asks for it again each time instead of remembering it for good.
+header_once "bare host, the 301" Cache-Control "no-cache"
+
+# The bare domain redirects a built file too (it serves nothing itself). That
+# redirect comes from the built files' location, so it carries their header.
+req "$PORT_PLAIN" travish.com GET "$bundle"
+check "bare host, GET the bundle status" "$STATUS" 301
+check "bare host, GET the bundle goes to" "$REDIRECT" "https://www.travish.com${bundle}"
+header_once "bare host, the bundle's 301" Cache-Control "$IMMUTABLE"
 
 req "$PORT_PLAIN" travish.com POST "/gcal-hook/$ZEROS" --data ''
 check "no map: POST /gcal-hook/<zeros> status" "$STATUS" 404
@@ -291,6 +370,15 @@ req "$PORT_MAP" travish.com GET "/gcal-drain/$ZEROS"
 check "map: GET a wrong drain path status" "$STATUS" 404
 req "$PORT_MAP" travish.com GET "/gcal-drain/$ONES"
 check "map: the hook's secret does not open the drain" "$STATUS" 404
+# A path shaped like a built file, under a calendar route: it must be refused
+# by that route's OWN location and never reach the built files' one. The proof
+# is the no-store header, which only the two calendar locations send on a 404.
+req "$PORT_MAP" travish.com POST "/gcal-hook/x.1234abcd.js" --data ''
+check "map: POST /gcal-hook/x.1234abcd.js status" "$STATUS" 404
+header_once "map: /gcal-hook/x.1234abcd.js was refused by the hook's own location" Cache-Control "no-store"
+req "$PORT_MAP" travish.com GET "/gcal-drain/x.1234abcd.js"
+check "map: GET /gcal-drain/x.1234abcd.js status" "$STATUS" 404
+header_once "map: /gcal-drain/x.1234abcd.js was refused by the drain's own location" Cache-Control "no-store"
 
 req "$PORT_MAP" travish.com POST "/gcal-hook/$ONES" --data '' \
   -H 'X-Goog-Channel-ID: smoke-channel' -H 'X-Goog-Resource-State: exists'
