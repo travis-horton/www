@@ -15,4 +15,5 @@
  * changes how versions compare, so the label stays standard semver. A local build
  * has no date and says so: v3.28.0+local.
  */
-export const versionLabel = (version, buildDate) => `v${version}+${buildDate || 'local'}`;
+export const versionLabel = (version, buildDate) =>
+  `v${version}+${buildDate || 'local'}`;

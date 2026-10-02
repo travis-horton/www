@@ -6,7 +6,10 @@ import { versionLabel } from './versionLabel';
 import './styles.css';
 
 // Baked in at build time (Dockerfile ARGs, passed by deploy-to-dev); package.json is the fallback.
-const label = versionLabel(process.env.APP_VERSION || version, process.env.BUILD_DATE);
+const label = versionLabel(
+  process.env.APP_VERSION || version,
+  process.env.BUILD_DATE,
+);
 
 /*
  * The Twitter and Instagram links came out on 26.0905. Travis does not use
