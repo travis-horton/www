@@ -1,0 +1,76 @@
+# The repo's own checks, run by GitHub instead of by memory (26.1002).
+#
+# Until this file the tests, the linter and the build ran only when someone
+# remembered to run them on a laptop: a pull request could be merged, and a
+# deploy could start, with all of them red. Now every pull request and every
+# push to dev gets a `test` result beside it.
+#
+# ⚠️ IT REPORTS; IT DOES NOT BLOCK. Nothing here stops a merge or a deploy. That
+# takes a ruleset on the branch, which is a repository setting and not a file.
+#
+# A pull request runs the workflow file from its OWN branch, so a change to a
+# check is tested by the pull request that makes it.
+#
+# Every `uses:` is pinned to a full commit, with the release it belongs to in the
+# comment. A tag can be moved to different code after the fact; a commit cannot.
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'dev'
+
+# The token this workflow gets can read the repository and nothing else.
+permissions:
+  contents: read
+
+# A newer push to the same branch or pull request replaces the run in progress.
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        # The six project pages are git submodules; the tests import them.
+        name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      -
+        # The same major version the Dockerfile builds with: move both together.
+        name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+          cache: npm
+
+      -
+        name: Install
+        run: npm ci
+
+      -
+        name: Tests
+        run: npm test -- --ci
+
+      -
+        name: Lint
+        run: npm run lint
+
+      # `npm run format:check` is NOT a step yet: three files under src/ still
+      # fail it, and formatting one of them changes the built bundle. Add the
+      # step in the commit that formats them.
+
+      -
+        name: Build
+        run: npm run build
+
+      -
+        # Keeps package.json out of what visitors download.
+        name: Nothing from package.json is in the bundle
+        run: node scripts/check-bundle.mjs dist
