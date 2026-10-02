@@ -122,6 +122,10 @@ export const weakKinds = (course, limit = 20) => {
  * exercise to lean on; knowing the WORD tells you what to actually practise,
  * and review mode needs the second one to weight its sampling.
  *
+ * Review sessions wrote it first; a level drill writes it too now, for its
+ * glyph and word cards (TokiPonaDrill's finish), so a word missed in the
+ * lesson that teaches it comes back in review as well.
+ *
  * The field is optional on purpose: every session already on disk predates it,
  * and a returning learner's history must keep working. Anything missing simply
  * contributes nothing to the tally.

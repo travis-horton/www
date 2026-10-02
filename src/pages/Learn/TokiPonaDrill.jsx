@@ -100,6 +100,11 @@ function TokiPonaDrill() {
       // New alongside `misses`; older sessions simply don't carry it. An item
       // testing two rules charges both, so this is longer than `misses`.
       missedRules: missed.flatMap((r) => r.rules || []),
+      // The word behind each missed glyph or word card, which review mode
+      // weights by. A sentence names no word, so its miss adds nothing here.
+      missedWords: missed
+        .map((r) => r.word)
+        .filter((word) => typeof word === 'string' && word !== ''),
     });
     // Read AFTER recording, so the cumulative list on the DONE screen includes
     // the session that just ended rather than being one drill out of date.
@@ -128,6 +133,7 @@ function TokiPonaDrill() {
       ...results,
       {
         kind: item.kind,
+        word: item.word,
         rules: item.rules,
         correct: isCorrect(item, input),
       },
