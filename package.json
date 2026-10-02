@@ -97,5 +97,13 @@
   },
   "@parcel/resolver-default": {
     "packageExports": true
+  },
+  "@parcel/transformer-js": {
+    "inlineEnvironment": [
+      "NODE_ENV",
+      "APP_VERSION",
+      "BUILD_DATE",
+      "npm_package_version"
+    ]
   }
 }
