@@ -272,6 +272,19 @@ fi
 security_headers "www host, a missing built .js"
 req "$PORT_PLAIN" www.travish.com GET /definitely-missing.1234abcd.css
 check "www host, GET a missing built .css status" "$STATUS" 404
+# The same three things for a stylesheet. One location answers both today;
+# these hold it if the two are ever given separate rules.
+header_absent "www host, a missing built .css" Cache-Control
+if grep -qF '<script' "$work/body"; then
+  fail "www host, a missing built .css is answered with a page that has a <script (the app's page)"
+else
+  pass "www host, a missing built .css is not answered with the app's page (no <script in the body)"
+fi
+if grep -qF 'nginx/' "$work/body"; then
+  fail "www host, a missing built .css: the body prints the nginx version"
+else
+  pass "www host, a missing built .css: the body does not print the nginx version"
+fi
 
 # An unknown PAGE address is still answered by the app, dots or no dots.
 req "$PORT_PLAIN" www.travish.com GET /no-such-page
