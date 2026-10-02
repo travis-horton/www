@@ -25,6 +25,60 @@ const HANDS = [
 ];
 
 /**
+ * The 36 marks and both rings of labels: everything on the dial that does not
+ * move. Which ring is emphasised follows the notation, and that is the only
+ * thing these 78 elements (36 strokes, 6 pairs, 36 glyphs) depend on.
+ *
+ * Memoised because the face around them re-renders on every drawn frame to
+ * move its hands. With `mode` as the only prop, the default comparison skips
+ * the marks on every one of those frames and redraws them when the notation
+ * changes, which is the only time they differ.
+ */
+const Marks = React.memo(function Marks({ mode }) {
+  return Array.from({ length: MARKS }, (_, i) => {
+    const major = i % MAJOR_EVERY === 0;
+    const a = markPoint(i, R);
+    const b = markPoint(i, major ? R_MARK_IN_MAJOR : R_MARK_IN);
+    const label = markLabel(i);
+    const p = markPoint(i, R_LABEL);
+    const o = markPoint(i, R_OUTER);
+    return (
+      <React.Fragment key={i}>
+        <line
+          className={`clock__dial-mark ${major ? 'is-major' : ''}`}
+          x1={a.x}
+          y1={a.y}
+          x2={b.x}
+          y2={b.y}
+        />
+        {label && (
+          <text
+            className={`clock__dial-label ${mode === 'seximal' ? 'is-active' : ''}`}
+            x={p.x}
+            y={p.y}
+            textAnchor="middle"
+            dominantBaseline="central"
+            data-testid={`dial-label-${i}`}
+          >
+            {label}
+          </text>
+        )}
+        <text
+          className={`clock__dial-outer ${mode === 'niftimal' ? 'is-active' : ''} ${major ? 'is-major' : ''}`}
+          x={o.x}
+          y={o.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          data-testid={`dial-outer-${i}`}
+        >
+          {outerLabel(i)}
+        </text>
+      </React.Fragment>
+    );
+  });
+});
+
+/**
  * The analog face. Angles come from dial.js; this file only draws.
  *
  * Hands are positioned with an SVG transform straight off the angle rather
@@ -63,47 +117,7 @@ function Face({ mode, extraHands = false, sextant = false }) {
 
       <circle className="clock__dial-rim" cx="0" cy="0" r={R} />
 
-      {Array.from({ length: MARKS }, (_, i) => {
-        const major = i % MAJOR_EVERY === 0;
-        const a = markPoint(i, R);
-        const b = markPoint(i, major ? R_MARK_IN_MAJOR : R_MARK_IN);
-        const label = markLabel(i);
-        const p = markPoint(i, R_LABEL);
-        const o = markPoint(i, R_OUTER);
-        return (
-          <React.Fragment key={i}>
-            <line
-              className={`clock__dial-mark ${major ? 'is-major' : ''}`}
-              x1={a.x}
-              y1={a.y}
-              x2={b.x}
-              y2={b.y}
-            />
-            {label && (
-              <text
-                className={`clock__dial-label ${mode === 'seximal' ? 'is-active' : ''}`}
-                x={p.x}
-                y={p.y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                data-testid={`dial-label-${i}`}
-              >
-                {label}
-              </text>
-            )}
-            <text
-              className={`clock__dial-outer ${mode === 'niftimal' ? 'is-active' : ''} ${major ? 'is-major' : ''}`}
-              x={o.x}
-              y={o.y}
-              textAnchor="middle"
-              dominantBaseline="central"
-              data-testid={`dial-outer-${i}`}
-            >
-              {outerLabel(i)}
-            </text>
-          </React.Fragment>
-        );
-      })}
+      <Marks mode={mode} />
 
       {HANDS.map(({ unit, length, width }) => (
         <line

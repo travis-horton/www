@@ -4,7 +4,13 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Clock from '.';
 import { msSinceLocalMidnight, spokenTime } from './clock';
-import { extraHandAngles, handAngles, ladderSweepAngles } from './dial';
+import {
+  extraHandAngles,
+  handAngles,
+  ladderSweepAngles,
+  MARKS,
+  outerLabel,
+} from './dial';
 
 /*
  * What moves on this page, and how often. index.test.jsx pins what the page
@@ -18,11 +24,16 @@ import { extraHandAngles, handAngles, ladderSweepAngles } from './dial';
  * The render counts come from a pure function wrapped in a spy, everything
  * else in its module real: spokenTime is called once per render of the page
  * root and from nowhere else ("read as one number"), so its call count IS the
- * root's render count.
+ * root's render count. outerLabel is called once per mark on a 36-mark dial
+ * and from nowhere else, so 36 calls is one drawing of one dial's marks.
  */
 jest.mock('./clock', () => {
   const real = jest.requireActual('./clock');
   return { __esModule: true, ...real, spokenTime: jest.fn(real.spokenTime) };
+});
+jest.mock('./dial', () => {
+  const real = jest.requireActual('./dial');
+  return { __esModule: true, ...real, outerLabel: jest.fn(real.outerLabel) };
 });
 
 // 16:00 local, the same instant index.test.jsx uses: seximal hour 24, a clean
@@ -83,6 +94,7 @@ beforeEach(() => {
   jest.useFakeTimers({ now: T0 });
   window.localStorage.clear();
   spokenTime.mockClear();
+  outerLabel.mockClear();
   errors = jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 
@@ -210,4 +222,32 @@ test('the page root renders once per seximal tick, not once per frame', () => {
   advance(100);
   expect(screen.getByTestId('digits-second')).toHaveTextContent('01');
   expect(spokenTime).toHaveBeenCalledTimes(2);
+});
+
+test("a dial's 36 marks are drawn once, not once per frame", () => {
+  render(page);
+  const dials = screen.getAllByTestId('dial').length;
+  expect(dials).toBe(3);
+  const once = dials * MARKS; // 108
+  expect(outerLabel).toHaveBeenCalledTimes(once);
+  const atMount = transforms('hand-moment');
+
+  // 112 frames. The hands moved on every one of them (the positive control,
+  // as above) and the marks, which never move, were not drawn again.
+  advance(1800);
+  const lastFrame = new Date(T0.getTime() + 112 * FRAME_MS);
+  const drawn = rotate(handAngles(msSinceLocalMidnight(lastFrame)).moment);
+  expect(transforms('hand-moment')).toEqual([drawn, drawn, drawn]);
+  expect(drawn).not.toBe(atMount[0]);
+  expect(outerLabel).toHaveBeenCalledTimes(once);
+
+  // A tick re-renders the page and the ballot around the dials. The marks
+  // depend on the notation alone, and the notation has not changed.
+  advance(100);
+  expect(screen.getByTestId('digits-second')).toHaveTextContent('01');
+  expect(outerLabel).toHaveBeenCalledTimes(once);
+
+  // Changing the notation is the one thing that redraws them: once each.
+  fireEvent.click(screen.getByRole('button', { name: 'niftimal' }));
+  expect(outerLabel).toHaveBeenCalledTimes(2 * once);
 });
