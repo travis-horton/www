@@ -244,4 +244,18 @@ describe('the complement drill', () => {
       .filter(({ y }) => y === 0)
       .forEach(({ item }) => expect(item.explain).not.toContain('six−Y'));
   });
+
+  // The wording itself, sentence for sentence, so that rewording a hint is a
+  // deliberate change: thirty prompts carry the general rule, five the zero
+  // form, and there is no third string.
+  test('the two hints, word for word', () => {
+    const tally = {};
+    everyComplement().forEach(({ item }) => {
+      tally[item.explain] = (tally[item.explain] || 0) + 1;
+    });
+    expect(tally).toEqual({
+      'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.': 30,
+      'nif − X0 = (six−X)0. The last digit is already zero, so there is nothing to add back.': 5,
+    });
+  });
 });
