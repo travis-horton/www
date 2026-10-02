@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Clock from '.';
-import { msSinceLocalMidnight } from './clock';
+import { msSinceLocalMidnight, spokenTime } from './clock';
 import { extraHandAngles, handAngles, ladderSweepAngles } from './dial';
 
 /*
@@ -14,7 +14,16 @@ import { extraHandAngles, handAngles, ladderSweepAngles } from './dial';
  *
  * No component is mocked. The page is mounted the way index.test.jsx mounts
  * it, under the <main> the Programming section supplies.
+ *
+ * The render counts come from a pure function wrapped in a spy, everything
+ * else in its module real: spokenTime is called once per render of the page
+ * root and from nowhere else ("read as one number"), so its call count IS the
+ * root's render count.
  */
+jest.mock('./clock', () => {
+  const real = jest.requireActual('./clock');
+  return { __esModule: true, ...real, spokenTime: jest.fn(real.spokenTime) };
+});
 
 // 16:00 local, the same instant index.test.jsx uses: seximal hour 24, a clean
 // face, zero ticks into the minute.
@@ -73,6 +82,7 @@ beforeEach(() => {
   // asserted to the digit.
   jest.useFakeTimers({ now: T0 });
   window.localStorage.clear();
+  spokenTime.mockClear();
   errors = jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 
@@ -175,4 +185,29 @@ test('the notation toggle reaches the dials', () => {
     expect(mark(dial, 'dial-outer-7')).toHaveClass('is-active');
     expect(mark(dial, 'dial-label-6')).not.toHaveClass('is-active');
   });
+});
+
+test('the page root renders once per seximal tick, not once per frame', () => {
+  render(page);
+  expect(spokenTime).toHaveBeenCalledTimes(1);
+  const atMount = transforms('hand-moment');
+
+  // 1800 ms is 112 frames and no tick: the first tick is 1851.85 ms in.
+  advance(1800);
+
+  // The frames really ran. Without this the count below could pass on a
+  // clock that never drew anything: the last frame was at 1792 ms, and the
+  // hands are where that instant puts them.
+  const lastFrame = new Date(T0.getTime() + 112 * FRAME_MS);
+  const drawn = rotate(handAngles(msSinceLocalMidnight(lastFrame)).moment);
+  expect(transforms('hand-moment')).toEqual([drawn, drawn, drawn]);
+  expect(drawn).not.toBe(atMount[0]);
+
+  // …and the page around the faces was not rendered again for any of them.
+  expect(spokenTime).toHaveBeenCalledTimes(1);
+
+  // One tick later the digits step, and the root renders exactly once more.
+  advance(100);
+  expect(screen.getByTestId('digits-second')).toHaveTextContent('01');
+  expect(spokenTime).toHaveBeenCalledTimes(2);
 });
