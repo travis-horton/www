@@ -250,6 +250,46 @@ describe('"read the lesson again" starts a fresh session', () => {
     finishDrill('Again');
     expect(lastSession().total).toBe(total);
   });
+
+  /*
+   * A fresh session is also a fresh DRAW of the questions. The order comes
+   * from a Math.random shuffle, so pin it: at 0.999 the shuffle leaves the
+   * list as built and the drill opens on the level's first glyph; at 0 it
+   * opens on the second. A restart that reset the position and kept the old
+   * questions would open on the same card every time.
+   */
+  test('toki pona: "Again" and "read the lesson again" both deal the questions afresh', () => {
+    window.localStorage.clear();
+    const [first, second] = getLevel('1').glyphReading;
+    expect(GLYPHS[first]).not.toBe(GLYPHS[second]);
+
+    const random = jest.spyOn(Math, 'random');
+    try {
+      random.mockReturnValue(0.999);
+      const { container } = renderAt('/learn/toki-pona/1');
+      const opensOn = () => {
+        const glyph = container.querySelector('.tp__glyph--prompt');
+        return glyph ? glyph.textContent : null;
+      };
+      start();
+      expect(opensOn()).toBe(GLYPHS[first]);
+      finishDrill('Again');
+
+      random.mockReturnValue(0);
+      fireEvent.click(screen.getByRole('button', { name: 'Again' }));
+      expect(opensOn()).toBe(GLYPHS[second]);
+      finishDrill('Again');
+
+      random.mockReturnValue(0.999);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'read the lesson again' }),
+      );
+      start();
+      expect(opensOn()).toBe(GLYPHS[first]);
+    } finally {
+      random.mockRestore();
+    }
+  });
 });
 
 /*
