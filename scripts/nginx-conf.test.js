@@ -14,6 +14,10 @@
  * once at the top of the server would be missing from exactly the two routes
  * nobody looks at in a browser. So the three headers live in one small file
  * (nginx/security-headers.conf) that every location includes for itself.
+ *
+ * And the cache rules: a built file (its name holds a hash of its content) may
+ * be kept for a year, a page must be asked for again every time, and a built
+ * file that is not there must be a real 404 that carries no cache header.
  */
 import fs from 'fs';
 import path from 'path';
@@ -27,8 +31,20 @@ const SECURITY_HEADERS = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Content-Security-Policy': "frame-ancestors 'self'",
 };
+// A built file's address: `.<8 hex digits>.<extension>`, or that plus `.map`.
+const BUILT = '\\.[0-9a-f]{8}\\.[a-z0-9]+(\\.map)?$';
+const IMMUTABLE = 'public, max-age=31536000, immutable';
 // Every location of the server, in the file's order.
-const LOCATIONS = ['^~ /gcal-hook/', '^~ /gcal-drain/', '/'];
+const LOCATIONS = ['^~ /gcal-hook/', '^~ /gcal-drain/', `~ ${BUILT}`, '/'];
+// What each one says about caching. Only the two calendar routes say it with
+// `always` (on their 404s too); `immutable` must NEVER have it, or the 404 for
+// a missing built file would be kept for a year.
+const CACHE_CONTROL = {
+  '^~ /gcal-hook/': ['no-store', 'always'],
+  '^~ /gcal-drain/': ['no-store', 'always'],
+  [`~ ${BUILT}`]: [IMMUTABLE],
+  '/': ['no-cache'],
+};
 
 /*
  * A small reader for nginx's config syntax, following nginx's own rules for
@@ -196,6 +212,133 @@ describe('nginx.conf', () => {
     // Directly inside a location is the only place: above it (the server, the
     // file's top) the locations drop it; below it (an `if`) it drops theirs.
     expect(misplaced).toEqual([]);
+  });
+
+  test('each location says what a browser may keep, and only `no-store` says it with `always`', () => {
+    const said = Object.fromEntries(
+      locations.map(({ directive }) => [
+        args(directive).join(' '),
+        directive.block
+          .filter(
+            (inner) =>
+              name(inner) === 'add_header' &&
+              args(inner)[0] === 'Cache-Control',
+          )
+          .map((inner) => args(inner).slice(1)),
+      ]),
+    );
+    expect(said).toEqual(
+      Object.fromEntries(
+        Object.entries(CACHE_CONTROL).map(([label, value]) => [label, [value]]),
+      ),
+    );
+    // Said once more on its own, because it is the costly one: with `always`
+    // the year-long header would also go on the 404 for a missing file.
+    const immutableAlways = findAll(conf, 'add_header').filter(
+      ({ directive }) =>
+        args(directive).some((word) => word.includes('immutable')) &&
+        args(directive).includes('always'),
+    );
+    expect(immutableAlways).toEqual([]);
+  });
+
+  test('both calendar routes are `^~`, so a regex location can never take them', () => {
+    const calendar = locations
+      .map(({ directive }) => args(directive))
+      .filter((words) => words.some((word) => word.includes('/gcal-')));
+    expect(calendar).toEqual([
+      ['^~', '/gcal-hook/'],
+      ['^~', '/gcal-drain/'],
+    ]);
+  });
+
+  test('the server does not print its version', () => {
+    const server = findAll(conf, 'server')[0].directive.block;
+    const tokens = server.filter((inner) => name(inner) === 'server_tokens');
+    expect(tokens.map(args)).toEqual([['off']]);
+  });
+
+  describe("the built files' location", () => {
+    const built = locations
+      .map(({ directive }) => directive)
+      .find((directive) => args(directive)[0] === '~') || {
+      words: [],
+      block: [],
+    };
+    const page = locations
+      .map(({ directive }) => directive)
+      .find((directive) => args(directive).join(' ') === '/') || {
+      words: [],
+      block: [],
+    };
+    const directives = (location, wanted) =>
+      location.block.filter((inner) => name(inner) === wanted);
+    const pattern = (built.words[2] || {}).text || '';
+
+    test('its pattern is written in quotes', () => {
+      // Unquoted, nginx reads the `{` of `{8}` as the start of a block.
+      expect(built.words.map((word) => word.quoted)).toEqual([
+        false,
+        false,
+        true,
+      ]);
+      expect(pattern).toBe(BUILT);
+    });
+
+    test('the pattern takes built files and nothing else', () => {
+      const regex = new RegExp(pattern);
+      const takes = (address) => pattern !== '' && regex.test(address);
+      expect(
+        [
+          '/app.dd8b2794.js',
+          '/app.dd8b2794.js.map',
+          '/app.1f6d4f35.css.map',
+          '/resume.e1370cb9.pdf',
+          '/nasin-nanpa-4.0.2-UCSUR.792eb59e.otf',
+        ].filter((address) => !takes(address)),
+      ).toEqual([]);
+      expect(
+        [
+          '/',
+          '/index.html',
+          '/piano',
+          '/learn/toki-pona/1',
+          '/blog/js-this',
+          '/blog/some.thing',
+          '/x.1234ABCD.js',
+          '/x.1234abc.js',
+          '/x.1234abcd.js/more',
+        ].filter(takes),
+      ).toEqual([]);
+    });
+
+    test('a file that is not there is a real 404, never the app', () => {
+      expect(directives(built, 'try_files').map(args)).toEqual([
+        ['$uri', '=404'],
+      ]);
+      expect(directives(built, 'root').map(args)).toEqual([['/var/www/html']]);
+    });
+
+    test('an unknown page address still gets the app', () => {
+      expect(directives(page, 'try_files').map(args)).toEqual([
+        ['$uri', '/index.html'],
+      ]);
+    });
+
+    test('the bare domain is redirected from here exactly as from the pages', () => {
+      const redirect = (location) =>
+        directives(location, 'if').map((inner) => [
+          args(inner),
+          inner.block.map((line) => [name(line), ...args(line)]),
+        ]);
+      expect(redirect(built)).toEqual([
+        [
+          ['($host', '=', 'travish.com)'],
+          [['return', '301', 'https://www.travish.com$request_uri']],
+        ],
+      ]);
+      expect(redirect(built)).toEqual(redirect(page));
+    });
   });
 });
 
