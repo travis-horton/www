@@ -42,7 +42,6 @@ function TokiPonaDrill() {
   const { levelId } = useParams();
   const level = getLevel(levelId);
 
-  const [round, setRound] = useState(0);
   const [items, setItems] = useState(() => (level ? buildSession(level) : []));
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
@@ -87,7 +86,6 @@ function TokiPonaDrill() {
     setResults([]);
     setIndex(0);
     setInput('');
-    setRound(round + 1);
     setPhase(then);
   };
 
