@@ -864,9 +864,13 @@ export const acceptedFromGloss = (gloss) => {
 export const buildSession = (level) => {
   const items = [];
 
+  // `word` on the three vocabulary shapes below is the word a miss is charged
+  // to (progress.js weakWords). The sentence items carry none: a sentence
+  // tests a rule, and its misses are charged through `rules` instead.
   level.glyphReading.forEach((word) => {
     items.push({
       kind: 'glyph',
+      word,
       prompt: GLYPHS[word],
       promptIsGlyph: true,
       promptSub: 'which word is this?',
@@ -878,6 +882,7 @@ export const buildSession = (level) => {
   level.vocab.forEach(({ word, gloss }) => {
     items.push({
       kind: 'word',
+      word,
       prompt: word,
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean?',
@@ -891,6 +896,7 @@ export const buildSession = (level) => {
   (level.again || []).forEach(({ word, gloss }) => {
     items.push({
       kind: 'word',
+      word,
       prompt: word,
       promptGlyph: GLYPHS[word],
       promptSub: 'what does it mean here? (back from an earlier level)',
