@@ -7,6 +7,7 @@ import { msSinceLocalMidnight, spokenTime } from './clock';
 import {
   extraHandAngles,
   handAngles,
+  ladderDigits,
   ladderSweepAngles,
   MARKS,
   outerLabel,
@@ -152,6 +153,80 @@ test('all four faces sweep between ticks', () => {
 
   // …while the digits, which tick, have not moved at all.
   expect(screen.getByTestId('digits-second')).toHaveTextContent('00');
+});
+
+test('no frame is skipped: the hands are redrawn on each of the first three', () => {
+  render(page);
+  let before = {
+    moment: transforms('hand-moment')[0],
+    snap: transforms('six-hand-snap')[0],
+  };
+
+  // The tests around this one read the hands after 10 frames and after 112,
+  // both even, so a face that drew on every OTHER frame would pass them all.
+  // Three frames in a row cover an odd one and an even one whichever half
+  // went missing.
+  [1, 2, 3].forEach((frame) => {
+    advance(FRAME_MS);
+    expect(new Date().getTime() - T0.getTime()).toBe(frame * FRAME_MS);
+
+    const ms = msSinceLocalMidnight(new Date());
+    const moment = rotate(handAngles(ms).moment);
+    const snap = rotate(ladderSweepAngles(ms).snap);
+    expect(transforms('hand-moment')).toEqual([moment, moment, moment]);
+    expect(transforms('six-hand-snap')).toEqual([snap]);
+
+    // …and one frame is enough to move both, so "equal to the geometry now"
+    // cannot be satisfied by a hand left where the frame before put it.
+    expect(moment).not.toBe(before.moment);
+    expect(snap).not.toBe(before.snap);
+    before = { moment, snap };
+  });
+});
+
+test('the faces are driven by requestAnimationFrame, not by a timer', () => {
+  // A 16 ms timer loop draws the same pictures under jest's fake clock, and
+  // every other test in this file passes on one. The difference is in the
+  // browser: animation frames stop on a hidden tab and a timer does not,
+  // which is what the hook's comment and the README promise.
+  const raf = jest.spyOn(window, 'requestAnimationFrame');
+  try {
+    render(page);
+    // Four analog faces (three dials and the seven-hand face), one request
+    // each when they mount…
+    expect(raf).toHaveBeenCalledTimes(4);
+
+    // …and one each per frame after that: 4 × (1 + 10).
+    advance(160);
+    expect(raf).toHaveBeenCalledTimes(44);
+  } finally {
+    raf.mockRestore();
+  }
+});
+
+test('the seven-hand face reads its digits off the same clock as its hands', () => {
+  render(page);
+  const readout = screen.getByTestId('sixface-digits');
+  expect(readout.textContent).toBe('4000000₆');
+
+  // A snap is 308.6 ms, so 400 ms (25 frames) is one snap and no more.
+  advance(400);
+  const ms = msSinceLocalMidnight(new Date());
+  const digits = ladderDigits(ms).join('');
+  expect(digits).toBe('4000001');
+
+  // The readout, the face's spoken label and the key under it all step with
+  // the hands; none of them is left at the value the face mounted with.
+  expect(readout.textContent).toBe(`${digits}₆`);
+  expect(screen.getByTestId('sixface')).toHaveAttribute(
+    'aria-label',
+    `Seven hands, one per unit: ${digits}`,
+  );
+  const key = document.querySelectorAll('.clock__six-key-digit');
+  expect(Array.from(key, (el) => el.textContent).join('')).toBe(digits);
+  expect(transforms('six-hand-snap')).toEqual([
+    rotate(ladderSweepAngles(ms).snap),
+  ]);
 });
 
 test.each([
