@@ -29,6 +29,10 @@ RUN npm run build
 
 FROM nginx:1.31
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
+# The three security headers, included by each location of nginx.conf.
+# ⚠️ NOT under conf.d: nginx loads every file there by itself, above the server,
+# and each location that has an add_header of its own would silently drop them.
+COPY ./nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
 
 # ⚠️ THE IMAGE MUST OWN THIS DIRECTORY, NOT THE RUN COMMAND. nginx.conf declares
 # `access_log /var/log/gcal-hook/…` for the push receiver, and nginx OPENS every
