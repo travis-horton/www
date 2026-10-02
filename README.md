@@ -67,14 +67,27 @@ When you start Docker, a default bridge network (also called bridge) is created 
 newly-started containers connect to it unless otherwise specified. You can also create user-defined
 custom bridge networks.
 
+the proxy and acme containers are started with `--restart always`, not `--rm`: a container started
+with `--rm` is deleted when the server reboots, and then nothing answers on ports 80 and 443 until
+someone starts it again by hand.
+
+both images are named by version. `reverse-proxy/docker-compose.yml` describes the same two
+containers for `docker compose` (it calls them `nginx-proxy` and `nginx-proxy-acme`); keep the
+versions here and there the same. on any one server use one way or the other and stay with it:
+compose puts its project name in front of the volume names, so switching starts the proxy on empty
+certificate volumes.
+
 
 ## start the nginx proxy docker container -- to be done in stage and prod
-docker run --detach --rm --name proxy --publish 80:80 --publish 443:443 --volume certs:/etc/nginx/certs --volume vhost:/etc/nginx/vhost.d --volume html:/usr/share/nginx/html --volume /var/run/docker.sock:/tmp/docker.sock:ro -d nginxproxy/nginx-proxy
+docker run --detach --restart always --name proxy --publish 80:80 --publish 443:443 --volume certs:/etc/nginx/certs --volume vhost:/etc/nginx/vhost.d --volume html:/usr/share/nginx/html --volume /var/run/docker.sock:/tmp/docker.sock:ro -d nginxproxy/nginx-proxy:1.11.6
 
 
 ## start acme docker container with real certs (limit 5 per week!) -- to be done in stage and prod
-docker run --detach --rm --name acme --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh -d nginxproxy/acme-companion
+docker run --detach --restart always --name acme --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh -d nginxproxy/acme-companion:2.8.2
 
+
+the two "start kiddspazz website" blocks below are how it was first done by hand. the deploy
+workflows now start these containers themselves, as `web` and `www_web` (see `.github/workflows/`).
 
 ## start kiddspazz website at travish.com -- to be done in prod
 docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
@@ -86,4 +99,4 @@ docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST
 
 
 ## start the acme docker container with test certs and DEBUG mode -- for testing only
-docker run --detach --rm --name acme --env "DEBUG=1" --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh --env "ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory" -d nginxproxy/acme-companion
+docker run --detach --rm --name acme --env "DEBUG=1" --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh --env "ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory" -d nginxproxy/acme-companion:2.8.2
