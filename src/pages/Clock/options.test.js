@@ -23,8 +23,19 @@ describe('the options', () => {
     expect(new Set(OPTION_IDS).size).toBe(OPTION_IDS.length);
   });
 
-  test('the face at the top of the page is on the ballot', () => {
+  test('the incumbent face is on the ballot, and listed first', () => {
     // Otherwise the vote is between alternatives to something unopposed.
     expect(OPTION_IDS[0]).toBe('three-hands');
+  });
+
+  test('no option points at a face at the top of the page', () => {
+    // The big clock came off the top of the page on 26.0905; every face now
+    // lives on the ballot, so there is nothing up there to point at.
+    CLOCK_OPTIONS.forEach((o) => {
+      const prose = [o.title, o.subtitle, o.blurb, ...o.pros, ...o.cons];
+      prose.forEach((text) => {
+        expect(text).not.toMatch(/top of (this|the) page/i);
+      });
+    });
   });
 });
