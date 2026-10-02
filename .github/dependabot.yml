@@ -1,0 +1,47 @@
+# Dependabot proposes version bumps as pull requests (26.1002).
+#
+# Since the actions, the base images and the checks' tools are now pinned to
+# exact versions, something has to say when a newer one exists. This is that:
+# once a week it opens pull requests that move a pin, and each one is tested by
+# the checks workflow like any other pull request.
+#
+# ⚠️ target-branch is dev on all three, because main only takes releases from
+# dev. This moves the VERSION-update pull requests configured here. Dependabot's
+# SECURITY-update pull requests are a separate repository setting and always
+# open against the default branch (main): re-target those to dev by hand.
+version: 2
+updates:
+  # The actions the workflows use (the 40-character pins and their # vX.Y.Z
+  # comments). One pull request for all of them.
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns:
+          - '*'
+
+  # The two FROM lines in the Dockerfile.
+  - package-ecosystem: docker
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  # package.json. Minor and patch bumps arrive together in one pull request; a
+  # new MAJOR version of anything gets a pull request of its own.
+  - package-ecosystem: npm
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types:
+          - minor
+          - patch
