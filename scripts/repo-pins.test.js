@@ -4,18 +4,21 @@
 /*
  * What the build and the deploys are allowed to pull in, and with what power.
  *
- * These read the Dockerfile and the workflow files as TEXT (no YAML parser) and
- * fail when one of four habits slips back in:
+ * These read the Dockerfile, the proxy's compose file and the workflow files as
+ * TEXT (no YAML parser) and fail when one of five habits slips back in:
  *
  *   1. a base image named by a floating tag (`FROM node:latest`): the same
  *      Dockerfile then builds a different site next month, with nothing in the
  *      repo's history to say when or why;
- *   2. an action named by a tag (`uses: some/action@v4`): a tag can be moved to
+ *   2. the same for the two images of the proxy in front of the site
+ *      (reverse-proxy/docker-compose.yml): named bare, a server keeps whatever
+ *      was newest on the day it was last pulled, and nothing says which;
+ *   3. an action named by a tag (`uses: some/action@v4`): a tag can be moved to
  *      different code after the fact, a full commit cannot, and the deploy jobs
  *      hand these actions the SSH key to the servers;
- *   3. a workflow with no `permissions:` block: it then gets the repository's
+ *   4. a workflow with no `permissions:` block: it then gets the repository's
  *      default token, which here can WRITE;
- *   4. production deploying with the key the sandbox also uses.
+ *   5. production deploying with the key the sandbox also uses.
  *
  * history.yml is left out BY NAME. It is an installed copy of a file whose
  * master lives outside this repository (its own header says an edit here is
@@ -59,6 +62,27 @@ describe('the Dockerfile', () => {
       .map((match) => match[1]);
     expect(imageMajor).toBeDefined();
     expect(checksMajor).toEqual([imageMajor]);
+  });
+});
+
+describe("the proxy's compose file", () => {
+  // No workflow deploys reverse-proxy/docker-compose.yml: it is the written
+  // record of what the two proxy containers on each server should be.
+  const images = linesOf('reverse-proxy', 'docker-compose.yml')
+    .map((line) => /^\s*image:\s*["']?([^"'\s#]*)["']?\s*(#.*)?$/.exec(line))
+    .filter(Boolean)
+    .map((match) => match[1]);
+
+  test('both proxy images name a numbered release, never bare or `latest`', () => {
+    // The proxy and its certificate companion (an empty list cannot pass).
+    expect(images).toHaveLength(2);
+    const floating = images.filter(
+      (image) =>
+        !/^[^:@\s]+:\d+\.\d+\.\d+(-[a-z0-9.]+)?(@sha256:[0-9a-f]{64})?$/.test(
+          image,
+        ),
+    );
+    expect(floating).toEqual([]);
   });
 });
 
