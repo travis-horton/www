@@ -142,7 +142,8 @@ describe('performances.json carries only known fields', () => {
     // assert changes in the same commit as the renderer.
     const filled = (v) =>
       Array.isArray(v) ? v.length > 0 : v !== null && v !== undefined;
-    const count = (objects, slot) => objects.filter((o) => filled(o[slot])).length;
+    const count = (objects, slot) =>
+      objects.filter((o) => filled(o[slot])).length;
     expect({
       rows: {
         performers: count(data.performances, 'performers'),
