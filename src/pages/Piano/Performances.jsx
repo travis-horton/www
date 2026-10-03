@@ -9,11 +9,12 @@ import data from '../../data/performances.json';
  * than stored, so the file cannot rot into announcing a concert that happened
  * last spring.
  *
- * Entries with visibility 'draft' never render. That is where the judgement
- * calls live: the November Planets dates Travis's own calendar note says he
- * may not be playing, the run that might be a rehearsal, the gig whose name is
- * an unexpanded abbreviation. They stay in the file so the question is not
- * lost, and stay off the page so it does not claim something untrue.
+ * performances.json holds PUBLIC entries only. This file imports it whole, so
+ * everything in it is downloaded by every visitor, rendered or not (ruling
+ * L-2, 26.0926). Entries still awaiting a decision belong outside the repo,
+ * and performances.test.js fails if a non-public row, a note or an internal
+ * field gets back in. The visibility filter below stays as a second line of
+ * defence.
  *
  * No entry shows a ROLE, because the calendar never recorded one and guessing
  * on a public page is worse than omitting.
