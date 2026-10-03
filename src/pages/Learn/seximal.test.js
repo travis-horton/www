@@ -186,4 +186,76 @@ describe('the complement drill', () => {
     expect(item.prompt).toBe('(nif − 01₆) + 2₆');
     expect(item.value).toBe(37);
   });
+
+  /*
+   * The hint under a complement answer states a rule. A learner who has just
+   * got it wrong will apply that rule to the digits in front of them, so the
+   * rule has to produce the answer for the question it is printed under.
+   * "(five−X)(six−Y)" does not when Y is zero: nif − 20 would come out as
+   * "36", which is not a base-six numeral, and the answer is 40.
+   *
+   * All 35 values of n, none sampled: the first Math.random picks the
+   * complement generator, the second lands n on k + 1.
+   */
+  const everyComplement = () =>
+    Array.from({ length: 35 }, (_, k) => {
+      jest
+        .spyOn(Math, 'random')
+        .mockReturnValueOnce(0) // pick → complement
+        .mockReturnValue((k + 0.5) / 35); // n → k + 1
+      const item = getLevel('5').generate();
+      jest.restoreAllMocks();
+      const [, x, y] = item.prompt.match(/^nif − ([0-5])([0-5])₆$/);
+      return { item, x: Number(x), y: Number(y) };
+    });
+
+  // What the hint's own rule gives for these digits; null if it states no rule.
+  const byTheHint = ({ item, x, y }) => {
+    if (item.explain.includes('(five−X)(six−Y)')) return `${5 - x}${6 - y}`;
+    if (item.explain.includes('(six−X)0')) return `${6 - x}0`;
+    return null;
+  };
+
+  test('the hint, applied to the digits in the prompt, gives the answer — for every n', () => {
+    const all = everyComplement();
+    expect(all).toHaveLength(35);
+    expect(all.map(({ item }) => item.value)).toEqual(
+      Array.from({ length: 35 }, (_, k) => 35 - k),
+    );
+    const wrong = all
+      .filter((c) => byTheHint(c) !== c.item.digits.padStart(2, '0'))
+      .map((c) => `${c.item.prompt} → hint gives ${byTheHint(c)}`);
+    expect(wrong).toEqual([]);
+  });
+
+  test('only the five prompts ending in zero get the zero form of the hint', () => {
+    const all = everyComplement();
+    const zeroForm = all.filter(({ item }) =>
+      item.explain.includes('(six−X)0'),
+    );
+    expect(zeroForm.map(({ item }) => item.prompt)).toEqual([
+      'nif − 10₆',
+      'nif − 20₆',
+      'nif − 30₆',
+      'nif − 40₆',
+      'nif − 50₆',
+    ]);
+    all
+      .filter(({ y }) => y === 0)
+      .forEach(({ item }) => expect(item.explain).not.toContain('six−Y'));
+  });
+
+  // The wording itself, sentence for sentence, so that rewording a hint is a
+  // deliberate change: thirty prompts carry the general rule, five the zero
+  // form, and there is no third string.
+  test('the two hints, word for word', () => {
+    const tally = {};
+    everyComplement().forEach(({ item }) => {
+      tally[item.explain] = (tally[item.explain] || 0) + 1;
+    });
+    expect(tally).toEqual({
+      'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.': 30,
+      'nif − X0 = (six−X)0. The last digit is already zero, so there is nothing to add back.': 5,
+    });
+  });
 });

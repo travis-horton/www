@@ -99,8 +99,18 @@ sitelen pona and has nothing to render here.
 
 ## Behaviour
 
-- Updates every second (a seximal second is 1.85 real seconds, so a real-second
-  tick is always fresh enough).
+- Two clocks, at two rates. The **digits, the day bar and the percentage** move
+  once per seximal second (1.85 real seconds), on a timeout that is aimed at
+  the next tick boundary and re-aimed on arrival, so it cannot drift. The **four
+  analog faces** on the ballot redraw once per animation frame, each from a
+  loop of its own (`useAnimationFrameDate`), so their hands sweep.
+- The frame loop lives in the faces, not in the page. A frame re-renders a face
+  and nothing around it; the rest of the page is rendered once per tick and is
+  not touched in between. On the three 36-mark dials the marks and label rings
+  are memoised on the notation, so a frame moves the hands and leaves the
+  marks alone.
+- Both stop when the page is left, and the frame loops pause on a hidden tab
+  (`requestAnimationFrame` does that by itself).
 - Mode toggle persisted in `localStorage` under `travish.clock.mode`; reads and
   writes are wrapped, so a blocked store just means the choice is per-tab.
 - Two buttons with `aria-pressed`, 44 px tall, no hover-only UI — the iPad is
@@ -114,6 +124,28 @@ sitelen pona and has nothing to render here.
   seximal and niftimal faces, unit names, the one-number reading.
 - `clock.test.js` — pins the split (6⁶, 40-min hour, 16:00 = 31104 exactly),
   the niftimal digit set, round-trips, and the glyph → pair-name table above.
+- `dial.js` — the pure geometry of the analog faces: hand angles, mark points
+  and labels, the span and watch indexes, the seven-hand ladder.
+- `dial.test.js` — pins the marks, that every hand sweeps and wraps, the
+  stepped watch and breath hands, the seven digits against the direct seximal
+  expansion, and both label rings.
+- `options.js` — the ballot as data: each option's title, subtitle, blurb and
+  the cases for and against.
+- `options.test.js` — every option is complete, the ids are unique, the
+  incumbent face is listed first, and no option points at a face "at the top of
+  the page".
 - `index.jsx` / `index.test.jsx` — the page; default mode, toggle, persistence,
-  fallback on garbage, and that it ticks.
+  fallback on garbage, that it ticks on the seximal second, and the ballot's
+  panels.
+- `Ballot.jsx` — the five options laid out, each with its live demo.
+- `Face.jsx` — the 36-mark dial (options 1, 3 and 4): three swept hands, plus
+  the two extra hands or the shaded sextant when asked for.
+- `SixFace.jsx` — the six-mark, seven-hand face (option 5) and its readout.
+- `useAnimationFrameDate.js` — the per-frame clock, one hook that each analog
+  face calls for itself: a Date replaced once per drawn frame, cancelled on
+  unmount.
+- `renders.test.jsx` — when things are drawn: the faces sweep between ticks,
+  the page root renders once per tick and not per frame, a dial's marks are
+  drawn once, the notation toggle reaches the dials, and no loop survives
+  leaving the page.
 - `styles.css`.
