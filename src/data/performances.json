@@ -1,53 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-05",
-  "sourceWindow": {
-    "from": "2024-09-04",
-    "to": "2027-09-06"
-  },
-  "caveats": [
-    "ROLE IS ABSENT FROM EVERY ENTRY. The calendar never records whether Travis played, conducted, coached or attended. Until each is filled in by hand, no entry should claim a role.",
-    "Only about a quarter of past entries carry a venue. Every Boise State concert on the 2026-27 calendar has none, and no Harry Potter date has one.",
-    "Entries with visibility 'draft' are judgement calls that should not render until confirmed.",
-    "Known gaps: Sweeney Todd (Oct/Nov 2025) has a final dress on the calendar and no performances; the whole 2024-25 BPMC season is invisible because the master calendar only covers 2025-26 forward; the May 2027 Spain choir tour has a departure date but no concerts.",
-    "About 20 student recitals are calendared by first name only and need full names before publishing."
-  ],
   "venues": {
     "cathedral-rockies": {
-      "name": "Cathedral of the Rockies",
-      "address": "717 N 11th St, Boise, ID 83702"
+      "name": "Cathedral of the Rockies"
     },
     "morrison": {
-      "name": "Morrison Center",
-      "address": "2201 W Cesar Chavez Ln, Boise, ID 83725"
+      "name": "Morrison Center"
     },
     "langroise": {
-      "name": "Langroise Center for Performing and Fine Arts",
-      "address": "2112 Cleveland Blvd, Caldwell, ID 83605"
+      "name": "Langroise Center for Performing and Fine Arts"
     },
     "first-pres-boise": {
-      "name": "First Presbyterian Church",
-      "address": "950 W State St, Boise, ID 83702"
+      "name": "First Presbyterian Church"
     },
     "st-michaels": {
-      "name": "St Michael's Episcopal Cathedral",
-      "address": "518 N 8th St, Boise, ID 83702"
+      "name": "St Michael's Episcopal Cathedral"
     },
     "brandt": {
-      "name": "Brandt Center",
-      "address": "707 Fern St, Nampa, ID 83686"
-    },
-    "knitting-factory": {
-      "name": "Knitting Factory",
-      "address": "416 S 9th St, Boise, ID 83702"
+      "name": "Brandt Center"
     },
     "isf": {
-      "name": "Idaho Shakespeare Festival",
-      "address": "5657 E Warm Springs Ave, Boise, ID 83716"
-    },
-    "spaulding": {
-      "name": "Spaulding Ranch",
-      "address": "3805 N Cole Rd, Boise, ID"
+      "name": "Idaho Shakespeare Festival"
     }
   },
   "institutions": {
@@ -142,9 +115,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-10-11-fall-choral-collage-concert",
@@ -162,9 +133,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": "Venue not on the calendar; 2025-26 equivalents were at First Presbyterian."
+      "visibility": "public"
     },
     {
       "id": "2026-10-27-christi-amonson-and-travis-horton-in-recital",
@@ -182,49 +151,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
-    },
-    {
-      "id": "2026-11-07-holst--the-planets",
-      "title": "Holst: The Planets",
-      "subtitle": "Boise Phil SYM 2",
-      "date": "2026-11-07",
-      "startTime": null,
-      "allDay": true,
-      "timezone": "America/Boise",
-      "venueId": "morrison",
-      "institutionId": "bpmc",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "low",
-      "notes": "DISPUTED. Travis's own calendar note reads: a cappella / with-orchestra only, no accompanist needed, Travis may be in Wisconsin. Do not publish without confirming."
-    },
-    {
-      "id": "2026-11-08-holst--the-planets",
-      "title": "Holst: The Planets",
-      "subtitle": "Boise Phil SYM 2, second performance",
-      "date": "2026-11-08",
-      "startTime": null,
-      "allDay": true,
-      "timezone": "America/Boise",
-      "venueId": "morrison",
-      "institutionId": "bpmc",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "low",
-      "notes": "Same dispute as 11-07."
+      "visibility": "public"
     },
     {
       "id": "2026-11-28-elf",
@@ -242,9 +169,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-11-29-elf",
@@ -262,9 +187,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-12-06-readings-and-carols",
@@ -282,9 +205,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": "Venue not on the calendar; 2025 was St Michael's."
+      "visibility": "public"
     },
     {
       "id": "2026-12-18-handel--messiah",
@@ -302,9 +223,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-12-19-handel--messiah",
@@ -322,9 +241,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-12-19-handel--messiah-2",
@@ -342,9 +259,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2027-02-28-spring-choral-collage-concert",
@@ -362,9 +277,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2027-03-06-bruckner--te-deum",
@@ -382,9 +295,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2027-03-07-bruckner--te-deum",
@@ -402,9 +313,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2027-04-10-heroes",
@@ -422,9 +331,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2027-04-16-spring-choral-and-orchestral-concert",
@@ -442,9 +349,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": "Calendar suggests Beethoven 9; unconfirmed."
+      "visibility": "public"
     },
     {
       "id": "2027-04-23-concert-with-idaho-state-university",
@@ -462,9 +367,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": "Pocatello, ID."
+      "visibility": "public"
     },
     {
       "id": "2027-04-24-concert-with-idaho-state-university",
@@ -482,89 +385,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
-    },
-    {
-      "id": "2026-07-31-concert-with-phil-kettler",
-      "title": "Concert with Phil Kettler",
-      "subtitle": null,
-      "date": "2026-07-31",
-      "startTime": "13:30",
-      "allDay": false,
-      "timezone": "America/Boise",
-      "venueId": null,
-      "institutionId": "indep",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "medium",
-      "notes": "Sun Valley. Possibly the same engagement as the 07-30 entry, recorded twice."
-    },
-    {
-      "id": "2026-07-11-wedding",
-      "title": "Wedding",
-      "subtitle": null,
-      "date": "2026-07-11",
-      "startTime": "16:15",
-      "allDay": false,
-      "timezone": "America/Boise",
-      "venueId": null,
-      "institutionId": "indep",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "medium",
-      "notes": "Private event. Publish only if Travis wants weddings listed."
-    },
-    {
-      "id": "2026-06-25-under-the-trees-at-spaulding-ranch",
-      "title": "Under the Trees at Spaulding Ranch",
-      "subtitle": null,
-      "date": "2026-06-25",
-      "startTime": "18:00",
-      "allDay": false,
-      "timezone": "America/Boise",
-      "venueId": "spaulding",
-      "institutionId": "indep",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "medium",
-      "notes": "UTT is Under the TREES per memory feedback_calendar_all; the extraction wrongly expanded it as Under the Table. Role unconfirmed."
-    },
-    {
-      "id": "2026-06-12-ff-show",
-      "title": "FF Show",
-      "subtitle": null,
-      "date": "2026-06-12",
-      "startTime": "19:30",
-      "allDay": false,
-      "timezone": "America/Boise",
-      "venueId": "knitting-factory",
-      "institutionId": "indep",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "low",
-      "notes": "FF is never expanded anywhere on the calendar."
+      "visibility": "public"
     },
     {
       "id": "2026-05-17-phil-kettler-studio-recital",
@@ -582,9 +403,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-05-14-voice-minors-recital",
@@ -602,9 +421,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-05-13-bryce-leifeste--junior-recital",
@@ -622,9 +439,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-04-28-haydn--the-creation",
@@ -642,29 +457,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
-    },
-    {
-      "id": "2026-04-25-brahms--hungarian-dances",
-      "title": "Brahms: Hungarian Dances",
-      "subtitle": null,
-      "date": "2026-04-25",
-      "startTime": "18:00",
-      "allDay": false,
-      "timezone": "America/Boise",
-      "venueId": "langroise",
-      "institutionId": "coi",
-      "role": null,
-      "productionId": null,
-      "performers": [],
-      "repertoire": [],
-      "media": [],
-      "links": [],
-      "visibility": "draft",
-      "confidence": "medium",
-      "notes": "Four-hour calendar block; may be a rehearsal rather than a performance."
+      "visibility": "public"
     },
     {
       "id": "2026-04-24-alumni-concert",
@@ -682,9 +475,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-28-harry-potter",
@@ -702,9 +493,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-28-harry-potter-2",
@@ -722,9 +511,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-27-harry-potter",
@@ -742,9 +529,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-26-harry-potter",
@@ -762,9 +547,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-15-boise-phil-sym-5",
@@ -782,9 +565,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-14-boise-phil-sym-5",
@@ -802,9 +583,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-14-opera-scenes",
@@ -822,9 +601,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-13-opera-scenes",
@@ -842,9 +619,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-03-01-spring-choral-collage",
@@ -862,9 +637,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-02-21-nats-masterclass",
@@ -882,9 +655,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-02-21-nats-masterclass-2",
@@ -902,9 +673,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2026-02-05-meistersingers-at-imea",
@@ -922,9 +691,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-12-20-handel--messiah",
@@ -942,9 +709,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-12-20-handel--messiah-2",
@@ -962,9 +727,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-12-19-handel--messiah",
@@ -982,9 +745,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-12-07-readings-and-carols",
@@ -1002,9 +763,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-12-06-anna-panova-in-recital",
@@ -1022,9 +781,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-12-03-piano-studio-recital",
@@ -1042,9 +799,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-11-22-willy-wonka",
@@ -1062,9 +817,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-11-22-willy-wonka-2",
@@ -1082,9 +835,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-11-21-willy-wonka",
@@ -1102,9 +853,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-11-20-willy-wonka",
@@ -1122,9 +871,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-10-26-choral-collage-concert",
@@ -1142,9 +889,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-10-25-bach-and-beethoven",
@@ -1162,9 +907,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-10-21-spanish-song-recital",
@@ -1182,9 +925,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-06-07-little-shop-of-horrors",
@@ -1202,9 +943,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-06-06-little-shop-of-horrors",
@@ -1222,9 +961,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-06-05-little-shop-of-horrors",
@@ -1242,9 +979,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "medium",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-05-11-chamber-concert",
@@ -1262,9 +997,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-05-09-choir-concert",
@@ -1282,9 +1015,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-05-03-christi-amonson--travis-horton-and-phil-kett",
@@ -1302,9 +1033,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-04-30-honors-recital",
@@ -1322,9 +1051,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-03-20-choir-concert",
@@ -1342,9 +1069,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-03-08-harry-potter",
@@ -1362,9 +1087,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-03-08-harry-potter-2",
@@ -1382,9 +1105,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-03-07-harry-potter",
@@ -1402,9 +1123,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2025-03-06-harry-potter",
@@ -1422,9 +1141,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2024-12-06-choir-concert",
@@ -1442,9 +1159,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2024-11-20-honors-recital",
@@ -1462,9 +1177,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     },
     {
       "id": "2024-11-18-piano-studio-recital",
@@ -1482,9 +1195,7 @@
       "repertoire": [],
       "media": [],
       "links": [],
-      "visibility": "public",
-      "confidence": "high",
-      "notes": null
+      "visibility": "public"
     }
   ]
 }
