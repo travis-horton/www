@@ -5,23 +5,38 @@ on:
     branches:
       - 'dev'
 
+# What this workflow's own GitHub token may do: READ, nothing else. Without this
+# block it gets the repository's default token, which can write to the repo.
+# pull-requests: read is for "Work out the release version" below, which asks
+# GitHub which pull requests are waiting on dev. That step is allowed to fail
+# quietly, so taking this line away would not stop a deploy: the footer would
+# just show the OLD version. The Docker Hub login and the server key are
+# separate secrets and are not affected.
+permissions:
+  contents: read
+  pull-requests: read
+
+# Every `uses:` below is pinned to a full commit, with the release it belongs to
+# in the comment. A tag (@v4) can be moved to different code after the fact; a
+# commit cannot, and these actions are handed the Docker Hub login and the SSH
+# key to the server.
 jobs:
   deploy-new-web-app:
     runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           submodules: recursive
 
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       -
         name: Login to DockerHub
-        uses: docker/login-action@v4
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -64,7 +79,7 @@ jobs:
         # pick up a newer build) and :tree-<content hash> (what production pulls).
         name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           push: true
@@ -79,7 +94,7 @@ jobs:
 
       -
         name: Deploy web app to kiddspazz.com
-        uses: appleboy/ssh-action@v0.1.3
+        uses: appleboy/ssh-action@bf84735fa9986d048980965656d55112e863f432 # v0.1.3
         with:
           host: ${{ secrets.DIGITALOCEAN_HOST }}
           username: ${{ secrets.DIGITALOCEAN_USERNAME }}

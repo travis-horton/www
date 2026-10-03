@@ -97,7 +97,12 @@ code * {
 main {
   margin: 30px auto;
   max-width: 60%;
-  min-width: calc(var(--main-content-width) * 1px);
+  /*
+   * A floor of 600px, but never wider than the window. The bare 600px floor,
+   * with the small-screen rules below only starting at 500px, made every page
+   * scroll sideways in a window between 501 and 599 px wide.
+   */
+  min-width: min(calc(var(--main-content-width) * 1px), 100%);
 }
 
 @media only screen and (max-width: 500px) {

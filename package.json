@@ -6,7 +6,7 @@
     "test": "jest",
     "build": "parcel build ./src/index.html",
     "serve": "parcel serve ./src/index.html",
-    "rebuild": "docker stop web; docker-compose build && docker-compose up -d",
+    "rebuild": "docker build -t www_web . && docker run --rm -p 8080:80 www_web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\"",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kiddspazz/www.git"
+    "url": "git+https://github.com/travis-horton/www.git"
   },
   "author": "kiddspazz (https://www.travish.com/)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kiddspazz/www/issues"
+    "url": "https://github.com/travis-horton/www/issues"
   },
-  "homepage": "https://github.com/kiddspazz/www#readme",
+  "homepage": "https://github.com/travis-horton/www#readme",
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -63,14 +63,12 @@
     "testEnvironment": "jsdom",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/src/pages/Programming/projects/asteroids/",
       "<rootDir>/.claude/"
     ],
     "moduleNameMapper": {
-      "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "^url:.+$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(png|jpg|jpeg|gif|svg|ico)$": "<rootDir>/__mocks__/bareAssetMock.js",
-      "\\.(pdf|woff|woff2|ttf|eot)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.(png|jpg|jpeg|gif|svg|ico|webp|avif|pdf|woff|woff2|ttf|otf|eot)$": "<rootDir>/__mocks__/bareAssetMock.js",
       "^/src/(.+)$": "<rootDir>/src/$1"
     },
     "transform": {
@@ -99,5 +97,13 @@
   },
   "@parcel/resolver-default": {
     "packageExports": true
+  },
+  "@parcel/transformer-js": {
+    "inlineEnvironment": [
+      "NODE_ENV",
+      "APP_VERSION",
+      "BUILD_DATE",
+      "npm_package_version"
+    ]
   }
 }

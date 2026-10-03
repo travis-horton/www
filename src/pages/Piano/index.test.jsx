@@ -1,7 +1,14 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Piano from '.';
 
-test('renders without crashing', () => {
+test('the piano page has its collaborative-piano and performances sections', () => {
   render(<Piano />);
+
+  expect(
+    screen.getByRole('heading', { name: 'Collaborative piano' }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Performances' }),
+  ).toBeInTheDocument();
 });
