@@ -221,6 +221,30 @@ describe('sessions', () => {
         });
     });
   });
+
+  /*
+   * A vocabulary item names the WORD it tests, so a miss can be charged to
+   * that word (progress.js weakWords, which review mode weights by). A glyph
+   * card's word is its answer; a word card's — an "again" card included — is
+   * its prompt. A sentence tests a rule, not a word, and names none.
+   */
+  test('glyph and word items name the word they test; sentences name none', () => {
+    LEVELS.forEach((level) => {
+      const session = buildSession(level);
+      const kinds = [...new Set(session.map((item) => item.kind))].sort();
+      expect(kinds).toEqual(['en-tp', 'glyph', 'tp-en', 'word']);
+      session.forEach((item) => {
+        const at = `level ${level.id} ${item.kind} "${item.prompt}"`;
+        if (item.kind === 'glyph') {
+          expect(`${at}: ${item.word}`).toBe(`${at}: ${item.answer}`);
+        } else if (item.kind === 'word') {
+          expect(`${at}: ${item.word}`).toBe(`${at}: ${item.prompt}`);
+        } else {
+          expect(`${at}: ${'word' in item}`).toBe(`${at}: false`);
+        }
+      });
+    });
+  });
 });
 
 /*

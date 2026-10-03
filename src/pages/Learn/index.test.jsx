@@ -3,9 +3,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Learn from '.';
-import { recordSession } from './progress';
+import { recordSession, weakWords } from './progress';
 import { fromDigits, seximalName, toDigits } from './seximal';
-import { GLYPHS } from './tokipona';
+import { getLevel, GLYPHS } from './tokipona';
 
 /*
  * The drill is generated, so these tests avoid asserting on any particular
@@ -249,6 +249,46 @@ describe('"read the lesson again" starts a fresh session', () => {
 
     finishDrill('Again');
     expect(lastSession().total).toBe(total);
+  });
+
+  /*
+   * A fresh session is also a fresh DRAW of the questions. The order comes
+   * from a Math.random shuffle, so pin it: at 0.999 the shuffle leaves the
+   * list as built and the drill opens on the level's first glyph; at 0 it
+   * opens on the second. A restart that reset the position and kept the old
+   * questions would open on the same card every time.
+   */
+  test('toki pona: "Again" and "read the lesson again" both deal the questions afresh', () => {
+    window.localStorage.clear();
+    const [first, second] = getLevel('1').glyphReading;
+    expect(GLYPHS[first]).not.toBe(GLYPHS[second]);
+
+    const random = jest.spyOn(Math, 'random');
+    try {
+      random.mockReturnValue(0.999);
+      const { container } = renderAt('/learn/toki-pona/1');
+      const opensOn = () => {
+        const glyph = container.querySelector('.tp__glyph--prompt');
+        return glyph ? glyph.textContent : null;
+      };
+      start();
+      expect(opensOn()).toBe(GLYPHS[first]);
+      finishDrill('Again');
+
+      random.mockReturnValue(0);
+      fireEvent.click(screen.getByRole('button', { name: 'Again' }));
+      expect(opensOn()).toBe(GLYPHS[second]);
+      finishDrill('Again');
+
+      random.mockReturnValue(0.999);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'read the lesson again' }),
+      );
+      start();
+      expect(opensOn()).toBe(GLYPHS[first]);
+    } finally {
+      random.mockRestore();
+    }
   });
 });
 
@@ -501,4 +541,180 @@ describe('toki pona', () => {
       screen.getByText(/no e between a preverb and its verb — 2/),
     ).toBeInTheDocument();
   });
+
+  /*
+   * Review mode weights its sampling by the words that have been going wrong
+   * (progress.js weakWords), and for a long time only review sessions wrote
+   * that down: a word missed in the lesson that TEACHES it left no trace. A
+   * level drill now records the word behind every missed glyph and word card.
+   * A missed sentence adds nothing here — it broke a rule, which missedRules
+   * already carries.
+   *
+   * Level 1 is the plain case; 4 and 9 bring words back from earlier levels
+   * ("again" cards), which charge the word like any other word card.
+   */
+  test.each(['1', '4', '9'])(
+    'a level %s drill records the word behind every missed glyph and word card',
+    (id) => {
+      window.localStorage.clear();
+      const level = getLevel(id);
+      const vocabulary = [
+        ...level.glyphReading,
+        ...level.vocab.map((v) => v.word),
+        ...(level.again || []).map((v) => v.word),
+      ];
+
+      renderAt(`/learn/toki-pona/${id}`);
+      start();
+      // Miss every question: an empty box is wrong, and "I didn't" says so on
+      // the self-graded ones.
+      let guard = 0;
+      while (!screen.queryByRole('button', { name: 'Again' }) && guard < 60) {
+        fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+        fireEvent.click(
+          screen.queryByRole('button', { name: 'Next' }) ||
+            screen.getByRole('button', { name: "I didn't" }),
+        );
+        guard += 1;
+      }
+
+      const { sessions } = JSON.parse(
+        window.localStorage.getItem('travish.learn.v1'),
+      );
+      expect(sessions).toHaveLength(1);
+      const [session] = sessions;
+      expect(session.correct).toBe(0);
+      expect([...session.missedWords].sort()).toEqual([...vocabulary].sort());
+      session.missedWords.forEach((word) => {
+        expect(typeof word).toBe('string');
+        expect(word).not.toBe('');
+      });
+      // Every question was missed, yet the list is shorter than the drill:
+      // exactly as long as its glyph and word misses, the sentences left out.
+      expect(session.missedWords.length).toBeLessThan(session.total);
+      expect(session.missedWords).toHaveLength(
+        session.misses.filter((kind) => kind === 'glyph' || kind === 'word')
+          .length,
+      );
+
+      // And it reaches the thing review mode reads, word for word and count
+      // for count: a word drilled as a glyph AND as a word card was missed
+      // twice.
+      const expected = {};
+      vocabulary.forEach((word) => {
+        expected[word] = (expected[word] || 0) + 1;
+      });
+      const weak = {};
+      weakWords('toki-pona').forEach(({ word, count }) => {
+        weak[word] = count;
+      });
+      expect(weak).toEqual(expected);
+      expect(weak[level.glyphReading[0]]).toBe(2);
+    },
+  );
+
+  /*
+   * The test above misses everything, so it cannot tell "missed" from "asked":
+   * a drill that wrote down the word of EVERY card, right or wrong, would pass
+   * it — and then every drilled word is weak, which flattens review's
+   * weighting with nothing on screen to show for it. So the two below answer
+   * one half of the vocabulary cards correctly, miss the rest, and require
+   * that only the missed half is written down. Once each way round.
+   */
+
+  // The vocabulary card on screen: which word, and whether it is asked as a
+  // glyph ("which word is this?") or as a word ("what does it mean?"), with
+  // an answer the drill accepts. null on a sentence.
+  const cardOnScreen = (container, level) => {
+    const glyph = container.querySelector('.tp__glyph--prompt');
+    if (glyph) {
+      const word = level.glyphReading.find(
+        (w) => GLYPHS[w] === glyph.textContent,
+      );
+      return { kind: 'glyph', word, right: word };
+    }
+    const sub = container.querySelector('.drill__sub').textContent;
+    if (!sub.startsWith('what does it mean')) return null;
+    // The prompt is the word, then its glyph in a span of its own.
+    const word =
+      container.querySelector('.drill__prompt').firstChild.textContent;
+    const cards = sub.includes('here?') ? level.again : level.vocab;
+    const { gloss } = cards.find((v) => v.word === word);
+    // "hand · arm (& five)": any one part of the gloss is a right answer.
+    return { kind: 'word', word, right: gloss.split('·')[0].trim() };
+  };
+
+  // Runs a whole level drill, answering the cards of `rightKind` correctly
+  // and missing everything else, and returns what the session stored.
+  const drillAnswering = (id, rightKind) => {
+    window.localStorage.clear();
+    const level = getLevel(id);
+    const { container } = renderAt(`/learn/toki-pona/${id}`);
+    start();
+    let guard = 0;
+    while (!screen.queryByRole('button', { name: 'Again' }) && guard < 60) {
+      const card = cardOnScreen(container, level);
+      if (card && card.kind === rightKind) {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: card.right },
+        });
+      }
+      fireEvent.click(screen.getByRole('button', { name: 'Check' }));
+      fireEvent.click(
+        screen.queryByRole('button', { name: 'Next' }) ||
+          screen.getByRole('button', { name: "I didn't" }),
+      );
+      guard += 1;
+    }
+    const { sessions } = JSON.parse(
+      window.localStorage.getItem('travish.learn.v1'),
+    );
+    expect(sessions).toHaveLength(1);
+    const weak = {};
+    weakWords('toki-pona').forEach(({ word, count }) => {
+      weak[word] = count;
+    });
+    return { level, session: sessions[0], weak };
+  };
+
+  // How often each word appears in a list: the shape weakWords reports.
+  const timesEach = (words) => {
+    const counts = {};
+    words.forEach((word) => {
+      counts[word] = (counts[word] || 0) + 1;
+    });
+    return counts;
+  };
+
+  test.each(['1', '4', '9'])(
+    'a level %s drill with every glyph read right charges only the word cards',
+    (id) => {
+      const { level, session, weak } = drillAnswering(id, 'glyph');
+      const wordCards = [...level.vocab, ...(level.again || [])].map(
+        (v) => v.word,
+      );
+
+      // The glyphs really were marked right — this is not the miss-everything
+      // drill again under another name.
+      expect(session.correct).toBe(level.glyphReading.length);
+      expect([...session.missedWords].sort()).toEqual([...wordCards].sort());
+      // A word read right as a glyph and missed as a word card was missed
+      // once, not twice; a word only ever read right is not on the list.
+      expect(weak).toEqual(timesEach(wordCards));
+    },
+  );
+
+  test.each(['1', '4', '9'])(
+    'a level %s drill with every word card answered right charges only the glyphs',
+    (id) => {
+      const { level, session, weak } = drillAnswering(id, 'word');
+      const wordCards = [...level.vocab, ...(level.again || [])];
+
+      expect(session.correct).toBe(wordCards.length);
+      expect([...session.missedWords].sort()).toEqual(
+        [...level.glyphReading].sort(),
+      );
+      expect(weak).toEqual(timesEach(level.glyphReading));
+    },
+  );
 });

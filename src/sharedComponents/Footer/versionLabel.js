@@ -9,10 +9,12 @@
  * tools what the next release will be (`history-append.mjs --predict` — the same
  * calculation the release's own merge makes), and production runs that exact
  * image, so the live site shows the version it really is. A build without it
- * falls back to package.json's version.
+ * falls back to the package version npm hands the build (npm_package_version,
+ * set by `npm run`), and to 0.0.0 when the build was not started by npm at all.
  *
  * Everything after "+" is semver BUILD METADATA: it describes this build and never
  * changes how versions compare, so the label stays standard semver. A local build
  * has no date and says so: v3.28.0+local.
  */
-export const versionLabel = (version, buildDate) => `v${version}+${buildDate || 'local'}`;
+export const versionLabel = (version, buildDate) =>
+  `v${version}+${buildDate || 'local'}`;
