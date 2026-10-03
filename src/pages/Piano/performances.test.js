@@ -72,6 +72,96 @@ describe('performances.json ships public data only', () => {
   });
 });
 
+describe('performances.json carries only known fields', () => {
+  // Adding a field the page shows = add it here in the same commit.
+  const TOP_FIELDS = [
+    'schemaVersion',
+    'venues',
+    'institutions',
+    'productions',
+    'performances',
+  ];
+  const ROW_FIELDS = [
+    'id',
+    'title',
+    'subtitle',
+    'date',
+    'startTime',
+    'allDay',
+    'timezone',
+    'venueId',
+    'institutionId',
+    'role',
+    'productionId',
+    'performers',
+    'repertoire',
+    'media',
+    'links',
+    'visibility',
+  ];
+  const VENUE_FIELDS = ['name'];
+  const INSTITUTION_FIELDS = ['name', 'short'];
+  const PRODUCTION_FIELDS = [
+    'title',
+    'institutionId',
+    'venueId',
+    'note',
+    'dates',
+    'performers',
+    'repertoire',
+  ];
+
+  // Reports key NAMES only, never a value: the file may be red on private data.
+  const unknownKeys = (objects, allowed) =>
+    [...new Set(objects.flatMap((o) => Object.keys(o)))]
+      .filter((k) => !allowed.includes(k))
+      .sort();
+
+  test('top-level keys are exactly the known set', () => {
+    expect(Object.keys(data).sort()).toEqual([...TOP_FIELDS].sort());
+  });
+
+  test('every row carries only known keys', () => {
+    expect(unknownKeys(data.performances, ROW_FIELDS)).toEqual([]);
+  });
+
+  test('venues, institutions and productions carry only known keys', () => {
+    expect({
+      venues: unknownKeys(Object.values(data.venues), VENUE_FIELDS),
+      institutions: unknownKeys(
+        Object.values(data.institutions),
+        INSTITUTION_FIELDS,
+      ),
+      productions: unknownKeys(productions, PRODUCTION_FIELDS),
+    }).toEqual({ venues: [], institutions: [], productions: [] });
+  });
+
+  test('slots the page does not render are empty on every row and production', () => {
+    // The page renders none of these. They are where people's names and
+    // outside links would land. When the page starts rendering one, this
+    // assert changes in the same commit as the renderer.
+    const filled = (v) =>
+      Array.isArray(v) ? v.length > 0 : v !== null && v !== undefined;
+    const count = (objects, slot) => objects.filter((o) => filled(o[slot])).length;
+    expect({
+      rows: {
+        performers: count(data.performances, 'performers'),
+        repertoire: count(data.performances, 'repertoire'),
+        media: count(data.performances, 'media'),
+        links: count(data.performances, 'links'),
+        role: count(data.performances, 'role'),
+      },
+      productions: {
+        performers: count(productions, 'performers'),
+        repertoire: count(productions, 'repertoire'),
+      },
+    }).toEqual({
+      rows: { performers: 0, repertoire: 0, media: 0, links: 0, role: 0 },
+      productions: { performers: 0, repertoire: 0 },
+    });
+  });
+});
+
 describe('performances.json stays whole', () => {
   test('every venue and institution a public row or production names exists', () => {
     const dangling = [...publicRows, ...productions].filter(
