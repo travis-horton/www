@@ -161,6 +161,16 @@ describe('performances.json carries only known fields', () => {
       productions: { performers: 0, repertoire: 0 },
     });
   });
+
+  test('production dates are plain YYYY-MM-DD strings', () => {
+    // The key allowlists stop at the top level of each object; this closes
+    // the one nested array a production carries, so nothing can ride in it.
+    const isDay = (d) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
+    const odd = productions.filter(
+      (p) => !Array.isArray(p.dates) || !p.dates.every(isDay),
+    );
+    expect(odd.length).toBe(0);
+  });
 });
 
 describe('performances.json stays whole', () => {
