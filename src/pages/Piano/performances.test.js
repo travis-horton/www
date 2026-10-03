@@ -36,8 +36,10 @@ describe('performances.json ships public data only', () => {
     const withConfidence = data.performances.filter((p) =>
       Object.prototype.hasOwnProperty.call(p, 'confidence'),
     );
-    expect(withNotes.length).toBe(0);
-    expect(withConfidence.length).toBe(0);
+    expect({
+      notes: withNotes.length,
+      confidence: withConfidence.length,
+    }).toEqual({ notes: 0, confidence: 0 });
   });
 
   test('no internal top-level fields', () => {
@@ -56,8 +58,10 @@ describe('performances.json ships public data only', () => {
     const unusedInstitutions = Object.keys(data.institutions).filter(
       (id) => !institutionIds.has(id),
     );
-    expect(unusedVenues.length).toBe(0);
-    expect(unusedInstitutions.length).toBe(0);
+    expect({
+      venues: unusedVenues.length,
+      institutions: unusedInstitutions.length,
+    }).toEqual({ venues: 0, institutions: 0 });
   });
 
   test('no venue carries a street address (the page shows names only)', () => {
