@@ -244,8 +244,12 @@ const complementItem = () => {
     promptSub: `nif minus ${seximalName(n)}`,
     value: NIF - n,
     answerMode: 'digits',
+    // The general rule yields a digit `6` when Y is zero (nif − 20 "=" 36), so
+    // those five prompts get the lesson's own edge case instead.
     explain:
-      'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.',
+      n % 6 === 0
+        ? 'nif − X0 = (six−X)0. The last digit is already zero, so there is nothing to add back.'
+        : 'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.',
   });
 };
 

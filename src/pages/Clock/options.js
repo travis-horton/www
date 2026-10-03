@@ -8,16 +8,16 @@
  * a ballot where one entry has three pros and no cons is not a ballot.
  *
  * The order is the order they were built, which is also roughly the order of
- * how much they ask of the reader. The first is the face at the top of the
- * page: the incumbent belongs on the ballot, or the vote is between
- * alternatives to something nobody voted on.
+ * how much they ask of the reader. The first is the face that used to open
+ * the page (it came off the top on 26.0905): the incumbent belongs on the
+ * ballot, or the vote is between alternatives to something nobody voted on.
  */
 
 export const CLOCK_OPTIONS = [
   {
     id: 'three-hands',
     title: 'Three hands on a nif-mark dial',
-    subtitle: 'the face at the top of this page',
+    subtitle: 'the incumbent: the face this page used to open with',
     blurb: `A lapse hand turning once a day, a lull hand once a lapse, a moment
       hand once a lull. A nif of marks, a major every sixth. Each hand's
       position is two seximal digits — which sixth of the dial, then which

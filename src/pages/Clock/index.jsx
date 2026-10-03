@@ -74,7 +74,6 @@ const LEGEND = [
 function Clock() {
   const [mode, setMode] = useState(loadMode);
   const [now, setNow] = useState(() => new Date());
-  const [frame, setFrame] = useState(() => new Date());
 
   // Tick on the SEXIMAL second, not the decimal one. A tick is 1.85 s, so a
   // 1000 ms interval showed the same face twice, then skipped one — the clock
@@ -84,6 +83,11 @@ function Clock() {
   // This is the DIGITAL clock's heartbeat, and the bar's and the percentage's.
   // Everything it feeds is a floored number, and a floored number should move
   // once per tick and hold.
+  //
+  // It is also the ONLY clock this component keeps, so the page renders once
+  // per tick. The analog faces on the ballot sweep once per drawn frame, and
+  // each runs that loop itself (useAnimationFrameDate): a frame redraws a
+  // face, not the prose, the legend and the ballot around it.
   useEffect(() => {
     let id;
     const tick = () => {
@@ -93,21 +97,6 @@ function Clock() {
     };
     id = setTimeout(tick, msToNextTick(new Date()));
     return () => clearTimeout(id);
-  }, []);
-
-  // The ANALOG face's own clock, one update per drawn frame (Travis, 26.0905).
-  // A swept hand needs a position per frame, not per tick; driving it off the
-  // tick above would move it in 1.85-second jumps no matter what the geometry
-  // said. Kept separate rather than raising the tick rate, so the digits go on
-  // stepping. requestAnimationFrame also stops on a hidden tab for free.
-  useEffect(() => {
-    let id;
-    const draw = () => {
-      setFrame(new Date());
-      id = window.requestAnimationFrame(draw);
-    };
-    id = window.requestAnimationFrame(draw);
-    return () => window.cancelAnimationFrame(id);
   }, []);
 
   const choose = (m) => {
@@ -278,7 +267,7 @@ function Clock() {
           ))}
         </dl>
 
-        <Ballot now={frame} ms={ms} mode={mode} />
+        <Ballot ms={ms} mode={mode} />
 
         <p className="clock__foot">
           <Link to="/learn/seximal">the seximal course</Link>
