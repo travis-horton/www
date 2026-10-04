@@ -12,6 +12,9 @@ function Image({
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const size = { height: `${height}px`, width: `${width}px` };
+  // React 19 drops src="" (a browser can read it as "fetch this page again")
+  // and warns about it. A missing picture gets no src at all, said outright.
+  const orNone = (url) => url || undefined;
 
   return (
     <div className={className} style={size}>
@@ -21,7 +24,7 @@ function Image({
         className="image thumb"
         alt=""
         aria-hidden="true"
-        src={thumb}
+        src={orNone(thumb)}
         style={{ visibility: isLoaded ? 'hidden' : 'visible', ...size }}
       />
       <img
@@ -29,7 +32,7 @@ function Image({
         className="image full"
         style={{ opacity: isLoaded ? 1 : 0, ...size }}
         alt={alt}
-        src={src}
+        src={orNone(src)}
       />
     </div>
   );

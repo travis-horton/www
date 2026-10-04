@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/travis-horton/www#readme",
   "dependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-is": "^18.0.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-is": "^19.3.0",
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
