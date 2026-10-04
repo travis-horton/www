@@ -1,0 +1,22 @@
+// Parcel's own pipeline, minus Babel (26.1004).
+//
+// Parcel compiles the site's JavaScript itself (@parcel/transformer-js, which
+// is SWC). It only hands a file to Babel when it finds a Babel config FILE
+// above it — and the one such file in src/ is the asteroids submodule's
+// .babelrc. Parcel 2 can only drive Babel 7 (it asks for @babel/core ^7.12.0),
+// and this repo's Babel is 8 now, used by jest alone. So the asteroids game
+// would fail the build ("Could not find module @babel/core satisfying
+// ^7.12.0"). Dropping Babel here compiles asteroids the same way as every
+// other file on the site.
+//
+// ⚠️ The Dockerfile copies this file in by name: an image built without it
+// falls back to Parcel's default pipeline and fails the same way.
+{
+  "extends": "@parcel/config-default",
+  "transformers": {
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  }
+}
