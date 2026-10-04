@@ -22,6 +22,9 @@ ENV BUILD_DATE=$BUILD_DATE
 
 COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json
+# Parcel's pipeline without Babel (Babel 8 is jest's alone; .parcelrc says why).
+# Without this file the build falls back to Parcel's default and fails.
+COPY ./.parcelrc /app/.parcelrc
 
 RUN npm ci
 COPY ./src /app/src
