@@ -12,6 +12,23 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #139: Glyphs show up in the /learn search box · React 19 + 5 more** · [PR #139](https://github.com/travis-horton/www/pull/139) · merged 26.1004.1002 · v3.30.2
+- **[Glyphs show up in the /learn search box](https://github.com/travis-horton/www/pull/140)** · merged 26.1004.1002
+  Fixed: the example glyph in the /learn search box, and any glyph pasted into it, showed as an empty box; it now draws in the sitelen pona font.
+- **[React 19](https://github.com/travis-horton/www/pull/137)** · merged 26.1004.1002
+  Behind the scenes: the library the whole website is built on moved up a major version (18 to 19). Every page draws the same content as before.
+  Fixed: the AND-gate picture on the blog post "The D Flip-Flop, pt 1" has no small placeholder version. It used to give the browser an empty picture address, which the new version warns could make a browser download the whole page again. Now it gives no address at all.
+- **[Babel 8 for the site's tests](https://github.com/travis-horton/www/pull/136)** · merged 26.1004.1002
+  Behind the scenes: the tool the automatic tests use to read the site's code moved up a major version (7 to 8), with all of its pieces upgraded together. The built website is byte-for-byte the same as before.
+- **[A small security fix in the build tools](https://github.com/travis-horton/www/pull/138)** · merged 26.1004.1002
+  Behind the scenes: a helper library the build uses got a security patch (brace-expansion 1.1.18 to 1.1.21). Nothing on the site looks or works differently.
+- **[Bump the actions group with 2 updates](https://github.com/travis-horton/www/pull/129)** · merged 26.1004.1002
+  Behind the scenes: an automatic dependency update — "Bump the actions group with 2 updates".
+- **[Bump @testing-library/jest-dom from 6.9.1 to 7.0.1](https://github.com/travis-horton/www/pull/131)** · merged 26.1004.1002
+  Behind the scenes: an automatic dependency update — "Bump @testing-library/jest-dom from 6.9.1 to 7.0.1".
+- **[Bump the npm-minor-and-patch group across 1 directory with 9 updates](https://github.com/travis-horton/www/pull/135)** · merged 26.1004.1002
+  Behind the scenes: an automatic dependency update — "Bump the npm-minor-and-patch group across 1 directory with 9 updates".
+
 **www #127: site upkeep: narrow windows, a seximal hint, toki pona review, clock ballot wording, the new site right after an update, a lighter clock page, checks that run on every pull request, a build from named versions, safety instructions for browsers, a named proxy, old files gone · the three demo projects are pinned to their official versions · Piano page sends only what it shows** · [PR #127](https://github.com/travis-horton/www/pull/127) · merged 26.1003.1238 · v3.30.1
 - **[Narrow windows](https://github.com/travis-horton/www/commit/c2e9fd5)** · merged 26.1003.1238
   Fixed: in a browser window between 501 and 599 pixels wide, every page was wider than the window, so it scrolled sideways and the ends of the lines were cut off. The text now wraps inside the window. Nothing changes on a phone or in a window 600 pixels or wider, except that a browser which always shows its scroll bar had the same problem up to 614 pixels, and that is fixed too.
