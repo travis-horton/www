@@ -54,8 +54,9 @@ export default defineConfig([
       'react/prop-types': 'off',
       // Apostrophes in blog prose are not a bug. The rule exists for stray `>` and `}`.
       'react/no-unescaped-entities': 'off',
-      // jest's babel-jest still uses the classic JSX runtime, so `import React`
-      // stays in every JSX file even though Parcel does not need it.
+      // `import React` stays in the JSX files from when jest compiled JSX the
+      // classic way. Since Babel 8 (26.1004) jest and Parcel both use the
+      // automatic runtime and neither needs it, so an unused one is allowed.
       '@typescript-eslint/no-unused-vars': [
         'error',
         { varsIgnorePattern: '^React$', argsIgnorePattern: '^_', caughtErrors: 'none' },
