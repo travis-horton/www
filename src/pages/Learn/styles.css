@@ -262,9 +262,15 @@
 /*
  * 16px minimum on the input: anything smaller and iOS Safari zooms the page
  * on focus, which on an iPad turns every question into a pinch-to-recover.
+ *
+ * The font list is the body's own ('gothic', serif) with sitelen-pona slotted
+ * in before the generic fallback: gothic draws every latin letter, and the
+ * browser falls through to sitelen-pona only for the private-use glyph
+ * codepoints it lacks — the search placeholder's glyph and any glyph pasted or
+ * typed in. With `inherit` those drew as missing-glyph boxes (26.1004).
  */
 .drill__input {
-  font-family: inherit;
+  font-family: 'gothic', 'sitelen-pona', serif;
   font-size: 24px;
   width: 100%;
   max-width: 340px;
