@@ -48,6 +48,21 @@ test('only the full image carries the alt text', () => {
   expect(thumb).toHaveAttribute('aria-hidden', 'true');
 });
 
+// The blog's AND-gate picture has no thumbnail. React 19 warns about src=""
+// (a browser may refetch the whole page for it), so a missing picture must
+// leave the attribute off instead.
+test('a missing thumb or src leaves the attribute off, with no warning', () => {
+  const errors = jest.spyOn(console, 'error').mockImplementation(() => {});
+  const { container } = render(<Image alt="photo" src="full.png" />);
+  render(<Image alt="nothing yet" />);
+  const thumb = container.querySelector('img.thumb');
+  const full = container.querySelector('img.full');
+  expect(thumb).not.toHaveAttribute('src');
+  expect(full).toHaveAttribute('src', 'full.png');
+  expect(errors).not.toHaveBeenCalled();
+  errors.mockRestore();
+});
+
 test('applies height and width as px dimensions', () => {
   const { container } = render(<Image alt="test" height={200} width={300} />);
   expect(container.firstChild).toHaveStyle({ height: '200px', width: '300px' });
