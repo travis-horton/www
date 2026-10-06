@@ -54,6 +54,12 @@ COPY ./nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
 # different job — PERSISTENCE across `--rm` deploys, not existence.
 RUN mkdir -p /var/log/gcal-hook
 
+# 📒 Same rule, same reason, for the visit log (26.1006): nginx.conf's
+# `access_log /var/log/www/visits.log` would otherwise kill any container started
+# without the mount. Both containers get `-v /var/log/www` from the deploy
+# workflows; the image must still boot without it.
+RUN mkdir -p /var/log/www
+
 # 🔑 The mount point for the gcal capability map (ticket 63ba96c0, 26.0911).
 # Deliberately EMPTY in the image: this image is public on Docker Hub, so the
 # secret must never be baked in. `web` bind-mounts the droplet's
