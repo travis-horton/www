@@ -12,6 +12,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #142: a visit log that survives updates** · [PR #142](https://github.com/travis-horton/www/pull/142) · merged 26.1006.1522 · v3.30.3
+- **[a visit log that survives updates](https://github.com/travis-horton/www/pull/141)** · merged 26.1006.1522
+  Behind the scenes: the server now writes one line per page visit (when, which page, which site it came from, the browser and device) to a log kept on the server itself, so the history no longer disappears each time the site is updated. Pictures, fonts and code files that load with a page are left out, so each line is one real page view. The log is never published on the site.
+
 **www #139: Glyphs show up in the /learn search box · React 19 + 5 more** · [PR #139](https://github.com/travis-horton/www/pull/139) · merged 26.1004.1002 · v3.30.2
 - **[Glyphs show up in the /learn search box](https://github.com/travis-horton/www/pull/140)** · merged 26.1004.1002
   Fixed: the example glyph in the /learn search box, and any glyph pasted into it, showed as an empty box; it now draws in the sitelen pona font.
