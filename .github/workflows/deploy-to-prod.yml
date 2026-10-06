@@ -95,13 +95,20 @@ jobs:
             # answers 404 and Google eventually drops the channels. `www_web`
             # gets no mount on purpose — the receiver lives on travish.com only.
             mkdir -p /etc/gcal-hook
+            # -v /var/log/www: the visit log (26.1006), on BOTH containers —
+            # www.travish.com is the canonical host, so most visits land on
+            # www_web. Both append to one file; each line is a single write.
+            # No mkdir: the deploy user can't create dirs under /var/log, and
+            # Docker creates a missing bind-mount source itself (as root).
             docker run --restart unless-stopped --name web -e VIRTUAL_HOST=travish.com \
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
               -v /etc/gcal-hook:/etc/nginx/gcal:ro \
+              -v /var/log/www:/var/log/www \
               -d "$IMAGE"
             docker run --restart unless-stopped --name www_web -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
+              -v /var/log/www:/var/log/www \
               -d "$IMAGE"
             # Keep the job's verdict: ssh-action reports the script's LAST exit
             # status, which until now was the docker run above. The cleanup
