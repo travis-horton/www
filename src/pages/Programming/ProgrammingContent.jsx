@@ -53,12 +53,8 @@ function ProgrammingContent() {
           </a>
           <br />
           Learn{' '}
-          <a
-            href="https://doc.rust-lang.org/stable/book/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Rust
+          <a href="https://ziglang.org/learn/" target="_blank" rel="noreferrer">
+            Zig
           </a>
           <br />
           <a
