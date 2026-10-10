@@ -4,6 +4,18 @@ on:
   push:
     branches:
       - 'main'
+  # ROLLBACK (26.1009). Before this the only trigger was a push to main, and
+  # re-running an old production run does not bring an old build back: a run
+  # from before 26.0928 deploys dev's newest :latest. Now an older main commit
+  # can be deployed by hand; its own sandbox-proven image is pulled:
+  #   gh workflow run 'production environment' --repo travis-horton/www --ref main -f ref=<old main commit>
+  # Only releases from 26.0928 on have the tree-<hash> image this looks for.
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'The main commit to deploy (empty = the newest main)'
+        required: false
+        default: ''
 
 # What this workflow's own GitHub token may do: read the repository, nothing
 # else. Without this block it gets the repository's default token, which can
@@ -22,13 +34,19 @@ jobs:
         # Only to read the content hash below; nothing is built here. Production
         # never builds (Travis, 26.0918: "nothing can get to prod that hasn't been
         # in the sandbox environment").
+        # A rollback (workflow_dispatch above) checks out the commit it names;
+        # a push checks out the commit that was pushed, as before.
         name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       -
         # Production runs the sandbox's build OF THESE EXACT FILES: the image
-        # tagged tree-<git's hash of main's tree>, which deploy-to-dev pushes for
-        # every dev commit. Before this, prod pulled :latest — whatever dev built
+        # tagged tree-<git's hash of main's tree>, which deploy-to-dev adds to a
+        # build only once that build is up and healthy in the sandbox (since
+        # 26.1009; before, it was tagged before the sandbox had tried it).
+        # Before 26.0928, prod pulled :latest — whatever dev built
         # last, which a main merge would ship even when it wasn't what the merge
         # contained (26.0910).
         #

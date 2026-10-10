@@ -4,29 +4,10 @@ import resume from 'url:/src/assets/resume.pdf';
 
 const Contact = () => (
   <main>
-    <h2>Contact</h2>
+    {/* The page's own name is its h1, drawn the size of the h2s below. */}
+    <h1 className="page-heading">Contact</h1>
     <p>
       Email: <a href="mailto:travis@travish.com">travis@travish.com</a>
-      <br />
-      Phone: 919.593.0887
-      <br />
-      Twitter:{' '}
-      <a
-        href="https://twitter.com/brightlyopen"
-        target="_blank"
-        rel="noreferrer"
-      >
-        brightlyopen
-      </a>
-      <br />
-      Instagram:{' '}
-      <a
-        href="https://www.instagram.com/brightlyopen"
-        target="_blank"
-        rel="noreferrer"
-      >
-        brightlyopen
-      </a>
       <br />
       LinkedIn:{' '}
       <a
@@ -60,7 +41,7 @@ const Contact = () => (
       </a>
       <br />
       <a href="https://jvns.ca/" target="_blank" rel="noreferrer">
-        Julia Evan&apos;s blog
+        Julia Evans&apos;s blog
       </a>
     </p>
   </main>

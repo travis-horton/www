@@ -71,9 +71,9 @@ function TokiPonaHome() {
       </ul>
 
       <p className="learn__meta">
-        All ten levels are here — 119 word cards, twelve at a time and eleven
-        at the end, plus li and e, which are taught as rules. There is no Level
-        11; after that it is just talking.
+        All ten levels are here — 119 word cards, twelve at a time and eleven at
+        the end, plus li and e, which are taught as rules. There is no Level 11;
+        after that it is just talking.
       </p>
 
       <h2>This course&apos;s house style</h2>
@@ -91,8 +91,8 @@ function TokiPonaHome() {
           after <em>tawa</em>, <em>lon</em>, <em>tan</em>, <em>kepeken</em>.
         </li>
         <li>
-          <strong>The 120 words of pu, plus kin</strong> are the syllabus. The later
-          community words — <em>kijetesantakalu</em>, <em>soko</em>,{' '}
+          <strong>The 120 words of pu, plus kin</strong> are the syllabus. The
+          later community words — <em>kijetesantakalu</em>, <em>soko</em>,{' '}
           <em>misikeke</em> — are real and widely used, but they are an
           appendix, not the ladder.
         </li>

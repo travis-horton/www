@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 function ProgrammingContent() {
   return (
     <div>
+      {/* The page's name for screen readers and outlines; the page shows no
+          title of its own, so it is not drawn. */}
+      <h1 className="visually-hidden">Programming</h1>
       <p>
         Yeah, I write stuff that computers can read sometimes. I like moving
         pixels around and doing math problems to get them to do so in
@@ -44,31 +47,16 @@ function ProgrammingContent() {
         </ul>
         <section>
           <h2>Goals</h2>
-          <a
-            href="https://www.postgresql.org/docs/11/tutorial-sql.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Postgres tutorial
-          </a>
-          <br />
-          Learn{' '}
-          <a
-            href="https://doc.rust-lang.org/stable/book/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Rust
-          </a>
-          <br />
-          <a
-            href="https://www.nand2tetris.org"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Nand2tetris
-          </a>
-          <br />
+          <p>
+            Build travish.com&apos;s backend in{' '}
+            <a
+              href="https://ziglang.org/learn/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Zig
+            </a>
+          </p>
         </section>
         <section>
           <h2>Works in progress</h2>

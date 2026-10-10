@@ -23,7 +23,13 @@ import {
   parseCode,
   previewImport,
 } from './transfer';
-import { MAX_SESSIONS, load, recordSession } from './progress';
+import {
+  MAX_SESSIONS,
+  load,
+  recordSession,
+  summarize,
+  weakKinds,
+} from './progress';
 
 const KEY = 'travish.learn.v1';
 
@@ -283,6 +289,41 @@ describe('individually broken sessions are skipped, not fatal', () => {
     expect(outcome.added).toBe(1);
     expect(outcome.skipped).toBe(4);
     expect(load().sessions.map((s) => s.id)).toEqual(['good']);
+  });
+
+  test('a hand-edited session with misses as a string, or more right than asked, is skipped', () => {
+    // Both came from the 26.1002 audit's probes. The first imported cleanly
+    // and then broke /learn/seximal on every render (weakKinds called
+    // .forEach on a string); the second showed a best score of 1250%.
+    const payload = buildPayload([
+      run({ id: 'good', at: '2026-01-01T00:00:00.000Z' }),
+      run({ id: 'string-misses', course: 'seximal', misses: 'name' }),
+      run({ id: 'string-words', missedWords: 'telo' }),
+      run({ id: 'object-rules', missedRules: { a: 1 } }),
+      run({ id: 'too-right', total: 4, correct: 50 }),
+    ]);
+
+    const outcome = importCode(JSON.stringify(payload));
+
+    expect(outcome.ok).toBe(true);
+    expect(outcome.added).toBe(1);
+    expect(outcome.skipped).toBe(4);
+    expect(load().sessions.map((s) => s.id)).toEqual(['good']);
+  });
+});
+
+describe('a bad session already in the store does not break the tallies', () => {
+  test('misses as a string, and a null entry, contribute nothing instead of throwing', () => {
+    // A store written before the import refused these (or edited by hand).
+    seed([
+      null,
+      run({ course: 'seximal', misses: 'name' }),
+      run({ course: 'seximal', misses: ['digit'] }),
+    ]);
+    expect(() => weakKinds('seximal')).not.toThrow();
+    expect(weakKinds('seximal')).toEqual([{ kind: 'digit', count: 1 }]);
+    expect(() => summarize('seximal', '1')).not.toThrow();
+    expect(summarize('seximal', '1').attempts).toBe(2);
   });
 });
 

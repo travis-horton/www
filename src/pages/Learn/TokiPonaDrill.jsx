@@ -344,6 +344,7 @@ function TokiPonaDrill() {
 
         {checked && (
           <div
+            role="status"
             className={`drill__verdict ${wasRight || selfGraded ? 'is-right' : 'is-wrong'}`}
           >
             {!selfGraded && (

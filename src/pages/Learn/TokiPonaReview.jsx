@@ -226,6 +226,7 @@ function TokiPonaReview() {
 
         {checked && (
           <div
+            role="status"
             className={`drill__verdict ${wasRight ? 'is-right' : 'is-wrong'}`}
           >
             <p className="drill__verdict-line">{wasRight ? 'Yes.' : 'No.'}</p>

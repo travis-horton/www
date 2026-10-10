@@ -2,7 +2,7 @@ import React from 'react';
 
 const TheFirstBlog = () => (
   <div className="container">
-    <main className="content">
+    <article className="content">
       <div className="main">
         <h1 className="blog_title">The First Blog Post</h1>
         <p>
@@ -34,7 +34,11 @@ const TheFirstBlog = () => (
             Nand2Tetris
           </a>
           . I&apos;m on the Chapter 3: Sequential Logic (
-          <a href="./ch3_sequential_logic.pdf" download="Sequential Logic.pdf">
+          <a
+            href="https://www.nand2tetris.org/project03"
+            target="_blank"
+            rel="noreferrer"
+          >
             pdf
           </a>
           ), and I found the first thing they don&apos;t really explain: how you
@@ -47,7 +51,7 @@ const TheFirstBlog = () => (
         <p>A little code:</p>
         <code>console.log(&quot;Hello, World!&quot;);</code>
       </div>
-    </main>
+    </article>
   </div>
 );
 

@@ -5,12 +5,20 @@ import JsThisBlog from './blog-posts/js-this.jsx';
 import TheFlipFlop1 from './blog-posts/the-flip-flop-1.jsx';
 import TheFirstBlog from './blog-posts/the-first-blog.jsx';
 import { NotFoundContent } from '../NotFound';
+import { Titled } from '/src/sharedComponents/DocumentHead';
 
 import './styles.css';
 import './neon-button.css';
 
+// Each page's tab title (sharedComponents/DocumentHead says why it is set
+// here, on the leaf, and not once for the whole section).
+const titled = (title, page) => <Titled title={title}>{page}</Titled>;
+
 const BlogToc = () => (
   <>
+    {/* The page's name for screen readers and outlines; the list shows no
+        title of its own, so it is not drawn. Each post has its own h1. */}
+    <h1 className="visually-hidden">Blog</h1>
     <table className="blog__table-of-contents">
       <tbody>
         <tr>
@@ -54,11 +62,20 @@ const BlogToc = () => (
 const Blog = () => (
   <main>
     <Routes>
-      <Route index element={<BlogToc />} />
-      <Route path="js-this" element={<JsThisBlog />} />
-      <Route path="the-flip-flop-1" element={<TheFlipFlop1 />} />
-      <Route path="the-first-blog" element={<TheFirstBlog />} />
-      <Route path="*" element={<NotFoundContent />} />
+      <Route index element={titled('Blog', <BlogToc />)} />
+      <Route
+        path="js-this"
+        element={titled("JavaScript's this", <JsThisBlog />)}
+      />
+      <Route
+        path="the-flip-flop-1"
+        element={titled('The D Flip-Flop, pt 1', <TheFlipFlop1 />)}
+      />
+      <Route
+        path="the-first-blog"
+        element={titled('The First Blog Post', <TheFirstBlog />)}
+      />
+      <Route path="*" element={titled('Not found', <NotFoundContent />)} />
     </Routes>
   </main>
 );
