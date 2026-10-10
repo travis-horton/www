@@ -38,6 +38,12 @@ COPY ./.parcelrc /app/.parcelrc
 
 RUN npm ci
 COPY ./src /app/src
+# sitemap.xml, written from src/data/public-pages.json (26.1010). Before the
+# site build, so a list that names a private or impossible address fails the
+# build fast. Written OUTSIDE dist on purpose: scripts/check-bundle.mjs fails
+# any built file but index.html that has no hash in its name.
+COPY ./scripts/gen-sitemap.mjs /app/scripts/gen-sitemap.mjs
+RUN node scripts/gen-sitemap.mjs /app/sitemap.xml
 RUN npm run build
 
 FROM nginx:1.31
@@ -82,4 +88,8 @@ COPY --from=build /app/dist /var/www/html
 # the build rather than in it: scripts/check-bundle.mjs requires every BUILT
 # file but index.html to carry a hash in its name. Served by nginx.conf's pages
 # location (④), which answers an existing file as itself, with `no-cache`.
-COPY ./nginx/robots.txt ./nginx/sitemap.xml /var/www/html/
+# sitemap.xml is generated in the build stage (26.1010) from
+# src/data/public-pages.json by scripts/gen-sitemap.mjs, and guarded by
+# scripts/sitemap.test.js, which fails when a routed page is not on the list.
+COPY ./nginx/robots.txt /var/www/html/
+COPY --from=build /app/sitemap.xml /var/www/html/sitemap.xml
