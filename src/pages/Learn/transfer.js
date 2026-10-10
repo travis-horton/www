@@ -89,7 +89,15 @@ export const checksum = (str) => {
   return h.toString(16).padStart(8, '0');
 };
 
-/** True for a session object this course can actually score. */
+// The optional per-session lists. Each may be missing (older sessions predate
+// it) but, when present, must be a list: the tallies in progress.js walk them.
+const OPTIONAL_LISTS = ['misses', 'missedWords', 'missedRules'];
+
+/**
+ * True for a session object this course can actually score. `correct` may not
+ * exceed `total` (a hand-edited code once showed a best score of 1250%), and
+ * an optional list that is there must be a list.
+ */
 const isUsable = (s) =>
   Boolean(s) &&
   typeof s === 'object' &&
@@ -99,7 +107,9 @@ const isUsable = (s) =>
   Number.isFinite(s.total) &&
   s.total > 0 &&
   Number.isFinite(s.correct) &&
-  s.correct >= 0;
+  s.correct >= 0 &&
+  s.correct <= s.total &&
+  OPTIONAL_LISTS.every((key) => s[key] === undefined || Array.isArray(s[key]));
 
 /**
  * A dedupe key for each session in ONE list.
