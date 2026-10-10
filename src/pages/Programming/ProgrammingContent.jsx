@@ -47,27 +47,16 @@ function ProgrammingContent() {
         </ul>
         <section>
           <h2>Goals</h2>
-          <a
-            href="https://www.postgresql.org/docs/11/tutorial-sql.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Postgres tutorial
-          </a>
-          <br />
-          Learn{' '}
-          <a href="https://ziglang.org/learn/" target="_blank" rel="noreferrer">
-            Zig
-          </a>
-          <br />
-          <a
-            href="https://www.nand2tetris.org"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Nand2tetris
-          </a>
-          <br />
+          <p>
+            Build travish.com&apos;s backend in{' '}
+            <a
+              href="https://ziglang.org/learn/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Zig
+            </a>
+          </p>
         </section>
         <section>
           <h2>Works in progress</h2>
