@@ -178,6 +178,16 @@ Auth middleware: public routes (`/api/health`, `/api/auth/*`) pass through; all 
 
 **Verify:** Manual flow — POST login, check DB for token, GET verify with token, confirm Set-Cookie header, use cookie to access journal endpoints
 
+#### Security requirements (before anything deploys)
+
+Added 26.1009 (ruling M-221, from the 26.1002 site audit). Where these disagree with the flow above or the Architecture notes (`SameSite=Strict`, `GET /api/auth/verify?token=X`), **these win**.
+
+1. **Login can't be used to spam anyone.** `POST /api/auth/login` answers `204` for any email address and sends mail only to the allowlisted address. Rate limit: 3 requests per address per 15 minutes, and 10 per IP per hour.
+2. **Tokens are hashed, short-lived and single-use.** A 32-byte random token; the database stores only its SHA-256; it expires after 15 minutes and is deleted the moment it is used.
+3. **The token never travels in a GET query string.** The email link opens a page that POSTs the token to the API, and that page sends `Referrer-Policy: no-referrer`, so the token stays out of server logs, browser history and Referer headers.
+4. **The session cookie is `SameSite=Lax`, `HttpOnly`, `Secure`, with the `__Host-` prefix.** (`Strict` would drop the cookie on the click from a mail client.)
+5. **Nothing unauthenticated ships.** The Phase 3 endpoints exist only behind the Phase 4 middleware, never as "no auth yet" routes in a deployed image, and no secret is ever `COPY`ed into the Docker image (the image is public on Docker Hub).
+
 ### Phase 5: Docker + Deployment
 **Goal:** Both frontend and backend deploy automatically (deploy BEFORE frontend auth so API is live before wiring up React)
 
