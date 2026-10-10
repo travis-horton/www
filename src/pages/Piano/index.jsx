@@ -7,6 +7,9 @@ import './styles.css';
 function Piano() {
   return (
     <main>
+      {/* The page's name for screen readers and outlines; the page shows no
+          title of its own, so it is not drawn. */}
+      <h1 className="visually-hidden">Piano</h1>
       <p>
         I play the piano with other people. That is the work, and it is the part
         of music I have always wanted to do.

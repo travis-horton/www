@@ -4,7 +4,8 @@ import resume from 'url:/src/assets/resume.pdf';
 
 const Contact = () => (
   <main>
-    <h2>Contact</h2>
+    {/* The page's own name is its h1, drawn the size of the h2s below. */}
+    <h1 className="page-heading">Contact</h1>
     <p>
       Email: <a href="mailto:travis@travish.com">travis@travish.com</a>
       <br />

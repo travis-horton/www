@@ -45,6 +45,30 @@ h2 {
 }
 
 /*
+ * A page's h1 that should look like the h2s around it (Contact, 26.1009):
+ * every page now has exactly one h1, for screen readers and outlines, without
+ * changing how the page looks.
+ */
+h1.page-heading {
+  font-family: inherit;
+  font-size: 22px;
+  margin: 20px 0 8px 0;
+}
+
+/* Read by screen readers, not drawn (the usual clip pattern). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
  * h3 and h4 had no rule at all, so they fell back to the browser default of
  * `1.33em 0` — equal space above and below. A heading that is equidistant from
  * the section it ends and the section it opens reads as belonging to neither.
