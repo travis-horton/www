@@ -2,7 +2,8 @@
 # Is the site up? Two questions, asked the way a visitor would (26.1010).
 #
 #   www    https://www.travish.com/ must answer 200, in text/html, with the
-#          site's own page in it (the `<div id="root">` the app draws into).
+#          site's own page in it (the root div the app draws into, quoted or,
+#          as the minified build serves it, `<div id=root>`).
 #          The status alone is not enough: the site answers every address with
 #          the same page, and the proxy in front of it answers in HTML too.
 #   apex   https://travish.com/ must answer 301, pointing exactly at
@@ -38,7 +39,12 @@ RETRY_DELAY="${UPTIME_RETRY_DELAY:-30}"
 
 # Every request says who it is, so these visits can be told apart in a log.
 USER_AGENT='travish-uptime-check (+https://github.com/travis-horton/www)'
-ROOT_MARKER='<div id="root">'
+# The div the app draws into. src/index.html writes it `<div id="root">`, but
+# the site serves Parcel's minified build, which drops the quotes:
+# `<div id=root>`. Both shapes (and single quotes) count, and other attributes
+# may come before or after the id.
+ROOT_MARKER='<div id=root>'
+ROOT_PATTERN="<div[[:space:]]([^>]*[[:space:]])?id=(\"root\"|'root'|root)([[:space:]/>])"
 
 case "$ATTEMPTS" in
   '' | *[!0-9]* | 0) echo "UPTIME_ATTEMPTS must be a whole number of 1 or more, not '$ATTEMPTS'" >&2; exit 2 ;;
@@ -109,7 +115,7 @@ probe_www() {
       return 1
       ;;
   esac
-  if ! grep -qF "$ROOT_MARKER" "$WORK/body"; then
+  if ! grep -qE "$ROOT_PATTERN" "$WORK/body"; then
     WHY="a page that is not the site (no $ROOT_MARKER in it)"
     return 1
   fi

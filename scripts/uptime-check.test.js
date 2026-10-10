@@ -37,8 +37,19 @@ const send = (res, status, headers, body = '') => {
   res.end(body);
 };
 const HTML = { 'Content-Type': 'text/html; charset=utf-8' };
+// What the live site actually serves: Parcel's MINIFIED build of
+// src/index.html, which drops attribute quotes, so the root div arrives as
+// `<div id=root>`. This is dist/index.html from `npm run build` on 26.1010,
+// with the import map and the hashed file names shortened.
 const SITE_PAGE =
-  '<!doctype html><html><head><title>travish</title></head><body><div id="root"></div></body></html>';
+  '<!DOCTYPE html><html lang=en><link rel=stylesheet href=/index.css><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1"><title>Travis Horton: one human bean</title><script type=module defer src=/index.js></script><body>\n    <div id=root></div>\n  \n\n';
+// The page as written in the source, quotes and all.
+const SOURCE_PAGE = fs.readFileSync(
+  path.join(REPO, 'src', 'index.html'),
+  'utf8',
+);
+// After `npm run build`, the real built page (absent before a build).
+const BUILT_PAGE = path.join(REPO, 'dist', 'index.html');
 // nginx-proxy's own answer when the container behind a host is down.
 const PROXY_503 =
   '<html><head><title>503 Service Temporarily Unavailable</title></head><body><center><h1>503 Service Temporarily Unavailable</h1></center><hr><center>nginx</center></body></html>';
@@ -128,6 +139,86 @@ describe('scripts/uptime-check.sh against a stand-in server', () => {
       const written = fs.readFileSync(summary, 'utf8');
       expect(written).toMatch(/OK\s+www/);
       expect(written).toMatch(/OK\s+apex/);
+    },
+    SLOW,
+  );
+
+  test(
+    'the page as src/index.html writes it (quoted root div) also passes',
+    async () => {
+      expect(SOURCE_PAGE).toContain('<div id="root">');
+      const { port } = await startFixture({
+        www: (res) => send(res, 200, HTML, SOURCE_PAGE),
+        apex: redirect,
+      });
+      const { code, output } = await runCheck(port);
+      expect(output).toMatch(/OK\s+www/);
+      expect(code).toBe(0);
+    },
+    SLOW,
+  );
+
+  // Runs only after `npm run build` has made dist/index.html; it ties the
+  // check to whatever the minifier produces today.
+  (fs.existsSync(BUILT_PAGE) ? test : test.skip)(
+    'the real built page (dist/index.html) passes',
+    async () => {
+      const built = fs.readFileSync(BUILT_PAGE, 'utf8');
+      const { port } = await startFixture({
+        www: (res) => send(res, 200, HTML, built),
+        apex: redirect,
+      });
+      const { code, output } = await runCheck(port);
+      expect(output).toMatch(/OK\s+www/);
+      expect(code).toBe(0);
+    },
+    SLOW,
+  );
+
+  test(
+    'a div whose id only starts with "root", or a data-id=root, is not the site',
+    async () => {
+      const decoys = [
+        '<html><body><div id=rootless></div></body></html>',
+        '<html><body><div id="root-x"></div></body></html>',
+        '<html><body><div data-id=root></div></body></html>',
+      ];
+      const { port } = await startFixture({
+        www: (res, n) => send(res, 200, HTML, decoys[(n - 1) % decoys.length]),
+        apex: redirect,
+      });
+      const { code, output } = await runCheck(port, { UPTIME_ATTEMPTS: '3' });
+      expect(output).toMatch(/FAIL\s+www.*attempt 3 of 3/);
+      expect(code).toBe(1);
+    },
+    SLOW,
+  );
+
+  test(
+    'www answers 200 with the root div but not in text/html: exit 1',
+    async () => {
+      const { port } = await startFixture({
+        www: (res) =>
+          send(res, 200, { 'Content-Type': 'text/plain' }, SITE_PAGE),
+        apex: redirect,
+      });
+      const { code, output } = await runCheck(port);
+      expect(output).toMatch(/FAIL\s+www.*text\/html.*text\/plain/);
+      expect(code).toBe(1);
+    },
+    SLOW,
+  );
+
+  test.each([302, 303, 307, 308])(
+    'the bare domain answers %i to the right place: exit 1 (only 301 counts)',
+    async (status) => {
+      const { port } = await startFixture({
+        www: site,
+        apex: (res) => send(res, status, { ...HTML, Location: CANONICAL }),
+      });
+      const { code, output } = await runCheck(port);
+      expect(output).toMatch(new RegExp(`FAIL\\s+apex.*status ${status}`));
+      expect(code).toBe(1);
     },
     SLOW,
   );
@@ -320,6 +411,27 @@ describe('the uptime workflow', () => {
         /^\s+run:\s*bash scripts\/uptime-check\.sh\s*$/.test(line),
       ),
     ).toBe(true);
+  });
+
+  test("its time limit outlasts the script's worst case, with room to spare", () => {
+    // A job cut off by its time limit is CANCELLED, not failed, and a
+    // cancelled scheduled run may send no email. So the limit must cover every
+    // try timing out, plus the waits between tries, plus two minutes for the
+    // runner and the checkout. Read from the script, so raising a default
+    // without raising the limit fails here.
+    const script = fs.readFileSync(SCRIPT, 'utf8');
+    const number = (re) => Number((re.exec(script) || [])[1]);
+    const attempts = number(/UPTIME_ATTEMPTS:-(\d+)\}/);
+    const delay = number(/UPTIME_RETRY_DELAY:-(\d+)\}/);
+    const maxTime = number(/--max-time (\d+)/);
+    [attempts, delay, maxTime].forEach((n) => expect(n).toBeGreaterThan(0));
+    const worstSeconds = 2 * (attempts * maxTime + (attempts - 1) * delay);
+    const limit = lines
+      .map((line) => /^\s+timeout-minutes:\s*(\d+)\s*$/.exec(line))
+      .filter(Boolean)
+      .map((match) => Number(match[1]));
+    expect(limit).toHaveLength(1);
+    expect(limit[0] * 60).toBeGreaterThanOrEqual(worstSeconds + 120);
   });
 
   test('its checkout keeps no credentials and fetches no submodules', () => {
