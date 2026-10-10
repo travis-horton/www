@@ -10,8 +10,9 @@
  *
  * It also runs the generator and reads what it writes as XML, and proves the
  * generator refuses a list that would publish a private or impossible address
- * (/journal, the calendar routes, a drill page with a `:levelId`, a wildcard,
- * a duplicate).
+ * (/journal, both calendar routes, a drill page with a `:levelId`, a wildcard,
+ * a query or fragment, white space, a path without a leading slash, a
+ * duplicate, a page also in "notIndexed"), and escapes the XML specials.
  *
  * The generator is plain Node (.mjs) and jest does not transform .mjs, so it
  * is never imported here: the test runs it with node, as the build does.
@@ -187,33 +188,55 @@ describe('the generator fails closed', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  const withList = (name, pages) => {
+  const withList = (name, pages, notIndexed = []) => {
     const file = path.join(dir, `${name}.json`);
-    fs.writeFileSync(file, JSON.stringify({ pages, notIndexed: [] }));
+    fs.writeFileSync(file, JSON.stringify({ pages, notIndexed }));
     return generate(['--pages', file, '-']);
   };
 
   test('a good list passes (the control)', () => {
-    const run = withList('good', ['/', '/piano']);
+    const run = withList('good', ['/', '/piano'], ['/learn/x']);
     expect(run.status).toBe(0);
   });
 
   // Each refusal must NAME the offending address, so a refusal for some other
-  // reason (a missing file, a crash) does not count as a pass.
+  // reason (a missing file, a crash) does not count as a pass. Each row trips
+  // exactly one check, so removing any one check turns a row red.
   test.each([
     ['the journal', ['/', '/journal'], '/journal'],
-    ['a calendar route', ['/', '/gcal-hook/x'], '/gcal-hook/x'],
+    ['the calendar hook', ['/', '/gcal-hook/x'], '/gcal-hook/x'],
+    ['the calendar drain', ['/', '/gcal-drain'], '/gcal-drain'],
     [
       'a drill page',
       ['/', '/learn/seximal/:levelId'],
       '/learn/seximal/:levelId',
     ],
-    ['a wildcard', ['/', '*'], '*'],
+    ['a bare wildcard', ['/', '*'], '*'],
+    ['a wildcard inside a path', ['/', '/x*'], '/x*'],
+    ['a query', ['/', '/a?b'], '/a?b'],
+    ['a fragment', ['/', '/a#b'], '/a#b'],
+    ['white space', ['/', '/a b'], '/a b'],
+    ['a path without a leading slash', ['/', 'piano'], 'piano'],
     ['a duplicate', ['/', '/piano', '/piano'], '/piano'],
-  ])('refuses %s', (name, pages, named) => {
-    const run = withList(name.replace(/\W+/g, '-'), pages);
+    ['a page also in notIndexed', ['/', '/piano'], '/piano', ['/piano']],
+  ])('refuses %s', (name, pages, named, notIndexed = []) => {
+    const run = withList(name.replace(/\W+/g, '-'), pages, notIndexed);
     expect(run.status).not.toBe(0);
     expect(run.stdout).toBe('');
     expect(run.stderr).toContain(`"${named}"`);
+  });
+
+  test('escapes the five XML special characters in an address', () => {
+    const odd = `/a&b<c>d'e"f`;
+    const run = withList('escape', ['/', odd]);
+    expect(run.status).toBe(0);
+    expect(run.stdout).toContain('/a&amp;b&lt;c&gt;d&apos;e&quot;f</loc>');
+    const doc = new DOMParser().parseFromString(run.stdout, 'application/xml');
+    expect(doc.getElementsByTagName('parsererror')).toHaveLength(0);
+    const locs = [...doc.getElementsByTagNameNS(SITEMAP_NS, 'loc')];
+    expect(locs.map((loc) => loc.textContent)).toEqual([
+      `${CANONICAL_ORIGIN}/`,
+      `${CANONICAL_ORIGIN}${odd}`,
+    ]);
   });
 });
