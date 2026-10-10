@@ -38,6 +38,9 @@ ATTEMPTS="${UPTIME_ATTEMPTS:-3}"
 RETRY_DELAY="${UPTIME_RETRY_DELAY:-30}"
 
 # Every request says who it is, so these visits can be told apart in a log.
+# This name is also what keeps them out of the site's visit log (the
+# `$http_user_agent` map in nginx/nginx.conf), so the two change together;
+# scripts/nginx-conf.test.js reads it from here and fails if they drift.
 USER_AGENT='travish-uptime-check (+https://github.com/travis-horton/www)'
 # The div the app draws into. src/index.html writes it `<div id="root">`, but
 # the site serves Parcel's minified build, which drops the quotes:

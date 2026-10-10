@@ -128,6 +128,9 @@ scheduled run to the account that last changed the cron line, if its notificatio
 Actions failures. schedules only run from `main`, and GitHub switches a public repo's schedules off
 after 60 days with no activity (turn it back on from the Actions tab).
 
+the check's requests say `travish-uptime-check` as their User-Agent, and `nginx/nginx.conf` leaves
+them out of the visit log (they still show in `docker logs`).
+
 run it by hand on GitHub (once the workflow is on `main`):
 `gh workflow run uptime --repo travis-horton/www`
 
