@@ -76,7 +76,6 @@ export const outerLabel = (i) => NIFTIMAL_DIGITS[i];
 export const SPANS_PER_DAY = 216; // 6³, so a span index is three seximal digits
 const MS_PER_SPAN = MS_PER_DAY / SPANS_PER_DAY;
 const MS_PER_WATCH = MS_PER_DAY / 6;
-const MS_PER_BREATH = MS_PER_MINUTE / 6;
 
 /**
  * The span face: the whole time as ONE number, 0..215, which is 000₆..555₆.
@@ -100,12 +99,18 @@ export const watchIndex = (msSinceMidnight) =>
  * sixth of its resolution, a breath the moment hand at a sixth of its — so on
  * a 36-mark dial they land on every sixth mark and read as slow duplicates.
  * Drawn stepping, so that is visible rather than argued.
+ *
+ * Each is a rung of the ladder below (the watch rung 1, the breath rung 5), so
+ * each is read with ladderDigit, which multiplies before dividing. The breath
+ * used to be `floor((ms % MS_PER_MINUTE) / (MS_PER_MINUTE / 6))`, and a lull
+ * (MS_PER_MINUTE, 66666.66… ms) is not representable: at an exact lull
+ * boundary such as 200000 ms the remainder came out as 66666.66… instead of 0,
+ * so the hand drew one step back (300 degrees, not 0) for that frame. The same
+ * trap, and the same fix, as ladderDigit's own comment.
  */
 export const extraHandAngles = (msSinceMidnight) => ({
-  watch: turnToDegrees(Math.floor(msSinceMidnight / MS_PER_WATCH) / 6),
-  breath: turnToDegrees(
-    Math.floor((msSinceMidnight % MS_PER_MINUTE) / MS_PER_BREATH) / 6,
-  ),
+  watch: turnToDegrees(ladderDigit(msSinceMidnight, 1) / 6),
+  breath: turnToDegrees(ladderDigit(msSinceMidnight, 5) / 6),
 });
 
 /* --- the six-tick face: one hand per rung, one digit per hand ------------- */

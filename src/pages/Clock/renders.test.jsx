@@ -146,9 +146,9 @@ test('all four faces sweep between ticks', () => {
   // The watch and breath hands (option 3) are STEPPED by design: a watch is
   // four hours and a breath eleven seconds, so neither is due to step in
   // 160 ms. What is asserted is that they read the same clock as the hands
-  // beside them, NOT that they stood still: at the mount instant itself, an
-  // exact minute boundary, extraHandAngles puts the breath hand one step
-  // back (300 rather than 0) and it reads 0 from the first frame on.
+  // beside them. (The mount instant is an exact minute boundary; until
+  // 26.1009 extraHandAngles put the breath hand one step back there, 300
+  // rather than 0. dial.test.js now pins it at 0.)
   expect(transforms('hand-watch')).toEqual([rotate(extraHandAngles(ms).watch)]);
   expect(transforms('hand-breath')).toEqual([
     rotate(extraHandAngles(ms).breath),

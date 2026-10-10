@@ -114,6 +114,23 @@ describe('the sketches', () => {
     }
     expect(seen.size).toBe(6);
   });
+
+  test('the breath hand is at zero ON a lull boundary, not one step back', () => {
+    // 200000 ms is exactly three lulls (a lull is 66666.66… ms, which a float
+    // cannot hold). The old remainder-then-divide read 66666.66… there and
+    // put the hand at 300 degrees for that frame.
+    expect(extraHandAngles(200000).breath).toBe(0);
+    expect(extraHandAngles(200000 - 1).breath).toBeCloseTo(300);
+    // Every lull boundary that lands on a whole millisecond, all day.
+    for (let ms = 0; ms < MS_PER_DAY; ms += 200000) {
+      expect(extraHandAngles(ms).breath).toBe(0);
+    }
+    // Both hands are the ladder's digits, at every instant sampled.
+    for (let ms = 0; ms < MS_PER_DAY; ms += 77777) {
+      expect(extraHandAngles(ms).watch).toBe(ladderAngles(ms).watch);
+      expect(extraHandAngles(ms).breath).toBe(ladderAngles(ms).breath);
+    }
+  });
 });
 
 describe('six ticks, seven hands', () => {
