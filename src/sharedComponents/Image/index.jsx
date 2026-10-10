@@ -19,14 +19,18 @@ function Image({
   return (
     <div className={className} style={size}>
       {/* A placeholder for the same picture: the full image below carries
-          the alt text, so a screen reader hears it once. */}
-      <img
-        className="image thumb"
-        alt=""
-        aria-hidden="true"
-        src={orNone(thumb)}
-        style={{ visibility: isLoaded ? 'hidden' : 'visible', ...size }}
-      />
+          the alt text, so a screen reader hears it once. Only when there IS
+          a thumbnail: an <img> with no src draws as a broken picture (the
+          blog's AND gate showed one, 26.1002 audit). */}
+      {thumb && (
+        <img
+          className="image thumb"
+          alt=""
+          aria-hidden="true"
+          src={thumb}
+          style={{ visibility: isLoaded ? 'hidden' : 'visible', ...size }}
+        />
+      )}
       <img
         onLoad={() => setIsLoaded(true)}
         className="image full"

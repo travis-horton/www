@@ -6,7 +6,7 @@ import andGate from 'url:/src/assets/media/and-gate.png';
 
 const TheFlipFlop1 = () => (
   <div className="container">
-    <main className="content">
+    <article className="content">
       <div className="main">
         <h1 className="blog_title">The D Flip-Flop, pt 1</h1>
         <p>
@@ -52,15 +52,7 @@ const TheFlipFlop1 = () => (
         </p>
         <p>
           There a few other types of gates: OR gates, NOT gates, NAND gates, and
-          several others. Go read about them{' '}
-          <a
-            href="http://www.ee.surrey.ac.uk/Projects/CAL/digital-logic/gatesfunc/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            here
-          </a>
-          .
+          several others. Go read about them.
         </p>
         <p>
           With these gates you can build all sorts of more complicated logical
@@ -125,7 +117,7 @@ const TheFlipFlop1 = () => (
         <br />
         <code>{'}'}</code>
       </div>
-    </main>
+    </article>
   </div>
 );
 

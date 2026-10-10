@@ -49,16 +49,20 @@ test('only the full image carries the alt text', () => {
 });
 
 // The blog's AND-gate picture has no thumbnail. React 19 warns about src=""
-// (a browser may refetch the whole page for it), so a missing picture must
-// leave the attribute off instead.
-test('a missing thumb or src leaves the attribute off, with no warning', () => {
+// (a browser may refetch the whole page for it), so a missing src must leave
+// the attribute off instead. A missing thumbnail draws no placeholder at all:
+// an <img> with no src shows as a broken picture (26.1009).
+test('no thumb: one img, no placeholder; a missing src leaves the attribute off, with no warning', () => {
   const errors = jest.spyOn(console, 'error').mockImplementation(() => {});
   const { container } = render(<Image alt="photo" src="full.png" />);
-  render(<Image alt="nothing yet" />);
-  const thumb = container.querySelector('img.thumb');
-  const full = container.querySelector('img.full');
-  expect(thumb).not.toHaveAttribute('src');
-  expect(full).toHaveAttribute('src', 'full.png');
+  expect(container.querySelectorAll('img')).toHaveLength(1);
+  expect(container.querySelector('img.thumb')).toBeNull();
+  expect(container.querySelector('img.full')).toHaveAttribute(
+    'src',
+    'full.png',
+  );
+  const { container: empty } = render(<Image alt="nothing yet" />);
+  expect(empty.querySelector('img.full')).not.toHaveAttribute('src');
   expect(errors).not.toHaveBeenCalled();
   errors.mockRestore();
 });
