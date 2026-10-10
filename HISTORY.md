@@ -12,6 +12,15 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #163: two dead blog links point at their archived copies · Bump the npm-minor-and-patch group with 4 updates · Bump actions/setup-node from 7.0.0 to 7.1.0 in the actions group** · [PR #163](https://github.com/travis-horton/www/pull/163) · merged 26.1010.1011 · v3.31.1
+- **[two dead blog links point at their archived copies](https://github.com/travis-horton/www/pull/162)** · merged 26.1010.1011
+  Fixed: in "this" in JavaScript, the word "articles" links again, now to the Internet Archive's 2019 copy of the arrow-functions article it once pointed to. In the flip-flop post, "Go read about them here" links again, to the Archive's 2023 copy of the University of Surrey's logic-gates page. Both originals are gone from the web.
+  Try it: open https://www.travish.com/blog/the-flip-flop-1 and click "here"
+- **[Bump the npm-minor-and-patch group with 4 updates](https://github.com/travis-horton/www/pull/158)** · merged 26.1010.1011
+  Behind the scenes: an automatic dependency update — "Bump the npm-minor-and-patch group with 4 updates".
+- **[Bump actions/setup-node from 7.0.0 to 7.1.0 in the actions group](https://github.com/travis-horton/www/pull/157)** · merged 26.1010.1011
+  Behind the scenes: an automatic dependency update — "Bump actions/setup-node from 7.0.0 to 7.1.0 in the actions group".
+
 **www #156: the backend plan, corrected · two out-of-date lines on the site + 10 more** · [PR #156](https://github.com/travis-horton/www/pull/156) · merged 26.1010.0933 · v3.31.0
 - **[Login safety rules in the plan](https://github.com/travis-horton/www/commit/3438a91)** · merged 26.1010.0933
   Behind the scenes: the written plan for the future journal login now lists the rules it must meet before it goes online: who can be sent a login email and how often, how long a login link lasts, and how the login is remembered. Nothing on the site changes; the login doesn't exist yet.
