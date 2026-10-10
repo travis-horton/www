@@ -7,7 +7,8 @@
  * These read the Dockerfile, the proxy's compose file and the workflow files as
  * TEXT (no YAML parser) and fail when one of five habits slips back in:
  *
- *   1. a base image named by a floating tag (`FROM node:latest`): the same
+ *   1. a base image named by a floating tag (`FROM node:latest`, or a channel
+ *      such as `nginx:mainline`): the same
  *      Dockerfile then builds a different site next month, with nothing in the
  *      repo's history to say when or why;
  *   2. the same for the two images of the proxy in front of the site
@@ -38,19 +39,36 @@ const linesOf = (...parts) =>
 const workflow = (name) => linesOf('.github', 'workflows', name);
 
 describe('the Dockerfile', () => {
+  // image:tag, the tag starting with a digit, optionally frozen by a digest.
+  const NUMBERED_TAG = /^[^:@]+:\d[^:@]*(@sha256:[0-9a-f]{64})?$/;
   const froms = linesOf('Dockerfile')
     .map((line) => /^\s*FROM\s+(?:--platform=\S+\s+)?(\S+)/i.exec(line))
     .filter(Boolean)
     .map((match) => match[1]);
 
-  test('every base image names an explicit version, never `latest`', () => {
+  test('every base image names a version number, never `latest` or a channel', () => {
     // Both stages are there to be checked (an empty list cannot pass).
     expect(froms).toHaveLength(2);
-    const floating = froms.filter((image) => {
-      const tag = /^[^:@]+:([^:@]+)(@sha256:[0-9a-f]{64})?$/.exec(image);
-      return !tag || tag[1] === 'latest';
-    });
+    // The tag must START WITH A DIGIT (26-trixie, 1.31, 1.31.6). That refuses
+    // `latest` and also the channel names that move just as freely: nginx's
+    // `stable` and `mainline`, node's `lts` and `current`. Until 26.1009 only
+    // `latest` and a missing tag were refused, so `nginx:mainline` passed.
+    const floating = froms.filter((image) => !NUMBERED_TAG.test(image));
     expect(floating).toEqual([]);
+  });
+
+  test('the rule above refuses the floating names it is there to refuse', () => {
+    const rule = (image) => NUMBERED_TAG.test(image);
+    [
+      'node',
+      'node:latest',
+      'nginx:mainline',
+      'nginx:stable',
+      'node:lts',
+    ].forEach((image) => expect([image, rule(image)]).toEqual([image, false]));
+    ['node:26-trixie', 'nginx:1.31', 'nginx:1.31.6'].forEach((image) =>
+      expect([image, rule(image)]).toEqual([image, true]),
+    );
   });
 
   test('the checks run on the same Node major the image is built with', () => {
