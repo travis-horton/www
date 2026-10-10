@@ -2,12 +2,18 @@
 # Both base images are named by version, never `latest` (26.1002). With `latest`
 # the same Dockerfile built a different site whenever Docker Hub moved the tag,
 # and nothing in this repo's history said when. ⚠️ Corrected 26.1009: these name
-# a RELEASE LINE, not one build. `node:26-trixie` and `nginx:1.31` are re-pointed
-# by every patch release (one CI run had nginx 1.31.6 here while the proxy ran
-# 1.31.3), so a new MAJOR or MINOR version is a change to one of these lines
-# that can be read, tested and reverted, but a patch arrives by itself. A
-# `@sha256:` digest after the tag would freeze one exact build. A channel name
-# (`stable`, `mainline`, `lts`) is refused by scripts/repo-pins.test.js.
+# a RELEASE LINE, not one build, and they MOVE. `nginx:1.31` is re-pointed by
+# every 1.31.x patch (one CI run had nginx 1.31.6 here while the proxy ran
+# 1.31.3); `node:26-trixie` by every Node 26 minor AND patch release. So the
+# same commit, rebuilt a week later, can be a different build, and only a jump
+# to nginx 1.32 or Node 27 is a change to one of these lines.
+# That is ON PURPOSE (Travis, ruling M-169, 26.1009): a personal site wants each
+# security patch the next time it builds, without a pull request per patch. The
+# price: a rollback re-runs the old image (deploy-to-prod.yml pulls it by tag),
+# but rebuilding an old commit does not reproduce it. To freeze one exact build
+# instead, pin the full version (`nginx:1.31.6`) or add a `@sha256:` digest.
+# A channel name (`stable`, `mainline`, `lts`) is refused by
+# scripts/repo-pins.test.js.
 # ⚠️ node's major must equal `node-version` in .github/workflows/checks.yml:
 # move both together (scripts/repo-pins.test.js fails if they drift).
 FROM node:26-trixie AS build
