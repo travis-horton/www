@@ -141,8 +141,13 @@
   margin: 4px 0 8px 0;
 }
 
+/* min-width: 0 lets the title wrap inside the row: a flex item will not
+   shrink below its longest word by default, and on a 375 px phone the title
+   of /learn/seximal/1 pushed the "next" arrow off the screen (26.1002 audit). */
 .level-nav__title {
   flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
   text-align: center;
 }
 

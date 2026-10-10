@@ -9,6 +9,18 @@
   text-align: center;
 }
 
+/*
+ * On a phone the demos' canvases (434 to 600 px wide, set by each project)
+ * made the page scroll sideways (26.1002 audit: 375 px window, 472 to 638 px
+ * of page). A canvas shrinks to the column instead and keeps its shape; only
+ * how it is SHOWN changes, not how many pixels it draws. Wider than the
+ * canvas, nothing changes.
+ */
+.project-content canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 .project-content__ray-tracer {
   margin-left: -50px;
 }
