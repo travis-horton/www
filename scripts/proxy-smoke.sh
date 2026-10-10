@@ -2,7 +2,7 @@
 # Rehearse the proxy that stands in front of the site, at the version
 # reverse-proxy/docker-compose.yml names, with the built image behind it.
 #
-#   bash scripts/proxy-smoke.sh <image>          e.g. www_web:ci
+#   bash scripts/proxy-smoke.sh <image> [<chat image>]   e.g. www_web:ci chat:ci
 #
 # ⚠️ FOR A THROWAWAY MACHINE ONLY (GitHub's runner). It starts a container
 # called `nginx-proxy` on ports 80 and 443, and it is never to be run on a
@@ -30,6 +30,16 @@
 #   5. The sandbox deploy's own two commands still work on this proxy: writing
 #      vhost.d/<host> through `docker exec nginx-proxy` and `nginx -s reload`,
 #      after which every answer for that host carries X-Robots-Tag.
+#   6. (26.1010) The chat at /chat/, started the way the deploys start it: its
+#      own container on a private network, the site's containers created on
+#      that network and put on the proxy's before they start. Through the
+#      proxy: /chat redirects to /chat/, the page and its files come from the
+#      chat, the live connection upgrades to a WebSocket, and two people hold a
+#      real conversation over it (scripts/chat-smoke.mjs). With the chat
+#      stopped, /chat/ alone fails (502) and the site still answers; started
+#      again, /chat/ comes back without touching the site.
+#      Needs the chat image as the second argument; without one this part is
+#      skipped, except under CI=true, where that is a FAIL.
 #
 # What it does NOT prove, and cannot: certificates. No certificate is issued
 # here, the companion container (acme-companion) is not started, port 443 is
@@ -40,7 +50,8 @@
 # is removed again, volumes included, whatever happened.
 set -euo pipefail
 
-IMAGE="${1:?usage: bash scripts/proxy-smoke.sh <image>}"
+IMAGE="${1:?usage: bash scripts/proxy-smoke.sh <image> [<chat image>]}"
+CHAT_IMAGE="${2:-}"
 here="$(cd "$(dirname "$0")" && pwd)"
 COMPOSE="$here/../reverse-proxy/docker-compose.yml"
 PROJECT=www-proxy-rehearsal
@@ -49,6 +60,9 @@ PROJECT=www-proxy-rehearsal
 PROXY=nginx-proxy
 WEB=proxy-rehearsal-web
 WWW=proxy-rehearsal-www_web
+CHAT=proxy-rehearsal-chat
+# The deploys call it www-chat; any name works, nginx only asks for `chat`.
+NET=proxy-rehearsal-www-chat
 PORT="${PROXY_SMOKE_PORT:-80}"
 ZEROS=00000000000000000000000000000000
 IMMUTABLE='public, max-age=31536000, immutable'
@@ -77,7 +91,8 @@ passes=0
 fails=0
 
 remove_everything() {
-  docker rm -f "$WEB" "$WWW" >/dev/null 2>&1 || true
+  docker rm -f "$WEB" "$WWW" "$CHAT" >/dev/null 2>&1 || true
+  docker network rm "$NET" >/dev/null 2>&1 || true
   docker compose -p "$PROJECT" -f "$COMPOSE" down -v >/dev/null 2>&1 || true
 }
 
@@ -167,9 +182,19 @@ security_headers() {
 }
 
 # start_site <container> <host>: one container of the image, announced to the
-# proxy the way the deploy workflows announce it.
+# proxy and started the way the deploy workflows do it (26.1010): created on
+# the chat's network, put on the proxy's default network, then started.
 start_site() {
-  docker run -d --name "$1" -e VIRTUAL_HOST="$2" -e VIRTUAL_PORT=80 "$IMAGE" >/dev/null
+  docker create --name "$1" --network "$NET" -e VIRTUAL_HOST="$2" -e VIRTUAL_PORT=80 "$IMAGE" >/dev/null
+  docker network connect bridge "$1"
+  docker start "$1" >/dev/null
+}
+
+# start_chat: the chat as the deploys start it. Its name here is the
+# rehearsal's own; `chat` is what nginx.conf asks for, given as an alias.
+start_chat() {
+  docker run -d --name "$CHAT" --network "$NET" --network-alias chat \
+    -e BASE_PATH=/chat -e PORT=8081 "$CHAT_IMAGE" >/dev/null
 }
 
 # wait_for_site: up to 60 s for the proxy to answer 200 for www.
@@ -216,7 +241,11 @@ case "$version" in
   *) fail "the proxy did not say its nginx version" ;;
 esac
 
-echo "== 2. two containers of the site behind it"
+echo "== 2. two containers of the site behind it (and the chat, when given)"
+docker network create "$NET" >/dev/null
+if [ -n "$CHAT_IMAGE" ]; then
+  start_chat
+fi
 start_site "$WEB" travish.com
 start_site "$WWW" www.travish.com
 if wait_for_site; then
@@ -268,6 +297,102 @@ header_once "bare host, the hook's 404" Cache-Control "no-store"
 req no-such-host.example GET /
 check "a host the proxy does not know, GET / status (the proxy's own answer)" "$STATUS" 503
 
+echo "== 2½. the chat at /chat/"
+# wait_for_chat <want status>: up to 30 s for /chat/ on www to answer that.
+wait_for_chat() {
+  local tries=0
+  while [ "$tries" -lt 30 ]; do
+    req www.travish.com GET /chat/
+    if [ "$STATUS" = "$1" ]; then
+      return 0
+    fi
+    tries=$((tries + 1))
+    sleep 1
+  done
+  return 1
+}
+if [ -z "$CHAT_IMAGE" ]; then
+  if [ "${CI:-}" = "true" ]; then
+    fail "no chat image given: the chat checks did not run"
+  else
+    echo "SKIP  no chat image given: the chat checks did not run (under CI=true this is a FAIL)"
+  fi
+else
+  req www.travish.com GET /chat
+  check "www host, GET /chat status (to the slash)" "$STATUS" 301
+  header_once "www host, GET /chat" Location "/chat/"
+  security_headers "www host, the /chat redirect"
+
+  req travish.com GET "/chat/?x=1"
+  check "bare host, GET /chat/?x=1 status" "$STATUS" 301
+  check "bare host, GET /chat/?x=1 goes to" "$REDIRECT" "https://www.travish.com/chat/?x=1"
+
+  wait_for_chat 200 || true
+  check "www host, GET /chat/ status" "$STATUS" 200
+  check "www host, GET /chat/ content type" "$CTYPE" "text/html; charset=UTF-8"
+  if grep -qF 'src="socket.io/socket.io.js"' "$work/body"; then
+    pass "www host, /chat/ is the chat's page (it loads its live connection by a relative address)"
+  else
+    fail "www host, /chat/ is not the chat's page"
+    head -c 400 "$work/body" || true
+    echo
+  fi
+  security_headers "www host, GET /chat/"
+  header_absent "www host, GET /chat/" X-Powered-By
+
+  req www.travish.com GET /chat/client.js
+  check "www host, GET /chat/client.js status" "$STATUS" 200
+  req www.travish.com GET /chat/socket.io/socket.io.js
+  check "www host, GET /chat/socket.io/socket.io.js status" "$STATUS" 200
+
+  req www.travish.com GET "/chat/socket.io/?EIO=4&transport=polling"
+  check "www host, the live connection's first answer (polling) status" "$STATUS" 200
+  if grep -qF '0{"sid"' "$work/body"; then
+    pass "www host, the live connection opens (polling)"
+  else
+    fail "www host, the live connection did not open (polling): $(head -c 200 "$work/body")"
+  fi
+
+  # The upgrade to a WebSocket, by hand: a 101 and the chat's opening packet.
+  # The connection stays open, so curl is stopped after 3 s (exit 28 is fine).
+  : >"$work/ws-headers"
+  : >"$work/ws-body"
+  curl -sS --http1.1 -N --max-time 3 -D "$work/ws-headers" -o "$work/ws-body" \
+    -H "Host: www.travish.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+    -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+    "http://127.0.0.1:${PORT}/chat/socket.io/?EIO=4&transport=websocket" 2>/dev/null || true
+  check "www host, the WebSocket upgrade status" "$(head -n 1 "$work/ws-headers" | awk '{print $2}')" 101
+  if grep -aqF '0{"sid"' "$work/ws-body"; then
+    pass "www host, the chat's opening packet arrives over the WebSocket"
+  else
+    fail "www host, no opening packet over the WebSocket"
+  fi
+
+  # A real conversation, from a container that reaches the proxy the way a
+  # visitor does (the host's port), by the site's real name.
+  if docker run --rm --add-host "www.travish.com:host-gateway" \
+    -v "$here/chat-smoke.mjs:/chat-smoke.mjs:ro" "$CHAT_IMAGE" \
+    node /chat-smoke.mjs "ws://www.travish.com:${PORT}/chat/socket.io/"; then
+    pass "two people talk over the chat through the proxy"
+  else
+    fail "two people could not talk over the chat through the proxy"
+  fi
+
+  # The chat must never take the site with it.
+  docker stop "$CHAT" >/dev/null
+  wait_for_chat 502 || true
+  check "chat stopped: www host, GET /chat/ status" "$STATUS" 502
+  req www.travish.com GET /
+  check "chat stopped: www host, GET / status (the site still answers)" "$STATUS" 200
+  docker start "$CHAT" >/dev/null
+  wait_for_chat 200 || true
+  check "chat started again: www host, GET /chat/ status (no site restart)" "$STATUS" 200
+  still_up_proxy() {
+    check "$1" "$(docker inspect -f '{{.State.Running}} {{.RestartCount}}' "$2" 2>/dev/null || echo 'inspect failed')" "true 0"
+  }
+  still_up_proxy "the www container never restarted" "$WWW"
+fi
+
 echo "== 3. the sandbox deploy's two commands, on this proxy version"
 if write_robots; then
   pass "docker exec $PROXY: wrote vhost.d/<host> for both hosts and reloaded nginx"
@@ -316,8 +441,10 @@ fi
 
 echo "== 4. everything it started is removed again"
 remove_everything
-left="$(docker ps -a --format '{{.Names}}' | grep -cx -e "$PROXY" -e "$WEB" -e "$WWW" || true)"
+left="$(docker ps -a --format '{{.Names}}' | grep -cx -e "$PROXY" -e "$WEB" -e "$WWW" -e "$CHAT" || true)"
 check "containers of this rehearsal left behind" "$left" 0
+left="$(docker network ls --format '{{.Name}}' | grep -cx "$NET" || true)"
+check "networks of this rehearsal left behind" "$left" 0
 left="$(docker volume ls -q | grep -c "^${PROJECT}_" || true)"
 check "volumes of this rehearsal left behind" "$left" 0
 

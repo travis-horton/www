@@ -102,6 +102,16 @@ docker run --detach --restart always --name acme --volumes-from proxy --volume /
 the two "start kiddspazz website" blocks below are how it was first done by hand. the deploy
 workflows now start these containers themselves, as `web` and `www_web` (see `.github/workflows/`).
 
+since 26.1010 they also start a third, `chat` (react-chat, the submodule `services/react-chat`),
+which answers www.travish.com/chat/. it sits on its own docker network, `www-chat`, which the
+workflows create the first time; `web` and `www_web` are created on that network and then put on
+the default bridge, where the proxy reaches them. the chat has no VIRTUAL_HOST, so the proxy never
+routes to it directly: the site's nginx passes `/chat/` to it (`nginx/nginx.conf`, ②¾). if `chat`
+is down, only `/chat/` fails (502); the site keeps answering. nothing in it is saved: every deploy
+or restart starts the chat empty. its image is built by the sandbox deploy, in the same Docker Hub
+repository as the site's, tagged `chat-<commit>` and, once the sandbox is up, `chat-tree-<hash>`,
+which production pulls.
+
 ## start kiddspazz website at travish.com -- to be done in prod
 docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
 docker run --rm --name www_website -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web

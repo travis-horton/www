@@ -105,6 +105,12 @@ jobs:
         run: docker build -t www_web:ci .
 
       -
+        # 💬 The chat's image (26.1010), from the submodule services/react-chat,
+        # the way deploy-to-dev builds it. Used by the proxy rehearsal below.
+        name: Build the chat's image
+        run: docker build -t chat:ci services/react-chat
+
+      -
         name: Start it and ask it what the live site is asked
         run: bash scripts/image-smoke.sh www_web:ci
 
@@ -123,8 +129,10 @@ jobs:
         # replaced by hand; this is the part of that step a check can try
         # first. It proves routing and headers. It does NOT prove certificates:
         # none is issued here and the companion container is not started.
+        # Since 26.1010 it also starts the chat the way the deploys do and
+        # holds a conversation over /chat/ through the proxy.
         name: Rehearse the pinned proxy in front of the image
-        run: bash scripts/proxy-smoke.sh www_web:ci
+        run: bash scripts/proxy-smoke.sh www_web:ci chat:ci
 
   workflows:
     runs-on: ubuntu-latest
