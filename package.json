@@ -1,6 +1,6 @@
 {
   "name": "www",
-  "version": "3.30.3",
+  "version": "3.31.0",
   "description": "website with parcel",
   "scripts": {
     "test": "jest",

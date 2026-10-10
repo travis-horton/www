@@ -12,6 +12,55 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #156: the backend plan, corrected · two out-of-date lines on the site + 10 more** · [PR #156](https://github.com/travis-horton/www/pull/156) · merged 26.1010.0933 · v3.31.0
+- **[Login safety rules in the plan](https://github.com/travis-horton/www/commit/3438a91)** · merged 26.1010.0933
+  Behind the scenes: the written plan for the future journal login now lists the rules it must meet before it goes online: who can be sent a login email and how often, how long a login link lasts, and how the login is remembered. Nothing on the site changes; the login doesn't exist yet.
+- **[The plan's first line](https://github.com/travis-horton/www/commit/10f9e11)** · merged 26.1010.0933
+  Fixed: the plan's opening line called the journal server "the active project" while further down it said "not started". It now says planned and not started, a leisure-paced learning project since 26.1001.
+- **[Programming goals](https://github.com/travis-horton/www/commit/ae3e7c6)** · merged 26.1010.0933
+  Fixed: the Goals list on www.travish.com/programming still named an old Postgres tutorial and other past goals. It now says one current goal: build travish.com's backend in Zig.
+- **[Contact page](https://github.com/travis-horton/www/commit/ae3e7c6)** · merged 26.1010.0933
+  Fixed: the Contact page no longer prints a phone number that anyone, including spam robots, could copy. Email is the way to get in touch.
+- **[Pages load when opened](https://github.com/travis-horton/www/commit/1e72f85)** · merged 26.1010.0933
+  Behind the scenes: the /learn courses, the programming demos and the piano page are now downloaded only when someone opens them, so the first page of a visit loads about a third less script. Nothing looks different.
+- **[A damaged progress code is skipped](https://github.com/travis-horton/www/commit/c6729bc)** · merged 26.1010.0933
+  Fixed: on /learn, pasting a hand-edited "move progress between devices" code could leave the seximal pages broken until the browser's saved data was cleared, or show a best score above 100%. Damaged entries in a code are now skipped and counted, and the pages keep working.
+- **[Blog links and picture](https://github.com/travis-horton/www/commit/4c02028)** · merged 26.1010.0933
+  Fixed: on the blog, the "pdf" link in The First Blog Post downloaded a useless copy of the site instead of a PDF; it now opens the Nand2Tetris chapter page. Two links to sites that no longer exist were removed, and the AND-gate picture in The D Flip-Flop, pt 1 no longer shows a broken-picture icon beside it.
+- **[Phones](https://github.com/travis-horton/www/commit/11092ad)** · merged 26.1010.0933
+  Fixed: on a phone, the programming demos (perlin noise, ray tracer, orbitz, asteroids, polygon race) and the first seximal lesson were wider than the screen and scrolled sideways. The demos now shrink to fit, and the lesson's title wraps so the "next" arrow stays on screen.
+- **[Page names in the tab](https://github.com/travis-horton/www/commit/c123c0d)** · merged 26.1010.0933
+  New: each page now has its own name in the browser tab and in search results, such as "Piano · Travis Horton"; the home page keeps "Travis Horton: one human bean". Each page also tells search engines that its address on www.travish.com is the real one.
+- **[Screen readers](https://github.com/travis-horton/www/commit/cec2eeb)** · merged 26.1010.0933
+  Fixed: in the /learn drills, a screen reader now says whether an answer was right after Check, and every page now has a main title a screen reader can find. Nothing on the screen looks different.
+- **[Compressed files](https://github.com/travis-horton/www/commit/6c142cc)** · merged 26.1010.0933
+  Behind the scenes: the site now sends its script, stylesheet, icons and fonts compressed, so a first visit downloads about a third as much; the main script goes from about 362 KB to about 112 KB. The two font kinds are also labelled as fonts now.
+- **[/journal is gone for good](https://github.com/travis-horton/www/commit/6c142cc)** · merged 26.1010.0933
+  Fixed: www.travish.com/journal, the hidden page removed on 26.0913, still answered like a page, so search engines had no reason to forget it. It now answers "gone", which tells them to drop it.
+- **[Files for search engines](https://github.com/travis-horton/www/commit/6c142cc)** · merged 26.1010.0933
+  New: the site has a robots.txt saying search engines may read every page, and a sitemap listing the site's pages (www.travish.com/sitemap.xml), so they can find all of them.
+- **[a truer note on the site's building blocks](https://github.com/travis-horton/www/pull/154)** · merged 26.1010.0933
+  Behind the scenes: the build file's note on its two starting software bundles now says plainly that they pick up safety fixes on their own, that this is on purpose, and how far each can move without anyone changing the file. Nothing about the site changes.
+- **[Live only after the test site passes](https://github.com/travis-horton/www/commit/fbec2e6)** · merged 26.1010.0933
+  Behind the scenes: a new version of the site is marked ready for www.travish.com only after it has come up healthy on the test site, kiddspazz.com. Before, the real site could start switching to a new version a few seconds before the test site had finished checking it.
+- **[A way back](https://github.com/travis-horton/www/commit/fbec2e6)** · merged 26.1010.0933
+  New: an earlier release of www.travish.com can be put back with one command, using the exact build the test site ran for it; the README says how. It works for releases from 26.0928 on.
+- **[Test site stays out of search results from the first moment](https://github.com/travis-horton/www/commit/fbec2e6)** · merged 26.1010.0933
+  Fixed: after the test site's front door is replaced, the first update would have left kiddspazz.com without its "don't list me in search engines" note until the update after it. The note is now written before the site restarts.
+- **[Tidier upkeep](https://github.com/travis-horton/www/commit/7a27225)** · merged 26.1010.0933
+  Behind the scenes: the automatic update proposals now send a big new version of a build tool on its own instead of bundled with small ones; the check on the server software's version names now also refuses names like "mainline" or "stable" that change by themselves; and two notes in the setup files were corrected to say what they really do.
+- **[the clock page's breath hand lands on time](https://github.com/travis-horton/www/pull/148)** · merged 26.1010.0933
+  Fixed: on the clock page, in the sketch with the watch and breath drawn as extra hands, the breath hand pointed one mark too far back for a moment at the start of every lull. It now points at the right mark at that instant as well.
+- **[the code's layout is checked on every change](https://github.com/travis-horton/www/pull/147)** · merged 26.1010.0933
+  Behind the scenes: three files of the /learn pages were re-wrapped to the site's standard code layout, and the automatic checks on every change now confirm that layout too. Nothing on the pages changes.
+- **[a check that draft performances stay off the site](https://github.com/travis-horton/www/pull/146)** · merged 26.1010.0933
+  Behind the scenes: every build now checks that the Piano page's unpublished performances are not in the files visitors download, and that the published ones are; the build's checks go red if a draft ever slips back in.
+- **[History links repaired after the clean-up](https://github.com/travis-horton/www/pull/145)** · merged 26.1010.0933
+  Fixed: after the 26.1009 clean-up that removed old private files from the site's history, every link in this history file pointed at a change ID that no longer existed. All 191 links now point at the same changes under their new IDs.
+- **[Programming goal now Zig; Contact page tidied](https://github.com/travis-horton/www/pull/144)** · merged 26.1010.0933
+  New: the Programming page's goals list says "Learn Zig" instead of "Learn Rust", and the link goes to Zig's own learning page. The Contact page no longer lists Twitter or Instagram, since those accounts aren't used (the footer dropped them on 26.0905).
+  Fixed: the Contact page spelled the blog "Julia Evan's"; it now reads "Julia Evans's".
+
 **www #142: a visit log that survives updates** · [PR #142](https://github.com/travis-horton/www/pull/142) · merged 26.1006.1522 · v3.30.3
 - **[a visit log that survives updates](https://github.com/travis-horton/www/pull/141)** · merged 26.1006.1522
   Behind the scenes: the server now writes one line per page visit (when, which page, which site it came from, the browser and device) to a log kept on the server itself, so the history no longer disappears each time the site is updated. Pictures, fonts and code files that load with a page are left out, so each line is one real page view. The log is never published on the site.
