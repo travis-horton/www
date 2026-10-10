@@ -113,3 +113,26 @@ docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST
 
 ## start the acme docker container with test certs and DEBUG mode -- for testing only
 docker run --detach --rm --name acme --env "DEBUG=1" --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh --env "ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory" -d nginxproxy/acme-companion:2.8.2
+
+
+# uptime check
+
+every 30 minutes GitHub runs `scripts/uptime-check.sh` (`.github/workflows/uptime.yml`), which asks:
+
+* `https://www.travish.com/` answers 200 with the site's own page in it, and
+* `https://travish.com/` answers 301 to `https://www.travish.com/` (not followed: the redirect is
+  made by the container serving the bare domain, so seeing it proves that container is up).
+
+each is asked up to three times, 30 seconds apart. a red run is the alarm: GitHub emails a failed
+scheduled run to the account that last changed the cron line, if its notification settings send
+Actions failures. schedules only run from `main`, and GitHub switches a public repo's schedules off
+after 60 days with no activity (turn it back on from the Actions tab).
+
+run it by hand on GitHub (once the workflow is on `main`):
+`gh workflow run uptime --repo travis-horton/www`
+
+run it locally (it makes two or more requests to the live site):
+`bash scripts/uptime-check.sh`
+
+its tests run it against a stand-in server on your own machine, never the live site:
+`npx jest scripts/uptime-check.test.js`
