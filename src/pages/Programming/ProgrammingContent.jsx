@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 function ProgrammingContent() {
   return (
     <div>
+      {/* The page's name for screen readers and outlines; the page shows no
+          title of its own, so it is not drawn. */}
+      <h1 className="visually-hidden">Programming</h1>
       <p>
         Yeah, I write stuff that computers can read sometimes. I like moving
         pixels around and doing math problems to get them to do so in

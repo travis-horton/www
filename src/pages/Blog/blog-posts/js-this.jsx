@@ -2,7 +2,7 @@ import React from 'react';
 
 const JsThisBlog = () => (
   <div className="container">
-    <main className="content">
+    <article className="content">
       <div className="main">
         <h1 className="blog_title">
           Javascript's <code>this</code>, <code>apply</code>, <code>call</code>,
@@ -116,11 +116,10 @@ const JsThisBlog = () => (
           <a href="https://stackabuse.com/arrow-functions-in-javascript/">
             different
           </a>{' '}
-          <a href="https://developer.blog/es6-arrow-functions/">articles</a> in
-          themselves. For the purposes of these notes, the important thing to
-          remember is that <code>this</code> retains the value it had within
-          whatever called the arrow function. This functionality can be useful
-          for using helper functions within other functions, for class
+          articles in themselves. For the purposes of these notes, the important
+          thing to remember is that <code>this</code> retains the value it had
+          within whatever called the arrow function. This functionality can be
+          useful for using helper functions within other functions, for class
           constructions, and other fun things too.
         </p>
         <h3>Other cases</h3>
@@ -148,7 +147,7 @@ const JsThisBlog = () => (
           go into much more detail about those three cases.
         </p>
       </div>
-    </main>
+    </article>
   </div>
 );
 
