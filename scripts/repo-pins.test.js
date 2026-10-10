@@ -219,9 +219,9 @@ describe('the workflows', () => {
   });
 
   test('the sandbox marks a build for production only after its own deploy', () => {
-    // Production pulls :tree-<hash>. That tag must be written AFTER the
-    // sandbox deploy step, so a run that stops early (a failure, a cancel)
-    // never leaves a tag behind that production would then pull.
+    // Production pulls :tree-<hash>. That tag (and :latest) must be written
+    // AFTER the sandbox deploy step, so a run that stops early (a failure, a
+    // cancel) never leaves a tag behind that production would then pull.
     const lines = workflow('deploy-to-dev.yml');
     const deploy = lines.findIndex((line) =>
       /^\s*(?:-\s+)?uses:\s*appleboy\/ssh-action@/.test(line),
@@ -233,5 +233,13 @@ describe('the workflows', () => {
     expect(deploy).toBeGreaterThan(-1);
     expect(treeTag).toBeGreaterThan(deploy);
     expect(tagging).toBeGreaterThan(deploy);
+    // And nothing BEFORE the deploy names those tags: not the build step's
+    // `tags:` list (the pre-26.1009 habit), not an extra step. Comment lines
+    // are skipped, since they may describe the tags.
+    const early = lines
+      .slice(0, deploy)
+      .filter((line) => !/^\s*#/.test(line))
+      .filter((line) => /www_web:(?:tree-|latest\b)/.test(line));
+    expect(early).toEqual([]);
   });
 });
