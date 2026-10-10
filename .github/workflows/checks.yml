@@ -79,9 +79,9 @@ jobs:
         run: npm run build
 
       -
-        # Keeps package.json out of what visitors download, and the real
-        # version number in.
-        name: Nothing from package.json is in the bundle
+        # Keeps package.json and draft performances out of what visitors
+        # download, and the real version number and the public performances in.
+        name: Nothing from package.json or a draft performance is in the bundle
         run: node scripts/check-bundle.mjs dist
 
   image:

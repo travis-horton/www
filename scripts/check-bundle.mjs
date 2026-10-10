@@ -1,5 +1,5 @@
-// Three checks on the built site: two about the footer's version, one about
-// the built files' names.
+// Four checks on the built site: two about the footer's version, one about
+// the built files' names, one about the Piano page's performances.
 //
 //   node scripts/check-bundle.mjs <dist-dir>
 //
@@ -30,6 +30,14 @@
 //    long-cache rule must cover every built file, and index.html (the one name
 //    that never changes) must stay outside it.
 //
+// 4. No draft performance is in the bundle, and the public ones are. The Piano
+//    page's list comes from src/data/performances.json, and once every visitor
+//    downloaded the draft rows (with private notes) that the page only hid on
+//    screen. The data file now holds public rows only, and a jest test says
+//    so; this looks at what was actually BUILT, so a draft row that reached
+//    the site another way is caught too. The public count must be above zero,
+//    so a bundle the list fell out of cannot pass by finding nothing.
+//
 // Exit 0: all hold. Exit 1: one fails (the file or the missing string is
 // named), or there was nothing to check. An empty or missing folder is a
 // failure on purpose, so a build that silently produced nothing cannot pass.
@@ -37,6 +45,10 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
 const MARKERS = ['devDependencies', 'testPathIgnorePatterns'];
+// 4. How a performance row's visibility reads in the built .js (the bundler
+// keeps the JSON text as it is).
+const DRAFT_ROW = '"visibility":"draft"';
+const PUBLIC_ROW = '"visibility":"public"';
 // The one built file whose name must NOT carry a hash.
 const PAGE = 'index.html';
 
@@ -83,9 +95,18 @@ const wanted = `v${process.env.APP_VERSION || packageVersion}+`;
 
 let failures = 0;
 let versionSeen = 0;
+let publicRows = 0;
 for (const file of files) {
   const text = readFileSync(file, 'utf8');
   versionSeen += count(text, wanted);
+  publicRows += count(text, PUBLIC_ROW);
+  const drafts = count(text, DRAFT_ROW);
+  if (drafts > 0) {
+    failures += 1;
+    console.error(
+      `FAIL  ${file} contains ${drafts} draft performance row(s) (${DRAFT_ROW}): every visitor would download them. src/data/performances.json must hold public rows only.`,
+    );
+  }
   for (const marker of MARKERS) {
     const hits = count(text, marker);
     if (hits > 0) {
@@ -104,6 +125,13 @@ if (failures === 0 && versionSeen === 0) {
   failures += 1;
   console.error(
     `FAIL  no built .js file contains "${wanted}": the footer's version was not written into the bundle. Check that package.json's "@parcel/transformer-js" inlineEnvironment still lists npm_package_version and APP_VERSION, and that the build was started with npm.`,
+  );
+}
+
+if (publicRows === 0) {
+  failures += 1;
+  console.error(
+    `FAIL  no built .js file contains ${PUBLIC_ROW}: the Piano page's performances are not in the bundle, so the draft check above proved nothing.`,
   );
 }
 
@@ -161,4 +189,7 @@ console.log(
 );
 console.log(
   `OK    ${named} built file(s) besides ${PAGE} carry a hash of their content in their name; ${PAGE} does not`,
+);
+console.log(
+  `OK    ${publicRows} public performance row(s) in the bundle, and no draft row`,
 );
