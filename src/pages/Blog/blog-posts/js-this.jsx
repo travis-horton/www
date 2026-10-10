@@ -116,10 +116,13 @@ const JsThisBlog = () => (
           <a href="https://stackabuse.com/arrow-functions-in-javascript/">
             different
           </a>{' '}
-          articles in themselves. For the purposes of these notes, the important
-          thing to remember is that <code>this</code> retains the value it had
-          within whatever called the arrow function. This functionality can be
-          useful for using helper functions within other functions, for class
+          <a href="https://web.archive.org/web/20191114095537/https://developer.blog/es6-arrow-functions/">
+            articles
+          </a>{' '}
+          in themselves. For the purposes of these notes, the important thing to
+          remember is that <code>this</code> retains the value it had within
+          whatever called the arrow function. This functionality can be useful
+          for using helper functions within other functions, for class
           constructions, and other fun things too.
         </p>
         <h3>Other cases</h3>

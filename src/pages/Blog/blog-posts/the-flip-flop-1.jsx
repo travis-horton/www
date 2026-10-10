@@ -52,7 +52,15 @@ const TheFlipFlop1 = () => (
         </p>
         <p>
           There a few other types of gates: OR gates, NOT gates, NAND gates, and
-          several others. Go read about them.
+          several others. Go read about them{' '}
+          <a
+            href="https://web.archive.org/web/20230728100834/http://www.ee.surrey.ac.uk/Projects/CAL/digital-logic/gatesfunc/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            here
+          </a>
+          .
         </p>
         <p>
           With these gates you can build all sorts of more complicated logical
