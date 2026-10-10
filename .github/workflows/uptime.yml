@@ -48,8 +48,10 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    # Worst case is two questions x three tries x 20 seconds, plus the waits.
-    timeout-minutes: 5
+    # Worst case is two questions x (three tries x 20 seconds + two 30-second
+    # waits) = 4 minutes. A job stopped by this limit is CANCELLED, not failed,
+    # and may send no email, so it leaves room over that (tested).
+    timeout-minutes: 8
     steps:
       -
         # Only the script is needed: no project pages, no credentials kept.
