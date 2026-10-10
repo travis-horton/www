@@ -27,7 +27,9 @@
  *        - docker: after each `docker run` it is "mid-write" for the next
  *          FAKE_DOCKERGEN_BUSY nginx calls (`nginx -t` or `nginx -s reload`),
  *          each of which fails with the line above; after that the config is
- *          whole. Any call it does not know is logged as `unknown` (exit 99).
+ *          whole. One case also makes the first reload fail right after a
+ *          passing `nginx -t` (docker-gen started writing again in between).
+ *          Any call it does not know is logged as `unknown` (exit 99).
  *        - sleep: returns at once, logging its argument.
  *        - mkdir: logs, touches nothing (the script makes two directories
  *          under /var/log and /etc on the server).
@@ -253,6 +255,15 @@ case "$1" in
             echo "$emerg" >&2
             exit 1
           fi
+          # docker-gen started writing again between nginx -t and the reload.
+          races=0
+          if [ -f "$state.races" ]; then races="$(cat "$state.races")"; fi
+          if [ "$races" -gt 0 ]; then
+            echo "reload-race" >> "$log"
+            echo $((races - 1)) > "$state.races"
+            echo "$emerg" >&2
+            exit 1
+          fi
           exit 0
           ;;
         "sh -c "*vhost.d*)
@@ -331,7 +342,9 @@ const afterContainers = (lines) => {
   return rest.slice(0, pause);
 };
 
-const runDeploy = (name, busy) => {
+// races: how many reloads fail even right after a passing `nginx -t`.
+const runDeploy = (name, busy, races = 0) => {
+  fs.writeFileSync(`${stateFile}.races`, String(races));
   const result = spawnSync('bash', [scriptFile], {
     cwd: dir,
     env: fakeEnv(busy),
@@ -346,7 +359,7 @@ const runDeploy = (name, busy) => {
     fs.writeFileSync(
       path.join(keep, `${name}.txt`),
       [
-        `# the deploy's ssh script from ${DEV_WORKFLOW}, FAKE_DOCKERGEN_BUSY=${busy}`,
+        `# the deploy's ssh script from ${DEV_WORKFLOW}, FAKE_DOCKERGEN_BUSY=${busy}, reload races=${races}`,
         `# exit status: ${result.status}, signal: ${result.signal}`,
         '# ---- what the script printed (stdout, then stderr)',
         output,
@@ -405,6 +418,21 @@ describe("the deploy's real ssh script, against a fake docker", () => {
     expect(lines).not.toContain('reload');
     expect(lines).not.toContain('prune');
     expect(result.status).not.toBe(0);
+  });
+
+  test('a reload that fails right after a passing `nginx -t` counts as a failed try, not the end', () => {
+    const { result, output, lines } = runDeploy('reload-race', 0, 1);
+    expect(afterContainers(lines)).toEqual([
+      't ok',
+      'reload',
+      'reload-race',
+      'sleep 1',
+      't ok',
+      'reload',
+    ]);
+    expect(lines).toContain('prune');
+    expect(output).not.toContain('DEPLOY FAILED');
+    expect(result.status).toBe(0);
   });
 
   test('when the config is already whole, it reloads at once', () => {
