@@ -1,6 +1,6 @@
 # www Backend Project
 
-Personal website for Travis Horton at travish.com. Currently a static React app deployed via Docker + nginx-proxy on DigitalOcean. Backend is the active project: a Zig API server with PostgreSQL, magic link auth, and a journal sync pipeline.
+Personal website for Travis Horton at travish.com. Currently a static React app deployed via Docker + nginx-proxy on DigitalOcean. Backend (planned, not started; a leisure-paced Zig learning project since 26.1001): a Zig API server with PostgreSQL, magic link auth, and a journal sync pipeline.
 
 **Why Zig:** Learning project — Travis knows Zig's creator one-friend-removed.
 **Frontend:** JS, React 18, Parcel 2, React Router 7 (`react-router-dom` ^7.18.3). Deployed via Docker + GitHub Actions.
