@@ -175,12 +175,49 @@ jobs:
               -v /var/log/www:/var/log/www \
               -d "$IMAGE"
             # The noindex files were written above; the reload stays here, after
-            # the new containers, as it always was.
-            docker exec nginx-proxy nginx -s reload
+            # the new containers, as it always was. But it waits for a whole
+            # config first (26.1010). docker-gen, inside nginx-proxy, rewrites
+            # /etc/nginx/conf.d/default.conf whenever a container starts or
+            # stops (the two just above), and "nginx -s reload" reads that
+            # whole file before it signals anything. A reload in that same
+            # moment reads a half-written file and fails: "[emerg] unexpected
+            # end of file ... default.conf:173" (checks run 38075573361,
+            # 26.1010, www #169, in the proxy rehearsal, which ran this same
+            # bare reload). Here that would turn the deploy red and skip the
+            # image cleanup, though the site is up. So: up to 30 tries, 1 s
+            # apart. Each runs "nginx -t" and reloads only when that passes; a
+            # reload that still fails (docker-gen started again in between)
+            # counts as a failed try. A config that never passes is a real
+            # failure: it is reported with what nginx last said, the deploy
+            # fails and the image cleanup is skipped, as before. At most ~30 s
+            # added.
+            reload_tries=0
+            reload_rc=1
+            reload_out=""
+            reload_what=""
+            while [ "$reload_tries" -lt 30 ]; do
+              reload_tries=$((reload_tries + 1))
+              reload_what="nginx -t"
+              if reload_out="$(docker exec nginx-proxy nginx -t 2>&1)"; then
+                reload_what="nginx -s reload"
+                if reload_out="$(docker exec nginx-proxy nginx -s reload 2>&1)"; then
+                  reload_rc=0
+                  break
+                fi
+              fi
+              if [ "$reload_tries" -lt 30 ]; then
+                sleep 1
+              fi
+            done
+            if [ "$reload_rc" -ne 0 ]; then
+              echo "DEPLOY FAILED: nginx -t inside nginx-proxy still failing after 30 tries (docker-gen never finished writing /etc/nginx/conf.d/default.conf, or the config is really broken); last output, of '$reload_what':"
+              printf '%s\n' "$reload_out"
+            fi
             # Keep the job's verdict: ssh-action reports the script's LAST exit
-            # status, which until now was the reload above. The cleanup below
-            # must not be able to hide a failed deploy, or cause one.
-            deploy_rc=$?
+            # status, which until 26.1010 was a bare reload here and is now
+            # the wait-and-reload above (reload_rc). The cleanup below must not
+            # be able to hide a failed deploy, or cause one.
+            deploy_rc=$reload_rc
             # Is the new site actually up? Both containers must be RUNNING,
             # started from $IMAGE (the build this run just pulled), and must
             # NEVER have restarted. The last part is what makes this reliable:
