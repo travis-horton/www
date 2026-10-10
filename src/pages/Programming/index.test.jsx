@@ -63,3 +63,18 @@ test('the seximal time-keeping project renders its hexagon clock', () => {
   );
   expect(container.querySelector('main svg polygon')).not.toBeNull();
 });
+
+test('the projects list links to the chat as a plain link, outside the app (26.1010)', () => {
+  render(
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      initialEntries={['/']}
+    >
+      <Programming />
+    </MemoryRouter>,
+  );
+  expect(screen.getByRole('link', { name: 'Chat' })).toHaveAttribute(
+    'href',
+    '/chat/',
+  );
+});

@@ -97,6 +97,21 @@ jobs:
             APP_VERSION=${{ steps.version.outputs.version }}
 
       -
+        # 💬 The chat (26.1010): react-chat, pinned as the git submodule
+        # services/react-chat, so this commit decides which chat is built.
+        # Same repository on Docker Hub, its own tag prefix (`chat-`), so no
+        # new repository has to exist there. Like the site's image it gets only
+        # its :chat-<commit> tag here; :chat-tree-<content hash>, which
+        # production pulls, is added by the last step once the sandbox is up.
+        name: Build and push the chat
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: services/react-chat
+          push: true
+          tags: |
+            kiddspazz/www_web:chat-${{ github.sha }}
+
+      -
         name: Deploy web app to kiddspazz.com
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
@@ -107,11 +122,13 @@ jobs:
             # The exact build this run just pushed — not :latest, which a newer
             # push can move while this run is still going.
             IMAGE=kiddspazz/www_web:${{ github.sha }}
+            CHAT_IMAGE=kiddspazz/www_web:chat-${{ github.sha }}
             # Stop HERE if the pull fails (Docker Hub blip, rate limit): this
             # script has no set -e, and the old site's image is under a
             # different tag, so carrying on would remove the running
             # containers and then fail to start the new ones — nothing serving.
             docker pull "$IMAGE" || { echo "pull of $IMAGE failed; live site left untouched"; exit 1; }
+            docker pull "$CHAT_IMAGE" || { echo "pull of $CHAT_IMAGE failed; live site left untouched"; exit 1; }
             # kiddspazz.com is the SANDBOX and must never be indexed: the same
             # bundle serves travish.com, and Search Console flagged the pair as
             # "duplicate without user-selected canonical" (26.0917). nginx-proxy
@@ -133,7 +150,18 @@ jobs:
             # them and the site stayed down until the next push (26.0913).
             # rm -f replaces the old stop + rm pairs: a stopped container is no
             # longer removed for us, and -f also clears one left mid-restart.
-            docker rm -f web www_web || true
+            docker rm -f chat web www_web || true
+            # 💬 THE CHAT (26.1010). Its own container, on a private network
+            # that only the two site containers share with it; no VIRTUAL_HOST,
+            # so the proxy in front never routes to it. The site's nginx passes
+            # /chat/ to it by name (nginx/nginx.conf, ②¾). Created once and then
+            # reused; this line does nothing when it exists already.
+            docker network create www-chat >/dev/null 2>&1 || true
+            # Started BEFORE the site, so the site finds it from its first
+            # request. In memory only: every deploy starts it empty.
+            docker run --restart unless-stopped --name chat --network www-chat \
+              -e BASE_PATH=/chat -e PORT=8081 \
+              -d "$CHAT_IMAGE"
             mkdir -p /var/log/gcal-hook
             # -v: the gcal push receiver's log must outlive the container, which
             # every deploy replaces. Mirrored from deploy-to-prod so DEV IS A
@@ -149,16 +177,28 @@ jobs:
             # -v /var/log/www: the visit log (26.1006), mirrored from prod so the
             # dev deploy proves both containers boot with it and write to it.
             # No mkdir: Docker creates a missing bind-mount source itself.
-            docker run --restart unless-stopped --name web -e VIRTUAL_HOST=kiddspazz.com \
+            # create → connect → start (26.1010), not `docker run`: each site
+            # container is made on the chat's network FIRST, which gives it
+            # docker's name server (nginx asks it for `chat`), and is put on
+            # the default network, where the proxy reaches it, BEFORE it
+            # starts, so the proxy sees it complete the moment it starts.
+            # scripts/proxy-smoke.sh rehearses these exact steps.
+            docker create --restart unless-stopped --name web --network www-chat \
+              -e VIRTUAL_HOST=kiddspazz.com \
               -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
               -v /etc/gcal-hook:/etc/nginx/gcal:ro \
               -v /var/log/www:/var/log/www \
-              -d "$IMAGE"
-            docker run --restart unless-stopped --name www_web -e VIRTUAL_HOST=www.kiddspazz.com \
+              "$IMAGE" >/dev/null
+            docker network connect bridge web
+            docker start web
+            docker create --restart unless-stopped --name www_web --network www-chat \
+              -e VIRTUAL_HOST=www.kiddspazz.com \
               -e LETSENCRYPT_HOST=www.kiddspazz.com -e VIRTUAL_PORT=80 \
               -v /var/log/www:/var/log/www \
-              -d "$IMAGE"
+              "$IMAGE" >/dev/null
+            docker network connect bridge www_web
+            docker start www_web
             # The noindex files were written above; the reload stays here, after
             # the new containers, as it always was.
             docker exec nginx-proxy nginx -s reload
@@ -166,7 +206,7 @@ jobs:
             # status, which until now was the reload above. The cleanup below
             # must not be able to hide a failed deploy, or cause one.
             deploy_rc=$?
-            # Is the new site actually up? Both containers must be RUNNING,
+            # Is the new site actually up? Every container must be RUNNING,
             # started from $IMAGE (the build this run just pulled), and must
             # NEVER have restarted. The last part is what makes this reliable:
             # with --restart unless-stopped a container that dies on start (a
@@ -176,12 +216,16 @@ jobs:
             # wait so a container that dies in its first seconds has done so.
             # Before this, the job only knew whether the LAST command succeeded,
             # so it could go green with the site down (26.0925).
+            # The chat is checked the same way: the sandbox must prove it too
+            # before production may pull it.
             sleep 5
             site_up=1
-            for c in web www_web; do
+            for pair in "chat=$CHAT_IMAGE" "web=$IMAGE" "www_web=$IMAGE"; do
+              c=${pair%%=*}
+              want=${pair#*=}
               restarts=$(docker inspect -f '{{.RestartCount}}' "$c" 2>/dev/null || echo unknown)
-              if [ -z "$(docker ps -q --filter "name=^/?$c\$" --filter status=running --filter "ancestor=$IMAGE")" ]; then
-                echo "DEPLOY FAILED: container '$c' is not running $IMAGE"
+              if [ -z "$(docker ps -q --filter "name=^/?$c\$" --filter status=running --filter "ancestor=$want")" ]; then
+                echo "DEPLOY FAILED: container '$c' is not running $want"
                 docker ps -a --filter "name=^/?$c\$" || true
                 site_up=0
               elif [ "$restarts" != 0 ]; then
@@ -217,8 +261,14 @@ jobs:
         # production keeps waiting and then fails without touching the live
         # site. `imagetools create` only writes new names for the image already
         # on Docker Hub; nothing is rebuilt or re-uploaded.
+        # The chat's tag goes FIRST: production waits for the site's tree tag,
+        # so once that exists the chat's does too.
         name: Mark this build as proven in the sandbox
         env:
           SOURCE: kiddspazz/www_web:${{ github.sha }}
           TREE_TAG: kiddspazz/www_web:tree-${{ steps.tree.outputs.tree }}
-        run: docker buildx imagetools create --tag "$TREE_TAG" --tag kiddspazz/www_web:latest "$SOURCE"
+          CHAT_SOURCE: kiddspazz/www_web:chat-${{ github.sha }}
+          CHAT_TREE_TAG: kiddspazz/www_web:chat-tree-${{ steps.tree.outputs.tree }}
+        run: |
+          docker buildx imagetools create --tag "$CHAT_TREE_TAG" "$CHAT_SOURCE"
+          docker buildx imagetools create --tag "$TREE_TAG" --tag kiddspazz/www_web:latest "$SOURCE"

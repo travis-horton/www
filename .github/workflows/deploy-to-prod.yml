@@ -67,6 +67,21 @@ jobs:
             if [ "$code" = 200 ]; then
               echo "found kiddspazz/www_web:$TAG"
               echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+              # 💬 The chat (26.1010), only for a commit that has it (the
+              # submodule services/react-chat). The sandbox tags the chat
+              # BEFORE the site, so it is there by now. A rollback to an older
+              # commit has no chat: chat_tag stays empty and the deploy below
+              # removes the chat container.
+              if [ -n "$(git ls-tree HEAD services/react-chat)" ]; then
+                CHAT_TAG="chat-tree-$TREE"
+                code=$(curl -s -o /dev/null -w '%{http_code}' "https://hub.docker.com/v2/repositories/kiddspazz/www_web/tags/$CHAT_TAG")
+                if [ "$code" != 200 ]; then
+                  echo "::error::The site's sandbox build is there but the chat's (kiddspazz/www_web:$CHAT_TAG) is not (Docker Hub answered $code). Nothing was deployed."
+                  exit 1
+                fi
+                echo "found kiddspazz/www_web:$CHAT_TAG"
+                echo "chat_tag=$CHAT_TAG" >> "$GITHUB_OUTPUT"
+              fi
               exit 0
             fi
             echo "no sandbox build of $TAG yet (Docker Hub answered $code); waiting 20 s ($i/45)"
@@ -90,17 +105,33 @@ jobs:
           key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD || secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
             IMAGE=kiddspazz/www_web:${{ steps.image.outputs.tag }}
+            # Empty for a commit without the chat (a rollback past 26.1010).
+            CHAT_TAG='${{ steps.image.outputs.chat_tag }}'
+            CHAT_IMAGE=${CHAT_TAG:+kiddspazz/www_web:$CHAT_TAG}
             # Stop HERE if the pull fails (Docker Hub blip, rate limit): this
             # script has no set -e, and the old site's image is under a
             # different tag, so carrying on would remove the running
             # containers and then fail to start the new ones — nothing serving.
             docker pull "$IMAGE" || { echo "pull of $IMAGE failed; live site left untouched"; exit 1; }
+            if [ -n "$CHAT_IMAGE" ]; then
+              docker pull "$CHAT_IMAGE" || { echo "pull of $CHAT_IMAGE failed; live site left untouched"; exit 1; }
+            fi
             # --restart unless-stopped (not --rm): the containers come back by
             # themselves when the droplet reboots. With --rm a reboot DELETED
             # them and the site stayed down until the next push (26.0913).
             # rm -f replaces the old stop + rm pairs: a stopped container is no
             # longer removed for us, and -f also clears one left mid-restart.
-            docker rm -f web www_web || true
+            docker rm -f chat web www_web || true
+            # 💬 THE CHAT (26.1010), exactly as the sandbox runs it
+            # (deploy-to-dev.yml says why each part is there): a private
+            # network shared only with the two site containers, created once;
+            # the chat started first, with no VIRTUAL_HOST.
+            docker network create www-chat >/dev/null 2>&1 || true
+            if [ -n "$CHAT_IMAGE" ]; then
+              docker run --restart unless-stopped --name chat --network www-chat \
+                -e BASE_PATH=/chat -e PORT=8081 \
+                -d "$CHAT_IMAGE"
+            fi
             mkdir -p /var/log/gcal-hook
             # -v: the gcal push receiver's log MUST outlive the container.
             # Every deploy replaces the container, so without this the doorbell's
@@ -118,21 +149,30 @@ jobs:
             # www_web. Both append to one file; each line is a single write.
             # No mkdir: the deploy user can't create dirs under /var/log, and
             # Docker creates a missing bind-mount source itself (as root).
-            docker run --restart unless-stopped --name web -e VIRTUAL_HOST=travish.com \
+            # create → connect → start, as in the sandbox: on the chat's
+            # network first (docker's name server), on the proxy's default
+            # network before starting (the proxy sees it complete at start).
+            docker create --restart unless-stopped --name web --network www-chat \
+              -e VIRTUAL_HOST=travish.com \
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
               -v /etc/gcal-hook:/etc/nginx/gcal:ro \
               -v /var/log/www:/var/log/www \
-              -d "$IMAGE"
-            docker run --restart unless-stopped --name www_web -e VIRTUAL_HOST=www.travish.com \
+              "$IMAGE" >/dev/null
+            docker network connect bridge web
+            docker start web
+            docker create --restart unless-stopped --name www_web --network www-chat \
+              -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
               -v /var/log/www:/var/log/www \
-              -d "$IMAGE"
+              "$IMAGE" >/dev/null
+            docker network connect bridge www_web
+            docker start www_web
             # Keep the job's verdict: ssh-action reports the script's LAST exit
             # status, which until now was the docker run above. The cleanup
             # below must not be able to hide a failed deploy, or cause one.
             deploy_rc=$?
-            # Is the new site actually up? Both containers must be RUNNING,
+            # Is the new site actually up? Every container must be RUNNING,
             # started from $IMAGE (the build this run just pulled), and must
             # NEVER have restarted. The last part is what makes this reliable:
             # with --restart unless-stopped a container that dies on start (a
@@ -144,10 +184,14 @@ jobs:
             # so it could go green with travish.com down (26.0925).
             sleep 5
             site_up=1
-            for c in web www_web; do
+            checks="web=$IMAGE www_web=$IMAGE"
+            if [ -n "$CHAT_IMAGE" ]; then checks="chat=$CHAT_IMAGE $checks"; fi
+            for pair in $checks; do
+              c=${pair%%=*}
+              want=${pair#*=}
               restarts=$(docker inspect -f '{{.RestartCount}}' "$c" 2>/dev/null || echo unknown)
-              if [ -z "$(docker ps -q --filter "name=^/?$c\$" --filter status=running --filter "ancestor=$IMAGE")" ]; then
-                echo "DEPLOY FAILED: container '$c' is not running $IMAGE"
+              if [ -z "$(docker ps -q --filter "name=^/?$c\$" --filter status=running --filter "ancestor=$want")" ]; then
+                echo "DEPLOY FAILED: container '$c' is not running $want"
                 docker ps -a --filter "name=^/?$c\$" || true
                 site_up=0
               elif [ "$restarts" != 0 ]; then
