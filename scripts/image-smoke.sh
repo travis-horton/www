@@ -41,6 +41,10 @@
 #      a script, and the visitor saw a blank page until a hard reload. An
 #      unknown PAGE address still gets the app (the server cannot know the
 #      app's routes); the app shows its own "not found".
+#   7. (26.1009) The bundle and stylesheet come back gzipped when asked, and
+#      plain when not; the .otf and .ttf fonts carry font types; /journal and
+#      everything under it answers 410 Gone; robots.txt and sitemap.xml are
+#      served.
 #
 # The map used here is made up on the spot (thirty-two 1s, thirty-two 2s). The
 # real one lives only on the server and is never in this repository.
@@ -249,6 +253,59 @@ req "$PORT_PLAIN" www.travish.com GET "$stylesheet"
 check "www host, GET the stylesheet status" "$STATUS" 200
 check "www host, GET the stylesheet content type" "$CTYPE" text/css
 header_once "www host, GET the stylesheet" Cache-Control "$IMMUTABLE"
+# The stylesheet names the fonts (as url(name.hash.otf), beside it at the
+# root); take one of each kind from it.
+otf="$(grep -oE '[A-Za-z0-9._-]+\.otf' "$work/body" | head -n 1 | sed 's|^|/|' || true)"
+ttf="$(grep -oE '[A-Za-z0-9._-]+\.ttf' "$work/body" | head -n 1 | sed 's|^|/|' || true)"
+
+# 7. Compression (26.1009): asked for gzip, the bundle and the stylesheet come
+# back gzipped, and say that the answer depends on Accept-Encoding.
+req "$PORT_PLAIN" www.travish.com GET "$bundle" -H 'Accept-Encoding: gzip'
+check "www host, the bundle asked for with gzip: status" "$STATUS" 200
+header_once "www host, the bundle asked for with gzip" Content-Encoding "gzip"
+header_once "www host, the bundle asked for with gzip" Vary "Accept-Encoding"
+req "$PORT_PLAIN" www.travish.com GET "$stylesheet" -H 'Accept-Encoding: gzip'
+header_once "www host, the stylesheet asked for with gzip" Content-Encoding "gzip"
+# And not asked for, not given: a client that cannot unpack gets plain text.
+req "$PORT_PLAIN" www.travish.com GET "$bundle"
+header_absent "www host, the bundle asked for plainly" Content-Encoding
+
+# The two font kinds go out as fonts, not as application/octet-stream.
+if [ -n "$otf" ] && [ -n "$ttf" ]; then
+  req "$PORT_PLAIN" www.travish.com GET "$otf"
+  check "www host, GET an .otf font content type" "$CTYPE" font/otf
+  req "$PORT_PLAIN" www.travish.com GET "$ttf"
+  check "www host, GET a .ttf font content type" "$CTYPE" font/ttf
+else
+  fail "the stylesheet names no .otf and .ttf font to check (otf='$otf' ttf='$ttf')"
+fi
+
+# /journal is gone for good: 410, on the address and under it.
+req "$PORT_PLAIN" www.travish.com GET /journal
+check "www host, GET /journal status (gone for good)" "$STATUS" 410
+security_headers "www host, the /journal 410"
+req "$PORT_PLAIN" www.travish.com GET /journal/26/10/261009.html
+check "www host, GET under /journal/ status" "$STATUS" 410
+req "$PORT_PLAIN" travish.com GET /journal
+check "bare host, GET /journal status (redirected first, like every page)" "$STATUS" 301
+
+# For search engines: robots.txt names the sitemap; both are plain files.
+req "$PORT_PLAIN" www.travish.com GET /robots.txt
+check "www host, GET /robots.txt status" "$STATUS" 200
+check "www host, GET /robots.txt content type" "$CTYPE" text/plain
+if grep -qF 'Sitemap: https://www.travish.com/sitemap.xml' "$work/body"; then
+  pass "robots.txt names the sitemap"
+else
+  fail "robots.txt does not name https://www.travish.com/sitemap.xml"
+fi
+req "$PORT_PLAIN" www.travish.com GET /sitemap.xml
+check "www host, GET /sitemap.xml status" "$STATUS" 200
+check "www host, GET /sitemap.xml content type" "$CTYPE" text/xml
+if grep -qF '<loc>https://www.travish.com/piano</loc>' "$work/body"; then
+  pass "sitemap.xml lists the site's pages"
+else
+  fail "sitemap.xml does not list https://www.travish.com/piano"
+fi
 
 req "$PORT_PLAIN" www.travish.com GET "${bundle}.map"
 check "www host, GET the bundle's source map status" "$STATUS" 200

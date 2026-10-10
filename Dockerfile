@@ -78,3 +78,8 @@ RUN mkdir -p /var/log/www
 RUN mkdir -p /etc/nginx/gcal
 
 COPY --from=build /app/dist /var/www/html
+# For search engines (26.1009). Plain files with fixed names, so they sit beside
+# the build rather than in it: scripts/check-bundle.mjs requires every BUILT
+# file but index.html to carry a hash in its name. Served by nginx.conf's pages
+# location (④), which answers an existing file as itself, with `no-cache`.
+COPY ./nginx/robots.txt ./nginx/sitemap.xml /var/www/html/

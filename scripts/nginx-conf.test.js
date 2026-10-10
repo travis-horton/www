@@ -35,13 +35,21 @@ const SECURITY_HEADERS = {
 const BUILT = '\\.[0-9a-f]{8}\\.[a-z0-9]+(\\.map)?$';
 const IMMUTABLE = 'public, max-age=31536000, immutable';
 // Every location of the server, in the file's order.
-const LOCATIONS = ['^~ /gcal-hook/', '^~ /gcal-drain/', `~ ${BUILT}`, '/'];
+const LOCATIONS = [
+  '^~ /gcal-hook/',
+  '^~ /gcal-drain/',
+  '^~ /journal',
+  `~ ${BUILT}`,
+  '/',
+];
 // What each one says about caching. Only the two calendar routes say it with
 // `always` (on their 404s too); `immutable` must NEVER have it, or the 404 for
-// a missing built file would be kept for a year.
+// a missing built file would be kept for a year. /journal says nothing: its
+// only answer is a 410, which is final (null = no Cache-Control line at all).
 const CACHE_CONTROL = {
   '^~ /gcal-hook/': ['no-store', 'always'],
   '^~ /gcal-drain/': ['no-store', 'always'],
+  '^~ /journal': null,
   [`~ ${BUILT}`]: [IMMUTABLE],
   '/': ['no-cache'],
 };
@@ -229,7 +237,10 @@ describe('nginx.conf', () => {
     );
     expect(said).toEqual(
       Object.fromEntries(
-        Object.entries(CACHE_CONTROL).map(([label, value]) => [label, [value]]),
+        Object.entries(CACHE_CONTROL).map(([label, value]) => [
+          label,
+          value ? [value] : [],
+        ]),
       ),
     );
     // Said once more on its own, because it is the costly one: with `always`
@@ -291,6 +302,56 @@ describe('nginx.conf', () => {
       ['root', '/var/log/gcal-hook'],
       ['try_files', '/hits.log', '=404'],
       ['default_type', 'text/plain'],
+    ]);
+  });
+
+  test('/journal answers 410 Gone (after the bare-domain redirect), and nothing else', () => {
+    const journal = locations.find(
+      ({ directive }) => args(directive).join(' ') === '^~ /journal',
+    );
+    expect(journal).toBeDefined();
+    expect(
+      journal.directive.block
+        .filter((inner) => name(inner) !== 'include')
+        .map((inner) => [
+          name(inner),
+          ...args(inner),
+          ...(inner.block
+            ? [inner.block.map((line) => [name(line), ...args(line)])]
+            : []),
+        ]),
+    ).toEqual([
+      [
+        'if',
+        '($host',
+        '=',
+        'travish.com)',
+        [['return', '301', 'https://www.travish.com$request_uri']],
+      ],
+      ['return', '410'],
+    ]);
+  });
+
+  test('compression is on at http scope, and the two font types are known', () => {
+    const top = (wanted) =>
+      conf.filter((directive) => name(directive) === wanted).map(args);
+    expect(top('gzip')).toEqual([['on']]);
+    expect(top('gzip_vary')).toEqual([['on']]);
+    expect(top('gzip_types')[0]).toEqual(
+      expect.arrayContaining([
+        'application/javascript',
+        'text/css',
+        'image/svg+xml',
+        'font/ttf',
+        'font/otf',
+      ]),
+    );
+    // A `types` block inside the server would REPLACE nginx's whole list.
+    expect(findAll(conf, 'types').map(({ inside }) => inside)).toEqual([[]]);
+    const types = conf.find((directive) => name(directive) === 'types');
+    expect(types.block.map((line) => [name(line), ...args(line)])).toEqual([
+      ['font/ttf', 'ttf'],
+      ['font/otf', 'otf'],
     ]);
   });
 
