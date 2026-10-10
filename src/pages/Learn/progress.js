@@ -83,7 +83,7 @@ export const commitSessions = (sessions) => {
 /** Per-course, per-level summary: attempts, best score, most recent score. */
 export const summarize = (course, levelId) => {
   const runs = load().sessions.filter(
-    (s) => s.course === course && s.levelId === levelId,
+    (s) => s && s.course === course && s.levelId === levelId,
   );
   if (runs.length === 0) return null;
   const best = runs.reduce((acc, s) => Math.max(acc, s.correct / s.total), 0);
@@ -101,11 +101,14 @@ export const summarize = (course, levelId) => {
  */
 export const weakKinds = (course, limit = 20) => {
   const runs = load()
-    .sessions.filter((s) => s.course === course)
+    .sessions.filter((s) => s && s.course === course)
     .slice(-limit);
   const tally = {};
   runs.forEach((s) => {
-    (s.misses || []).forEach((kind) => {
+    // Array.isArray, not `|| []`: a hand-edited progress code once carried
+    // misses as a STRING, which `|| []` let through to .forEach, and /learn
+    // threw on every render until the browser's site data was cleared.
+    (Array.isArray(s.misses) ? s.misses : []).forEach((kind) => {
       tally[kind] = (tally[kind] || 0) + 1;
     });
   });
