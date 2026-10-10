@@ -12,7 +12,11 @@
 version: 2
 updates:
   # The actions the workflows use (the 40-character pins and their # vX.Y.Z
-  # comments). One pull request for all of them.
+  # comments). Minor and patch bumps arrive together in one pull request; a new
+  # MAJOR version of an action gets a pull request of its own (26.1009). The
+  # deploy steps run only after a merge, so nothing on a pull request can test
+  # them: one bundled pull request of several majors (a different SSH action,
+  # a new checkout) would be tried for the first time on the servers.
   - package-ecosystem: github-actions
     directory: /
     target-branch: dev
@@ -23,6 +27,9 @@ updates:
       actions:
         patterns:
           - '*'
+        update-types:
+          - minor
+          - patch
 
   # The two FROM lines in the Dockerfile.
   - package-ecosystem: docker

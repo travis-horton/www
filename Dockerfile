@@ -1,9 +1,13 @@
 # syntax=docker/dockerfile:1
 # Both base images are named by version, never `latest` (26.1002). With `latest`
 # the same Dockerfile built a different site whenever Docker Hub moved the tag,
-# and nothing in this repo's history said when. These two are exactly what
-# `latest` pointed at on the day they were pinned, so a new version is now a
-# change to one of these lines that can be read, tested and reverted.
+# and nothing in this repo's history said when. ⚠️ Corrected 26.1009: these name
+# a RELEASE LINE, not one build. `node:26-trixie` and `nginx:1.31` are re-pointed
+# by every patch release (one CI run had nginx 1.31.6 here while the proxy ran
+# 1.31.3), so a new MAJOR or MINOR version is a change to one of these lines
+# that can be read, tested and reverted, but a patch arrives by itself. A
+# `@sha256:` digest after the tag would freeze one exact build. A channel name
+# (`stable`, `mainline`, `lts`) is refused by scripts/repo-pins.test.js.
 # ⚠️ node's major must equal `node-version` in .github/workflows/checks.yml:
 # move both together (scripts/repo-pins.test.js fails if they drift).
 FROM node:26-trixie AS build

@@ -219,7 +219,8 @@ security_headers "www host, GET /"
 # The page itself is asked for again on every visit: it is the one file whose
 # name never changes, and it names all the others.
 header_once "www host, GET /" Cache-Control "no-cache"
-# The server says what it is, not which version.
+# This container says what it is, not which version. (Visitors get the
+# proxy's Server header instead, which this test cannot see.)
 header_once "www host, GET /" Server "nginx"
 
 req "$PORT_PLAIN" www.travish.com GET /piano

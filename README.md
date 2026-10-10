@@ -41,7 +41,15 @@ simply `npm install`
 
 this is set up to deploy to stage [kiddspazz.com](https://www.kiddspazz.com) simply by git pushing
 the `dev` branch.
-production automatically deploys on merge with `main`.
+production automatically deploys on merge with `main`. it never builds: it runs the image the
+sandbox built from the same files, and a build is marked for production only after it came up
+healthy on the sandbox.
+
+to roll production back to an earlier release, deploy that release's `main` commit by hand (only
+releases from 26.0928 on can be brought back this way):
+`gh workflow run 'production environment' --repo travis-horton/www --ref main -f ref=<old main commit>`.
+don't `gh run rerun` an old production run instead: a run from before 26.0928 deploys whatever the
+sandbox built last, not the old build.
 
 # authors
 
@@ -79,6 +87,11 @@ certificate volumes.
 
 
 ## start the nginx proxy docker container -- to be done in stage and prod
+⚠️ on the SANDBOX (kiddspazz.com) the proxy must be named `nginx-proxy`, not `proxy`: every dev
+deploy runs `docker exec nginx-proxy` to write the noindex header, and would go red without it. so on
+the sandbox use `--name nginx-proxy` here and `--volumes-from nginx-proxy` in the acme line below.
+don't rename a container that is already running.
+
 docker run --detach --restart always --name proxy --publish 80:80 --publish 443:443 --volume certs:/etc/nginx/certs --volume vhost:/etc/nginx/vhost.d --volume html:/usr/share/nginx/html --volume /var/run/docker.sock:/tmp/docker.sock:ro -d nginxproxy/nginx-proxy:1.11.6
 
 
