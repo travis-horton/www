@@ -23,6 +23,19 @@ on:
 permissions:
   contents: read
 
+# Never cancel a half-done production swap (26.1010). A newer release, or a
+# rollback dispatched by hand, that starts while a deploy is running WAITS for
+# it. Only the newest waiting run survives (GitHub cancels the older waiting
+# ones), so a later rollback replaces an earlier queued push run: the newest
+# intent wins. A separate lane from the sandbox's on purpose: they are
+# different servers, and this workflow's own wait for the sandbox's
+# tree-<hash> tag (up to 15 min) must never sit in the sandbox's queue. The
+# name is a fixed string, not the branch, so a rollback and a push deploy
+# share the one lane.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
 # Every `uses:` below is pinned to a full commit, with the release it belongs to
 # in the comment. A tag can be moved to different code after the fact; a commit
 # cannot, and the deploy step hands its action the SSH key to production.

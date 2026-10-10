@@ -16,6 +16,21 @@ permissions:
   contents: read
   pull-requests: read
 
+# ONE sandbox server, so ONE deploy at a time (26.1010). A burst of merges
+# (26.1010: ten in 30 s) used to start that many deploys at once. They fought
+# over the server's containers ("docker pull … Killed", "site not up"): 8 of 10
+# failed, and the one that won was not the newest commit. Now a deploy that
+# starts while another is running WAITS. GitHub keeps only the NEWEST waiting
+# run and cancels the older waiting ones, so after a burst the run already in
+# progress finishes, the newest commit deploys next, and nothing in between
+# runs. cancel-in-progress is false, not true, on purpose: a cancel part-way
+# through the ssh step can land after `docker rm -f web www_web` and before
+# `docker run`, which leaves the sandbox with no site. Waiting costs at most
+# one deploy (~2m20s).
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
 # Every `uses:` below is pinned to a full commit, with the release it belongs to
 # in the comment. A tag (@v4) can be moved to different code after the fact; a
 # commit cannot, and these actions are handed the Docker Hub login and the SSH
