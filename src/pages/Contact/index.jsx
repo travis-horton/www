@@ -9,8 +9,6 @@ const Contact = () => (
     <p>
       Email: <a href="mailto:travis@travish.com">travis@travish.com</a>
       <br />
-      Phone: 919.593.0887
-      <br />
       LinkedIn:{' '}
       <a
         href="https://www.linkedin.com/in/travis-horton-64b318182/"

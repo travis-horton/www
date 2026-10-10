@@ -32,6 +32,24 @@ test('the programming index lists the personal projects', () => {
   ).toBeInTheDocument();
 });
 
+test('Goals names the current goal, not the old Postgres/Rust list (M-219)', () => {
+  render(
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      initialEntries={['/']}
+    >
+      <Programming />
+    </MemoryRouter>,
+  );
+  const goals = screen
+    .getByRole('heading', { level: 2, name: 'Goals' })
+    .closest('section');
+  expect(goals).toHaveTextContent(
+    /^Goals\s*Build travish\.com's backend in Zig$/,
+  );
+  expect(goals).not.toHaveTextContent(/Postgres|Rust|Nand2tetris/);
+});
+
 test('the seximal time-keeping project renders its hexagon clock', () => {
   const { container } = render(
     <MemoryRouter
