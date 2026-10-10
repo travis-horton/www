@@ -45,7 +45,9 @@ test('it renders the lesson list and the search box', () => {
 test('the syllabus size it states is the size the course actually is', () => {
   mount();
   const cards = LEVELS.reduce((n, l) => n + l.vocab.length, 0);
-  expect(screen.getByText(new RegExp(`${cards} word cards`))).toBeInTheDocument();
+  expect(
+    screen.getByText(new RegExp(`${cards} word cards`)),
+  ).toBeInTheDocument();
   expect(
     screen.getByText(/plus li and e, which are taught as rules/),
   ).toBeInTheDocument();
