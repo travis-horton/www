@@ -5,7 +5,8 @@
 # deploy could start, with all of them red. Now every pull request and every
 # push to dev gets these results beside it:
 #
-#   test       the jest tests, eslint, the build, and a look inside the bundle
+#   test       the jest tests, eslint, Prettier's formatting, the build, and a
+#              look inside the bundle
 #   image      builds the real Docker image, starts it, and asks it what the
 #              live site is asked (scripts/image-smoke.sh). Nothing is pushed
 #              anywhere and no secret is used. This is the test of the
@@ -70,9 +71,11 @@ jobs:
         name: Lint
         run: npm run lint
 
-      # `npm run format:check` is NOT a step yet: three files under src/ still
-      # fail it, and formatting one of them changes the built bundle. Add the
-      # step in the commit that formats them.
+      -
+        # Prettier's layout for everything under src/. Red means a file was
+        # committed without `npm run format`; run it and commit the result.
+        name: Formatting
+        run: npm run format:check
 
       -
         name: Build
