@@ -355,6 +355,103 @@ describe('nginx.conf', () => {
     ]);
   });
 
+  test("the uptime check's requests stay out of the visit log; every other rule is unchanged", () => {
+    // The check (scripts/uptime-check.sh) names itself by User-Agent. Read the
+    // name from the script itself, so the two can never drift apart unseen.
+    const script = read('scripts', 'uptime-check.sh');
+    const named = /^USER_AGENT='([^']+)'$/m.exec(script);
+    expect(named).not.toBeNull();
+    const uptimeAgent = named[1];
+
+    // nginx's `map`, the part this file uses: an exact key is tried first,
+    // then each `~` (case-sensitive) or `~*` (case-insensitive) regex in the
+    // file's order, the first hit wins, and `default` answers the rest (an
+    // empty string when there is none). A value that names another map's
+    // variable is that map's answer.
+    const maps = Object.fromEntries(
+      conf
+        .filter((directive) => name(directive) === 'map' && directive.block)
+        .map((directive) => [
+          args(directive)[1],
+          {
+            source: args(directive)[0],
+            entries: directive.block.map((line) => [name(line), args(line)[0]]),
+          },
+        ]),
+    );
+    // The two maps the chain is made of, and what each one reads.
+    expect(
+      [maps.$visit_log, maps.$visit_page].map((map) => map && map.source),
+    ).toEqual(['$http_user_agent', '$uri']);
+
+    const lookup = (variable, request) => {
+      const { source, entries } = maps[variable];
+      const input = request[source];
+      const exact = entries.find(
+        ([key]) => key !== 'default' && !key.startsWith('~') && key === input,
+      );
+      const regex = entries.find(([key]) => {
+        if (!key.startsWith('~')) return false;
+        const caseless = key.startsWith('~*');
+        return new RegExp(
+          key.slice(caseless ? 2 : 1),
+          caseless ? 'i' : '',
+        ).test(input);
+      });
+      const fallback = entries.find(([key]) => key === 'default');
+      const value = (exact || regex || fallback || ['', ''])[1];
+      return maps[value] ? lookup(value, request) : value;
+    };
+    const logged = (uri, agent) =>
+      lookup('$visit_log', { $uri: uri, $http_user_agent: agent });
+
+    const CHROME =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36';
+    const SAFARI =
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
+    expect({
+      'the check, on the home page': logged('/', uptimeAgent),
+      'Chrome, on the home page': logged('/', CHROME),
+      'Safari, on /piano': logged('/piano', SAFARI),
+      'Chrome, a built script': logged('/index.abcd1234.js', CHROME),
+      'Chrome, sitemap.xml': logged('/sitemap.xml', CHROME),
+      'Chrome, robots.txt': logged('/robots.txt', CHROME),
+      // The name must START the User-Agent: one that merely carries it (here,
+      // the check's whole User-Agent, inside a browser-shaped one) is a
+      // visitor like any other.
+      'a decoy that mentions the name': logged(
+        '/',
+        `Mozilla/5.0 (compatible; ${uptimeAgent})`,
+      ),
+      'no User-Agent at all': logged('/', ''),
+    }).toEqual({
+      'the check, on the home page': '0',
+      'Chrome, on the home page': '1',
+      'Safari, on /piano': '1',
+      'Chrome, a built script': '0',
+      'Chrome, sitemap.xml': '0',
+      'Chrome, robots.txt': '0',
+      'a decoy that mentions the name': '1',
+      'no User-Agent at all': '1',
+    });
+
+    // And the log lines that read the chain are what they were: the stdout
+    // log restated first (so `docker logs` keeps every request, the check's
+    // included), then the visit log, written only when $visit_log says so.
+    const page = locations.find(
+      ({ directive }) => args(directive).join(' ') === '/',
+    );
+    expect(page).toBeDefined();
+    expect(
+      page.directive.block
+        .filter((inner) => name(inner) === 'access_log')
+        .map((inner) => [name(inner), ...args(inner)].join(' ')),
+    ).toEqual([
+      'access_log /var/log/nginx/access.log main',
+      'access_log /var/log/www/visits.log visits if=$visit_log',
+    ]);
+  });
+
   test('the server does not print its version', () => {
     const server = findAll(conf, 'server')[0].directive.block;
     const tokens = server.filter((inner) => name(inner) === 'server_tokens');

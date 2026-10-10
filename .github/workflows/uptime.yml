@@ -1,0 +1,65 @@
+# Is the site up? GitHub asks every 30 minutes (26.1010).
+#
+# Until this file nothing noticed when the site went down: on 26.0907
+# www.travish.com answered "503" for about 12 hours before anyone looked. Now
+# GitHub runs scripts/uptime-check.sh every 30 minutes and the run goes red
+# when either answer is wrong:
+#
+#   www    https://www.travish.com/ answers 200 with the site's own page in it
+#          (not just any page: the proxy in front of the site answers in HTML
+#          too, and a 200 alone would let its error pages pass).
+#   apex   https://travish.com/ answers 301 to https://www.travish.com/. The
+#          redirect is made inside the container that serves the bare domain,
+#          so seeing it proves THAT container is up; when it is down the proxy
+#          answers 503. It is not followed, because following it would only
+#          ask the www container a second time.
+#
+# Each is asked up to three times, 30 seconds apart, before it counts as down.
+#
+# 📧 A red run is the alarm: GitHub emails a failed scheduled run to the
+# account that last changed the cron line below, if that account's
+# notification settings send Actions failures (Settings → Notifications →
+# Actions). Nothing else is sent anywhere, and no secret is used.
+#
+# ⚠️ Two GitHub rules about schedules:
+#   - A schedule runs ONLY from the default branch (main). This file does
+#     nothing until it reaches main through the next dev → main release.
+#     "Run workflow" (workflow_dispatch) also needs it on main first.
+#   - GitHub turns a public repository's schedules OFF after 60 days with no
+#     activity in the repository, and says so by email. Turn it back on from
+#     the Actions tab.
+#
+# Minutes 7 and 37 rather than 0 and 30: GitHub delays, and sometimes drops,
+# scheduled runs at the top of the hour, when everyone's are due.
+#
+# Every `uses:` is pinned to a full commit, with the release it belongs to in the
+# comment. A tag can be moved to different code after the fact; a commit cannot.
+name: uptime
+
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+
+# The token this workflow gets can read the repository and nothing else.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Worst case is two questions x (three tries x 20 seconds + two 30-second
+    # waits) = 4 minutes. A job stopped by this limit is CANCELLED, not failed,
+    # and may send no email, so it leaves room over that (tested).
+    timeout-minutes: 8
+    steps:
+      -
+        # Only the script is needed: no project pages, no credentials kept.
+        name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      -
+        name: Ask www.travish.com and travish.com
+        run: bash scripts/uptime-check.sh
