@@ -27,6 +27,7 @@ export default defineConfig([
       'src/pages/Programming/projects/polygon-race/**',
       'src/pages/Programming/projects/ray-tracer/**',
       'src/pages/Programming/projects/seximal_clock/**',
+      'services/react-chat/**',
       // The Zig backend — not JavaScript.
       'api/**',
     ],

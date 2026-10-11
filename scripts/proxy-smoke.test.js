@@ -19,8 +19,9 @@
  *
  * No docker is needed and none is reached. A temp directory goes FIRST on
  * PATH, holding three fakes:
- *   - docker: after each `docker run` it is "mid-write" for the next
- *     FAKE_DOCKERGEN_BUSY nginx calls (`nginx -t` or `nginx -s reload`), each
+ *   - docker: after each container starts (`docker start`, the way the
+ *     rehearsal starts the site since the chat came, 26.1010, or `docker run
+ *     -d`) it is "mid-write" for the next FAKE_DOCKERGEN_BUSY nginx calls (`nginx -t` or `nginx -s reload`), each
  *     of which fails with the line above; after that the config is whole.
  *   - curl: always "connection refused". Every assert that asks the proxy a
  *     question therefore fails here; these tests do not look at those.
@@ -42,8 +43,10 @@ const EMERG =
   'nginx: [emerg] unexpected end of file, expecting ";" or "}" in /etc/nginx/conf.d/default.conf:173';
 // How many times the script tries `nginx -t` before it gives up on a reload.
 const TRIES = 30;
-// Every PASS or FAIL line the script prints, whatever happens.
-const ASSERTS = 39;
+// Every PASS or FAIL line the script prints, whatever happens. (40 since the
+// chat, 26.1010: "networks of this rehearsal left behind". The chat's own
+// checks are skipped here, with no chat image, and print no PASS or FAIL.)
+const ASSERTS = 40;
 // The script runs a few hundred tiny processes; give it room on a slow machine.
 jest.setTimeout(30000);
 
@@ -70,6 +73,23 @@ case "$1" in
     ;;
   rm)
     [ "$2" = -f ] && exit 0
+    ;;
+  network)
+    case "$2" in
+      create | connect | rm | ls)
+        exit 0
+        ;;
+    esac
+    ;;
+  create)
+    exit 0
+    ;;
+  start)
+    after="$FAKE_DOCKERGEN_BUSY"
+    [ -n "$after" ] || after=2
+    echo "$after" > "$state"
+    echo "start" >> "$log"
+    exit 0
     ;;
   run)
     if [ "$2" = -d ]; then
@@ -168,6 +188,10 @@ const fakeEnv = (busy) => {
     FAKE_DOCKERGEN_BUSY: String(busy),
   };
   delete env.DOCKER_CONTEXT;
+  // No chat image is given here, so the chat checks are skipped. Under
+  // CI=true that skip is itself a FAIL, which would change the tally between
+  // a laptop and CI; these tests are about the reloads, not the chat.
+  delete env.CI;
   return env;
 };
 
@@ -175,7 +199,7 @@ const readLog = () =>
   fs.readFileSync(logFile, 'utf8').split('\n').filter(Boolean);
 
 // The fake docker's log, cut into one piece per write_robots call: from the
-// call's second vhost.d write up to the next write or `docker run`.
+// call's second vhost.d write up to the next write or `docker start`.
 const writeRobotsCalls = (lines) => {
   const calls = [];
   let i = 0;
@@ -185,7 +209,7 @@ const writeRobotsCalls = (lines) => {
       while (
         end < lines.length &&
         lines[end] !== 'write vhost' &&
-        lines[end] !== 'run'
+        lines[end] !== 'start'
       ) {
         end += 1;
       }
@@ -251,8 +275,8 @@ test('the fake docker fails a bare reload the way CI did, while docker-gen is mi
 test('when docker-gen finishes writing, both reloads wait for it and succeed', () => {
   const { result, output, lines } = runRehearsal('settles', 2);
 
-  // The fake really stood in for docker: four `docker run`s, nothing unknown.
-  expect(lines.filter((line) => line === 'run')).toHaveLength(4);
+  // The fake really stood in for docker: four `docker start`s, nothing unknown.
+  expect(lines.filter((line) => line === 'start')).toHaveLength(4);
   expect(lines.filter((line) => line.startsWith('unknown'))).toEqual([]);
 
   expect(output).toContain(FIRST_WRITE_PASS);

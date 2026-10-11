@@ -24,7 +24,9 @@
  *      of the step "Deploy web app to kiddspazz.com") is cut out of the
  *      workflow and run with bash against fakes. No docker is needed and none
  *      is reached. A temp directory goes FIRST on PATH, holding:
- *        - docker: after each `docker run` it is "mid-write" for the next
+ *        - docker: after each container starts (`docker run -d`, as the chat
+ *          does, or `docker start`, as the two site containers do since the
+ *          chat came, 26.1010) it is "mid-write" for the next
  *          FAKE_DOCKERGEN_BUSY nginx calls (`nginx -t` or `nginx -s reload`),
  *          each of which fails with the line above; after that the config is
  *          whole. One case also makes the first reload fail right after a
@@ -194,6 +196,21 @@ case "$1" in
       exit 0
     fi
     ;;
+  network)
+    if [ "$2" = create ] || [ "$2" = connect ]; then
+      echo "network $2" >> "$log"
+      exit 0
+    fi
+    ;;
+  create)
+    echo "create" >> "$log"
+    exit 0
+    ;;
+  start)
+    echo "$FAKE_DOCKERGEN_BUSY" > "$state"
+    echo "start" >> "$log"
+    exit 0
+    ;;
   run)
     prev=""
     last2=""
@@ -328,15 +345,17 @@ const fakeEnv = (busy) => {
 const readLog = () =>
   fs.readFileSync(logFile, 'utf8').split('\n').filter(Boolean);
 
-// What the fakes logged after the second `docker run`, up to the script's
-// `sleep 5` (the pause before it checks the site is up): the reload's part.
+// What the fakes logged after the second site container's `docker start`, up
+// to the script's `sleep 5` (the pause before it checks the site is up): the
+// reload's part. (The chat's `docker run` comes before both.)
 const afterContainers = (lines) => {
-  const runs = lines.reduce(
-    (at, line, i) => (line === 'run' ? [...at, i] : at),
+  expect(lines.filter((line) => line === 'run')).toHaveLength(1);
+  const starts = lines.reduce(
+    (at, line, i) => (line === 'start' ? [...at, i] : at),
     [],
   );
-  expect(runs).toHaveLength(2);
-  const rest = lines.slice(runs[1] + 1);
+  expect(starts).toHaveLength(2);
+  const rest = lines.slice(starts[1] + 1);
   const pause = rest.indexOf('sleep 5');
   expect(pause).toBeGreaterThan(-1);
   return rest.slice(0, pause);

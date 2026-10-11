@@ -16,3 +16,6 @@
 [submodule "src/pages/Programming/projects/seximal_clock"]
 	path = src/pages/Programming/projects/seximal_clock
 	url = https://github.com/travis-horton/seximal_clock
+[submodule "services/react-chat"]
+	path = services/react-chat
+	url = https://github.com/travis-horton/react-chat

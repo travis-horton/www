@@ -39,6 +39,8 @@ const LOCATIONS = [
   '^~ /gcal-hook/',
   '^~ /gcal-drain/',
   '^~ /journal',
+  '= /chat',
+  '^~ /chat/',
   `~ ${BUILT}`,
   '/',
 ];
@@ -50,6 +52,10 @@ const CACHE_CONTROL = {
   '^~ /gcal-hook/': ['no-store', 'always'],
   '^~ /gcal-drain/': ['no-store', 'always'],
   '^~ /journal': null,
+  // The chat (26.1010): its redirect is permanent, and the chat server says
+  // its own Cache-Control; a second one from here would double it.
+  '= /chat': null,
+  '^~ /chat/': null,
   [`~ ${BUILT}`]: [IMMUTABLE],
   '/': ['no-cache'],
 };
@@ -330,6 +336,80 @@ describe('nginx.conf', () => {
       ],
       ['return', '410'],
     ]);
+  });
+
+  describe('the chat, /chat/ (26.1010)', () => {
+    const block = (label) =>
+      (
+        locations.find(
+          ({ directive }) => args(directive).join(' ') === label,
+        ) || { directive: { block: [] } }
+      ).directive.block
+        .filter((inner) => name(inner) !== 'include')
+        .map((inner) => [
+          name(inner),
+          ...args(inner),
+          ...(inner.block
+            ? [inner.block.map((line) => [name(line), ...args(line)])]
+            : []),
+        ]);
+    const bareDomain = [
+      'if',
+      '($host',
+      '=',
+      'travish.com)',
+      [['return', '301', 'https://www.travish.com$request_uri']],
+    ];
+
+    test('/chat without its slash is sent to /chat/, by a relative redirect', () => {
+      expect(block('= /chat')).toEqual([
+        bareDomain,
+        ['absolute_redirect', 'off'],
+        ['return', '301', '/chat/'],
+      ]);
+    });
+
+    test('/chat/ is passed to the chat container, looked up per request, as a WebSocket when asked', () => {
+      const rules = block('^~ /chat/');
+      // The bare domain redirects before anything is passed on.
+      expect(rules[0]).toEqual(bareDomain);
+      expect(rules.slice(1)).toEqual([
+        ['resolver', '127.0.0.11', 'valid=10s', 'ipv6=off'],
+        ['resolver_timeout', '3s'],
+        ['set', '$chat_upstream', 'chat:8081'],
+        ['proxy_pass', 'http://$chat_upstream'],
+        ['proxy_http_version', '1.1'],
+        ['proxy_set_header', 'Host', '$host'],
+        ['proxy_set_header', 'Upgrade', '$http_upgrade'],
+        ['proxy_set_header', 'Connection', '$connection_upgrade'],
+        ['proxy_connect_timeout', '5s'],
+        ['proxy_read_timeout', '1h'],
+        ['proxy_send_timeout', '1h'],
+        ['proxy_buffering', 'off'],
+      ]);
+    });
+
+    test('no proxy_pass anywhere names a host directly (one that is down would stop nginx from starting)', () => {
+      const direct = findAll(conf, 'proxy_pass')
+        .map(({ directive }) => args(directive)[0])
+        .filter((target) => !/^https?:\/\/\$/.test(target));
+      expect(direct).toEqual([]);
+    });
+
+    test('the WebSocket map is at http scope: an upgrade when asked, else close', () => {
+      const maps = conf.filter(
+        (directive) =>
+          name(directive) === 'map' &&
+          args(directive).join(' ') === '$http_upgrade $connection_upgrade',
+      );
+      expect(maps).toHaveLength(1);
+      expect(maps[0].block.map((line) => [name(line), ...args(line)])).toEqual(
+        [
+          ['default', 'upgrade'],
+          ['', 'close'],
+        ],
+      );
+    });
   });
 
   test('compression is on at http scope, and the two font types are known', () => {
