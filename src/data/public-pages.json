@@ -1,0 +1,24 @@
+{
+  "pages": [
+    "/",
+    "/piano",
+    "/programming",
+    "/programming/clock",
+    "/programming/seximal-time-keeping",
+    "/programming/binary",
+    "/programming/perlin-noise",
+    "/programming/ray-tracer",
+    "/programming/orbitz",
+    "/programming/asteroids",
+    "/programming/polygon-race",
+    "/blog",
+    "/blog/js-this",
+    "/blog/the-flip-flop-1",
+    "/blog/the-first-blog",
+    "/learn",
+    "/learn/seximal",
+    "/learn/toki-pona",
+    "/contact"
+  ],
+  "notIndexed": ["/learn/toki-pona/review"]
+}
