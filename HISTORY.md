@@ -12,6 +12,32 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #173: the chat starts on the server · the chat room, at /chat/ + 7 more** · [PR #173](https://github.com/travis-horton/www/pull/173) · merged 26.1010.2105 · v3.32.0
+- **[the chat starts on the server](https://github.com/travis-horton/www/pull/172)** · merged 26.1010.2105
+  Fixed: on the test copy of the site the chat crashed as soon as it started and kept restarting, so /chat/ showed an error while the rest of the site stayed up. The site now uses the chat's new packaging, which the server runs without trouble, and a check stops the old kind of packaging from coming back.
+  Try it: open https://kiddspazz.com/chat/ in two browser windows and chat between them
+- **[the chat room, at /chat/](https://github.com/travis-horton/www/pull/170)** · merged 26.1010.2105
+  New: a live chat room at www.travish.com/chat/ (and on the sandbox at kiddspazz.com/chat/): type a name, see who else is there, and talk. Nothing is saved, so it starts empty each time the site is updated; names are up to 24 characters, messages up to 500, and anyone sending more than 5 messages in 5 seconds has the extra ones dropped. The Programming page links to it under Personal Projects.
+  Try it: open https://kiddspazz.com/chat/ in two browser windows and join with a different name in each.
+  Behind the scenes: the chat runs as its own small program next to the site, and the automatic checks on every change now start it the way the server does and hold a two-person conversation through it, and prove the website keeps working when the chat is switched off.
+- **[the proxy rehearsal check stops failing at random](https://github.com/travis-horton/www/pull/169)** · merged 26.1010.2105
+  Fixed: the automatic check that rehearses the server in front of the website could fail on a perfectly good change, because it asked that server to reload its settings while the server was still writing them (it happened once on 26.1010). It now waits, up to 30 seconds, until the settings read as complete, and only then reloads; if they never do, it fails and says exactly why.
+- **[uptime check every 30 minutes](https://github.com/travis-horton/www/pull/167)** · merged 26.1010.2105
+  New: GitHub now looks at the site every 30 minutes. It checks that www.travish.com shows the site's own page (not an error page) and that travish.com still forwards visitors to www.travish.com, asking up to three times before it calls the site down, and a failed check makes GitHub send an email. The checks are left out of the site's own visit log, so they do not clutter the count of real visits. It starts working once this reaches the live site in the next release.
+  Try it: open https://github.com/travis-horton/www/actions/workflows/uptime.yml to see every check and whether it passed.
+- **[the sitemap check closes three gaps](https://github.com/travis-horton/www/pull/168)** · merged 26.1010.2105
+  Behind the scenes: the automatic check on the list of pages for search engines (www.travish.com/sitemap.xml) now also finds pages grouped under a shared layout, and notices when a section such as /blog is pointed at a different page. The build now also refuses an address written in a disguised form (a doubled slash, a percent code, or a "." or ".." step) instead of trusting how it looks. The 19 pages listed are the same as before.
+- **[the sitemap writes itself](https://github.com/travis-horton/www/pull/166)** · merged 26.1010.2105
+  Behind the scenes: the list of pages for search engines (www.travish.com/sitemap.xml) is now written when the site is built, from one list of public pages, instead of by hand. The automatic tests compare that list with the pages the site really serves and fail if a new page was left off. The build itself refuses to write a list that names the journal, another private address, or an address that cannot exist. The 19 pages listed are the same as before.
+- **[sandbox updates wait for the proxy's settings before reloading](https://github.com/travis-horton/www/pull/171)** · merged 26.1010.2105
+  Fixed: an update of the sandbox site (kiddspazz.com) could be marked as failed by bad timing. The proxy in front of the site rewrites its settings file whenever the site is restarted, and the update asked it to re-read that file in the same moment, sometimes while it was half written. The update now checks the file first, every second for up to 30 seconds, and reloads only once it is whole; if it never is, the update fails with a message that says so.
+- **[one install at a time on each server](https://github.com/travis-horton/www/pull/164)** · merged 26.1010.2105
+  Fixed: when several changes were approved within seconds of each other, the test copy of the site (kiddspazz.com) started installing all of them at once. On 26.1010 eight of ten failed, and the one that won was not the newest. Now an install waits for the one already running, and only the newest waiting change goes next. The test copy and the live site each have a queue of their own.
+  Behind the scenes: added automatic checks that each server's installs stay one at a time, and that the test copy marks a build ready for the live site only after it has come up there.
+- **[the ray tracer runs its tidied-up code](https://github.com/travis-horton/www/pull/165)** · merged 26.1010.2105
+  Behind the scenes: the ray tracer on the Programming page now uses its newest version, rebuilt from one long block into small pieces (the 3D math, the spheres, the colours, the scene and the drawing loop), plus updated tools from 26.1010. The picture is the same down to the last pixel.
+  Try it: open https://www.travish.com/programming/ray-tracer after the next release
+
 **www #163: two dead blog links point at their archived copies · Bump the npm-minor-and-patch group with 4 updates · Bump actions/setup-node from 7.0.0 to 7.1.0 in the actions group** · [PR #163](https://github.com/travis-horton/www/pull/163) · merged 26.1010.1011 · v3.31.1
 - **[two dead blog links point at their archived copies](https://github.com/travis-horton/www/pull/162)** · merged 26.1010.1011
   Fixed: in "this" in JavaScript, the word "articles" links again, now to the Internet Archive's 2019 copy of the arrow-functions article it once pointed to. In the flip-flop post, "Go read about them here" links again, to the Archive's 2023 copy of the University of Surrey's logic-gates page. Both originals are gone from the web.
