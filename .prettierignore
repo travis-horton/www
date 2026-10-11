@@ -10,5 +10,6 @@ src/pages/Programming/projects/perlin-noise
 src/pages/Programming/projects/polygon-race
 src/pages/Programming/projects/ray-tracer
 src/pages/Programming/projects/seximal_clock
+services/react-chat
 # the Zig backend
 api

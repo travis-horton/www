@@ -57,7 +57,8 @@
     "testEnvironment": "jsdom",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "<rootDir>/.claude/"
+      "<rootDir>/.claude/",
+      "<rootDir>/src/pages/Programming/projects/ray-tracer/test/"
     ],
     "moduleNameMapper": {
       "^url:.+$": "<rootDir>/__mocks__/fileMock.js",

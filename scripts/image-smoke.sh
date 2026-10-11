@@ -45,6 +45,10 @@
 #      plain when not; the .otf and .ttf fonts carry font types; /journal and
 #      everything under it answers 410 Gone; robots.txt and sitemap.xml are
 #      served.
+#   8. (26.1010) With no chat anywhere (this container is on no chat network),
+#      nginx still starts and the site still answers (1 and 2 above), /chat
+#      still redirects to /chat/, and /chat/ alone fails, with a 502. The chat
+#      itself is rehearsed in scripts/proxy-smoke.sh.
 #
 # The map used here is made up on the spot (thirty-two 1s, thirty-two 2s). The
 # real one lives only on the server and is never in this repository.
@@ -415,6 +419,18 @@ elif [ "${CI:-}" = "true" ]; then
 else
   echo "SKIP  no $CHROME here: the browser check did not run (under CI=true this is a FAIL)"
 fi
+
+# 8. The chat is not here: only /chat/ may notice.
+req "$PORT_PLAIN" www.travish.com GET /chat
+check "no chat: www host, GET /chat status (to the slash)" "$STATUS" 301
+header_once "no chat: www host, GET /chat" Location "/chat/"
+req "$PORT_PLAIN" www.travish.com GET /chat/
+check "no chat: www host, GET /chat/ status (only the chat fails)" "$STATUS" 502
+security_headers "no chat: the 502"
+req "$PORT_PLAIN" travish.com GET /chat/
+check "no chat: bare host, GET /chat/ status (redirected first, like every page)" "$STATUS" 301
+req "$PORT_PLAIN" www.travish.com GET /
+check "no chat: www host, GET / status (the site does not care)" "$STATUS" 200
 
 still_up "the no-mount container is running and never restarted" "$PLAIN"
 

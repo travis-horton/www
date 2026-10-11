@@ -44,6 +44,12 @@ function ProgrammingContent() {
           <li>
             <Link to={'/programming/polygon-race'}>Polygon race</Link>
           </li>
+          <li>
+            {/* Its own server, not a page of this app: a plain link, so the
+                browser leaves the app and asks for it. */}
+            <a href="/chat/">Chat</a>
+            {' — a live chat room, built with React; nothing is saved'}
+          </li>
         </ul>
         <section>
           <h2>Goals</h2>

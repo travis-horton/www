@@ -39,6 +39,8 @@ const LOCATIONS = [
   '^~ /gcal-hook/',
   '^~ /gcal-drain/',
   '^~ /journal',
+  '= /chat',
+  '^~ /chat/',
   `~ ${BUILT}`,
   '/',
 ];
@@ -50,6 +52,10 @@ const CACHE_CONTROL = {
   '^~ /gcal-hook/': ['no-store', 'always'],
   '^~ /gcal-drain/': ['no-store', 'always'],
   '^~ /journal': null,
+  // The chat (26.1010): its redirect is permanent, and the chat server says
+  // its own Cache-Control; a second one from here would double it.
+  '= /chat': null,
+  '^~ /chat/': null,
   [`~ ${BUILT}`]: [IMMUTABLE],
   '/': ['no-cache'],
 };
@@ -332,6 +338,80 @@ describe('nginx.conf', () => {
     ]);
   });
 
+  describe('the chat, /chat/ (26.1010)', () => {
+    const block = (label) =>
+      (
+        locations.find(
+          ({ directive }) => args(directive).join(' ') === label,
+        ) || { directive: { block: [] } }
+      ).directive.block
+        .filter((inner) => name(inner) !== 'include')
+        .map((inner) => [
+          name(inner),
+          ...args(inner),
+          ...(inner.block
+            ? [inner.block.map((line) => [name(line), ...args(line)])]
+            : []),
+        ]);
+    const bareDomain = [
+      'if',
+      '($host',
+      '=',
+      'travish.com)',
+      [['return', '301', 'https://www.travish.com$request_uri']],
+    ];
+
+    test('/chat without its slash is sent to /chat/, by a relative redirect', () => {
+      expect(block('= /chat')).toEqual([
+        bareDomain,
+        ['absolute_redirect', 'off'],
+        ['return', '301', '/chat/'],
+      ]);
+    });
+
+    test('/chat/ is passed to the chat container, looked up per request, as a WebSocket when asked', () => {
+      const rules = block('^~ /chat/');
+      // The bare domain redirects before anything is passed on.
+      expect(rules[0]).toEqual(bareDomain);
+      expect(rules.slice(1)).toEqual([
+        ['resolver', '127.0.0.11', 'valid=10s', 'ipv6=off'],
+        ['resolver_timeout', '3s'],
+        ['set', '$chat_upstream', 'chat:8081'],
+        ['proxy_pass', 'http://$chat_upstream'],
+        ['proxy_http_version', '1.1'],
+        ['proxy_set_header', 'Host', '$host'],
+        ['proxy_set_header', 'Upgrade', '$http_upgrade'],
+        ['proxy_set_header', 'Connection', '$connection_upgrade'],
+        ['proxy_connect_timeout', '5s'],
+        ['proxy_read_timeout', '1h'],
+        ['proxy_send_timeout', '1h'],
+        ['proxy_buffering', 'off'],
+      ]);
+    });
+
+    test('no proxy_pass anywhere names a host directly (one that is down would stop nginx from starting)', () => {
+      const direct = findAll(conf, 'proxy_pass')
+        .map(({ directive }) => args(directive)[0])
+        .filter((target) => !/^https?:\/\/\$/.test(target));
+      expect(direct).toEqual([]);
+    });
+
+    test('the WebSocket map is at http scope: an upgrade when asked, else close', () => {
+      const maps = conf.filter(
+        (directive) =>
+          name(directive) === 'map' &&
+          args(directive).join(' ') === '$http_upgrade $connection_upgrade',
+      );
+      expect(maps).toHaveLength(1);
+      expect(maps[0].block.map((line) => [name(line), ...args(line)])).toEqual(
+        [
+          ['default', 'upgrade'],
+          ['', 'close'],
+        ],
+      );
+    });
+  });
+
   test('compression is on at http scope, and the two font types are known', () => {
     const top = (wanted) =>
       conf.filter((directive) => name(directive) === wanted).map(args);
@@ -352,6 +432,103 @@ describe('nginx.conf', () => {
     expect(types.block.map((line) => [name(line), ...args(line)])).toEqual([
       ['font/ttf', 'ttf'],
       ['font/otf', 'otf'],
+    ]);
+  });
+
+  test("the uptime check's requests stay out of the visit log; every other rule is unchanged", () => {
+    // The check (scripts/uptime-check.sh) names itself by User-Agent. Read the
+    // name from the script itself, so the two can never drift apart unseen.
+    const script = read('scripts', 'uptime-check.sh');
+    const named = /^USER_AGENT='([^']+)'$/m.exec(script);
+    expect(named).not.toBeNull();
+    const uptimeAgent = named[1];
+
+    // nginx's `map`, the part this file uses: an exact key is tried first,
+    // then each `~` (case-sensitive) or `~*` (case-insensitive) regex in the
+    // file's order, the first hit wins, and `default` answers the rest (an
+    // empty string when there is none). A value that names another map's
+    // variable is that map's answer.
+    const maps = Object.fromEntries(
+      conf
+        .filter((directive) => name(directive) === 'map' && directive.block)
+        .map((directive) => [
+          args(directive)[1],
+          {
+            source: args(directive)[0],
+            entries: directive.block.map((line) => [name(line), args(line)[0]]),
+          },
+        ]),
+    );
+    // The two maps the chain is made of, and what each one reads.
+    expect(
+      [maps.$visit_log, maps.$visit_page].map((map) => map && map.source),
+    ).toEqual(['$http_user_agent', '$uri']);
+
+    const lookup = (variable, request) => {
+      const { source, entries } = maps[variable];
+      const input = request[source];
+      const exact = entries.find(
+        ([key]) => key !== 'default' && !key.startsWith('~') && key === input,
+      );
+      const regex = entries.find(([key]) => {
+        if (!key.startsWith('~')) return false;
+        const caseless = key.startsWith('~*');
+        return new RegExp(
+          key.slice(caseless ? 2 : 1),
+          caseless ? 'i' : '',
+        ).test(input);
+      });
+      const fallback = entries.find(([key]) => key === 'default');
+      const value = (exact || regex || fallback || ['', ''])[1];
+      return maps[value] ? lookup(value, request) : value;
+    };
+    const logged = (uri, agent) =>
+      lookup('$visit_log', { $uri: uri, $http_user_agent: agent });
+
+    const CHROME =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36';
+    const SAFARI =
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
+    expect({
+      'the check, on the home page': logged('/', uptimeAgent),
+      'Chrome, on the home page': logged('/', CHROME),
+      'Safari, on /piano': logged('/piano', SAFARI),
+      'Chrome, a built script': logged('/index.abcd1234.js', CHROME),
+      'Chrome, sitemap.xml': logged('/sitemap.xml', CHROME),
+      'Chrome, robots.txt': logged('/robots.txt', CHROME),
+      // The name must START the User-Agent: one that merely carries it (here,
+      // the check's whole User-Agent, inside a browser-shaped one) is a
+      // visitor like any other.
+      'a decoy that mentions the name': logged(
+        '/',
+        `Mozilla/5.0 (compatible; ${uptimeAgent})`,
+      ),
+      'no User-Agent at all': logged('/', ''),
+    }).toEqual({
+      'the check, on the home page': '0',
+      'Chrome, on the home page': '1',
+      'Safari, on /piano': '1',
+      'Chrome, a built script': '0',
+      'Chrome, sitemap.xml': '0',
+      'Chrome, robots.txt': '0',
+      'a decoy that mentions the name': '1',
+      'no User-Agent at all': '1',
+    });
+
+    // And the log lines that read the chain are what they were: the stdout
+    // log restated first (so `docker logs` keeps every request, the check's
+    // included), then the visit log, written only when $visit_log says so.
+    const page = locations.find(
+      ({ directive }) => args(directive).join(' ') === '/',
+    );
+    expect(page).toBeDefined();
+    expect(
+      page.directive.block
+        .filter((inner) => name(inner) === 'access_log')
+        .map((inner) => [name(inner), ...args(inner)].join(' ')),
+    ).toEqual([
+      'access_log /var/log/nginx/access.log main',
+      'access_log /var/log/www/visits.log visits if=$visit_log',
     ]);
   });
 

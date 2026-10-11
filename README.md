@@ -45,6 +45,12 @@ production automatically deploys on merge with `main`. it never builds: it runs 
 sandbox built from the same files, and a build is marked for production only after it came up
 healthy on the sandbox.
 
+deploys run one at a time per server: a deploy that starts while one is running (a push, or a
+rollback run by hand) waits, and only the newest waiting deploy runs after it. a skipped sandbox
+run never marks its build for production, so if a release's production deploy fails waiting for
+its build, re-run the cancelled `development environment` run for that commit, then the
+production run.
+
 to roll production back to an earlier release, deploy that release's `main` commit by hand (only
 releases from 26.0928 on can be brought back this way):
 `gh workflow run 'production environment' --repo travis-horton/www --ref main -f ref=<old main commit>`.
@@ -102,6 +108,16 @@ docker run --detach --restart always --name acme --volumes-from proxy --volume /
 the two "start kiddspazz website" blocks below are how it was first done by hand. the deploy
 workflows now start these containers themselves, as `web` and `www_web` (see `.github/workflows/`).
 
+since 26.1010 they also start a third, `chat` (react-chat, the submodule `services/react-chat`),
+which answers www.travish.com/chat/. it sits on its own docker network, `www-chat`, which the
+workflows create the first time; `web` and `www_web` are created on that network and then put on
+the default bridge, where the proxy reaches them. the chat has no VIRTUAL_HOST, so the proxy never
+routes to it directly: the site's nginx passes `/chat/` to it (`nginx/nginx.conf`, ②¾). if `chat`
+is down, only `/chat/` fails (502); the site keeps answering. nothing in it is saved: every deploy
+or restart starts the chat empty. its image is built by the sandbox deploy, in the same Docker Hub
+repository as the site's, tagged `chat-<commit>` and, once the sandbox is up, `chat-tree-<hash>`,
+which production pulls.
+
 ## start kiddspazz website at travish.com -- to be done in prod
 docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
 docker run --rm --name www_website -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
@@ -113,3 +129,29 @@ docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST
 
 ## start the acme docker container with test certs and DEBUG mode -- for testing only
 docker run --detach --rm --name acme --env "DEBUG=1" --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh --env "ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory" -d nginxproxy/acme-companion:2.8.2
+
+
+# uptime check
+
+every 30 minutes GitHub runs `scripts/uptime-check.sh` (`.github/workflows/uptime.yml`), which asks:
+
+* `https://www.travish.com/` answers 200 with the site's own page in it, and
+* `https://travish.com/` answers 301 to `https://www.travish.com/` (not followed: the redirect is
+  made by the container serving the bare domain, so seeing it proves that container is up).
+
+each is asked up to three times, 30 seconds apart. a red run is the alarm: GitHub emails a failed
+scheduled run to the account that last changed the cron line, if its notification settings send
+Actions failures. schedules only run from `main`, and GitHub switches a public repo's schedules off
+after 60 days with no activity (turn it back on from the Actions tab).
+
+the check's requests say `travish-uptime-check` as their User-Agent, and `nginx/nginx.conf` leaves
+them out of the visit log (they still show in `docker logs`).
+
+run it by hand on GitHub (once the workflow is on `main`):
+`gh workflow run uptime --repo travis-horton/www`
+
+run it locally (it makes two or more requests to the live site):
+`bash scripts/uptime-check.sh`
+
+its tests run it against a stand-in server on your own machine, never the live site:
+`npx jest scripts/uptime-check.test.js`
