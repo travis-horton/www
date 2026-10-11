@@ -28,8 +28,10 @@
 #      on a missing one.
 #   4. The proxy is not the 2021 nginx (1.21.x) any more.
 #   5. The sandbox deploy's own two commands still work on this proxy: writing
-#      vhost.d/<host> through `docker exec nginx-proxy` and `nginx -s reload`,
-#      after which every answer for that host carries X-Robots-Tag.
+#      vhost.d/<host> through `docker exec nginx-proxy` (word for word) and
+#      `nginx -s reload` (here only once `nginx -t` passes, see
+#      reload_when_settled), after which every answer for that host carries
+#      X-Robots-Tag.
 #
 # What it does NOT prove, and cannot: certificates. No certificate is issued
 # here, the companion container (acme-companion) is not started, port 443 is
@@ -186,15 +188,53 @@ wait_for_site() {
   return 1
 }
 
-# write_robots: the sandbox deploy's two commands, word for word, for the two
-# hosts of this rehearsal (.github/workflows/deploy-to-dev.yml).
+# reload_when_settled: `nginx -s reload` inside the proxy, but only once the
+# proxy's config is whole. docker-gen, in the same container, rewrites
+# /etc/nginx/conf.d/default.conf (and reloads nginx itself) whenever a container
+# starts or stops, and `nginx -s reload` reads that whole file before it
+# signals anything. A reload in that same moment reads a half-written file and
+# fails: "[emerg] unexpected end of file ... default.conf:173", checks run
+# 38075573361, 26.1010, right after the site's containers were replaced.
+# So: up to RELOAD_TRIES tries, 1 s apart. Each runs `nginx -t`, and reloads
+# only when that passes; a reload that still fails (docker-gen started again in
+# between) counts as a failed try. A config that never passes is a real
+# failure and is reported as one, with what nginx last said.
+# The sandbox deploy (deploy-to-dev.yml) still reloads at once, bare; that is
+# a follow-up for the workflow, not done here.
+RELOAD_TRIES=30
+reload_when_settled() {
+  local tries=0 out="" what=""
+  # `if` around every docker call: called from an `if`, where `set -e` does not
+  # apply, and a failed try must lead to the next one, not out.
+  while [ "$tries" -lt "$RELOAD_TRIES" ]; do
+    tries=$((tries + 1))
+    what="nginx -t"
+    if out="$(docker exec "$PROXY" nginx -t 2>&1)"; then
+      what="nginx -s reload"
+      if out="$(docker exec "$PROXY" nginx -s reload 2>&1)"; then
+        return 0
+      fi
+    fi
+    if [ "$tries" -lt "$RELOAD_TRIES" ]; then
+      sleep 1
+    fi
+  done
+  echo "nginx -t inside $PROXY still failing after $RELOAD_TRIES tries (docker-gen never finished writing /etc/nginx/conf.d/default.conf, or the config is really broken); last output, of \`$what\`:"
+  printf '%s\n' "$out"
+  return 1
+}
+
+# write_robots: the sandbox deploy's two commands for the two hosts of this
+# rehearsal (.github/workflows/deploy-to-dev.yml). The vhost.d writes are the
+# deploy's word for word; the reload waits for a valid config first
+# (reload_when_settled), where the deploy reloads at once.
 write_robots() {
   local h
   # `|| return 1` on each: called from an `if`, where `set -e` does not apply.
   for h in travish.com www.travish.com; do
     docker exec "$PROXY" sh -c "printf 'add_header X-Robots-Tag \"noindex, nofollow\" always;\n' > /etc/nginx/vhost.d/$h" || return 1
   done
-  docker exec "$PROXY" nginx -s reload || return 1
+  reload_when_settled || return 1
 }
 
 echo "== image: $IMAGE behind the proxy of reverse-proxy/docker-compose.yml"
