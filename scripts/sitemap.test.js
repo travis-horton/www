@@ -6,13 +6,16 @@
  * post or demo would be missing from the sitemap until someone remembered it.
  * So this test reads the site's REAL routers (App.jsx and the three section
  * routers) and fails, naming the address, when a routed public page is not on
- * the list, or when the list names a page no router serves.
+ * the list, or when the list names a page no router serves. It walks into
+ * pathless layout routes, and it matches each section by the component App
+ * actually routes there (loading the lazy ones), not by its path.
  *
  * It also runs the generator and reads what it writes as XML, and proves the
  * generator refuses a list that would publish a private or impossible address
  * (/journal, both calendar routes, a drill page with a `:levelId`, a wildcard,
- * a query or fragment, white space, a path without a leading slash, a
- * duplicate, a page also in "notIndexed"), and escapes the XML specials.
+ * a query or fragment, white space, a path without a leading slash, a double
+ * slash, a %-escape, a '.' or '..' segment, a duplicate, a page also in
+ * "notIndexed"), and escapes the XML specials.
  *
  * The generator is plain Node (.mjs) and jest does not transform .mjs, so it
  * is never imported here: the test runs it with node, as the build does.
@@ -21,12 +24,19 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { spawnSync } from 'child_process';
-import { Routes, Navigate, createRoutesFromChildren } from 'react-router-dom';
+import { lazy } from 'react';
+import {
+  Routes,
+  Route,
+  Navigate,
+  createRoutesFromChildren,
+} from 'react-router-dom';
 
 import App from '../src/App';
 import Programming from '../src/pages/Programming';
 import Blog from '../src/pages/Blog';
 import Learn from '../src/pages/Learn';
+import Contact from '../src/pages/Contact';
 import { CANONICAL_ORIGIN } from '../src/sharedComponents/DocumentHead';
 
 const REPO = path.resolve(__dirname, '..');
@@ -36,13 +46,51 @@ const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 const PRIVATE_PREFIXES = ['/journal', '/gcal-hook', '/gcal-drain'];
 
 // Every '/x/*' route in App.jsx hands the rest of the address to a section
-// router. A new section must be added here, or the walk fails (it cannot
-// list pages it cannot see).
-const SECTIONS = {
-  '/programming/*': Programming,
-  '/blog/*': Blog,
-  '/learn/*': Learn,
-};
+// router: the component it routes there. The walk follows THAT component, so
+// a section path pointed at some other page fails instead of passing on the
+// old router's pages. A new section router must be added here, or the walk
+// fails (it cannot list pages it cannot see).
+const SECTION_ROUTERS = new Set([Programming, Blog, Learn]);
+
+const REACT_LAZY = Symbol.for('react.lazy');
+
+/**
+ * The component an element type stands for. Programming and Learn are
+ * React.lazy in App.jsx, so the type App routes is a lazy wrapper, not the
+ * component. React 19 keeps the loader on the wrapper: `_init(_payload)`
+ * starts the import and throws the pending promise; once that has settled it
+ * returns the module's default export, the same object this file imports.
+ * The beforeAll below settles App's lazy routes first, so this stays
+ * synchronous. Anything that does not resolve to a function gives null, and
+ * walk() then throws naming the path: it fails closed, never skips. These are
+ * React internals; an upgrade that changes them makes the walk throw loudly.
+ */
+function componentOf(type) {
+  if (type?.$$typeof !== REACT_LAZY) return type;
+  try {
+    const resolved = type._init(type._payload);
+    return typeof resolved === 'function' ? resolved : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Start every lazy route's import and wait for it, so componentOf() can read it. */
+async function settleLazyRoutes(routes) {
+  for (const route of routes) {
+    const type = route.element?.type;
+    if (type?.$$typeof === REACT_LAZY) {
+      try {
+        type._init(type._payload);
+      } catch (pending) {
+        if (typeof pending?.then === 'function') {
+          await Promise.resolve(pending).catch(() => {});
+        }
+      }
+    }
+    if (route.children) await settleLazyRoutes(route.children);
+  }
+}
 
 const readList = () => JSON.parse(fs.readFileSync(LIST, 'utf8'));
 
@@ -82,20 +130,36 @@ function walk(routes, base) {
       continue;
     }
     const p = route.path;
-    if (p === undefined || p === '*') continue; // the 404 pages
+    if (p === undefined) {
+      // A pathless layout route (<Route element={<Layout />}>) adds nothing
+      // to the address: its children are pages at the same base.
+      if (route.children) out.push(...walk(route.children, base));
+      continue;
+    }
+    if (p === '*') continue; // the 404 pages
     const full = join(base, p);
     if (full.endsWith('/*')) {
-      const section = SECTIONS[full];
-      if (!section) {
+      const section = componentOf(route.element?.type);
+      if (!SECTION_ROUTERS.has(section)) {
+        const what = section
+          ? `<${section.name || 'an unnamed component'}>`
+          : 'a component that does not load';
         throw new Error(
-          `App.jsx routes the section "${full}" but scripts/sitemap.test.js ` +
-            'does not know its router: add it to SECTIONS',
+          `App.jsx routes the section "${full}" to ${what}, which ` +
+            'scripts/sitemap.test.js does not know as a section router: ' +
+            'add it to SECTION_ROUTERS',
         );
       }
       out.push(...walk(routesOf(section), full.slice(0, -2)));
       continue;
     }
-    if (full.includes(':')) continue; // a drill page per level, not indexed
+    // Deliberate: a route with a `:param` (today the drill page per level,
+    // not indexed) is never REQUIRED on the list by this walk, because it
+    // stands for pages the walk cannot name. So if one ever serves public
+    // pages (a future /blog/:slug, say), its real addresses must be added to
+    // public-pages.json by hand; the generator refuses ':' so the pattern
+    // itself can never be listed.
+    if (full.includes(':')) continue;
     if (route.children) out.push(...walk(route.children, full));
     else out.push(full);
   }
@@ -109,6 +173,8 @@ function generate(args) {
 }
 
 describe('the router walk', () => {
+  beforeAll(() => settleLazyRoutes(routesOf(App)));
+
   test('every routed public page is on the list, and only those', () => {
     const walked = walk(routesOf(App), '/');
     const { pages, notIndexed } = readList();
@@ -130,10 +196,40 @@ describe('the router walk', () => {
     expect(new Set(walked).size).toBe(walked.length);
   });
 
-  test('a section App routes but SECTIONS does not know fails by name', () => {
+  test('a section whose router SECTION_ROUTERS does not know fails by name', () => {
     expect(() => walk([{ path: '/shop/*', element: null }], '/')).toThrow(
       /"\/shop\/\*"/,
     );
+  });
+
+  test("a pathless layout route's children are walked with the same base", () => {
+    // <Route element={<Layout />}> wraps pages without adding to the address.
+    const routes = createRoutesFromChildren(
+      <Route element={<div />}>
+        <Route path="/brand-new-page" element={<Contact />} />
+        <Route index element={<Contact />} />
+      </Route>,
+    );
+    expect(walk(routes, '/')).toEqual(['/brand-new-page', '/']);
+  });
+
+  test('a section path re-pointed at another component fails by name', () => {
+    expect(() =>
+      walk([{ path: '/blog/*', element: <Contact /> }], '/'),
+    ).toThrow(/"\/blog\/\*"/);
+  });
+
+  test('a section is walked by the component routed, under the routed path', () => {
+    const walked = walk([{ path: '/blog/*', element: <Learn /> }], '/');
+    expect(walked).toContain('/blog/toki-pona');
+    expect(walked).not.toContain('/blog/js-this');
+  });
+
+  test('a lazy section that cannot be loaded fails by name, never skipped', () => {
+    const NeverLoads = lazy(() => new Promise(() => {}));
+    expect(() =>
+      walk([{ path: '/blog/*', element: <NeverLoads /> }], '/'),
+    ).toThrow(/"\/blog\/\*"/);
   });
 });
 
@@ -206,6 +302,16 @@ describe('the generator fails closed', () => {
     ['the journal', ['/', '/journal'], '/journal'],
     ['the calendar hook', ['/', '/gcal-hook/x'], '/gcal-hook/x'],
     ['the calendar drain', ['/', '/gcal-drain'], '/gcal-drain'],
+    // nginx normalises these shapes (to /journal, /piano) before it matches
+    // a location, so the generator refuses the shape itself.
+    ['a double slash', ['/', '//journal'], '//journal'],
+    [
+      'a percent-escape',
+      ['/', '/%6Aournal/26/10/261010'],
+      '/%6Aournal/26/10/261010',
+    ],
+    ['a dot-dot segment', ['/', '/x/../journal'], '/x/../journal'],
+    ['a dot segment', ['/', '/./piano'], '/./piano'],
     [
       'a drill page',
       ['/', '/learn/seximal/:levelId'],

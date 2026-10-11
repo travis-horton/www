@@ -16,8 +16,10 @@
  *
  * This script refuses (exit 1, naming the address) any list that would publish
  * a private or impossible address: the journal, the calendar routes, a drill
- * page with a `:levelId`, a wildcard, a query or fragment, a duplicate, or a
- * page that is also in "notIndexed". No <lastmod>: there is no truthful date
+ * page with a `:levelId`, a wildcard, a query or fragment, a double slash, a
+ * %-escape, a '.' or '..' segment (nginx would normalise those three onto
+ * another address, a private one included), a duplicate, or a page that is
+ * also in "notIndexed". No <lastmod>: there is no truthful date
  * per page, and the field is optional in the sitemaps.org protocol.
  *
  *   node scripts/gen-sitemap.mjs <out-file>      write the file
@@ -87,6 +89,16 @@ function readList(file) {
 function problem(p, seen, notIndexed) {
   if (!p.startsWith('/')) return 'does not start with /';
   if (/[:*?#\s]/.test(p)) return 'holds one of : * ? # or white space';
+  // nginx normalises an address before it matches a location: it merges
+  // slashes, decodes %XX and resolves '.' and '..'. So //journal, /%6Aournal
+  // and /x/../journal all reach /journal, and a text-only prefix check below
+  // would let them through. No real page needs these shapes: refuse them
+  // outright (fail closed). Three checks, so each can be removed alone.
+  if (p.includes('//')) return 'holds an empty segment (//)';
+  if (p.includes('%')) return 'holds a %-escape';
+  if (p.split('/').some((s) => s === '.' || s === '..')) {
+    return 'holds a . or .. segment';
+  }
   for (const prefix of PRIVATE_PREFIXES) {
     if (p.startsWith(prefix)) return `is under the private ${prefix}`;
   }
