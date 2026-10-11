@@ -42,6 +42,10 @@ concurrency:
 jobs:
   deploy-new-web-app:
     runs-on: ubuntu-latest
+    # The production server's login details live in GitHub's "production"
+    # environment, which only main may deploy from. The repository-level
+    # copies are a fallback and are deleted after the first good deploy.
+    environment: production
     steps:
       -
         # Only to read the content hash below; nothing is built here. Production
