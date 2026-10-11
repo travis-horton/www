@@ -45,6 +45,12 @@ production automatically deploys on merge with `main`. it never builds: it runs 
 sandbox built from the same files, and a build is marked for production only after it came up
 healthy on the sandbox.
 
+deploys run one at a time per server: a deploy that starts while one is running (a push, or a
+rollback run by hand) waits, and only the newest waiting deploy runs after it. a skipped sandbox
+run never marks its build for production, so if a release's production deploy fails waiting for
+its build, re-run the cancelled `development environment` run for that commit, then the
+production run.
+
 to roll production back to an earlier release, deploy that release's `main` commit by hand (only
 releases from 26.0928 on can be brought back this way):
 `gh workflow run 'production environment' --repo travis-horton/www --ref main -f ref=<old main commit>`.
