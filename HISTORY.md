@@ -12,6 +12,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #175: Live-site login locked to the main branch** · [PR #175](https://github.com/travis-horton/www/pull/175) · merged 26.1011.0756 · v3.32.1
+- **[Live-site login locked to the main branch](https://github.com/travis-horton/www/pull/174)** · merged 26.1011.0756
+  Behind the scenes: the job that updates travish.com now logs in with details kept in a protected area only the main branch can use, and with a key of its own instead of the one the test site also uses.
+
 **www #173: the chat starts on the server · the chat room, at /chat/ + 7 more** · [PR #173](https://github.com/travis-horton/www/pull/173) · merged 26.1010.2105 · v3.32.0
 - **[the chat starts on the server](https://github.com/travis-horton/www/pull/172)** · merged 26.1010.2105
   Fixed: on the test copy of the site the chat crashed as soon as it started and kept restarting, so /chat/ showed an error while the rest of the site stayed up. The site now uses the chat's new packaging, which the server runs without trouble, and a check stops the old kind of packaging from coming back.
