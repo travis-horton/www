@@ -118,13 +118,23 @@ or restart starts the chat empty. its image is built by the sandbox deploy, in t
 repository as the site's, tagged `chat-<commit>` and, once the sandbox is up, `chat-tree-<hash>`,
 which production pulls.
 
+since 26.1014 (M-146) `web` and `www_web` are also started with `-e SERVER_TOKENS=off`. the proxy
+(1.x, the version pinned above) reads it from the container that announces a host and writes
+`server_tokens off;` into that host's server block, so the `Server` header says `nginx` with no
+version. the 2021/2022 proxies still on the servers ignore it; it takes effect at the first deploy
+after the proxy is replaced. ⚠️ do NOT also write `server_tokens off;` into `vhost.d/default` (or
+`vhost.d/<host>`) — that was www #125's droplet step 6, and this replaces it: the proxy includes
+those files inside the same server block, nginx refuses the directive twice, and the proxy's whole
+config stops loading. `scripts/server-tokens.test.js` guards both. after the swap, check with
+`curl -sI https://www.travish.com/ | grep -i '^server:'` — it should print `server: nginx`.
+
 ## start kiddspazz website at travish.com -- to be done in prod
-docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
-docker run --rm --name www_website -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
+docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web
+docker run --rm --name www_website -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web
 
 
 ## start kiddspazz website at kiddspazz.com -- to be done in stage
-docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
+docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web
 
 
 ## start the acme docker container with test certs and DEBUG mode -- for testing only
