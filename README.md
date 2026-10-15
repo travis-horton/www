@@ -155,3 +155,41 @@ run it locally (it makes two or more requests to the live site):
 
 its tests run it against a stand-in server on your own machine, never the live site:
 `npx jest scripts/uptime-check.test.js`
+
+
+# visit log
+
+nginx writes one line per page visit to `/var/log/www/visits.log` on the droplet. the directory is
+bind-mounted into both site containers (`web` and `www_web`), so the file survives every deploy.
+each line holds the visitor's IP address, so it is never served (no location has a root under
+`/var/log/www`) and only ever exists on the droplet.
+
+`nginx/visits.logrotate` rotates it monthly and keeps 3 old files (the oldest gzipped), so the oldest
+line on the disk is at most about four months old. that is long enough to answer a Search Console
+question weeks later, and short enough that old addresses don't pile up.
+
+it uses `copytruncate` (copy the file, then cut it to zero in place) rather than renaming the file
+and telling nginx to reopen it: two nginx processes hold the file open at once, and nginx appends
+(O_APPEND), so after the cut both carry on at the new end with no signal. a reopen signal would have
+to reach both containers and would fail mid-deploy. the cost is a line or two that can be lost at
+the moment of rotation, once a month.
+
+the rule runs on the droplet host, from its own daily logrotate job; it is not in the image, and no
+deploy installs it. install it once on prod, after it is merged to dev. the deploy user has no root
+but is in the docker group, so a throwaway container writes the file; the last part prints
+logrotate's path, and prints nothing if the host has no logrotate. `PROD` is the deploy login,
+`user@host`, the same pair as the deploy secrets `DIGITALOCEAN_USERNAME_PROD` and
+`DIGITALOCEAN_HOST_PROD` (kept out of this repo on purpose):
+
+`git -C ~/code/www fetch -q origin && git -C ~/code/www show origin/dev:nginx/visits.logrotate | ssh "$PROD" 'docker run --rm -i -v /etc/logrotate.d:/d kiddspazz/www_web sh -c "umask 022; cat > /d/www-visits" && command -v logrotate'`
+
+see how big the log is, and dry-run the rule with logrotate's debug mode (reads only, changes
+nothing):
+
+`ssh "$PROD" 'ls -l /var/log/www && docker run --rm -v /etc/logrotate.d/www-visits:/c:ro -v /var/log/www:/var/log/www:ro alpine:3.20 sh -c "apk add -q logrotate && logrotate -d /c"'`
+
+the dev droplet (kiddspazz.com) has no laptop ssh yet, so the rule is installed on prod only.
+
+the test reads the log's path from `nginx/nginx.conf` and the deploy workflows' mounts, and checks
+the rotation, the retention bound (124 days) and copytruncate:
+`npx jest scripts/visits-logrotate.test.js`

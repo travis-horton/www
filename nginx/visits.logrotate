@@ -1,0 +1,48 @@
+# The visit log's rotation rule (logrotate), 26.1014.
+#
+# nginx/nginx.conf writes one line per page visit to /var/log/www/visits.log,
+# a directory bind-mounted from the droplet into both site containers (web and
+# www_web), so the file outlives every deploy. This rule keeps it from growing
+# forever. It runs on the droplet HOST, from the host's own daily logrotate
+# job, and is NOT part of the image: no deploy installs it.
+#
+# Install (prod droplet, once, after this is merged to dev). The deploy user
+# has no root but is in the docker group, so a throwaway container writes the
+# file. PROD is the deploy login, user@host, the same pair as the deploy
+# secrets DIGITALOCEAN_USERNAME_PROD and DIGITALOCEAN_HOST_PROD (kept out of
+# this public repo on purpose):
+#   git -C ~/code/www fetch -q origin && git -C ~/code/www show origin/dev:nginx/visits.logrotate | ssh "$PROD" 'docker run --rm -i -v /etc/logrotate.d:/d kiddspazz/www_web sh -c "umask 022; cat > /d/www-visits" && command -v logrotate'
+# Installed as /etc/logrotate.d/www-visits, with no dot in the name: logrotate
+# skips files in that directory whose names end in certain extensions, and a
+# plain name can never match one.
+#
+# Retention: every line holds a visitor's IP address. Monthly, with 3 old
+# files kept, means the oldest line on the disk is at most about four months
+# old (the month being written plus three). That is long enough to answer a
+# Search Console question weeks later, and short enough that old addresses
+# do not pile up. scripts/visits-logrotate.test.js holds it to 124 days.
+#
+# copytruncate, not create + a reopen signal: two nginx processes (one per
+# container) hold this file open at once. nginx opens access logs with
+# O_APPEND, so after the copy is cut to zero in place both simply keep writing
+# at the new end, and no signal is needed. A signal would have to reach both
+# containers by name and would fail mid-deploy; a container it missed would
+# keep writing into the renamed file. The cost: a line written in the moment
+# between the copy and the cut can be lost, once a month.
+#
+# No `su`: Docker creates a missing bind-mount source as root:root 0755
+# (assumed for /var/log/www, not checked on the droplet), which passes
+# logrotate's check on the parent directory. If that directory ever becomes
+# group- or world-writable, logrotate will refuse it and say so.
+#
+# The test reads the path from nginx.conf and the deploy workflows' mounts.
+# Move the log there and this path has to move with it.
+/var/log/www/visits.log {
+    monthly
+    rotate 3
+    copytruncate
+    compress
+    delaycompress
+    missingok
+    notifempty
+}
