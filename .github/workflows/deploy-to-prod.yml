@@ -169,9 +169,14 @@ jobs:
             # create → connect → start, as in the sandbox: on the chat's
             # network first (docker's name server), on the proxy's default
             # network before starting (the proxy sees it complete at start).
+            # -e SERVER_TOKENS=off (26.1014, M-146): the proxy stops printing
+            # its nginx version for this host. Inert on the 2021 proxy, live
+            # once it is replaced. Never also write server_tokens into
+            # vhost.d (a duplicate directive; deploy-to-dev.yml says why).
             docker create --restart unless-stopped --name web --network www-chat \
               -e VIRTUAL_HOST=travish.com \
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
+              -e SERVER_TOKENS=off \
               -v /var/log/gcal-hook:/var/log/gcal-hook \
               -v /etc/gcal-hook:/etc/nginx/gcal:ro \
               -v /var/log/www:/var/log/www \
@@ -181,6 +186,7 @@ jobs:
             docker create --restart unless-stopped --name www_web --network www-chat \
               -e VIRTUAL_HOST=www.travish.com \
               -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 \
+              -e SERVER_TOKENS=off \
               -v /var/log/www:/var/log/www \
               "$IMAGE" >/dev/null
             docker network connect bridge www_web

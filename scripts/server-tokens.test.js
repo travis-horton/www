@@ -161,15 +161,31 @@ describe('nothing writes the server_tokens directive itself', () => {
     ['scripts', 'proxy-smoke.sh'],
   ];
 
+  const directiveLines = (label, text) =>
+    text
+      .split('\n')
+      .map((line, index) => ({ line, at: `${label}:${index + 1}` }))
+      .filter(({ line }) => !isComment(line) && /server_tokens/.test(line))
+      .map(({ line, at }) => `${at}  ${line.trim()}`);
+
   test('no deploy step and no rehearsal step mentions `server_tokens`', () => {
     const offending = writers.flatMap((parts) =>
-      read(...parts)
-        .split('\n')
-        .map((line, index) => ({ line, at: `${parts.join('/')}:${index + 1}` }))
-        .filter(({ line }) => !isComment(line) && /server_tokens/.test(line))
-        .map(({ line, at }) => `${at}  ${line.trim()}`),
+      directiveLines(parts.join('/'), read(...parts)),
     );
     expect(offending).toEqual([]);
+  });
+
+  test('the rule above finds a vhost.d write of the directive, and ignores comments and the variable', () => {
+    const text = [
+      '            # never write server_tokens into vhost.d (a comment)',
+      '              -e SERVER_TOKENS=off \\',
+      `            docker exec nginx-proxy sh -c "printf 'server_tokens off;\\n' > /etc/nginx/vhost.d/default"`,
+    ].join('\n');
+    expect(directiveLines('x', text)).toEqual([
+      expect.stringMatching(
+        /^x:3 {2}docker exec nginx-proxy .*vhost\.d\/default/,
+      ),
+    ]);
   });
 });
 
