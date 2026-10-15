@@ -137,6 +137,9 @@ jobs:
             fi
             refs="HEAD:refs/heads/$DEFAULT_BRANCH"
             for t in $tags; do refs="$refs refs/tags/$t"; done
+            # $refs splits into one argument per ref on purpose (www-only line: www's
+            # workflows check runs shellcheck; the master copy has no such check).
+            # shellcheck disable=SC2086
             if git push -q --atomic origin $refs; then echo "recorded and tagged:$tags"; exit 0; fi
             for t in $tags; do git tag -d "$t" >/dev/null; done
             sleep $(( attempt * 5 + RANDOM % 10 ))
