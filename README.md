@@ -119,14 +119,17 @@ repository as the site's, tagged `chat-<commit>` and, once the sandbox is up, `c
 which production pulls.
 
 since 26.1014 (M-146) `web` and `www_web` are also started with `-e SERVER_TOKENS=off`. the proxy
-(1.x, the version pinned above) reads it from the container that announces a host and writes
-`server_tokens off;` into that host's server block, so the `Server` header says `nginx` with no
-version. the 2021/2022 proxies still on the servers ignore it; it takes effect at the first deploy
-after the proxy is replaced. ⚠️ do NOT also write `server_tokens off;` into `vhost.d/default` (or
-`vhost.d/<host>`) — that was www #125's droplet step 6, and this replaces it: the proxy includes
-those files inside the same server block, nginx refuses the directive twice, and the proxy's whole
-config stops loading. `scripts/server-tokens.test.js` guards both. after the swap, check with
-`curl -sI https://www.travish.com/ | grep -i '^server:'` — it should print `server: nginx`.
+reads it from the container that announces a host and writes `server_tokens off;` into that host's
+server block, so the `Server` header says `nginx` with no version. every nginx-proxy since 0.9.1
+(commit fb7a1121, 2021-05) does this: the version pinned above, and also the 2021/2022 proxies
+still on the servers (nginx 1.21.1 on prod, 1.21.6 on the sandbox, i.e. nginx-proxy 0.9.2 or
+later). so it takes effect at the next deploy to each server; no proxy swap is needed for it.
+⚠️ do NOT also write `server_tokens off;` into `vhost.d/default` (or `vhost.d/<host>`) — that was
+www #125's droplet step 6, and this replaces it: the proxy includes those files inside the same
+server block, nginx refuses the directive twice, and the proxy's whole config stops loading.
+`scripts/server-tokens.test.js` guards both. after the next deploy, check with
+`curl -sI https://kiddspazz.com/ | grep -i '^server:'` (sandbox) or
+`curl -sI https://www.travish.com/ | grep -i '^server:'` (prod) — it should print `server: nginx`.
 
 ## start kiddspazz website at travish.com -- to be done in prod
 docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web

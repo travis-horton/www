@@ -9,13 +9,14 @@
  * `server_tokens off;` (nginx/nginx.conf, guarded by nginx-conf.test.js) never
  * reaches a visitor. nginx-proxy builds each host's server block from the
  * environment of the site container that announces the host (its
- * VIRTUAL_HOST), and from release 1.x it reads SERVER_TOKENS there: with
- * `-e SERVER_TOKENS=off` on the site container, the proxy writes
- * `server_tokens off;` into that host's server block and the header says
- * `nginx`, with no version (nginx-proxy 1.11.6, nginx.tmpl, the
+ * VIRTUAL_HOST), and since release 0.9.1 (commit fb7a1121, 2021-05) it reads
+ * SERVER_TOKENS there: with `-e SERVER_TOKENS=off` on the site container, the
+ * proxy writes `server_tokens off;` into that host's server block and the
+ * header says `nginx`, with no version (nginx-proxy 1.11.6, nginx.tmpl, the
  * `Env.SERVER_TOKENS` lookup and the two `server_tokens` lines it feeds).
- * The proxy from 2021/2022 still on the servers ignores the variable, so it
- * changes nothing there until the proxy is replaced (README, "docker notes").
+ * The 2021/2022 proxies still on the servers (nginx 1.21.1 and 1.21.6, so
+ * nginx-proxy 0.9.2 or later) read it too, so it takes effect at the next
+ * deploy to each server (README, "docker notes").
  *
  * These read the two deploy workflows, the proxy rehearsal and the compose
  * file as TEXT and fail when:

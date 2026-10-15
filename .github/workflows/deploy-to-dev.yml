@@ -201,8 +201,9 @@ jobs:
             # -e SERVER_TOKENS=off (26.1014, M-146): the proxy in front reads
             # it from the container that announces the host and writes
             # `server_tokens off;` into that host's server block, so the
-            # Server header says `nginx` with no version. The proxy from
-            # 2021/2022 ignores it; it takes effect once the proxy is replaced
+            # Server header says `nginx` with no version. Every nginx-proxy
+            # since 0.9.1 (commit fb7a1121, 2021-05) reads it, the droplets'
+            # 2021/2022 proxies included, so it takes effect at this deploy
             # (README, "docker notes"). Never ALSO write server_tokens into
             # vhost.d: the proxy includes that file inside the same server
             # block, nginx refuses the directive twice, and the whole proxy

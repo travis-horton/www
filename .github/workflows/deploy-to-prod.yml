@@ -170,9 +170,11 @@ jobs:
             # network first (docker's name server), on the proxy's default
             # network before starting (the proxy sees it complete at start).
             # -e SERVER_TOKENS=off (26.1014, M-146): the proxy stops printing
-            # its nginx version for this host. Inert on the 2021 proxy, live
-            # once it is replaced. Never also write server_tokens into
-            # vhost.d (a duplicate directive; deploy-to-dev.yml says why).
+            # its nginx version for this host. Every nginx-proxy since 0.9.1
+            # (commit fb7a1121, 2021-05) reads it, the droplet's 2021 proxy
+            # included, so it takes effect at this deploy. Never also write
+            # server_tokens into vhost.d (a duplicate directive;
+            # deploy-to-dev.yml says why).
             docker create --restart unless-stopped --name web --network www-chat \
               -e VIRTUAL_HOST=travish.com \
               -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 \
