@@ -105,8 +105,9 @@ docker run --detach --restart always --name proxy --publish 80:80 --publish 443:
 docker run --detach --restart always --name acme --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh -d nginxproxy/acme-companion:2.8.2
 
 
-the two "start kiddspazz website" blocks below are how it was first done by hand. the deploy
-workflows now start these containers themselves, as `web` and `www_web` (see `.github/workflows/`).
+the site itself was first started here by hand, as `website`. the deploy workflows now start its
+containers themselves, as `web` and `www_web` (see `.github/workflows/`, and "start the site's
+containers" below).
 
 since 26.1010 they also start a third, `chat` (react-chat, the submodule `services/react-chat`),
 which answers www.travish.com/chat/. it sits on its own docker network, `www-chat`, which the
@@ -131,13 +132,25 @@ server block, nginx refuses the directive twice, and the proxy's whole config st
 `curl -sI https://kiddspazz.com/ | grep -i '^server:'` (sandbox) or
 `curl -sI https://www.travish.com/ | grep -i '^server:'` (prod) — it should print `server: nginx`.
 
-## start kiddspazz website at travish.com -- to be done in prod
-docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web
-docker run --rm --name www_website -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web
+## start the site's containers -- done by the deploys, in stage and prod
+don't start these by hand: re-run the deploy. the deploy workflows start `chat`, `web` and
+`www_web` on every run, two hosts on each server:
+- prod: `web` = travish.com, `www_web` = www.travish.com
+- sandbox (stage): `web` = kiddspazz.com, `www_web` = www.kiddspazz.com
 
-
-## start kiddspazz website at kiddspazz.com -- to be done in stage
-docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 -e SERVER_TOKENS=off -d kiddspazz/www_web
+if they ever must be started by hand, copy the commands from the deploy itself, the step
+"Deploy web app to kiddspazz.com" in `.github/workflows/deploy-to-dev.yml` or "Deploy web app to
+travish.com" in `.github/workflows/deploy-to-prod.yml`. (a copy of them lived here and went stale,
+so there is none now.) whatever you run must match the deploy in four ways:
+- the names `web` and `www_web`, never `website` or `www_website`. a deploy only removes `chat`,
+  `web` and `www_web`, so a container under any other name outlives it, and since it announces the
+  same VIRTUAL_HOST the proxy splits visits between it and the real site.
+- `--restart unless-stopped`, never `--rm`: a `--rm` container is gone after a reboot (the same
+  reason the proxy and acme above use `--restart always`).
+- `docker create` on the `www-chat` network, then `docker network connect bridge`, then
+  `docker start`. without `www-chat` the site can't reach the chat and /chat/ breaks.
+- `-v /var/log/www:/var/log/www` (the visit log) on both, and `-e SERVER_TOKENS=off`. `web` also
+  gets the two gcal-hook mounts; `www_web` doesn't.
 
 
 ## start the acme docker container with test certs and DEBUG mode -- for testing only
