@@ -129,7 +129,8 @@ jobs:
           # key no longer reaches production.
           DEPLOY_KEY: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD || secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           # Production's public host key: its known_hosts line(s),
-          # "<host as in DIGITALOCEAN_HOST_PROD> <type> <key>", kept in the
+          # "<IP>,<name> <type> <key>" (it then matches
+          # DIGITALOCEAN_HOST_PROD either way), kept in the
           # production environment. NO fallback to the sandbox's: a
           # different server has a different key. README, "deployment",
           # says how to make it.

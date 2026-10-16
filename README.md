@@ -67,17 +67,39 @@ against a pinned copy (since 26.1015, M-168). each server has four deploy secret
 | private key | `DIGITALOCEAN_ACCESS_TOKEN` | `DIGITALOCEAN_ACCESS_TOKEN_PROD`, else the sandbox's |
 | host key | `DIGITALOCEAN_HOST_KEY` | `DIGITALOCEAN_HOST_KEY_PROD`, no fallback |
 
-a host-key secret holds the server's `known_hosts` line: `<host> <key type> <key>`, where `<host>`
-is written exactly as in that server's address secret (an IP and a name do not match each other).
-make it on a machine you trust with `ssh-keyscan -t ed25519 <host>`, and before saving it check
-that `ssh-keygen -lf -` on that line prints the same fingerprint the droplet itself prints for
-`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`. when a host-key secret is missing or empty the
-deploy fails with an error naming it, before it connects, so the server is not touched. a rebuilt
-droplet has a new host key: update the secret, or every deploy to it is refused.
+a host-key secret holds the server's `known_hosts` line: `<IP>,<name> <key type> <key>`. with both
+the IP and the name in front, the line matches whichever of the two the address secret holds:
 
-the sandbox's build logs in to Docker Hub as `DOCKERHUB_USERNAME` with `DOCKERHUB_TOKEN`, an access
-token (read & write on `kiddspazz/www_web`). it falls back to `DOCKERHUB_PASSWORD` until that secret
-is deleted (M-225).
+* sandbox: `<kiddspazz.com's IP>,kiddspazz.com ssh-ed25519 AAAA…`
+* production: `<travish.com's IP>,travish.com ssh-ed25519 AAAA…`
+
+each droplet's IP is on its page in DigitalOcean (`dig +short kiddspazz.com` and
+`dig +short travish.com` print the same).
+
+take the key from the droplet itself, which needs no ssh login: in DigitalOcean, open the droplet,
+then Access, then Launch Droplet Console, and run `cat /etc/ssh/ssh_host_ed25519_key.pub`. it prints
+`ssh-ed25519 AAAA… root@…`; put `<IP>,<name> ` in front, drop the trailing comment, and save that one
+line as the secret (`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` there shows its fingerprint,
+if you want one to compare). no ed25519 key on the droplet: use `ssh_host_ecdsa_key.pub` the same
+way. `ssh-keyscan` from a laptop also gives the line, but it asks the network, so trust it only once
+its fingerprint matches the one the console shows.
+
+the address secrets (`DIGITALOCEAN_HOST`, `DIGITALOCEAN_HOST_PROD`) should hold the bare IP, the
+same one as at the front of the host-key line. the deploy step passes them to `ssh` exactly as
+stored: unlike the old ssh action it trims no space or newline and takes no `:port`, so either one
+fails the deploy.
+
+when a host-key secret is missing or empty the deploy fails with an error naming it, before it
+connects, so the server is not touched. a rebuilt droplet has a new host key: update the secret, or
+every deploy to it is refused.
+
+the sandbox's build logs in to Docker Hub as `DOCKERHUB_USERNAME` with `DOCKERHUB_TOKEN`, a personal
+access token with Read & Write. a personal token can't be limited to one repository: it has one
+permission level for every repository the account can reach; only organization tokens can be
+([docs.docker.com/security/access-tokens](https://docs.docker.com/security/access-tokens/)). it falls
+back to `DOCKERHUB_PASSWORD` only while `DOCKERHUB_TOKEN` is missing (not when it is wrong), so keep
+that secret until one green sandbox deploy has logged in with the token, then delete it (M-225). the
+droplets need no Docker Hub login to pull: `kiddspazz/www_web` is public.
 
 # authors
 

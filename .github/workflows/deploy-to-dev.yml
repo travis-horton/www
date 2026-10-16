@@ -146,8 +146,8 @@ jobs:
           DEPLOY_USER: ${{ secrets.DIGITALOCEAN_USERNAME }}
           DEPLOY_KEY: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           # The sandbox server's public host key: its known_hosts line(s),
-          # "<host as in DIGITALOCEAN_HOST> <type> <key>". README,
-          # "deployment", says how to make it.
+          # "<IP>,<name> <type> <key>", so it matches DIGITALOCEAN_HOST
+          # either way. README, "deployment", says how to make it.
           DEPLOY_HOST_KEY: ${{ secrets.DIGITALOCEAN_HOST_KEY }}
           # Only the secret's NAME, for the error when it is missing.
           HOST_KEY_SECRET: DIGITALOCEAN_HOST_KEY
