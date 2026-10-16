@@ -20,10 +20,11 @@
  * Two kinds of test:
  *   1. STATIC, over both deploy workflows: no line is a bare reload, and every
  *      reload sits inside a `while` loop that runs `nginx -t` first.
- *   2. BEHAVIOURAL: the REAL script the deploy sends over ssh (the `script: |`
- *      of the step "Deploy web app to kiddspazz.com") is cut out of the
- *      workflow and run with bash against fakes. No docker is needed and none
- *      is reached. A temp directory goes FIRST on PATH, holding:
+ *   2. BEHAVIOURAL: the REAL script the deploy sends over ssh (the
+ *      `REMOTE_SCRIPT: |` of the step "Deploy web app to kiddspazz.com") is cut
+ *      out of the workflow and run as the server runs it, `bash -s` with the
+ *      script on stdin, against fakes. No docker is needed and none is
+ *      reached. A temp directory goes FIRST on PATH, holding:
  *        - docker: after each container starts (`docker run -d`, as the chat
  *          does, or `docker start`, as the two site containers do since the
  *          chat came, 26.1010) it is "mid-write" for the next
@@ -47,6 +48,8 @@ import { spawnSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+
+import { blockScalar, stepLines } from './workflow-text';
 
 const REPO = path.resolve(__dirname, '..');
 const WORKFLOW_DIR = path.join(REPO, '.github', 'workflows');
@@ -148,34 +151,97 @@ describe('the deploy workflows, read as text', () => {
     ];
     expect(reloadProblems('t', good).problems).toEqual([]);
   });
+
+  // A command that reads the script's INPUT. The server runs each deploy's
+  // REMOTE_SCRIPT as `bash -s`, reading the script from that same input, so
+  // such a command eats the lines after it: all of them (`cat`), or just the
+  // next one (`read`). The behavioural cases below see that only when the
+  // eaten line did something; a `read` in front of a comment changes nothing
+  // today and breaks the deploy the day the comment moves. So none at all.
+  // Lines ending in `\` are joined first, so a flag on a continuation line
+  // counts.
+  const STDIN_READER =
+    /(^|[\s;&|({!])(read|cat|mapfile|readarray|xargs|ssh)(\s|;|$)|\/dev\/stdin|<&0|\bdocker\s+(run|exec|start|attach)\b.*\s(-[a-z]*i[a-z]*|--interactive|--attach|-a)(\s|=|$)/;
+  const stdinReaders = (script) =>
+    script
+      .replace(/\\\n/g, ' ')
+      .split('\n')
+      .filter((line) => !isComment(line) && STDIN_READER.test(line))
+      .map((line) => line.trim());
+
+  test("neither deploy's server script has a command that reads its input", () => {
+    const steps = {
+      'deploy-to-dev.yml': STEP,
+      'deploy-to-prod.yml': 'Deploy web app to travish.com',
+    };
+    Object.entries(steps).forEach(([name, step]) => {
+      const script = blockScalar(
+        stepLines(linesOfFile(DEPLOYS[name]), step),
+        'REMOTE_SCRIPT',
+      );
+      expect(script).not.toBeNull();
+      expect([name, stdinReaders(script)]).toEqual([name, []]);
+    });
+  });
+
+  test('the rule above refuses commands that read stdin, and passes the ones the scripts use', () => {
+    [
+      'read -r _ || true',
+      'cat >/dev/null',
+      'if true; then read x; fi',
+      'mapfile -t lines',
+      'echo x | xargs echo',
+      'ssh other-host true',
+      'bash /dev/stdin',
+      'docker exec -i nginx-proxy sh',
+      'docker run -it busybox',
+      'docker run --rm \\\n  --interactive busybox',
+    ].forEach((line) =>
+      expect([line, stdinReaders(line).length]).toEqual([line, 1]),
+    );
+    [
+      'docker pull "$IMAGE" || { echo "pull of $IMAGE failed; live site left untouched"; exit 1; }',
+      'docker exec nginx-proxy nginx -t',
+      'docker ps -q --filter "name=^/?web$" --filter status=running',
+      'docker run --restart unless-stopped --name chat --network www-chat \\\n  -e PORT=8081 \\\n  -d "$CHAT_IMAGE"',
+      'echo "the config is already whole"',
+      '# read the comment, cat',
+    ].forEach((line) => expect([line, stdinReaders(line)]).toEqual([line, []]));
+  });
 });
 
-// The ssh script of the deploy step: every line after `script: |` that is
-// indented at least as deep as the first one, with that indent taken off.
-const remoteScript = (lines) => {
-  const step = lines.findIndex((line) =>
-    new RegExp(`^\\s*name:\\s*${STEP}\\s*$`).test(line),
-  );
-  expect(step).toBeGreaterThan(-1);
-  const start = lines.findIndex(
-    (line, i) => i > step && /^\s*script:\s*\|\s*$/.test(line),
-  );
-  expect(start).toBeGreaterThan(step);
-  const indent = /^(\s*)/.exec(lines[start + 1])[1].length;
-  expect(indent).toBeGreaterThan(0);
-  const body = [];
-  for (let i = start + 1; i < lines.length; i += 1) {
-    const line = lines[i];
-    if (line.trim() === '') {
-      body.push('');
-      continue;
-    }
-    if (/^(\s*)/.exec(line)[1].length < indent) break;
-    body.push(line.slice(indent));
-  }
-  while (body.length && body[body.length - 1] === '') body.pop();
-  return `${body.join('\n').split('${{ github.sha }}').join(FAKE_SHA)}\n`;
+// The script a deploy step sends to the server: its env's `REMOTE_SCRIPT: |`
+// (since M-168, 26.1015; before, the old action's `script: |`), with each
+// GitHub expression in `substitutions` filled in. Every one of them must be
+// there, so a renamed step output fails here rather than passing unfilled.
+const remoteScript = (file, stepName, substitutions) => {
+  const step = stepLines(linesOfFile(file), stepName);
+  expect(step.length).toBeGreaterThan(0);
+  const body = blockScalar(step, 'REMOTE_SCRIPT');
+  expect(body).not.toBeNull();
+  return Object.entries(substitutions).reduce((text, [expr, value]) => {
+    expect(text).toContain(expr);
+    return text.split(expr).join(value);
+  }, body);
 };
+
+// The sandbox's script, as every dev case below runs it.
+const DEV_SCRIPT = [DEV_WORKFLOW, STEP, { '${{ github.sha }}': FAKE_SHA }];
+
+// Production's script (step "Deploy web app to travish.com"), with the image
+// tags its "Wait for the sandbox build" step would have found. An empty chat
+// tag is a rollback to a commit from before the chat (26.1010).
+const PROD_TREE = 'fedcba9876543210fedcba9876543210fedcba98';
+const PROD_TAG = `tree-${PROD_TREE}`;
+const PROD_CHAT_TAG = `chat-tree-${PROD_TREE}`;
+const prodScript = (chatTag) => [
+  DEPLOYS['deploy-to-prod.yml'],
+  'Deploy web app to travish.com',
+  {
+    '${{ steps.image.outputs.tag }}': PROD_TAG,
+    '${{ steps.image.outputs.chat_tag }}': chatTag,
+  },
+];
 
 // The fakes. Plain strings (no `${`), so the shell's own syntax survives.
 const FAKE_DOCKER = String.raw`#!/bin/bash
@@ -322,7 +388,7 @@ beforeEach(() => {
   stateFile = path.join(dir, 'dockergen-busy');
   scriptFile = path.join(dir, 'deploy.sh');
   fs.writeFileSync(logFile, '');
-  fs.writeFileSync(scriptFile, remoteScript(linesOfFile(DEV_WORKFLOW)));
+  fs.writeFileSync(scriptFile, remoteScript(...DEV_SCRIPT));
 });
 
 afterEach(() => {
@@ -362,11 +428,17 @@ const afterContainers = (lines) => {
 };
 
 // races: how many reloads fail even right after a passing `nginx -t`.
-const runDeploy = (name, busy, races = 0) => {
+// source: [workflow file, step name, substitutions] (default: the sandbox's).
+const runDeploy = (name, busy, races = 0, source = DEV_SCRIPT) => {
+  fs.writeFileSync(scriptFile, remoteScript(...source));
   fs.writeFileSync(`${stateFile}.races`, String(races));
-  const result = spawnSync('bash', [scriptFile], {
+  // As the deploy runs it on the server: `bash -s`, the script on STDIN. A
+  // line in it that read stdin would swallow the rest of the script, and the
+  // cases below would then fail.
+  const result = spawnSync('bash', ['-s'], {
     cwd: dir,
     env: fakeEnv(busy),
+    input: fs.readFileSync(scriptFile, 'utf8'),
     encoding: 'utf8',
     timeout: 20000,
   });
@@ -378,7 +450,7 @@ const runDeploy = (name, busy, races = 0) => {
     fs.writeFileSync(
       path.join(keep, `${name}.txt`),
       [
-        `# the deploy's ssh script from ${DEV_WORKFLOW}, FAKE_DOCKERGEN_BUSY=${busy}, reload races=${races}`,
+        `# the deploy's ssh script from ${source[0]} ("${source[1]}"), FAKE_DOCKERGEN_BUSY=${busy}, reload races=${races}`,
         `# exit status: ${result.status}, signal: ${result.signal}`,
         '# ---- what the script printed (stdout, then stderr)',
         output,
@@ -458,6 +530,90 @@ describe("the deploy's real ssh script, against a fake docker", () => {
     const { result, lines } = runDeploy('already-whole', 0);
     expect(afterContainers(lines)).toEqual(['t ok', 'reload']);
     expect(lines).toContain('prune');
+    expect(result.status).toBe(0);
+  });
+});
+
+// Production's script, run the same way: `bash -s`, the script on stdin.
+// The expected logs below are the WHOLE run, in order. That exactness is the
+// point: a line that reads stdin (`cat`, `read`, a command that drains its
+// input) swallows the rest of the script, or one line of it, and bash still
+// exits 0 at the end of what it was given, so a status check alone would
+// pass. Any edit to production's REMOTE_SCRIPT that changes what it runs
+// must update these lists, on purpose.
+describe("production's real ssh script, run as the server runs it (bash -s)", () => {
+  // The part both cases share: the two mount directories, the two site
+  // containers made, connected and started, then the pause before the checks.
+  const SITE_UP = [
+    'mkdir -p /var/log/gcal-hook',
+    'mkdir -p /etc/gcal-hook',
+    'create',
+    'network connect',
+    'start',
+    'create',
+    'network connect',
+    'start',
+    'sleep 5',
+  ];
+
+  test('is complete shell once the image tags are filled in', () => {
+    const script = remoteScript(...prodScript(PROD_CHAT_TAG));
+    fs.writeFileSync(scriptFile, script);
+    expect(script).not.toContain('${{');
+    expect(script).toContain(`IMAGE=kiddspazz/www_web:${PROD_TAG}`);
+    expect(script).toContain(`CHAT_TAG='${PROD_CHAT_TAG}'`);
+    expect(script).toMatch(/\nexit 0\n$/);
+    const syntax = spawnSync('bash', ['-n', scriptFile], { encoding: 'utf8' });
+    expect(syntax.stderr).toBe('');
+    expect(syntax.status).toBe(0);
+  });
+
+  test('with the chat: both pulls, the chat, both site containers, every check, then the prune', () => {
+    const { result, output, lines } = runDeploy(
+      'prod-with-chat',
+      0,
+      0,
+      prodScript(PROD_CHAT_TAG),
+    );
+    expect(lines).toEqual([
+      'pull',
+      'pull',
+      'rm',
+      'network create',
+      'run',
+      ...SITE_UP,
+      'inspect',
+      'ps -q',
+      'inspect',
+      'ps -q',
+      'inspect',
+      'ps -q',
+      'prune',
+    ]);
+    expect(output).not.toContain('DEPLOY FAILED');
+    expect(result.status).toBe(0);
+  });
+
+  test('a rollback past the chat (empty chat tag): one pull, no chat started, still the prune', () => {
+    const { result, output, lines } = runDeploy(
+      'prod-no-chat',
+      0,
+      0,
+      prodScript(''),
+    );
+    expect(lines).toEqual([
+      'pull',
+      'rm',
+      'network create',
+      ...SITE_UP,
+      'inspect',
+      'ps -q',
+      'inspect',
+      'ps -q',
+      'prune',
+    ]);
+    expect(lines).not.toContain('run');
+    expect(output).not.toContain('DEPLOY FAILED');
     expect(result.status).toBe(0);
   });
 });

@@ -26,12 +26,15 @@
 #   3. The site's headers arrive unchanged and exactly once: the three security
 #      headers, no-cache on a page, the year-long header on a built file, none
 #      on a missing one.
-#   4. The proxy is not the 2021 nginx (1.21.x) any more.
+#   4. The proxy is not the 2021 nginx (1.21.x) any more, and (26.1014,
+#      M-146) its Server header is a bare `nginx` with no version: the site
+#      containers are started with SERVER_TOKENS=off, as the deploys start
+#      them, and the proxy writes `server_tokens off;` for their hosts.
 #   5. The sandbox deploy's own two commands still work on this proxy: writing
 #      vhost.d/<host> through `docker exec nginx-proxy` (word for word) and
-#      `nginx -s reload` (here only once `nginx -t` passes, see
-#      reload_when_settled), after which every answer for that host carries
-#      X-Robots-Tag.
+#      `nginx -s reload` (only once `nginx -t` passes, here as in the deploy
+#      since 26.1010; see reload_when_settled), after which every answer for
+#      that host carries X-Robots-Tag.
 #   6. (26.1010) The chat at /chat/, started the way the deploys start it: its
 #      own container on a private network, the site's containers created on
 #      that network and put on the proxy's before they start. Through the
@@ -185,9 +188,11 @@ security_headers() {
 
 # start_site <container> <host>: one container of the image, announced to the
 # proxy and started the way the deploy workflows do it (26.1010): created on
-# the chat's network, put on the proxy's default network, then started.
+# the chat's network, put on the proxy's default network, then started. With
+# SERVER_TOKENS=off, as the deploys (26.1014; scripts/server-tokens.test.js).
 start_site() {
-  docker create --name "$1" --network "$NET" -e VIRTUAL_HOST="$2" -e VIRTUAL_PORT=80 "$IMAGE" >/dev/null
+  docker create --name "$1" --network "$NET" -e VIRTUAL_HOST="$2" -e VIRTUAL_PORT=80 \
+    -e SERVER_TOKENS=off "$IMAGE" >/dev/null
   docker network connect bridge "$1"
   docker start "$1" >/dev/null
 }
@@ -224,8 +229,9 @@ wait_for_site() {
 # only when that passes; a reload that still fails (docker-gen started again in
 # between) counts as a failed try. A config that never passes is a real
 # failure and is reported as one, with what nginx last said.
-# The sandbox deploy (deploy-to-dev.yml) still reloads at once, bare; that is
-# a follow-up for the workflow, not done here.
+# The sandbox deploy (deploy-to-dev.yml) waits the same way since 26.1010
+# (www #171): its own loop, 30 tries 1 s apart, `nginx -t` first;
+# scripts/deploy-dev-reload.test.js holds both deploys to no bare reload.
 RELOAD_TRIES=30
 reload_when_settled() {
   local tries=0 out="" what=""
@@ -252,7 +258,7 @@ reload_when_settled() {
 # write_robots: the sandbox deploy's two commands for the two hosts of this
 # rehearsal (.github/workflows/deploy-to-dev.yml). The vhost.d writes are the
 # deploy's word for word; the reload waits for a valid config first
-# (reload_when_settled), where the deploy reloads at once.
+# (reload_when_settled), as the deploy's own loop does since 26.1010.
 write_robots() {
   local h
   # `|| return 1` on each: called from an `if`, where `set -e` does not apply.
@@ -306,10 +312,13 @@ header_once "www host, GET /" Cache-Control "no-cache"
 header_absent "www host, GET / (before the deploy's commands)" X-Robots-Tag
 server="$(header Server)"
 echo "Server header through the proxy: $server"
+# Exactly `nginx`, no version (26.1014, M-146): the site's containers carry
+# SERVER_TOKENS=off (start_site, as the deploys), and the proxy turns that into
+# `server_tokens off;` for the host. Anything with a version fails, 1.21 or not.
 case "$server" in
-  *nginx/1.21.*) fail "the Server header still says 1.21 ($server)" ;;
+  nginx) pass "the Server header is a bare nginx, no version" ;;
   "") fail "no Server header through the proxy" ;;
-  *) pass "the Server header does not say 1.21" ;;
+  *) fail "the Server header names a version ($server)" ;;
 esac
 
 req www.travish.com GET "$bundle"

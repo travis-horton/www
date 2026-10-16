@@ -57,6 +57,50 @@ releases from 26.0928 on can be brought back this way):
 don't `gh run rerun` an old production run instead: a run from before 26.0928 deploys whatever the
 sandbox built last, not the old build.
 
+the deploys reach each server with the runner's own `ssh`, which first checks the server's host key
+against a pinned copy (since 26.1015, M-168). each server has four deploy secrets:
+
+| | sandbox (repository secrets) | production (the `production` environment) |
+|---|---|---|
+| address | `DIGITALOCEAN_HOST` | `DIGITALOCEAN_HOST_PROD` |
+| user | `DIGITALOCEAN_USERNAME` | `DIGITALOCEAN_USERNAME_PROD` |
+| private key | `DIGITALOCEAN_ACCESS_TOKEN` | `DIGITALOCEAN_ACCESS_TOKEN_PROD`, else the sandbox's |
+| host key | `DIGITALOCEAN_HOST_KEY` | `DIGITALOCEAN_HOST_KEY_PROD`, no fallback |
+
+a host-key secret holds the server's `known_hosts` line: `<IP>,<name> <key type> <key>`. with both
+the IP and the name in front, the line matches whichever of the two the address secret holds:
+
+* sandbox: `<kiddspazz.com's IP>,kiddspazz.com ssh-ed25519 AAAA…`
+* production: `<travish.com's IP>,travish.com ssh-ed25519 AAAA…`
+
+each droplet's IP is on its page in DigitalOcean (`dig +short kiddspazz.com` and
+`dig +short travish.com` print the same).
+
+take the key from the droplet itself, which needs no ssh login: in DigitalOcean, open the droplet,
+then Access, then Launch Droplet Console, and run `cat /etc/ssh/ssh_host_ed25519_key.pub`. it prints
+`ssh-ed25519 AAAA… root@…`; put `<IP>,<name> ` in front, drop the trailing comment, and save that one
+line as the secret (`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` there shows its fingerprint,
+if you want one to compare). no ed25519 key on the droplet: use `ssh_host_ecdsa_key.pub` the same
+way. `ssh-keyscan` from a laptop also gives the line, but it asks the network, so trust it only once
+its fingerprint matches the one the console shows.
+
+the address secrets (`DIGITALOCEAN_HOST`, `DIGITALOCEAN_HOST_PROD`) should hold the bare IP, the
+same one as at the front of the host-key line. the deploy step passes them to `ssh` exactly as
+stored: unlike the old ssh action it trims no space or newline and takes no `:port`, so either one
+fails the deploy.
+
+when a host-key secret is missing or empty the deploy fails with an error naming it, before it
+connects, so the server is not touched. a rebuilt droplet has a new host key: update the secret, or
+every deploy to it is refused.
+
+the sandbox's build logs in to Docker Hub as `DOCKERHUB_USERNAME` with `DOCKERHUB_TOKEN`, a personal
+access token with Read & Write. a personal token can't be limited to one repository: it has one
+permission level for every repository the account can reach; only organization tokens can be
+([docs.docker.com/security/access-tokens](https://docs.docker.com/security/access-tokens/)). there is
+no fallback: the old `DOCKERHUB_PASSWORD` secret (which in fact held a 2021 token) was deleted
+26.1016 after a green sandbox deploy logged in with `DOCKERHUB_TOKEN` (M-225). the droplets need no
+Docker Hub login to pull: `kiddspazz/www_web` is public.
+
 # authors
 
 * kiddspazz/thor/travis, [github](https://github.com/travis-horton)
@@ -105,8 +149,9 @@ docker run --detach --restart always --name proxy --publish 80:80 --publish 443:
 docker run --detach --restart always --name acme --volumes-from proxy --volume /var/run/docker.sock:/var/run/docker.sock:ro --volume acme:/etc/acme.sh -d nginxproxy/acme-companion:2.8.2
 
 
-the two "start kiddspazz website" blocks below are how it was first done by hand. the deploy
-workflows now start these containers themselves, as `web` and `www_web` (see `.github/workflows/`).
+the site itself was first started here by hand, as `website`. the deploy workflows now start its
+containers themselves, as `web` and `www_web` (see `.github/workflows/`, and "start the site's
+containers" below).
 
 since 26.1010 they also start a third, `chat` (react-chat, the submodule `services/react-chat`),
 which answers www.travish.com/chat/. it sits on its own docker network, `www-chat`, which the
@@ -118,13 +163,38 @@ or restart starts the chat empty. its image is built by the sandbox deploy, in t
 repository as the site's, tagged `chat-<commit>` and, once the sandbox is up, `chat-tree-<hash>`,
 which production pulls.
 
-## start kiddspazz website at travish.com -- to be done in prod
-docker run --rm --name website -e VIRTUAL_HOST=travish.com -e LETSENCRYPT_HOST=travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
-docker run --rm --name www_website -e VIRTUAL_HOST=www.travish.com -e LETSENCRYPT_HOST=www.travish.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
+since 26.1014 (M-146) `web` and `www_web` are also started with `-e SERVER_TOKENS=off`. the proxy
+reads it from the container that announces a host and writes `server_tokens off;` into that host's
+server block, so the `Server` header says `nginx` with no version. every nginx-proxy since 0.9.1
+(commit fb7a1121, 2021-05) does this: the version pinned above, and also the 2021/2022 proxies
+still on the servers (nginx 1.21.1 on prod, 1.21.6 on the sandbox, i.e. nginx-proxy 0.9.2 or
+later). so it takes effect at the next deploy to each server; no proxy swap is needed for it.
+⚠️ do NOT also write `server_tokens off;` into `vhost.d/default` (or `vhost.d/<host>`) — that was
+www #125's droplet step 6, and this replaces it: the proxy includes those files inside the same
+server block, nginx refuses the directive twice, and the proxy's whole config stops loading.
+`scripts/server-tokens.test.js` guards both. after the next deploy, check with
+`curl -sI https://kiddspazz.com/ | grep -i '^server:'` (sandbox) or
+`curl -sI https://www.travish.com/ | grep -i '^server:'` (prod) — it should print `server: nginx`.
 
+## start the site's containers -- done by the deploys, in stage and prod
+don't start these by hand: re-run the deploy. the deploy workflows start `chat`, `web` and
+`www_web` on every run, two hosts on each server:
+- prod: `web` = travish.com, `www_web` = www.travish.com
+- sandbox (stage): `web` = kiddspazz.com, `www_web` = www.kiddspazz.com
 
-## start kiddspazz website at kiddspazz.com -- to be done in stage
-docker run --rm --name website -e VIRTUAL_HOST=kiddspazz.com -e LETSENCRYPT_HOST=kiddspazz.com -e VIRTUAL_PORT=80 -d kiddspazz/www_web
+if they ever must be started by hand, copy the commands from the deploy itself, the step
+"Deploy web app to kiddspazz.com" in `.github/workflows/deploy-to-dev.yml` or "Deploy web app to
+travish.com" in `.github/workflows/deploy-to-prod.yml`. (a copy of them lived here and went stale,
+so there is none now.) whatever you run must match the deploy in four ways:
+- the names `web` and `www_web`, never `website` or `www_website`. a deploy only removes `chat`,
+  `web` and `www_web`, so a container under any other name outlives it, and since it announces the
+  same VIRTUAL_HOST the proxy splits visits between it and the real site.
+- `--restart unless-stopped`, never `--rm`: a `--rm` container is gone after a reboot (the same
+  reason the proxy and acme above use `--restart always`).
+- `docker create` on the `www-chat` network, then `docker network connect bridge`, then
+  `docker start`. without `www-chat` the site can't reach the chat and /chat/ breaks.
+- `-v /var/log/www:/var/log/www` (the visit log) on both, and `-e SERVER_TOKENS=off`. `web` also
+  gets the two gcal-hook mounts; `www_web` doesn't.
 
 
 ## start the acme docker container with test certs and DEBUG mode -- for testing only
