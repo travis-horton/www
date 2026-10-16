@@ -11,9 +11,8 @@ on:
 # GitHub which pull requests are waiting on dev. That step is allowed to fail
 # quietly, so taking this line away would not stop a deploy: the footer would
 # just show the OLD version. The Docker Hub login (an access token,
-# DOCKERHUB_TOKEN, since M-225; the account password DOCKERHUB_PASSWORD is the
-# fallback until that secret is deleted) and the server key are separate
-# secrets and are not affected.
+# DOCKERHUB_TOKEN, since M-225; the old DOCKERHUB_PASSWORD fallback was removed
+# 26.1016) and the server key are separate secrets and are not affected.
 permissions:
   contents: read
   pull-requests: read
@@ -58,7 +57,7 @@ jobs:
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       -
         # The build's own time, Boise, YY.MMDD.HHMM — shown in the footer after the

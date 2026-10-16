@@ -277,17 +277,17 @@ describe('the workflows', () => {
     expect(prod).toEqual(dev);
   });
 
-  test('docker login reads DOCKERHUB_TOKEN first', () => {
+  test('docker login reads DOCKERHUB_TOKEN only', () => {
     // M-225 (a): a Docker Hub access token replaces the account password.
-    // The password stays as the fallback until Travis has made the token
-    // and then deleted the old secret, so no deploy breaks in between.
+    // The DOCKERHUB_PASSWORD fallback was removed 26.1016, once a green
+    // sandbox deploy had logged in with the token and that secret was deleted.
     const step = stepLines(workflow('deploy-to-dev.yml'), 'Login to DockerHub');
     const passwords = step
       .map((line) => /^\s*password:\s*(.+?)\s*$/.exec(line))
       .filter(Boolean)
       .map((match) => match[1]);
     expect(passwords).toEqual([
-      '${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}',
+      '${{ secrets.DOCKERHUB_TOKEN }}',
     ]);
   });
 
