@@ -12,6 +12,28 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #183: the website signs in to Docker Hub with one dedicated token · two out-of-date notes brought up to date + 4 more** · [PR #183](https://github.com/travis-horton/www/pull/183) · merged 26.1016.1109 · v3.32.2
+- **[the website signs in to Docker Hub with one dedicated token](https://github.com/travis-horton/www/pull/182)** · merged 26.1016.1109
+  Behind the scenes: the build now signs in to Docker Hub only with the token made for these deploys on 26.1016. The old stored login, which turned out to be a 2021 token that could also delete images, is gone from GitHub and from Docker Hub.
+- **[two out-of-date notes brought up to date](https://github.com/travis-horton/www/pull/181)** · merged 26.1016.1109
+  Behind the scenes: the rehearsal script's comments no longer say the test-server deploy reloads its front server without waiting (it has waited since 26.1010), and the README's "docker notes" no longer show the old `docker run --rm --name website` commands. Following those would have left a stray copy of the site that no deploy removes. In their place: re-run the deploy, where to copy from if a hand start is ever needed, and the four things it must match.
+- **[No more hand-made exceptions](https://github.com/travis-horton/www/commit/9a71c11)** · merged 26.1016.1109
+  Behind the scenes: the automatic job that writes the site's change log is now an exact copy of its master again. The two local edits it needed (keeping a newer version of GitHub's checkout step, and a note telling the workflow checker to allow one line) are gone, because the master now does both itself. A setting in the site's checks that let one old warning through is removed too; that warning no longer appears.
+- **[The change log job is tested on every pull request](https://github.com/travis-horton/www/commit/7a3a816)** · merged 26.1016.1109
+  Behind the scenes: the site's checks now run the change log job's own tests on every pull request, so a broken copy shows up there instead of first failing when a release merges.
+- **[Server check before every deploy](https://github.com/travis-horton/www/commit/d627175)** · merged 26.1016.1109
+  Behind the scenes: the deploys to kiddspazz.com and travish.com now log in with the standard ssh tool and refuse any server whose identity does not match a copy saved in the repository's settings. A missing copy stops the deploy before it connects, so neither server is touched.
+- **[Docker Hub access token](https://github.com/travis-horton/www/commit/d627175)** · merged 26.1016.1109
+  Behind the scenes: the sandbox build logs in to Docker Hub with an access token when one is saved, and with the old password only until that is deleted.
+- **[Stricter checks on the server login](https://github.com/travis-horton/www/commit/391f4ba)** · merged 26.1016.1109
+  Behind the scenes: automatic checks now catch any later edit that would quietly switch the server check off: a contrary setting placed first, a settings file, or a command that answers with whatever identity the server offers. The production deploy's own server instructions are now test-run exactly the way the server runs them, and the login ignores any settings file on the build machine.
+- **[Setup notes for the server identities](https://github.com/travis-horton/www/commit/cbbd35b)** · merged 26.1016.1109
+  Behind the scenes: the setup notes now say how to copy each server's identity from DigitalOcean's web console (no login needed), that the server address settings should hold the bare address, and that a personal Docker Hub token covers every repository of the account (only organization tokens can be limited to one).
+- **[the site stops naming its web-server version](https://github.com/travis-horton/www/pull/178)** · merged 26.1016.1109
+  Behind the scenes: the deploys now ask the server in front of the site to answer with just "nginx" instead of "nginx" plus its version number, and an automatic check fails if that setting is ever dropped or doubled up. The front servers already on both machines understand it, so it takes effect at the next deploy to each one.
+- **[the change log catches up on entries it missed](https://github.com/travis-horton/www/pull/176)** · merged 26.1016.1109
+  Behind the scenes: the robot that writes this file after each release now also writes in any earlier release it missed, oldest first, with a "recorded late" note when it is more than an hour late. If GitHub won't tell it what one missed release contained, it skips only that one, records the newest release anyway, and fills the gap on a later run.
+
 **www #175: Live-site login locked to the main branch** · [PR #175](https://github.com/travis-horton/www/pull/175) · merged 26.1011.0756 · v3.32.1
 - **[Live-site login locked to the main branch](https://github.com/travis-horton/www/pull/174)** · merged 26.1011.0756
   Behind the scenes: the job that updates travish.com now logs in with details kept in a protected area only the main branch can use, and with a key of its own instead of the one the test site also uses.
