@@ -139,16 +139,134 @@ const runStep = (file, name, overrides = {}) => {
   };
 };
 
-// The `-o Name=value` options ssh was given, as { Name: value }.
-const optionsOf = (argv) => {
+// The only `-o` options the step may give ssh. ssh takes the FIRST value it
+// is given for an option, so a second `-o StrictHostKeyChecking=…` placed in
+// front of `=yes` would win (ssh -G shows it: `-o StrictHostKeyChecking=false
+// -o StrictHostKeyChecking=yes` → "stricthostkeychecking false"), and an
+// option such as KnownHostsCommand or ProxyCommand can change what is
+// trusted without touching StrictHostKeyChecking at all. Names are compared
+// ignoring case, as ssh compares them.
+const SSH_OPTIONS = [
+  'IdentitiesOnly',
+  'BatchMode',
+  'StrictHostKeyChecking',
+  'UserKnownHostsFile',
+  'GlobalKnownHostsFile',
+  'ConnectTimeout',
+  'ServerAliveInterval',
+];
+const ALLOWED_SSH_OPTIONS = new Set(SSH_OPTIONS.map((n) => n.toLowerCase()));
+
+// Everything wrong with the arguments ssh was given, plus its `-o` options as
+// { Name: value }. Allowed: -T; -i <file>; -F /dev/null (no other file);
+// -o <option> from the list above, each name once, written `Name=value` or
+// `Name value`; and LAST, exactly `user@host` then `bash -s`. Anything else
+// (a glued `-oName=value`, `-F <file>`, `-v`, a flag ssh might add later) is
+// a problem, so a new argument has to be added here on purpose.
+const sshArgsProblems = (argv) => {
+  const problems = [];
   const options = {};
-  argv.forEach((arg, i) => {
-    if (argv[i - 1] !== '-o') return;
-    const at = arg.indexOf('=');
-    options[arg.slice(0, at)] = arg.slice(at + 1);
-  });
-  return options;
+  const seen = new Set();
+  const tail = argv.slice(-2);
+  if (
+    argv.length < 2 ||
+    !/^[^\s@-][^\s@]*@[^\s@]+$/.test(tail[0]) ||
+    tail[1] !== 'bash -s'
+  ) {
+    problems.push(
+      `the last two arguments are not user@host, 'bash -s': ${JSON.stringify(tail)}`,
+    );
+  }
+  const flags = argv.slice(0, -2);
+  for (let i = 0; i < flags.length; i += 1) {
+    const arg = flags[i];
+    if (arg === '-T') continue;
+    if (!['-i', '-F', '-o'].includes(arg)) {
+      problems.push(`argument not allowed: ${arg}`);
+      continue;
+    }
+    const value = flags[i + 1];
+    i += 1;
+    if (value === undefined) {
+      problems.push(`${arg} has no value`);
+      continue;
+    }
+    if (arg === '-i') continue;
+    if (arg === '-F') {
+      if (value !== '/dev/null')
+        problems.push(`-F ${value} (only -F /dev/null)`);
+      continue;
+    }
+    // -o: `Name=value` or `Name value`, split on the first `=` or space.
+    const at = value.search(/[=\s]/);
+    const name = at === -1 ? value : value.slice(0, at);
+    const key = name.toLowerCase();
+    if (!ALLOWED_SSH_OPTIONS.has(key)) {
+      problems.push(`option not allowed: -o ${value}`);
+      continue;
+    }
+    if (seen.has(key)) problems.push(`option given twice: -o ${value}`);
+    seen.add(key);
+    options[name] = at === -1 ? '' : value.slice(at + 1);
+  }
+  return { problems, options };
 };
+
+// The rule above, on made-up argument lists: the clean one passes, and every
+// way found (26.1015, review of PR #179) to outvote or sidestep
+// StrictHostKeyChecking=yes is refused.
+test('the ssh argument rule refuses repeated, unknown and glued options, and -F <file>', () => {
+  const clean = [
+    '-F',
+    '/dev/null',
+    '-T',
+    '-i',
+    '/tmp/deploy-ssh.X/key',
+    '-o',
+    'IdentitiesOnly=yes',
+    '-o',
+    'BatchMode=yes',
+    '-o',
+    'StrictHostKeyChecking=yes',
+    '-o',
+    'UserKnownHostsFile=/tmp/deploy-ssh.X/known_hosts',
+    '-o',
+    'GlobalKnownHostsFile=/dev/null',
+    '-o',
+    'ConnectTimeout=30',
+    '-o',
+    'ServerAliveInterval=30',
+    'deployer@203.0.113.7',
+    'bash -s',
+  ];
+  expect(sshArgsProblems(clean).problems).toEqual([]);
+  // Each bad list is the clean one with something put in front of
+  // `-o StrictHostKeyChecking=yes` (where ssh would read it first), or with
+  // the -F file swapped.
+  const strict = clean.indexOf('StrictHostKeyChecking=yes') - 1;
+  const before = (...args) => [
+    ...clean.slice(0, strict),
+    ...args,
+    ...clean.slice(strict),
+  ];
+  const bad = {
+    'the same option again, other case': before(
+      '-o',
+      'stricthostkeychecking=no',
+    ),
+    'the space form': before('-o', 'StrictHostKeyChecking no'),
+    'a glued -o': before('-oStrictHostKeyChecking=no'),
+    KnownHostsCommand: before('-o', 'KnownHostsCommand=/bin/echo %H %t %K'),
+    ProxyCommand: before('-o', 'ProxyCommand=nc %h %p'),
+    '-F another file': ['-F', '~/cfg', ...clean.slice(2)],
+  };
+  Object.entries(bad).forEach(([why, argv]) =>
+    expect([why, sshArgsProblems(argv).problems.length > 0]).toEqual([
+      why,
+      true,
+    ]),
+  );
+});
 
 describe.each(DEPLOYS)('%s, step "%s"', (file, name, secret) => {
   test('the step is a plain run block, and the env names its own host-key secret', () => {
@@ -184,7 +302,10 @@ describe.each(DEPLOYS)('%s, step "%s"', (file, name, secret) => {
   test('ssh checks the host key strictly, against the pinned line only', () => {
     const { result, argv, saved } = runStep(file, name);
     expect(result.status).toBe(0);
-    const options = optionsOf(argv);
+    // Only the arguments on the list, each option once (ssh takes the FIRST
+    // value of a repeated one), so nothing can outvote the values below.
+    const { problems, options } = sshArgsProblems(argv);
+    expect(problems).toEqual([]);
     expect(options).toEqual(
       expect.objectContaining({
         StrictHostKeyChecking: 'yes',
@@ -196,6 +317,10 @@ describe.each(DEPLOYS)('%s, step "%s"', (file, name, secret) => {
       }),
     );
     expect(argv).toContain('-T');
+    // No ssh config file is read (not the runner's ~/.ssh/config, not
+    // /etc/ssh/ssh_config): the options above are the whole configuration.
+    expect(argv.indexOf('-F')).toBeGreaterThan(-1);
+    expect(argv[argv.indexOf('-F') + 1]).toBe('/dev/null');
     // The known_hosts file it was pointed at holds exactly the secret.
     expect(saved('known_hosts')).toBe(`${HOST_KEY_LINE}\n`);
     // The key it was given is the secret, readable by its owner only.

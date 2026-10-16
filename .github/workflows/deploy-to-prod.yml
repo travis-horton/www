@@ -285,10 +285,11 @@ jobs:
           printf '%s\n' "$DEPLOY_HOST_KEY" > "$ssh_dir/known_hosts"
           # StrictHostKeyChecking=yes against ONLY that file: a server whose
           # key is not the pinned one is refused before the key is offered.
-          # BatchMode: never stop to ask anything. The remote script goes over
-          # stdin to `bash -s`; ssh exits with that script's exit status,
-          # which becomes this step's.
-          printf '%s' "$REMOTE_SCRIPT" | ssh -T -i "$ssh_dir/key" \
+          # BatchMode: never stop to ask anything. -F /dev/null: no ssh config
+          # file on the runner is read, so these options are all there is.
+          # The remote script goes over stdin to `bash -s`; ssh exits with
+          # that script's exit status, which becomes this step's.
+          printf '%s' "$REMOTE_SCRIPT" | ssh -F /dev/null -T -i "$ssh_dir/key" \
             -o IdentitiesOnly=yes -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile="$ssh_dir/known_hosts" \

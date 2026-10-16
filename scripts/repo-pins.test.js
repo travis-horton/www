@@ -205,20 +205,54 @@ describe('the workflows', () => {
     expect(found).toEqual([]);
   });
 
+  // Checking off in any spelling ssh accepts (`=no`, `=off`, `=false`, the
+  // space form `StrictHostKeyChecking no`, any case), trust-on-first-use, a
+  // KnownHostsCommand (it can answer with whatever key the server offers),
+  // or asking the server for the very key it is being checked against.
+  const HOST_KEY_BYPASS =
+    /StrictHostKeyChecking[\s=]+["']?(no|off|false|accept-new)\b|accept-new|ssh-keyscan|KnownHostsCommand/i;
+  // ssh pointed at a config file other than /dev/null: a file can switch
+  // checking off. Case-sensitive: ssh's lowercase -f means something else.
+  const SSH_CONFIG_FILE = /\bssh\b.*\s-F(?!\s+\/dev\/null\b)/;
+  const bypassesHostKey = (line) =>
+    HOST_KEY_BYPASS.test(line) || SSH_CONFIG_FILE.test(line);
+
   test('no workflow turns host-key checking off or fetches a key on the spot', () => {
-    // Any of these would trust whichever server answers: checking off,
-    // trust-on-first-use, or asking the server for the very key it is being
-    // checked against. Comment lines count too, so none is pasted back in
-    // from an example.
+    // Any of these would trust whichever server answers. Comment lines count
+    // too, so none is pasted back in from an example.
     const found = [];
     files.forEach((name) => {
       workflow(name).forEach((line, index) => {
-        if (/StrictHostKeyChecking=no|accept-new|ssh-keyscan/i.test(line)) {
+        if (bypassesHostKey(line)) {
           found.push(`${name}:${index + 1}  ${line.trim()}`);
         }
       });
     });
     expect(found).toEqual([]);
+  });
+
+  test('the rule above refuses every spelling of checking off, and ssh -F <file>', () => {
+    [
+      '-o StrictHostKeyChecking=off \\',
+      "-o 'StrictHostKeyChecking no' \\",
+      '-o stricthostkeychecking=false',
+      '-o StrictHostKeyChecking="no"',
+      '-o StrictHostKeyChecking=accept-new',
+      "-o 'KnownHostsCommand=/bin/echo %H %t %K'",
+      'ssh-keyscan -t ed25519 203.0.113.7',
+      'ssh -F cfg host',
+      'printf x | ssh -F "$HOME/.ssh/config" -T host',
+    ].forEach((line) =>
+      expect([line, bypassesHostKey(line)]).toEqual([line, true]),
+    );
+    [
+      '-o StrictHostKeyChecking=yes \\',
+      'printf x | ssh -F /dev/null -T -i "$ssh_dir/key" \\',
+      'ssh_dir="$(mktemp -d "$RUNNER_TEMP/deploy-ssh.XXXXXX")"',
+      'ssh-key: ${{ secrets.HISTORY_PUSH_KEY }}',
+    ].forEach((line) =>
+      expect([line, bypassesHostKey(line)]).toEqual([line, false]),
+    );
   });
 
   test.each(DEPLOYS)('each deploy pins its own host key: %s', (name) => {
