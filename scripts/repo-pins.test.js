@@ -5,7 +5,7 @@
  * What the build and the deploys are allowed to pull in, and with what power.
  *
  * These read the Dockerfile, the proxy's compose file and the workflow files as
- * TEXT (no YAML parser) and fail when one of six habits slips back in:
+ * TEXT (no YAML parser) and fail when one of eight habits slips back in:
  *
  *   1. a base image named by a floating tag (`FROM node:latest`, or a channel
  *      such as `nginx:mainline`): the same
@@ -16,13 +16,18 @@
  *      was newest on the day it was last pulled, and nothing says which;
  *   3. an action named by a tag (`uses: some/action@v4`): a tag can be moved to
  *      different code after the fact, a full commit cannot, and the deploy jobs
- *      hand these actions the SSH key to the servers;
+ *      hand these actions the Docker Hub login;
  *   4. a workflow with no `permissions:` block: it then gets the repository's
  *      default token, which here can WRITE;
  *   5. production deploying with the key the sandbox also uses;
  *   6. a deploy that can run beside another deploy of the same server
  *      (26.1010: ten merges in 30 s started ten dev deploys; eight failed and
- *      the survivor was not the newest commit).
+ *      the survivor was not the newest commit);
+ *   7. the SSH key to a server handed to an action, or a server reached
+ *      without checking its host key against a pinned copy (M-168, 26.1015;
+ *      scripts/deploy-ssh.test.js runs the ssh step itself);
+ *   8. the Docker Hub login made with the account password while an access
+ *      token is there to use (M-225, 26.1015).
  *
  * history.yml is left out BY NAME. It is an installed copy of a file whose
  * master lives outside this repository (its own header says an edit here is
@@ -30,6 +35,8 @@
  */
 import fs from 'fs';
 import path from 'path';
+
+import { blockScalar, envOf, stepLines } from './workflow-text';
 
 const REPO = path.resolve(__dirname, '..');
 const WORKFLOW_DIR = path.join(REPO, '.github', 'workflows');
@@ -160,13 +167,93 @@ describe('the workflows', () => {
 
   test("production's deploy asks for its own key first", () => {
     const keys = workflow('deploy-to-prod.yml')
-      .map((line) => /^\s*key:\s*(.+?)\s*$/.exec(line))
+      .map((line) => /^\s*DEPLOY_KEY:\s*(.+?)\s*$/.exec(line))
       .filter(Boolean)
       .map((match) => match[1]);
     // The shared key stays as the fallback until the PROD secret exists; once
     // it does, GitHub picks it without another change here.
     expect(keys).toEqual([
       '${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD || secrets.DIGITALOCEAN_ACCESS_TOKEN }}',
+    ]);
+  });
+
+  // M-168 (a), 26.1009: the deploys log in to the servers with the runner's
+  // own openssh, checking each server's host key against a pinned copy.
+  // appleboy/ssh-action (until 26.1015) was pinned to a commit, but that
+  // commit only fetches its ssh program (drone-ssh) while the job runs, so
+  // the pin never covered the code that was handed the server key, and
+  // neither deploy passed its `fingerprint`, so the server was never checked.
+  const DEPLOY_STEPS = {
+    'deploy-to-dev.yml': 'Deploy web app to kiddspazz.com',
+    'deploy-to-prod.yml': 'Deploy web app to travish.com',
+  };
+  const HOST_KEYS = {
+    'deploy-to-dev.yml': '${{ secrets.DIGITALOCEAN_HOST_KEY }}',
+    'deploy-to-prod.yml': '${{ secrets.DIGITALOCEAN_HOST_KEY_PROD }}',
+  };
+  const deployStep = (name) => stepLines(workflow(name), DEPLOY_STEPS[name]);
+
+  test('no workflow uses appleboy/ssh-action', () => {
+    const found = [];
+    files.forEach((name) => {
+      workflow(name).forEach((line, index) => {
+        if (/appleboy\/ssh-action/.test(line)) {
+          found.push(`${name}:${index + 1}  ${line.trim()}`);
+        }
+      });
+    });
+    expect(found).toEqual([]);
+  });
+
+  test('no workflow turns host-key checking off or fetches a key on the spot', () => {
+    // Any of these would trust whichever server answers: checking off,
+    // trust-on-first-use, or asking the server for the very key it is being
+    // checked against. Comment lines count too, so none is pasted back in
+    // from an example.
+    const found = [];
+    files.forEach((name) => {
+      workflow(name).forEach((line, index) => {
+        if (/StrictHostKeyChecking=no|accept-new|ssh-keyscan/i.test(line)) {
+          found.push(`${name}:${index + 1}  ${line.trim()}`);
+        }
+      });
+    });
+    expect(found).toEqual([]);
+  });
+
+  test.each(DEPLOYS)('each deploy pins its own host key: %s', (name) => {
+    const step = deployStep(name);
+    expect(step.length).toBeGreaterThan(0);
+    const env = envOf(step);
+    // Production's key lives in the production environment and has NO
+    // fallback to the sandbox's: a different server has a different key.
+    expect(env.DEPLOY_HOST_KEY).toEqual(HOST_KEYS[name]);
+    // No `uses:` at all in the step: the ssh is the runner's own.
+    expect(step.filter((line) => /^\s*uses:/.test(line))).toEqual([]);
+    // The old action's command_timeout was 10m; the step keeps that limit.
+    expect(
+      step.filter((line) => /^\s*timeout-minutes:\s*10\s*$/.test(line)),
+    ).toHaveLength(1);
+  });
+
+  test('the two deploy steps run the same ssh block, byte for byte', () => {
+    const dev = blockScalar(deployStep('deploy-to-dev.yml'), 'run');
+    const prod = blockScalar(deployStep('deploy-to-prod.yml'), 'run');
+    expect(dev).not.toBeNull();
+    expect(prod).toEqual(dev);
+  });
+
+  test('docker login reads DOCKERHUB_TOKEN first', () => {
+    // M-225 (a): a Docker Hub access token replaces the account password.
+    // The password stays as the fallback until Travis has made the token
+    // and then deleted the old secret, so no deploy breaks in between.
+    const step = stepLines(workflow('deploy-to-dev.yml'), 'Login to DockerHub');
+    const passwords = step
+      .map((line) => /^\s*password:\s*(.+?)\s*$/.exec(line))
+      .filter(Boolean)
+      .map((match) => match[1]);
+    expect(passwords).toEqual([
+      '${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}',
     ]);
   });
 
@@ -224,7 +311,7 @@ describe('the workflows', () => {
     // cancel) never leaves a tag behind that production would then pull.
     const lines = workflow('deploy-to-dev.yml');
     const deploy = lines.findIndex((line) =>
-      /^\s*(?:-\s+)?uses:\s*appleboy\/ssh-action@/.test(line),
+      /^\s*name:\s*Deploy web app to kiddspazz\.com\s*$/.test(line),
     );
     const treeTag = lines.findIndex((line) => /^\s*TREE_TAG:/.test(line));
     const tagging = lines.findIndex((line) =>

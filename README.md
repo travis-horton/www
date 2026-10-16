@@ -57,6 +57,28 @@ releases from 26.0928 on can be brought back this way):
 don't `gh run rerun` an old production run instead: a run from before 26.0928 deploys whatever the
 sandbox built last, not the old build.
 
+the deploys reach each server with the runner's own `ssh`, which first checks the server's host key
+against a pinned copy (since 26.1015, M-168). each server has four deploy secrets:
+
+| | sandbox (repository secrets) | production (the `production` environment) |
+|---|---|---|
+| address | `DIGITALOCEAN_HOST` | `DIGITALOCEAN_HOST_PROD` |
+| user | `DIGITALOCEAN_USERNAME` | `DIGITALOCEAN_USERNAME_PROD` |
+| private key | `DIGITALOCEAN_ACCESS_TOKEN` | `DIGITALOCEAN_ACCESS_TOKEN_PROD`, else the sandbox's |
+| host key | `DIGITALOCEAN_HOST_KEY` | `DIGITALOCEAN_HOST_KEY_PROD`, no fallback |
+
+a host-key secret holds the server's `known_hosts` line: `<host> <key type> <key>`, where `<host>`
+is written exactly as in that server's address secret (an IP and a name do not match each other).
+make it on a machine you trust with `ssh-keyscan -t ed25519 <host>`, and before saving it check
+that `ssh-keygen -lf -` on that line prints the same fingerprint the droplet itself prints for
+`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`. when a host-key secret is missing or empty the
+deploy fails with an error naming it, before it connects, so the server is not touched. a rebuilt
+droplet has a new host key: update the secret, or every deploy to it is refused.
+
+the sandbox's build logs in to Docker Hub as `DOCKERHUB_USERNAME` with `DOCKERHUB_TOKEN`, an access
+token (read & write on `kiddspazz/www_web`). it falls back to `DOCKERHUB_PASSWORD` until that secret
+is deleted (M-225).
+
 # authors
 
 * kiddspazz/thor/travis, [github](https://github.com/travis-horton)

@@ -38,7 +38,9 @@ concurrency:
 
 # Every `uses:` below is pinned to a full commit, with the release it belongs to
 # in the comment. A tag can be moved to different code after the fact; a commit
-# cannot, and the deploy step hands its action the SSH key to production.
+# cannot. The SSH key to production goes to no action at all (M-168,
+# 26.1015): the deploy step runs the runner's own openssh, which checks the
+# server against its pinned host key (DIGITALOCEAN_HOST_KEY_PROD) first.
 jobs:
   deploy-new-web-app:
     runs-on: ubuntu-latest
@@ -108,19 +110,33 @@ jobs:
           exit 1
 
       -
+        # The deploy itself: REMOTE_SCRIPT below runs on the server, sent by
+        # the runner's own openssh (M-168 (a), 26.1015), exactly as the
+        # sandbox's deploy does (deploy-to-dev.yml says why the action went).
+        # Openssh refuses any server whose key is not
+        # DIGITALOCEAN_HOST_KEY_PROD.
+        # timeout-minutes keeps the old action's 10-minute command_timeout.
         name: Deploy web app to travish.com
-        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
-        with:
-          host: ${{ secrets.DIGITALOCEAN_HOST_PROD }}
-          username: ${{ secrets.DIGITALOCEAN_USERNAME_PROD }}
+        timeout-minutes: 10
+        env:
+          DEPLOY_HOST: ${{ secrets.DIGITALOCEAN_HOST_PROD }}
+          DEPLOY_USER: ${{ secrets.DIGITALOCEAN_USERNAME_PROD }}
           # Production's OWN key if there is one, else the key the sandbox also
           # uses. Until a secret named DIGITALOCEAN_ACCESS_TOKEN_PROD exists
           # this is exactly the old behaviour; the day it is added, production
           # switches to it with no change here. After that the shared key can
           # be taken off the production server, and a leak of the sandbox's
           # key no longer reaches production.
-          key: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD || secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          script: |
+          DEPLOY_KEY: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD || secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          # Production's public host key: its known_hosts line(s),
+          # "<host as in DIGITALOCEAN_HOST_PROD> <type> <key>", kept in the
+          # production environment. NO fallback to the sandbox's: a
+          # different server has a different key. README, "deployment",
+          # says how to make it.
+          DEPLOY_HOST_KEY: ${{ secrets.DIGITALOCEAN_HOST_KEY_PROD }}
+          # Only the secret's NAME, for the error when it is missing.
+          HOST_KEY_SECRET: DIGITALOCEAN_HOST_KEY_PROD
+          REMOTE_SCRIPT: |
             IMAGE=kiddspazz/www_web:${{ steps.image.outputs.tag }}
             # Empty for a commit without the chat (a rollback past 26.1010).
             CHAT_TAG='${{ steps.image.outputs.chat_tag }}'
@@ -193,9 +209,10 @@ jobs:
               "$IMAGE" >/dev/null
             docker network connect bridge www_web
             docker start www_web
-            # Keep the job's verdict: ssh-action reports the script's LAST exit
-            # status, which until now was the docker run above. The cleanup
-            # below must not be able to hide a failed deploy, or cause one.
+            # Keep the job's verdict: ssh returns the remote script's exit
+            # status (the one it exits with, else its LAST command's), which
+            # until now was the docker start above. The cleanup below must
+            # not be able to hide a failed deploy, or cause one.
             deploy_rc=$?
             # Is the new site actually up? Every container must be RUNNING,
             # started from $IMAGE (the build this run just pulled), and must
@@ -246,3 +263,35 @@ jobs:
             if [ "$deploy_rc" -ne 0 ]; then exit "$deploy_rc"; fi
             if [ "$site_up" -ne 1 ]; then exit 1; fi
             exit 0
+        run: |
+          # The SAME text in both deploy workflows (deploy-to-dev.yml and
+          # deploy-to-prod.yml), byte for byte; the repo-pins test checks. It
+          # reads no file from the checkout, so a production rollback to an
+          # older commit runs it unchanged.
+          set -eu
+          # No pinned host key, no deploy: ssh would have nothing to check the
+          # server against. This stops before any connection is made, so the
+          # server is not touched.
+          if [ -z "${DEPLOY_HOST_KEY:-}" ]; then
+            echo "::error::The secret $HOST_KEY_SECRET is empty or missing. It holds the server's host key (its known_hosts line), which ssh checks the server against. Nothing was deployed: add the secret (README, deployment) and re-run this job."
+            exit 1
+          fi
+          # Owner-only files, in a directory that is removed when the step
+          # ends, pass or fail.
+          umask 077
+          ssh_dir="$(mktemp -d "$RUNNER_TEMP/deploy-ssh.XXXXXX")"
+          trap 'rm -rf "$ssh_dir"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$ssh_dir/key"
+          printf '%s\n' "$DEPLOY_HOST_KEY" > "$ssh_dir/known_hosts"
+          # StrictHostKeyChecking=yes against ONLY that file: a server whose
+          # key is not the pinned one is refused before the key is offered.
+          # BatchMode: never stop to ask anything. The remote script goes over
+          # stdin to `bash -s`; ssh exits with that script's exit status,
+          # which becomes this step's.
+          printf '%s' "$REMOTE_SCRIPT" | ssh -T -i "$ssh_dir/key" \
+            -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$ssh_dir/known_hosts" \
+            -o GlobalKnownHostsFile=/dev/null \
+            -o ConnectTimeout=30 -o ServerAliveInterval=30 \
+            "$DEPLOY_USER@$DEPLOY_HOST" 'bash -s'

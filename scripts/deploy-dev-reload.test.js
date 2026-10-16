@@ -20,10 +20,11 @@
  * Two kinds of test:
  *   1. STATIC, over both deploy workflows: no line is a bare reload, and every
  *      reload sits inside a `while` loop that runs `nginx -t` first.
- *   2. BEHAVIOURAL: the REAL script the deploy sends over ssh (the `script: |`
- *      of the step "Deploy web app to kiddspazz.com") is cut out of the
- *      workflow and run with bash against fakes. No docker is needed and none
- *      is reached. A temp directory goes FIRST on PATH, holding:
+ *   2. BEHAVIOURAL: the REAL script the deploy sends over ssh (the
+ *      `REMOTE_SCRIPT: |` of the step "Deploy web app to kiddspazz.com") is cut
+ *      out of the workflow and run as the server runs it, `bash -s` with the
+ *      script on stdin, against fakes. No docker is needed and none is
+ *      reached. A temp directory goes FIRST on PATH, holding:
  *        - docker: after each container starts (`docker run -d`, as the chat
  *          does, or `docker start`, as the two site containers do since the
  *          chat came, 26.1010) it is "mid-write" for the next
@@ -47,6 +48,8 @@ import { spawnSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+
+import { blockScalar, stepLines } from './workflow-text';
 
 const REPO = path.resolve(__dirname, '..');
 const WORKFLOW_DIR = path.join(REPO, '.github', 'workflows');
@@ -150,31 +153,15 @@ describe('the deploy workflows, read as text', () => {
   });
 });
 
-// The ssh script of the deploy step: every line after `script: |` that is
-// indented at least as deep as the first one, with that indent taken off.
+// The script the deploy step sends to the server: its env's `REMOTE_SCRIPT: |`
+// (since M-168, 26.1015; before, the old action's `script: |`), with the
+// commit filled in.
 const remoteScript = (lines) => {
-  const step = lines.findIndex((line) =>
-    new RegExp(`^\\s*name:\\s*${STEP}\\s*$`).test(line),
-  );
-  expect(step).toBeGreaterThan(-1);
-  const start = lines.findIndex(
-    (line, i) => i > step && /^\s*script:\s*\|\s*$/.test(line),
-  );
-  expect(start).toBeGreaterThan(step);
-  const indent = /^(\s*)/.exec(lines[start + 1])[1].length;
-  expect(indent).toBeGreaterThan(0);
-  const body = [];
-  for (let i = start + 1; i < lines.length; i += 1) {
-    const line = lines[i];
-    if (line.trim() === '') {
-      body.push('');
-      continue;
-    }
-    if (/^(\s*)/.exec(line)[1].length < indent) break;
-    body.push(line.slice(indent));
-  }
-  while (body.length && body[body.length - 1] === '') body.pop();
-  return `${body.join('\n').split('${{ github.sha }}').join(FAKE_SHA)}\n`;
+  const step = stepLines(lines, STEP);
+  expect(step.length).toBeGreaterThan(0);
+  const body = blockScalar(step, 'REMOTE_SCRIPT');
+  expect(body).not.toBeNull();
+  return body.split('${{ github.sha }}').join(FAKE_SHA);
 };
 
 // The fakes. Plain strings (no `${`), so the shell's own syntax survives.
@@ -364,9 +351,13 @@ const afterContainers = (lines) => {
 // races: how many reloads fail even right after a passing `nginx -t`.
 const runDeploy = (name, busy, races = 0) => {
   fs.writeFileSync(`${stateFile}.races`, String(races));
-  const result = spawnSync('bash', [scriptFile], {
+  // As the deploy runs it on the server: `bash -s`, the script on STDIN. A
+  // line in it that read stdin would swallow the rest of the script, and the
+  // cases below would then fail.
+  const result = spawnSync('bash', ['-s'], {
     cwd: dir,
     env: fakeEnv(busy),
+    input: fs.readFileSync(scriptFile, 'utf8'),
     encoding: 'utf8',
     timeout: 20000,
   });
