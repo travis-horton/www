@@ -87,6 +87,13 @@ jobs:
         name: Nothing from package.json or a draft performance is in the bundle
         run: node scripts/check-bundle.mjs dist
 
+      -
+        # The history keeper's builder (scripts/history-append.mjs, an installed
+        # copy) runs its own tests here, so a broken copy turns a pull request
+        # red instead of first failing at a release. No network, no token.
+        name: The history keeper's self-test
+        run: node scripts/history-append.mjs --self-test
+
   image:
     runs-on: ubuntu-latest
     steps:
