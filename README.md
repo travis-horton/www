@@ -96,10 +96,10 @@ every deploy to it is refused.
 the sandbox's build logs in to Docker Hub as `DOCKERHUB_USERNAME` with `DOCKERHUB_TOKEN`, a personal
 access token with Read & Write. a personal token can't be limited to one repository: it has one
 permission level for every repository the account can reach; only organization tokens can be
-([docs.docker.com/security/access-tokens](https://docs.docker.com/security/access-tokens/)). it falls
-back to `DOCKERHUB_PASSWORD` only while `DOCKERHUB_TOKEN` is missing (not when it is wrong), so keep
-that secret until one green sandbox deploy has logged in with the token, then delete it (M-225). the
-droplets need no Docker Hub login to pull: `kiddspazz/www_web` is public.
+([docs.docker.com/security/access-tokens](https://docs.docker.com/security/access-tokens/)). there is
+no fallback: the old `DOCKERHUB_PASSWORD` secret (which in fact held a 2021 token) was deleted
+26.1016 after a green sandbox deploy logged in with `DOCKERHUB_TOKEN` (M-225). the droplets need no
+Docker Hub login to pull: `kiddspazz/www_web` is public.
 
 # authors
 
