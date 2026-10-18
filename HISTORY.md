@@ -12,6 +12,10 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## October 2026
 
+**www #185: build(deps): bump the npm-minor-and-patch group with 5 updates** · [PR #185](https://github.com/travis-horton/www/pull/185) · merged 26.1018.1459 · v3.32.3
+- **[build(deps): bump the npm-minor-and-patch group with 5 updates](https://github.com/travis-horton/www/pull/184)** · merged 26.1018.1459
+  Behind the scenes: an automatic dependency update — "build(deps): bump the npm-minor-and-patch group with 5 updates".
+
 **www #183: the website signs in to Docker Hub with one dedicated token · two out-of-date notes brought up to date + 4 more** · [PR #183](https://github.com/travis-horton/www/pull/183) · merged 26.1016.1109 · v3.32.2
 - **[the website signs in to Docker Hub with one dedicated token](https://github.com/travis-horton/www/pull/182)** · merged 26.1016.1109
   Behind the scenes: the build now signs in to Docker Hub only with the token made for these deploys on 26.1016. The old stored login, which turned out to be a 2021 token that could also delete images, is gone from GitHub and from Docker Hub.
