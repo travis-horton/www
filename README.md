@@ -188,7 +188,8 @@ nothing):
 
 `ssh "$PROD" 'ls -l /var/log/www && docker run --rm -v /etc/logrotate.d/www-visits:/c:ro -v /var/log/www:/var/log/www:ro alpine:3.20 sh -c "apk add -q logrotate && logrotate -d /c"'`
 
-the dev droplet (kiddspazz.com) has no laptop ssh yet, so the rule is installed on prod only.
+the rule was written for prod. the dev droplet (kiddspazz.com) takes the same command, with the dev
+login (the pair in `DIGITALOCEAN_USERNAME` and `DIGITALOCEAN_HOST`) in place of `PROD`.
 
 the test reads the log's path from `nginx/nginx.conf` and the deploy workflows' mounts, and checks
 the rotation, the retention bound (124 days) and copytruncate:
