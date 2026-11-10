@@ -10,6 +10,14 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 *First draft, 26.0918. Generated from the git history and checked against the live site.*
 
+## November 2026
+
+**www #191: build(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group · build(deps): bump the npm-minor-and-patch group across 1 directory with 4 updates** · [PR #191](https://github.com/travis-horton/www/pull/191) · merged 26.1109.1944 · v3.32.4
+- **[build(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group](https://github.com/travis-horton/www/pull/189)** · merged 26.1109.1944
+  Behind the scenes: an automatic dependency update — "build(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group".
+- **[build(deps): bump the npm-minor-and-patch group across 1 directory with 4 updates](https://github.com/travis-horton/www/pull/190)** · merged 26.1109.1944
+  Behind the scenes: an automatic dependency update — "build(deps): bump the npm-minor-and-patch group across 1 directory with 4 updates".
+
 ## October 2026
 
 **www #185: build(deps): bump the npm-minor-and-patch group with 5 updates** · [PR #185](https://github.com/travis-horton/www/pull/185) · merged 26.1018.1459 · v3.32.3
