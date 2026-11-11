@@ -1,0 +1,68 @@
+# Do the sites still answer over HTTPS, with certificates good for two weeks
+# or more? GitHub asks once a week (26.1111, Praxis leaf 61cf3792).
+#
+# Why: the proxy in front of the sites (nginx-proxy) and its certificate
+# companion (acme-companion) run on the floating `latest` tag on both servers,
+# by Travis's choice (M-609, "is there a way to make sure the new images
+# work?"). Each deploy asks its own site the same questions as its last step;
+# this catches what happens BETWEEN deploys: a proxy re-created on a new
+# release, a certificate renewal that has quietly stopped working.
+#
+# scripts/https-check.sh asks, for each host below:
+#   answer  https://<host>/ answers 2xx or 3xx over a trusted certificate
+#           (redirects not followed: the bare travish.com answers 301);
+#   cert    the certificate expires more than 14 days from now
+#           (acme-companion renews at 30, so under 14 = two weeks of failed
+#           renewals).
+# The hosts are every name a server answers over HTTPS. Not asked, on purpose:
+# www.kiddspazz.com (no DNS record), chat.travish.com (the chat is served at
+# www.travish.com/chat/; the name exists only so it never points at a released
+# address), wander.travish.com and game.travish.com (no site behind them yet).
+# The 30-minute uptime check (uptime.yml) already looks at the site's content.
+#
+# 📧 A red run is the alarm: GitHub emails a failed scheduled run to the
+# account that last changed the cron line below, if that account's
+# notification settings send Actions failures (Settings → Notifications →
+# Actions). Nothing else is sent anywhere, and no secret is used.
+#
+# ⚠️ A schedule runs ONLY from the default branch (main): this file does
+# nothing until the next dev → main release. GitHub turns a public
+# repository's schedules off after 60 days with no activity, and says so by
+# email.
+#
+# Mondays 14:23 UTC (07:23 in Boise in winter, 08:23 in summer): the start of
+# the week, and off the top of the hour, when GitHub delays and drops scheduled
+# runs. One run takes about 15 seconds of Actions time.
+#
+# Every `uses:` is pinned to a full commit, with the release it belongs to in the
+# comment. A tag can be moved to different code after the fact; a commit cannot.
+name: https check
+
+on:
+  schedule:
+    - cron: '23 14 * * 1'
+  workflow_dispatch:
+
+# The token this workflow gets can read the repository and nothing else.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Worst case: three hosts x (three 20-second answers + two 10-second waits
+    # + a 20-second certificate read) = 5 minutes. A job stopped by this limit
+    # is CANCELLED, not failed, and may send no email, so it leaves room over
+    # that. A normal run takes seconds.
+    timeout-minutes: 8
+    steps:
+      -
+        # Only the script is needed: no project pages, no credentials kept.
+        name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      -
+        name: Ask every site over HTTPS
+        run: bash scripts/https-check.sh travish.com www.travish.com kiddspazz.com
