@@ -157,4 +157,4 @@ jobs:
         # master was fixed (26.1015, M-141), so the old exceptions are gone.
         # scripts/uptime-check.test.js fails when a workflow file is left off.
         name: Lint the workflow files
-        run: docker run --rm -v "$PWD:/repo:ro" --workdir /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color .github/workflows/checks.yml .github/workflows/deploy-to-dev.yml .github/workflows/deploy-to-prod.yml .github/workflows/history.yml .github/workflows/uptime.yml
+        run: docker run --rm -v "$PWD:/repo:ro" --workdir /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color .github/workflows/checks.yml .github/workflows/deploy-to-dev.yml .github/workflows/deploy-to-prod.yml .github/workflows/history.yml .github/workflows/https-check.yml .github/workflows/uptime.yml

@@ -297,3 +297,22 @@ jobs:
             -o GlobalKnownHostsFile=/dev/null \
             -o ConnectTimeout=30 -o ServerAliveInterval=30 \
             "$DEPLOY_USER@$DEPLOY_HOST" 'bash -s'
+
+      -
+        # Does the live site answer over HTTPS, as a visitor would reach it,
+        # with certificates good for 14 days or more? (26.1111, M-609: the
+        # proxy and its certificate companion float on `latest`, so this is the
+        # "did the new one work?" question.) The step above checked the
+        # containers from inside the server; this asks through the proxy, the
+        # certificates and DNS. The deploy has already happened: a failure
+        # here changes nothing on the server, it turns the run red and GitHub
+        # emails it. The same script runs weekly: .github/workflows/https-check.yml.
+        # A rollback checks out an older commit, which may not have the
+        # script; then it says so and the step passes.
+        name: Ask the live site over HTTPS
+        run: |
+          if [ -f scripts/https-check.sh ]; then
+            bash scripts/https-check.sh travish.com www.travish.com
+          else
+            echo "::warning::This commit has no scripts/https-check.sh (a rollback to before 26.1111), so the HTTPS check was skipped."
+          fi
