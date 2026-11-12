@@ -419,3 +419,53 @@
   background-color: var(--light-grey);
   cursor: not-allowed;
 }
+
+/* --- staged rounds (Level 1) --------------------------------------------- */
+
+.lesson h2 {
+  font-size: 20px;
+  margin: 26px 0 4px 0;
+}
+
+.lesson__count td:nth-child(2) {
+  line-height: 1.4;
+}
+
+.drill__rounds {
+  margin: 4px 0 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.drill__rounds li {
+  margin: 6px 0;
+}
+
+.lesson ul {
+  list-style: disc;
+  padding-left: 1.3em;
+  margin: 8px 0;
+}
+
+.lesson ul li {
+  line-height: 1.5;
+  margin: 4px 0;
+}
+
+.lesson__name {
+  white-space: nowrap;
+}
+
+.lesson__count td:first-child {
+  white-space: nowrap;
+}
+
+/* Four actions after a staged round: wrap the row, never a label. */
+.drill__actions {
+  flex-wrap: wrap;
+}
+
+.drill__actions button,
+.drill__actions a {
+  white-space: nowrap;
+}

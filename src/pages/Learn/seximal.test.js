@@ -11,7 +11,9 @@ import {
   getLevel,
   isCorrect,
   pairName,
+  roundOf,
   seximalName,
+  SESSION_LENGTH,
   toDigits,
 } from './seximal';
 
@@ -257,5 +259,71 @@ describe('the complement drill', () => {
       'nif − XY = (five−X)(six−Y). It is a complement, not a big subtraction.': 30,
       'nif − X0 = (six−X)0. The last digit is already zero, so there is nothing to add back.': 5,
     });
+  });
+});
+
+/*
+ * Staged rounds. A level may split its drill into rounds, each a dozen drawn
+ * from its own span, so a true beginner meets six..dozen-five before thirsy.
+ * Level 1 is the first (and so far only) level that does.
+ */
+describe('staged rounds', () => {
+  const level1 = getLevel('1');
+  const values = (items) => items.map((i) => i.value);
+
+  test('Level 1 runs in three rounds', () => {
+    expect(level1.rounds).toHaveLength(3);
+    level1.rounds.forEach((r) => expect(r.title).toEqual(expect.any(String)));
+  });
+
+  test('round 1 only asks for names, one to dozen-five, no repeats', () => {
+    for (let n = 0; n < 20; n += 1) {
+      const items = buildSession(level1, SESSION_LENGTH, 0);
+      expect(items).toHaveLength(SESSION_LENGTH);
+      expect(new Set(items.map((i) => i.kind))).toEqual(new Set(['name-it']));
+      values(items).forEach((v) => {
+        expect(v).toBeGreaterThanOrEqual(1);
+        expect(v).toBeLessThanOrEqual(17);
+      });
+      expect(new Set(values(items)).size).toBe(SESSION_LENGTH);
+    }
+  });
+
+  test('round 2 only asks for numerals over the same span', () => {
+    const items = buildSession(level1, SESSION_LENGTH, 1);
+    expect(new Set(items.map((i) => i.kind))).toEqual(new Set(['write-it']));
+    values(items).forEach((v) => expect(v).toBeLessThanOrEqual(17));
+  });
+
+  test('round 3 is thirsy to fifsy-five, both directions, evenly', () => {
+    for (let n = 0; n < 20; n += 1) {
+      const items = buildSession(level1, SESSION_LENGTH, 2);
+      values(items).forEach((v) => {
+        expect(v).toBeGreaterThanOrEqual(18);
+        expect(v).toBeLessThanOrEqual(35);
+      });
+      const names = items.filter((i) => i.kind === 'name-it').length;
+      expect(names).toBe(SESSION_LENGTH / 2);
+      expect(new Set(values(items)).size).toBe(SESSION_LENGTH);
+    }
+  });
+
+  test('every round stays inside the level drillRange', () => {
+    level1.rounds.forEach((r) => {
+      expect(r.values.min).toBeGreaterThanOrEqual(level1.drillRange.min);
+      expect(r.values.max).toBeLessThanOrEqual(level1.drillRange.max);
+    });
+  });
+
+  test('a level without rounds ignores the round argument', () => {
+    const items = buildSession(getLevel('3'), SESSION_LENGTH, 2);
+    expect(items).toHaveLength(SESSION_LENGTH);
+    items.forEach((i) => expect(['add', 'subtract']).toContain(i.kind));
+  });
+
+  test('roundOf clamps to the level', () => {
+    expect(roundOf(level1, 0)).toBe(level1.rounds[0]);
+    expect(roundOf(level1, 7)).toBe(null);
+    expect(roundOf(getLevel('3'), 0)).toBe(null);
   });
 });

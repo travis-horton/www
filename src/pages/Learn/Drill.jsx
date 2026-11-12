@@ -6,6 +6,7 @@ import {
   getLevel,
   isCorrect,
   LEVELS,
+  roundOf,
   SESSION_LENGTH,
 } from './seximal';
 import { LESSONS } from './Lessons';
@@ -29,10 +30,13 @@ function Drill() {
   const { levelId } = useParams();
   const level = getLevel(levelId);
 
+  // `round` is a redraw counter; `roundIndex` is which staged round (if the
+  // level has any) the session drills.
   const [round, setRound] = useState(0);
+  const [roundIndex, setRoundIndex] = useState(0);
   const items = useMemo(
-    () => (level ? buildSession(level) : []),
-    [level, round],
+    () => (level ? buildSession(level, SESSION_LENGTH, roundIndex) : []),
+    [level, round, roundIndex],
   );
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
@@ -52,6 +56,7 @@ function Drill() {
     setIndex(0);
     setInput('');
     setResults([]);
+    setRoundIndex(0);
     setPhase(TEACHING);
   }, [levelId]);
 
@@ -64,10 +69,27 @@ function Drill() {
     );
   }
 
+  const rounds = level.rounds || [];
+  const staged = rounds.length > 0;
+  const roundLabel = staged
+    ? `round ${roundIndex + 1} of ${rounds.length}`
+    : null;
+
+  // A fresh dozen from the top of round `index`, straight into the questions.
+  const startRound = (index) => {
+    setResults([]);
+    setIndex(0);
+    setInput('');
+    setRoundIndex(index);
+    setRound(round + 1);
+    setPhase(ANSWERING);
+  };
+
   const finish = (finalResults) => {
     recordSession({
       course: 'seximal',
       levelId: level.id,
+      ...(staged ? { round: roundIndex + 1 } : {}),
       total: finalResults.length,
       correct: finalResults.filter((r) => r.correct).length,
       misses: finalResults.filter((r) => !r.correct).map((r) => r.kind),
@@ -135,9 +157,29 @@ function Drill() {
             type="button"
             onClick={() => setPhase(ANSWERING)}
           >
-            {`Start — a dozen questions (${SESSION_LENGTH})`}
+            {staged
+              ? `Start ${roundLabel} — a dozen questions (${SESSION_LENGTH})`
+              : `Start — a dozen questions (${SESSION_LENGTH})`}
           </button>
         </p>
+        {staged && (
+          <>
+            <p className="lesson__dim">Or go straight to a round:</p>
+            <ol className="drill__rounds">
+              {rounds.map((r, i) => (
+                <li key={r.title}>
+                  <button
+                    className="drill__link-button"
+                    type="button"
+                    onClick={() => startRound(i)}
+                  >
+                    {`Round ${i + 1}: ${r.title}`}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
       </div>
     );
   }
@@ -152,6 +194,11 @@ function Drill() {
     return (
       <div className="drill">
         <h2>{`${correct} / ${results.length}`}</h2>
+        {staged && (
+          <p className="drill__meta">
+            {`Round ${roundIndex + 1} of ${rounds.length}: ${roundOf(level, roundIndex).title}`}
+          </p>
+        )}
         {missed.length === 0 ? (
           <p>Clean sweep. Nothing to carry into the next one.</p>
         ) : (
@@ -165,8 +212,23 @@ function Drill() {
           </>
         )}
         <p className="drill__actions">
+          {roundOf(level, roundIndex + 1) && (
+            <>
+              <button
+                className="drill__button"
+                type="button"
+                onClick={() => startRound(roundIndex + 1)}
+              >
+                {`On to round ${roundIndex + 2}`}
+              </button>{' '}
+            </>
+          )}
           <button
-            className="drill__button"
+            className={
+              roundOf(level, roundIndex + 1)
+                ? 'drill__link-button'
+                : 'drill__button'
+            }
             type="button"
             onClick={() => {
               setResults([]);
@@ -205,7 +267,9 @@ function Drill() {
   return (
     <div className="drill">
       <p className="drill__meta">
-        {`${level.title} · ${index + 1} of ${items.length}`}
+        {[level.title, roundLabel, `${index + 1} of ${items.length}`]
+          .filter(Boolean)
+          .join(' · ')}
       </p>
 
       <p className="drill__prompt">{item.prompt}</p>

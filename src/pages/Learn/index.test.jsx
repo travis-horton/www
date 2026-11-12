@@ -718,3 +718,88 @@ describe('toki pona', () => {
     },
   );
 });
+
+/*
+ * Staged rounds (Level 1). Each round is its own dozen; finishing one offers
+ * the next, and the lesson page can start any round directly.
+ */
+describe('a level with staged rounds', () => {
+  const giveUpOnAll = () => {
+    let guard = 0;
+    while (screen.queryByRole('button', { name: 'show me' }) && guard < 20) {
+      fireEvent.click(screen.getByRole('button', { name: 'show me' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      guard += 1;
+    }
+  };
+  const lastSession = () => {
+    const { sessions } = JSON.parse(
+      window.localStorage.getItem('travish.learn.v1'),
+    );
+    return sessions[sessions.length - 1];
+  };
+
+  test('the lesson lists the rounds and Start begins round 1', () => {
+    renderAt('/learn/seximal/1');
+    expect(
+      screen.getByRole('button', { name: /Round 2: write the numeral/ }),
+    ).toBeInTheDocument();
+    start();
+    expect(screen.getByText(/round 1 of 3 · 1 of 12$/)).toBeInTheDocument();
+    expect(screen.getByText('the spoken name')).toBeInTheDocument();
+  });
+
+  test('finishing a round offers the next one, and records which round it was', () => {
+    window.localStorage.clear();
+    renderAt('/learn/seximal/1');
+    start();
+    giveUpOnAll();
+    expect(lastSession().round).toBe(1);
+    expect(lastSession().total).toBe(12);
+
+    fireEvent.click(screen.getByRole('button', { name: 'On to round 2' }));
+    expect(screen.getByText(/round 2 of 3 · 1 of 12$/)).toBeInTheDocument();
+    expect(screen.getByText('base-six digits')).toBeInTheDocument();
+  });
+
+  test('a round can be started straight from the lesson; the last offers no next', () => {
+    renderAt('/learn/seximal/1');
+    fireEvent.click(screen.getByRole('button', { name: /Round 3: both/ }));
+    expect(screen.getByText(/round 3 of 3 · 1 of 12$/)).toBeInTheDocument();
+    giveUpOnAll();
+    expect(
+      screen.queryByRole('button', { name: /On to round/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Another dozen' }),
+    ).toBeInTheDocument();
+  });
+
+  test('a level without rounds says nothing about rounds', () => {
+    renderAt('/learn/seximal/3');
+    expect(screen.queryByRole('button', { name: /^Round/ })).toBeNull();
+    start();
+    expect(
+      screen.getByText(/^Adding & subtracting · 1 of 12$/),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('Level 1 says whose names these are', () => {
+  test('labels the set as personal and credits seximal.net', () => {
+    const { container } = renderAt('/learn/seximal/1');
+    expect(container.textContent).toMatch(/my personal set/);
+    expect(container.textContent).toMatch(/not standard/);
+    const link = screen.getAllByRole('link', { name: /seximal\.net/ })[0];
+    expect(link).toHaveAttribute('href', 'https://www.seximal.net/words');
+  });
+
+  test('the count table is the engine’s own names, one through fifsy-five', () => {
+    const { container } = renderAt('/learn/seximal/1');
+    const table = container.querySelector('.lesson__count');
+    for (let n = 1; n <= 35; n += 1) {
+      expect(table).toHaveTextContent(seximalName(n));
+    }
+    expect(table.querySelectorAll('tbody tr')).toHaveLength(6);
+  });
+});
