@@ -279,6 +279,63 @@ const chainItem = () => {
 
 const level5 = () => pick([complementItem, chainItem])();
 
+/*
+ * Staged rounds. A level that declares `rounds` drills one round at a time:
+ * each round is a dozen drawn WITHOUT repeats from its own `values` span, and
+ * `kinds` are dealt in turn, so a two-kind round is always half and half. A
+ * level with no rounds keeps its single `generate` and never sees this.
+ */
+const DOZEN_FIVE = 17; // 25s6 — the last number before thirsy
+const THIRSY = 18; // 30s6
+
+const LEVEL1_ROUNDS = [
+  {
+    title: 'say the name, up to dozen-five',
+    values: { min: 1, max: DOZEN_FIVE },
+    kinds: ['name-it'],
+  },
+  {
+    title: 'write the numeral, up to dozen-five',
+    values: { min: 1, max: DOZEN_FIVE },
+    kinds: ['write-it'],
+  },
+  {
+    title: 'both directions, thirsy to fifsy-five',
+    values: { min: THIRSY, max: PAIR_MAX },
+    kinds: ['name-it', 'write-it'],
+  },
+];
+
+const ITEM_BY_KIND = { 'name-it': nameIt, 'write-it': writeIt };
+
+const shuffle = (arr) => {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    const j = randInt(0, i);
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+};
+
+const span = ({ min, max }) =>
+  Array.from({ length: max - min + 1 }, (_, i) => min + i);
+
+/** The round at `index`, or null when the level has no such round. */
+export const roundOf = (level, index) =>
+  (level && level.rounds && level.rounds[index]) || null;
+
+const buildRound = (round, count) => {
+  const pool = span(round.values);
+  const drawn = [];
+  // A span smaller than the session starts over rather than running dry.
+  while (drawn.length < count) drawn.push(...shuffle(pool));
+  return drawn
+    .slice(0, count)
+    .map((value, i) =>
+      ITEM_BY_KIND[round.kinds[i % round.kinds.length]](value),
+    );
+};
+
 export const LEVELS = [
   {
     id: '1',
@@ -286,6 +343,7 @@ export const LEVELS = [
     blurb:
       'The words themselves — six, dozen, thirsy, foursy, fifsy — up to fifsy-five.',
     generate: level1,
+    rounds: LEVEL1_ROUNDS,
     drillRange: { min: 1, max: PAIR_MAX },
   },
   {
@@ -327,7 +385,9 @@ export const getLevel = (id) => LEVELS.find((l) => l.id === id) || null;
 
 export const SESSION_LENGTH = 12; // a dozen (20s6)
 
-export const buildSession = (level, count = SESSION_LENGTH) => {
+export const buildSession = (level, count = SESSION_LENGTH, roundIndex = 0) => {
+  const round = roundOf(level, roundIndex);
+  if (round) return shuffle(buildRound(round, count));
   const items = [];
   while (items.length < count) {
     items.push(level.generate());

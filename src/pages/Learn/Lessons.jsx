@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { seximalName, toDigits } from './seximal';
+
 /*
  * The teaching half. Each level opens with one of these and only then offers
  * the drill — a level that jumps straight to questions is a flashcard deck, not
@@ -8,69 +10,225 @@ import React from 'react';
  * Keyed by level id, rendered without props so nothing here needs prop-types.
  */
 
-const CountingTable = () => (
-  <table className="lesson__table">
+// The whole two-digit count, one row per sixes digit. Built from the engine,
+// so the table can never disagree with what the drill accepts.
+const CountTable = () => (
+  <table className="lesson__table lesson__count">
     <thead>
       <tr>
         <th>base six</th>
-        <th>name</th>
+        <th>names</th>
         <th>(decimal)</th>
       </tr>
     </thead>
     <tbody>
-      {[
-        ['1–5', 'one … five', '1–5'],
-        ['10', 'six', '6'],
-        ['11', 'seven', '7'],
-        ['15', 'eleven', '11'],
-        ['20', 'dozen', '12'],
-        ['23', 'dozen-three', '15'],
-        ['30', 'thirsy', '18'],
-        ['40', 'foursy', '24'],
-        ['50', 'fifsy', '30'],
-        ['55', 'fifsy-five', '35'],
-        ['100', 'nif', '36'],
-      ].map(([digits, name, dec]) => (
-        <tr key={digits}>
-          <td>
-            <code>{digits}</code>
-          </td>
-          <td>{name}</td>
-          <td className="lesson__dim">{dec}</td>
-        </tr>
-      ))}
+      {[0, 1, 2, 3, 4, 5].map((sixes) => {
+        const from = Math.max(sixes * 6, 1);
+        const to = sixes * 6 + 5;
+        const names = [];
+        for (let n = from; n <= to; n += 1) names.push(seximalName(n));
+        return (
+          <tr key={sixes}>
+            <td>
+              <code>{`${toDigits(from)}–${toDigits(to)}`}</code>
+            </td>
+            <td>
+              {names.map((name, i) => (
+                <React.Fragment key={name}>
+                  {i > 0 && ', '}
+                  <span className="lesson__name">{name}</span>
+                </React.Fragment>
+              ))}
+            </td>
+            <td className="lesson__dim">{`${from}–${to}`}</td>
+          </tr>
+        );
+      })}
     </tbody>
   </table>
 );
 
+// A numeral with its little base-six marker.
+const S = ({ children }) => (
+  <>
+    <code>{children}</code>
+    <sub>6</sub>
+  </>
+);
+
+const SEXIMAL_NET = 'https://www.seximal.net/words';
+
+/*
+ * Level 1, rewritten 26.1111 from the 26.1102 draft and Travis's rulings
+ * M-546..550: first person, a personal (non-standard) set credited to
+ * seximal.net, the count through 55s6, the drill in staged rounds.
+ * Draft copy for Travis's markup.
+ */
 const One = () => (
   <div className="lesson">
+    <h2>Whose words these are</h2>
     <p>
-      Base six has six digits and no more: 0, 1, 2, 3, 4, 5. There is no digit
-      for six — exactly the way decimal has no digit for ten.
+      Base six is ordinary math. Saying its numbers out loud is not: nobody has
+      agreed how to do it. The names on this page are{' '}
+      <strong>my personal set, and they are not standard</strong>. A math
+      textbook won&apos;t use them, and most people have never heard them.
     </p>
     <p>
-      So six is written <code>10</code>. That is the entire idea, and everything
-      else follows from it.
+      Almost all of them come from jan Misali&apos;s{' '}
+      <a href={SEXIMAL_NET}>seximal.net</a>: <em>thirsy</em>, <em>foursy</em>,{' '}
+      <em>fifsy</em> and <em>nif</em> are the site&apos;s words, not mine. Where
+      I differ: I say <em>dozen</em> for <S>20</S>, where the site says twelve,
+      and I hyphenate (dozen-one, not dozen one). There&apos;s more on that at
+      the bottom of the page.
+    </p>
+
+    <h2>What base six is</h2>
+    <p>
+      You already know how a number system works, because you use one every day.
+      Ordinary counting, decimal, has ten digits, 0 through 9. When it runs out
+      of digits it writes <code>10</code>, which means &quot;one group of ten,
+      and nothing left over.&quot;
     </p>
     <p>
-      But nobody says &quot;one zero.&quot; Six gets its own word:{' '}
-      <strong>six</strong>. The next five numbers keep the words you already use
-      — seven, eight, nine, ten, eleven — which are irregular in the same
-      forgivable way English already makes eleven and twelve irregular.
+      Base six does the same thing, sooner. It has six digits: 0, 1, 2, 3, 4 and
+      5. There is no digit for six, the same way decimal has no digit for ten.
+      So six is written <code>10</code>: one group of six, and nothing left
+      over.
     </p>
     <p>
-      Then comes the good part. <strong>A dozen is written 20.</strong> A dozen
-      has always felt like a round number, and this is why: in base six it
-      genuinely is one. Three more round numbers follow —{' '}
-      <strong>thirsy</strong>, <strong>foursy</strong>, <strong>fifsy</strong> —
-      and they combine the way you would guess: dozen-one, thirsy-four,
-      fifsy-five.
+      That&apos;s the whole idea. On this page a small 6 after a number means
+      it&apos;s written in base six, so <S>10</S> is six and a plain 10 is ten.
     </p>
-    <CountingTable />
-    <p className="lesson__dim">
-      Fifsy-five is the largest two-digit number there is. After it, everything
-      starts over — which is level two.
+
+    <h2>Why bother</h2>
+    <p>
+      I&apos;m not expecting anyone to switch, and you don&apos;t need a reason
+      beyond curiosity. But three things won me over:
+    </p>
+    <ul>
+      <li>
+        Fractions come out clean. A half is <S>0.3</S> and a third is <S>0.2</S>
+        , both exact. In decimal a third is 0.333… forever.
+      </li>
+      <li>
+        The times table is tiny. It stops at 5 × 5, which is <S>41</S> (decimal
+        25).
+      </li>
+      <li>Two hands count much further. More on that below.</li>
+    </ul>
+    <p>
+      And trying it shows you which parts of arithmetic are about numbers, and
+      which are only habit.
+    </p>
+
+    <h2>One to eleven</h2>
+    <p>
+      The first five numbers are the same as always: 1, 2, 3, 4, 5. Same digits,
+      same words. Then six is written <S>10</S>, and the next five keep the
+      words you already use:
+    </p>
+    <p className="lesson__example">
+      <S>10</S> six · <S>11</S> seven · <S>12</S> eight · <S>13</S> nine ·{' '}
+      <S>14</S> ten · <S>15</S> eleven
+    </p>
+    <p>
+      Read the two digits as a count: the first says how many sixes, the second
+      how many are left over. (A group of six is a <em>six</em>; more than one
+      are <em>sixes</em>.)
+    </p>
+    <p>
+      Here&apos;s the part that takes getting used to.{' '}
+      <strong>
+        The words still mean the amounts they always meant. Only the writing
+        moved.
+      </strong>{' '}
+      Ten is still ten fingers. It&apos;s written <S>14</S> because ten is one
+      six and four left over.
+    </p>
+    <p>
+      The trap: <S>12</S> looks like twelve, and it isn&apos;t. It&apos;s one
+      six and two left over, so it&apos;s eight. Never read the digits as if
+      they were decimal.
+    </p>
+
+    <h2>Dozen</h2>
+    <p>
+      After <S>15</S> the ones digit has run out, so the sixes digit goes up:{' '}
+      <S>20</S>, two sixes and nothing left over. That amount already has a good
+      English word, <strong>dozen</strong>, and from there the count goes the
+      way you&apos;d guess: dozen-one, dozen-two, up to dozen-five (<S>25</S>,
+      decimal 17).
+    </p>
+
+    <h2>Thirsy, foursy, fifsy</h2>
+    <p>
+      Three, four and five sixes get new words, built the way thirty and forty
+      are, with -sy in place of -ty: <S>30</S> is <strong>thirsy</strong>,{' '}
+      <S>40</S> is <strong>foursy</strong>, <S>50</S> is <strong>fifsy</strong>.
+      They combine just like dozen does. Here&apos;s the whole count, one row
+      per sixes digit:
+    </p>
+    <CountTable />
+    <p>
+      Say the rows out loud once, top to bottom. Every row after the second has
+      the same shape.
+    </p>
+
+    <h2>Count on your hands</h2>
+    <p>
+      Use your right hand for the ones, from a fist (0) to all five fingers (5).
+      Use your left hand for the sixes. When the right hand is full and needs
+      one more, close it and raise one finger on the left.
+    </p>
+    <p>
+      Left hand 2, right hand 3 is <S>23</S>, dozen-three. Both hands open is{' '}
+      <S>55</S>, fifsy-five: thirty-five on two hands, where decimal fingers
+      stop at ten.
+    </p>
+    <p>
+      To turn a pile of things into a number, take out as many sixes as you can,
+      then count what&apos;s left. Sixteen things is two sixes and four left
+      over: <S>24</S>, dozen-four.
+    </p>
+
+    <h2>Where this level stops</h2>
+    <p>
+      <S>55</S>, fifsy-five, is the biggest number with two digits. One more and
+      a third place opens: <S>100</S> is <strong>nif</strong> (decimal 36), six
+      sixes. Level two starts there, so it isn&apos;t in this drill.
+    </p>
+
+    <h2>What you&apos;ll meet elsewhere</h2>
+    <ul>
+      <li>
+        The system has other names: mathematicians call it senary, and some
+        people say heximal. Seximal is jan Misali&apos;s word.
+      </li>
+      <li>
+        <a href={SEXIMAL_NET}>seximal.net</a> is where thirsy, foursy, fifsy and
+        nif come from, and it&apos;s the place to read more. Nif is borrowed
+        from Ndom, a language of New Guinea that counts in sixes.
+      </li>
+      <li>
+        That site says twelve for <S>20</S> and starts dozen at <S>21</S>,
+        written dozen one with no hyphen. I say dozen for <S>20</S> too.
+      </li>
+      <li>
+        Outside this course, don&apos;t expect anyone to know what you mean by
+        foursy-three.
+      </li>
+    </ul>
+
+    <h2>The drill</h2>
+    <p>
+      Type your answer before you see the truth. Recognizing a right answer is a
+      different skill from producing one. &quot;Show me&quot; counts as a miss.
+      Capitals, hyphens and extra spaces don&apos;t matter.
+    </p>
+    <p>
+      It runs in three rounds of a dozen questions: first say the names up to
+      dozen-five, then write them, then both directions from thirsy to
+      fifsy-five. Three rounds is a nif of questions.
     </p>
   </div>
 );

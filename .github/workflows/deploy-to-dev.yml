@@ -387,3 +387,17 @@ jobs:
         run: |
           docker buildx imagetools create --tag "$CHAT_TREE_TAG" "$CHAT_SOURCE"
           docker buildx imagetools create --tag "$TREE_TAG" --tag kiddspazz/www_web:latest "$SOURCE"
+
+      -
+        # Does the sandbox answer over HTTPS, as a visitor would reach it, with
+        # a certificate good for 14 days or more? (26.1111, M-609: the proxy
+        # and its certificate companion float on `latest`, so this is the
+        # "did the new one work?" question.) The step above checked the
+        # containers from inside the server; this asks through the proxy, the
+        # certificate and DNS. Last, after the build is marked proven: a
+        # failure here turns the run red and GitHub emails it, but a sandbox
+        # certificate problem does not hold production back.
+        # www.kiddspazz.com is not asked: it has no DNS record.
+        # The same script runs weekly on its own: .github/workflows/https-check.yml.
+        name: Ask the sandbox over HTTPS
+        run: bash scripts/https-check.sh kiddspazz.com
