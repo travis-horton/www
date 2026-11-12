@@ -12,6 +12,15 @@ This is the whole history of my website, www.travish.com, newest first, written 
 
 ## November 2026
 
+**www #194: Seximal Level 1 rewritten, with practice in rounds · HTTPS check after every deploy and every week** · [PR #194](https://github.com/travis-horton/www/pull/194) · merged 26.1112.1149 · v3.33.0
+- **[Level 1 in your words](https://github.com/travis-horton/www/commit/8483ea4)** · merged 26.1112.1149
+  New: the first seximal lesson is rewritten in the first person for a complete beginner. It says the names are a personal set, not a standard one, credits seximal.net for thirsy, foursy, fifsy and nif, and explains the two differences (dozen for 20 in base six, where the site says twelve, and the hyphens). It covers the count up to fifsy-five, counting on two hands, and where nif begins.
+  Try it: open https://kiddspazz.com/learn/seximal/1
+- **[Practice in rounds](https://github.com/travis-horton/www/commit/8483ea4)** · merged 26.1112.1149
+  New: Level 1's practice now comes in three rounds of a dozen questions. First you say the names up to dozen-five, then you write them, and then you do both from thirsy to fifsy-five. After each round the page offers the next one, and the lesson page lets you jump straight to any round.
+- **[HTTPS check after every deploy and every week](https://github.com/travis-horton/www/pull/192)** · merged 26.1112.1149
+  Behind the scenes: after each update to the test site and the live site, and every Monday morning on its own, GitHub now asks travish.com, www.travish.com and kiddspazz.com for their front page over https and reads each site's security certificate. A site that does not answer, or a certificate with 14 days or fewer left, turns the run red, and GitHub emails the failure.
+
 **www #191: build(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group · build(deps): bump the npm-minor-and-patch group across 1 directory with 4 updates** · [PR #191](https://github.com/travis-horton/www/pull/191) · merged 26.1109.1944 · v3.32.4
 - **[build(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group](https://github.com/travis-horton/www/pull/189)** · merged 26.1109.1944
   Behind the scenes: an automatic dependency update — "build(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group".
