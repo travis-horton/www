@@ -1,10 +1,14 @@
 version: "3.7"
 
-# Both images are named by release (26.1002), never bare and never `latest`: a
-# bare name means "whatever was newest on the day this server last pulled", and
-# the two servers were found on two different versions, from 2021 and 2022, with
-# nothing saying which. These were the newest releases on the day they were
-# written here (scripts/repo-pins.test.js fails if a version goes missing).
+# The two versions below are a KNOWN-GOOD REFERENCE, not what the servers run.
+# Since the 26.1109 rebuilds both servers start the proxy with the bare image
+# names, i.e. `latest`, and that is the chosen policy (26.1111, M-609: keep
+# `latest`, with a health check after each restart and once a week, instead of
+# pinning). These are releases this setup is known to work with (the newest on
+# 26.1002, when they were written here): if a new `latest` breaks the proxy,
+# start one of these instead. Keep them named by version
+# (scripts/repo-pins.test.js fails on a bare name or `latest`), and move them
+# forward only to a release that has been seen working (26.1112, M-636).
 # ⚠️ No workflow deploys this file. Changing a version here changes nothing on a
 # server until the proxy is re-created there by hand (README, "docker notes").
 services:
